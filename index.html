@@ -42,6 +42,38 @@
         <p>&copy; 2024 Site do RollerCoin</p>
     </footer>
 
+    <h1>Comparação de Itens</h1>
+
+    <div class="dropdown-container">
+        <label for="itemEsquerda">Escolha o item da esquerda:</label>
+        <select id="itemEsquerda" onchange="compararItens()">
+            <option value="">Selecione um item</option>
+            <!-- Adicione opções para os itens da esquerda aqui -->
+            <option value="item1">Item 1</option>
+            <option value="item2">Item 2</option>
+            <option value="item3">Item 3</option>
+            <option value="item4">Item 4</option>
+            <option value="item5">Item 5</option>
+        </select>
+    </div>
+
+    <div class="dropdown-container">
+        <label for="itemDireita">Escolha o item da direita:</label>
+        <select id="itemDireita" onchange="compararItens()">
+            <option value="">Selecione um item</option>
+            <!-- Adicione opções para os itens da direita aqui -->
+            <option value="item1">Item 1</option>
+            <option value="item2">Item 2</option>
+            <option value="item3">Item 3</option>
+            <option value="item4">Item 4</option>
+            <option value="item5">Item 5</option>
+        </select>
+    </div>
+
+    <div id="resultado">
+        <!-- O resultado da comparação será exibido aqui -->
+    </div>
+
     <script src="script.js"></script>
 </body>
 
