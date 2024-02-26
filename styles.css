@@ -39,3 +39,25 @@ footer {
     bottom: 0;
     width: 100%;
 }
+
+h1 {
+    color: #333;
+}
+
+.dropdown-container {
+    margin: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+select {
+    padding: 5px;
+}
+
+#resultado {
+    margin-top: 20px;
+    font-weight: bold;
+}
