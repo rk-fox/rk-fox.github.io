@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Calculadora de Burn</title>
+</head>
+
+<body>
+<h1>Comparação de Itens</h1>
+
+    <div class="dropdown-container">
+        <label for="itemEsquerda">Escolha o item da esquerda:</label>
+        <select id="itemEsquerda" onchange="compararItens()">
+            <option value="">Selecione um item</option>
+            <!-- Adicione opções para os itens da esquerda aqui -->
+            <option value="fullMoonDragon">Full Moon Dragon</option>
+            <option value="veniVidiVici">VeniVidiVici</option>
+            <option value="cupOfPower">Cup Of Power</option>
+            <option value="chunxiRoad">Chunxi Road</option>
+            <option value="cryptoNeko">Crypto-NeKo</option>
+        </select>
+    </div>
+
+    <div class="dropdown-container">
+        <label for="itemDireita">Escolha o item da direita:</label>
+        <select id="itemDireita" onchange="compararItens()">
+            <option value="">Selecione um item</option>
+            <!-- Adicione opções para os itens da direita aqui -->
+            <option value="fullMoonDragon">Full Moon Dragon</option>
+            <option value="veniVidiVici">VeniVidiVici</option>
+            <option value="cupOfPower">Cup Of Power</option>
+            <option value="chunxiRoad">Chunxi Road</option>
+            <option value="cryptoNeko">Crypto-NeKo</option>
+        </select>
+    </div>
+
+    <div id="resultado">
+        <!-- O resultado da comparação será exibido aqui -->
+    </div>
+
+    <script src="script.js"></script>
+      <footer>
+        <p>&copy; 2024 Site do RollerCoin</p>
+    </footer>
+</body>
+
+</html>
