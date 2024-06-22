@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Linktree</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="profile">
+            <img src="sua-foto-de-perfil.jpg" alt="Foto de Perfil" class="profile-pic">
+            <h1>Seu Nome</h1>
+        </div>
+        <div class="banner">
+            <img src="seu-banner.jpg" alt="Banner" class="banner-img">
+        </div>
+        <div class="links">
+            <a href="https://seulink1.com" target="_blank">Link 1</a>
+            <a href="https://seulink2.com" target="_blank">Link 2</a>
+            <a href="https://seulink3.com" target="_blank">Link 3</a>
+            <!-- Adicione mais links conforme necessário -->
+        </div>
+    </div>
+</body>
+</html>
