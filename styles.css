@@ -1,3 +1,10 @@
+/* Reset some basic styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     display: flex;
@@ -14,6 +21,8 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
 }
 
 .profile-pic {
@@ -44,4 +53,14 @@ body {
 
 .links a:hover {
     background: #0056b3;
+}
+
+.ref, .email, .ads {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.adsbygoogle {
+    display: block;
+    margin: 20px auto;
 }
