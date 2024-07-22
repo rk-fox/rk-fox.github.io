@@ -164,13 +164,13 @@ tbody img {
     /* Estilos para a seta */
 .up::after {
     content: '▲'; /* Seta para cima */
-    color: green;
+    color: #008000;
     font-weight: bold;
 }
 
 .down::after {
     content: '▼'; /* Seta para baixo */
-    color: red;
+    color: #ff0000;
     font-weight: bold;
 }
 
