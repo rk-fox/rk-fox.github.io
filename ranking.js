@@ -41,19 +41,19 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const powerGain = totalPower - initialPower;
     const progressPercentage = (powerGain / initialPower) * 100;
     const positionChangeClass = positionChange > 0 ? 'up' : positionChange < 0 ? 'down' : '';
-    const positionChangeIcon = positionChange > 0 ? '▲' : positionChange < 0 ? '▼' : '';
+    const positionChangeText = positionChange !== 0 ? Math.abs(positionChange) : ''; // Exibe apenas o número de posições
 
     row.innerHTML = `
         <td data-label="Rank">${rank}</td>
-        <td data-label="Posição" class="${positionChangeClass}">${positionChangeIcon}</td>
+        <td data-label="Posição" class="${positionChangeClass}">${positionChangeText}</td>
         <td data-label="Nick">
             <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
             ${user.name}
         </td>
-        <td data-label="Miners">${userData.miners.toFixed(2)}</td>
+        <td data-label="Miners">${userData.miners}</td>
         <td data-label="Bônus (%)">${userData.bonus_percent.toFixed(2)}</td>
         <td data-label="Bônus">${userData.bonus.toFixed(2)}</td>
-        <td data-label="Racks">${userData.racks.toFixed(2)}</td>
+        <td data-label="Racks">${userData.racks}</td>
         <td data-label="Poder Total">${convertPower(totalPower)}</td>
         <td data-label="Progresso">
             <div class="progress-bar-container">
@@ -64,9 +64,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
             <div>${convertPower(powerGain)}</div>
         </td>
         <td data-label="Link">
-            <a href="${user.link}" class="btn-sala" target="_blank" rel="noopener noreferrer">
-                <img src="images/botao-home.png" alt="SALA">
-            </a>
+            <a href="${user.link}" class="btn-sala" target="_blank"></a>
         </td>
     `;
 
