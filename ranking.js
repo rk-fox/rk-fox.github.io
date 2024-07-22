@@ -59,14 +59,16 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
         <td data-label="Poder Total">${convertPower(totalPower)}</td>
         <td data-label="Progresso">
             <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 75%;"> <!-- Ajuste a largura dinamicamente -->
-                    <span class="progress-bar-text">75%</span> <!-- Texto centralizado -->
+                <div class="progress-bar" style="width: ${progressPercentage.toFixed(2)}%;" data-progress="${progressPercentage.toFixed(2)}%">
+                    <!-- Texto gerado dinamicamente com ::after no CSS -->
                 </div>
             </div>
-            <div class="progress-gain">${convertPower(powerGain)}</div>
+            <div style="text-align: center; font-size: 0.75rem;">${convertPower(powerGain)}</div>
         </td>
         <td data-label="Link">
-            <a href="${user.link}" class="btn-sala" target="_blank"></a>
+            <a href="${user.link}" class="btn-home" target="_blank">
+                <img src="images/botao-home.png" alt="Botão Home" class="btn-home-img">
+            </a>
         </td>
     `;
 
