@@ -1,66 +1,61 @@
-const userIds = [
-  '61e852b4dc27dc001969efa3',
-  '61fa83b690e1e40027ebefca',
-    // Adicione mais IDs aqui
-];
+document.addEventListener("DOMContentLoaded", function() {
+    // Lista de IDs dos usuários
+    const userIds = [
+        '61e852b4dc27dc001969efa3',
+        '61e484ca5aa1be001868f065',
+        '65de9e82a1e9f41193e2f6cc'
+    ];
 
-const apiUrl = 'https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/';
+    // Função para realizar a requisição e processar a resposta
+    function fetchUserData(userId) {
+        return new Promise((resolve, reject) => {
+            const url = `https://rollercoin.free.mockoapp.net/get?url=${encodeURIComponent(`https://rollercoin.com/api/profile/user-power-data/${userId}`)}`;
+            
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
 
-async function fetchUserData(id) {
-    const response = await fetch(`${apiUrl}${id}`);
-    const data = await response.json();
-    return data;
-}
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve(JSON.parse(xhr.responseText));
+                } else {
+                    reject(`Erro ${xhr.status}: ${xhr.statusText}`);
+                }
+            };
 
-async function getAllUserData() {
-    const userDataArray = [];
-    for (const id of userIds) {
-        try {
-            const userData = await fetchUserData(id);
-            if (userData.success) {
-                userDataArray.push({
-                    id: id,
-                    games: userData.data.games,
-                    miners: userData.data.miners,
-                    total: userData.data.total,
-                    bonus: userData.data.bonus,
-                    racks: userData.data.racks,
-                    bonus_percent: userData.data.bonus_percent,
-                });
-            }
-        } catch (error) {
-            console.error(`Erro ao buscar dados para o ID ${id}:`, error);
-        }
+            xhr.onerror = function() {
+                reject('Erro de rede');
+            };
+
+            xhr.send();
+        });
     }
-    return userDataArray;
-}
 
-function sortUserData(userDataArray) {
-    return userDataArray.sort((a, b) => b.total - a.total);
-}
+    // Preencher a tabela com os dados dos usuários
+    function populateTable(userData) {
+        const tableBody = document.querySelector('#user-table tbody');
+        
+        userIds.forEach(userId => {
+            fetchUserData(userId)
+                .then(data => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${userId}</td>
+                        <td>${JSON.stringify(data)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                })
+                .catch(error => {
+                    console.error(error);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${userId}</td>
+                        <td>Erro ao carregar dados</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+        });
+    }
 
-function displayRanking(userDataArray) {
-    const rankingDiv = document.getElementById('ranking');
-    userDataArray.forEach((user, index) => {
-        const userDiv = document.createElement('div');
-        userDiv.innerHTML = `
-            <h2>Posição: ${index + 1}</h2>
-            <p>ID: ${user.id}</p>
-            <p>Jogos: ${user.games}</p>
-            <p>Mineradores: ${user.miners}</p>
-            <p>Total: ${user.total}</p>
-            <p>Bônus: ${user.bonus}</p>
-            <p>Racks: ${user.racks}</p>
-            <p>Percentual de Bônus: ${user.bonus_percent}%</p>
-        `;
-        rankingDiv.appendChild(userDiv);
-    });
-}
-
-async function main() {
-    const userDataArray = await getAllUserData();
-    const sortedUserData = sortUserData(userDataArray);
-    displayRanking(sortedUserData);
-}
-
-main();
+    // Inicializar o preenchimento da tabela
+    populateTable();
+});
