@@ -59,8 +59,8 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
         <td data-label="Poder Total">${convertPower(totalPower)}</td>
         <td data-label="Progresso">
             <div class="progress-bar-container">
-                ${progressPercentage.toFixed(2)}%
-                <div class="progress-bar" style="width: ${progressPercentage.toFixed(2)}%;">
+                <div class="progress-bar" style="width: 75%;"> <!-- Ajuste a largura dinamicamente -->
+                    <span class="progress-bar-text">75%</span> <!-- Texto centralizado -->
                 </div>
             </div>
             <div class="progress-gain">${convertPower(powerGain)}</div>
