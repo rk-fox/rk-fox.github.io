@@ -64,11 +64,10 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
             <div>${convertPower(powerGain)}</div>
         </td>
         <td data-label="Link">
-            <a href="${user.link}" class="btn-sala">
+            <a href="${user.link}" class="btn-sala" target="_blank" rel="noopener noreferrer">
                 <img src="images/botao-home.png" alt="SALA">
             </a>
         </td>
-
     `;
 
     tableBody.appendChild(row);
