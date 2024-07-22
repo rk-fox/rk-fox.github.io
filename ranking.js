@@ -4,7 +4,7 @@ const userIds = [
     // Adicione mais IDs aqui
 ];
 
-const apiUrl = 'https://rollercoin.com/api/profile/user-power-data/';
+const apiUrl = 'https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/';
 
 async function fetchUserData(id) {
     const response = await fetch(`${apiUrl}${id}`);
