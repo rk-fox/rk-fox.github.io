@@ -64,10 +64,10 @@
  
         // Função para converter o poder para a unidade apropriada
         function convertPower(power) {
-            if (power >= 1e6) {
-                return (power / 1e6).toFixed(2) + ' EH';
-            } else if (power >= 1e3) {
-                return (power / 1e3).toFixed(2) + ' PH';
+            if (power >= 1e9) {
+                return (power / 1e9).toFixed(2) + ' EH';
+            } else if (power >= 1e6) {
+                return (power / 1e6).toFixed(2) + ' PH';
             } else {
                 return power.toFixed(2) + ' TH';
             }
