@@ -118,15 +118,15 @@ tbody img {
     height: 100%;
     background-color: #007bff;
     text-align: center;
-    color: grey;
+    color: white;
     line-height: 20px; /* Centraliza verticalmente o texto */
     border-radius: 10px 0 0 10px;
     white-space: nowrap;
-    width: 100%; /* Faz a barra de progresso ocupar 100% do contêiner */
 }
 
 /* Para centralizar o texto dentro da barra de progresso */
-.progress-bar-text {
+.progress-bar::after {
+    content: attr(data-progress); /* Adiciona o texto dinamicamente */
     position: absolute;
     top: 50%; /* Centraliza verticalmente o texto */
     left: 50%; /* Centraliza horizontalmente o texto */
