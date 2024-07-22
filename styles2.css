@@ -46,7 +46,7 @@ body {
 }
 
 .banner-img {
-    width: 50%;
+    width: 100%;
     max-width: 500px;
     height: auto;
     border-radius: 10px;
@@ -114,28 +114,27 @@ tbody img {
     overflow: hidden;
     width: 100%;
     max-width: 200px;
-    position: relative; /* Alinhamento correto do texto */
 }
 
 .progress-bar {
     height: 20px;
     background-color: #007bff;
-    border-radius: 5px;
-}
-
-.progress-bar-text {
-    position: absolute;
-    width: 100%;
     text-align: center;
-    line-height: 20px;
     color: white;
-    font-size: 0.75rem;
+    line-height: 20px;
+    border-radius: 5px;
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
     .profile-pic, .banner-img {
         max-width: 100px;
+    }
+
+    .banner-img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
     }
 
     table, thead, tbody, th, td, tr {
@@ -174,16 +173,16 @@ tbody img {
         font-weight: bold;
     }
 
-    /* Cores das setas de posição */
-    .up {
-        color: green !important; /* Verde para ganho de posição */
-        font-weight: bold;
-    }
+/* Cores das setas de posição */
+.up {
+    color: green !important; /* Verde para ganho de posição */
+    font-weight: bold;
+}
 
-    .down {
-        color: red !important; /* Vermelho para perda de posição */
-        font-weight: bold;
-    }
+.down {
+    color: red !important; /* Vermelho para perda de posição */
+    font-weight: bold;
+}
 
     .btn-sala {
         display: inline-block;
