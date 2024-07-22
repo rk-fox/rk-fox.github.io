@@ -196,8 +196,8 @@ tbody img {
 
     .btn-sala {
         display: inline-block;
-        width: 18px; /* Ajuste no tamanho */
-        height: 18px; /* Ajuste no tamanho */
+        width: 15px; /* Ajuste no tamanho */
+        height: 15px; /* Ajuste no tamanho */
         background-image: url('images/botao-home.png');
         background-size: cover;
         background-repeat: no-repeat;
