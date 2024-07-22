@@ -31,12 +31,12 @@ body {
     text-align: center;
     padding: 10px;
     background-color: #007bff;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .profile, .banner {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .profile-pic {
@@ -57,7 +57,13 @@ body {
 
 .ranking h1 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+    color: #007bff;
+}
+
+.ranking h3 {
+    text-align: center;
+    margin-bottom: 10px;
     color: #007bff;
 }
 
