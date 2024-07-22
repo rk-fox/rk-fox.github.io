@@ -194,9 +194,11 @@ tbody img {
         text-decoration: none;
         border-radius: 5px;
         text-align: center;
+        font-size: 14px;
     }
-
+    
     .btn-sala:hover {
         background-color: #0056b3;
+        text-decoration: none;
     }
 }
