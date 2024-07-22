@@ -102,50 +102,22 @@ tbody img {
 }
 
 /* Progress bar styles */
-.progress-bar-container {
-    position: relative; /* Contêiner relativo para posicionamento dos elementos internos */
-    height: 40px; /* Altura maior para acomodar o texto acima da barra */
-    background-color: #e0e0e0;
-    border-radius: 10px;
-    overflow: hidden;
-    width: 100%;
-    text-align: center; /* Centraliza o texto acima da barra */
-}
+    .progress-bar-container {
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 200px;
+    }
 
-.progress-text {
-    position: absolute; /* Texto posicionado absolutamente dentro do contêiner */
-    top: 0; /* Alinha ao topo do contêiner */
-    width: 100%; /* Largura total para centralização */
-    font-size: 0.75rem; /* Tamanho do texto */
-    line-height: 20px; /* Alinha o texto verticalmente */
-    color: #333; /* Cor do texto */
-    z-index: 1; /* Garante que o texto fique acima da barra de progresso */
-}
-
-.progress-bar {
-    position: absolute; /* Barra de progresso posicionada absolutamente */
-    top: 20px; /* Espaço abaixo do texto */
-    left: 0; /* Alinha à esquerda do contêiner */
-    height: 20px; /* Altura da barra */
-    background-color: #007bff;
-    border-radius: 10px;
-    text-align: center;
-    color: white;
-    line-height: 20px; /* Centraliza verticalmente o texto na barra */
-    white-space: nowrap;
-    z-index: 0; /* Barra de progresso atrás do texto */
-}
-
-/* Para centralizar o texto dentro da barra de progresso */
-.progress-bar::after {
-    content: attr(data-progress); /* Adiciona o texto dinamicamente */
-    position: absolute;
-    top: 50%; /* Centraliza verticalmente o texto */
-    left: 50%; /* Centraliza horizontalmente o texto */
-    transform: translate(-50%, -50%); /* Ajusta a posição para centralizar */
-    font-size: 0.75rem; /* Tamanho do texto menor */
-    color: white; /* Cor do texto */
-}
+    .progress-bar {
+        height: 20px;
+        background-color: #007bff;
+        text-align: center;
+        color: white;
+        line-height: 20px;
+        border-radius: 5px;
+    }
 
 
 /* Responsive design */
