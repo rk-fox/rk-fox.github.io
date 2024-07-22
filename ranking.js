@@ -42,12 +42,20 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const totalPower = userData.miners + userData.bonus + userData.racks;
     const powerGain = totalPower - initialPower;
     const progressPercentage = (powerGain / initialPower) * 100;
-    const positionChangeClass = positionChange > 0 ? 'up' : positionChange < 0 ? 'down' : '';
-    const positionChangeIcon = positionChange > 0 ? `▲ ${positionChange}` : positionChange < 0 ? `▼ ${Math.abs(positionChange)}` : '-';
+    let positionChangeContent = '-';
+    let positionChangeStyle = '';
+
+    if (positionChange > 0) {
+        positionChangeContent = `▲ ${positionChange}`;
+        positionChangeStyle = 'color: green; font-weight: bold;';
+    } else if (positionChange < 0) {
+        positionChangeContent = `▼ ${Math.abs(positionChange)}`;
+        positionChangeStyle = 'color: red; font-weight: bold;';
+    }
 
     row.innerHTML = `
         <td data-label="Rank">${rank}</td>
-        <td data-label="Posição" class="${positionChangeClass}">${positionChangeIcon}</td>
+        <td data-label="Posição" style="${positionChangeStyle}">${positionChangeContent}</td>
         <td data-label="Nick">
             <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
             ${user.name}
