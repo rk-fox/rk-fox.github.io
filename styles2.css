@@ -46,7 +46,7 @@ body {
 }
 
 .banner-img {
-    width: 100%;
+    width: 500px;
     max-width: 500px;
     border-radius: 10px;
 }
@@ -65,6 +65,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    font-family: Arial, sans-serif; /* Fonte da tabela */
 }
 
 thead {
@@ -75,6 +76,8 @@ thead {
 thead th {
     padding: 10px;
     text-align: left;
+    font-weight: bold;
+    color: #fff; /* Fonte branca no cabeçalho */
 }
 
 tbody tr {
@@ -86,11 +89,14 @@ tbody tr:nth-child(even) {
 }
 
 tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: #007bff; /* Fundo azul ao passar o mouse */
+    color: #fff; /* Fonte branca ao passar o mouse */
 }
 
 tbody td {
     padding: 10px;
+    font-weight: bold; /* Fonte mais grossa */
+    color: #007bff; /* Fonte azul */
 }
 
 tbody img {
@@ -107,16 +113,39 @@ tbody img {
     background-color: #e0e0e0;
     border-radius: 10px;
     overflow: hidden;
+    text-align: center; /* Centraliza o texto na barra de progresso */
 }
 
 .progress-bar {
     height: 100%;
     background-color: #007bff;
-    text-align: center;
+    text-align: center; /* Centraliza o texto na barra de progresso */
     color: white;
     line-height: 20px;
     border-radius: 10px 0 0 10px;
     white-space: nowrap;
+}
+
+/* Texto abaixo da barra de progresso */
+.progress-text {
+    text-align: center;
+    font-size: 12px; /* Ajuste o tamanho da fonte conforme necessário */
+    margin-top: 4px; /* Espaço entre a barra de progresso e o texto */
+}
+
+/* Estilo do botão */
+.btn-sala {
+    display: inline-block;
+    width: 10px; /* Largura do botão */
+    height: 10px; /* Altura do botão */
+    background-image: url('images/botao-home.png');
+    background-size: cover;
+    border: none;
+    text-indent: -9999px; /* Oculta o texto */
+}
+
+.btn-sala:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Escurece o botão ao passar o mouse */
 }
 
 /* Responsive design */
@@ -160,72 +189,14 @@ tbody img {
         text-align: left;
         font-weight: bold;
     }
-    
-    /* Estilos para a seta */
-.up::after {
-    content: '▲'; /* Seta para cima */
-    color: #008000;
-    font-weight: bold;
-}
 
-.down::after {
-    content: '▼'; /* Seta para baixo */
-    color: #ff0000;
-    font-weight: bold;
-}
-
-/* Se a seta ainda não estiver visível, adicione um pouco de estilo extra */
-.up, .down {
-    display: inline-block;
-    font-size: 16px; /* Ajuste o tamanho da fonte conforme necessário */
-    margin-right: 5px; /* Espaço entre a seta e o texto */
-}
-
-.position-change {
-    display: inline-block;
-    font-size: 14px; /* Ajuste o tamanho da fonte conforme necessário */
-    color: #333; /* Cor do texto */
-}
-
-    .progress-bar-container {
-        background-color: #e0e0e0;
-        border-radius: 5px;
-        overflow: hidden;
-        width: 100%;
-        max-width: 200px;
+    .up {
+        color: #0080000;
+        font-weight: bold;
     }
 
-    .progress-bar {
-        height: 20px;
-        background-color: #007bff;
-        text-align: center;
-        color: white;
-        line-height: 20px;
-        border-radius: 5px;
-    }
- 
-    .btn-sala {
-        display: inline-block;
-        width: 20px;  /* Define a largura do botão */
-        height: 20px; /* Define a altura do botão */
-        background-color: #007bff;
-        border-radius: 5px;
-        text-align: center;
-        padding: 0;  /* Remove qualquer padding extra */
-    }
-    
-    .btn-sala img {
-        width: 90%;  /* Faz a imagem ocupar toda a largura do botão */
-        height: 90%; /* Faz a imagem ocupar toda a altura do botão */
-        object-fit: contain; /* Ajusta a imagem para caber bem no botão */
-        transition: opacity 0.3s ease; /* Adiciona uma transição suave para o efeito de hover */
-    }
-    
-    .btn-sala:hover {
-        background-color: #0056b3;
-    }
-    
-    .btn-sala:hover img {
-        opacity: 0.8; /* Escurece o botão quando o mouse passa sobre ele */
+    .down {
+        color: #ff0000;
+        font-weight: bold;
     }
 }
