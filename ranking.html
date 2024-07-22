@@ -39,14 +39,11 @@
             <tr>
                 <th>Avatar</th>
                 <th>Nome do Personagem</th>
-                //<th>ID do Usuário</th>
-                //<th>Jogos</th>
                 <th>Miners</th>
                 <th>Bônus (%)</th>
                 <th>Bônus</th>
                 <th>Racks</th>
                 <th>Total (Poder)</th>
-                //<th>Temp</th>
             </tr>
         </thead>
         <tbody>
@@ -105,14 +102,11 @@
             row.innerHTML = `
                 <td><img src="${avatarUrl}" alt="Avatar de ${user.name}"></td>
                 <td>${user.name}</td>
-                <td>${user.id}</td>
-                //<td>${userData.games}</td>
                 <td>${userData.miners}</td>
-                <td>${convertPower(userData.total)}</td>
+                <td>${userData.bonus_percent.toFixed(2)}</td>
                 <td>${userData.bonus.toFixed(2)}</td>
                 <td>${userData.racks}</td>
-                //<td>${userData.temp}</td>
-                <td>${userData.bonus_percent.toFixed(2)}</td>
+                <td>${convertPower(userData.total)}</td>
             `;
  
             tableBody.appendChild(row);
