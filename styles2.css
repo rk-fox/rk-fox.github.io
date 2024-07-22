@@ -59,13 +59,14 @@ body {
     text-align: center;
     margin-bottom: 20px;
     color: #007bff;
+    font-weight: 600; /* Fonte mais grossa */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-    font-family: Arial, sans-serif; /* Fonte da tabela */
+    font-weight: 600; /* Fonte mais grossa */
 }
 
 thead {
@@ -76,8 +77,6 @@ thead {
 thead th {
     padding: 10px;
     text-align: left;
-    font-weight: bold;
-    color: #fff; /* Fonte branca no cabeçalho */
 }
 
 tbody tr {
@@ -89,14 +88,11 @@ tbody tr:nth-child(even) {
 }
 
 tbody tr:hover {
-    background-color: #007bff; /* Fundo azul ao passar o mouse */
-    color: #fff; /* Fonte branca ao passar o mouse */
+    background-color: #e9ecef; /* Destaque ao passar o mouse */
 }
 
 tbody td {
     padding: 10px;
-    font-weight: bold; /* Fonte mais grossa */
-    color: #007bff; /* Fonte azul */
 }
 
 tbody img {
@@ -113,39 +109,22 @@ tbody img {
     background-color: #e0e0e0;
     border-radius: 10px;
     overflow: hidden;
-    text-align: center; /* Centraliza o texto na barra de progresso */
 }
 
 .progress-bar {
     height: 100%;
     background-color: #007bff;
-    text-align: center; /* Centraliza o texto na barra de progresso */
+    text-align: center;
     color: white;
-    line-height: 20px;
+    line-height: 16px; /* Texto um pouco menor */
     border-radius: 10px 0 0 10px;
     white-space: nowrap;
+    font-size: 12px; /* Texto um pouco menor */
 }
 
-/* Texto abaixo da barra de progresso */
-.progress-text {
+.progress-gain {
     text-align: center;
-    font-size: 12px; /* Ajuste o tamanho da fonte conforme necessário */
-    margin-top: 4px; /* Espaço entre a barra de progresso e o texto */
-}
-
-/* Estilo do botão */
-.btn-sala {
-    display: inline-block;
-    width: 10px; /* Largura do botão */
-    height: 10px; /* Altura do botão */
-    background-image: url('images/botao-home.png');
-    background-size: cover;
-    border: none;
-    text-indent: -9999px; /* Oculta o texto */
-}
-
-.btn-sala:hover {
-    background-color: rgba(0, 0, 0, 0.1); /* Escurece o botão ao passar o mouse */
+    font-size: 12px; /* Texto um pouco menor */
 }
 
 /* Responsive design */
@@ -189,14 +168,48 @@ tbody img {
         text-align: left;
         font-weight: bold;
     }
-
+    
     .up {
-        color: #0080000;
+        color: green;
         font-weight: bold;
     }
 
     .down {
-        color: #ff0000;
+        color: red;
         font-weight: bold;
+    }
+
+    .progress-bar-container {
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .progress-bar {
+        height: 20px;
+        background-color: #007bff;
+        text-align: center;
+        color: white;
+        line-height: 20px;
+        border-radius: 5px;
+        font-size: 10px; /* Texto um pouco menor */
+    }
+
+    .btn-sala {
+        display: inline-block;
+        width: 18px; /* Reduzido */
+        height: 18px; /* Reduzido */
+        background: url('images/botao-home.png') no-repeat center;
+        background-size: contain;
+        border: none;
+        text-indent: -9999px; /* Oculta o texto */
+        vertical-align: middle;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-sala:hover {
+        background-color: rgba(0, 0, 0, 0.2); /* Escurecimento ao passar o mouse */
     }
 }
