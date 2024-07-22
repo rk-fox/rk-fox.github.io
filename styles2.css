@@ -107,22 +107,29 @@ tbody img {
 }
 
 /* Progress bar styles */
-    .progress-bar-container {
-        background-color: #e0e0e0;
-        border-radius: 5px;
-        overflow: hidden;
-        width: 100%;
-        max-width: 200px;
-    }
+.progress-bar-container {
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 200px;
+    position: relative; /* Alinhamento correto do texto */
+}
 
-    .progress-bar {
-        height: 20px;
-        background-color: #007bff;
-        text-align: center;
-        color: white;
-        line-height: 20px;
-        border-radius: 5px;
-    }
+.progress-bar {
+    height: 20px;
+    background-color: #007bff;
+    border-radius: 5px;
+}
+
+.progress-bar-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+    font-size: 0.75rem;
+}
 
 /* Responsive design */
 @media (max-width: 768px) {
@@ -166,16 +173,16 @@ tbody img {
         font-weight: bold;
     }
 
-/* Cores das setas de posição */
-.up {
-    color: green !important; /* Verde para ganho de posição */
-    font-weight: bold;
-}
+    /* Cores das setas de posição */
+    .up {
+        color: green !important; /* Verde para ganho de posição */
+        font-weight: bold;
+    }
 
-.down {
-    color: red !important; /* Vermelho para perda de posição */
-    font-weight: bold;
-}
+    .down {
+        color: red !important; /* Vermelho para perda de posição */
+        font-weight: bold;
+    }
 
     .btn-sala {
         display: inline-block;
