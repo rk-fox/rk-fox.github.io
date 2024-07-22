@@ -59,14 +59,13 @@ body {
     text-align: center;
     margin-bottom: 20px;
     color: #007bff;
-    font-weight: 600; /* Fonte mais grossa */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-    font-weight: 600; /* Fonte mais grossa */
+    font-weight: bold; /* Fonte mais grossa */
 }
 
 thead {
@@ -88,7 +87,7 @@ tbody tr:nth-child(even) {
 }
 
 tbody tr:hover {
-    background-color: #e9ecef; /* Destaque ao passar o mouse */
+    background-color: #e0e0e0; /* Mais destaque ao passar o mouse */
 }
 
 tbody td {
@@ -109,6 +108,7 @@ tbody img {
     background-color: #e0e0e0;
     border-radius: 10px;
     overflow: hidden;
+    width: 100%;
 }
 
 .progress-bar {
@@ -116,15 +116,11 @@ tbody img {
     background-color: #007bff;
     text-align: center;
     color: white;
-    line-height: 16px; /* Texto um pouco menor */
+    line-height: 20px;
     border-radius: 10px 0 0 10px;
     white-space: nowrap;
-    font-size: 12px; /* Texto um pouco menor */
-}
-
-.progress-gain {
-    text-align: center;
-    font-size: 12px; /* Texto um pouco menor */
+    position: absolute; /* Alinha o texto no contêiner */
+    width: 100%;
 }
 
 /* Responsive design */
@@ -168,7 +164,7 @@ tbody img {
         text-align: left;
         font-weight: bold;
     }
-    
+
     .up {
         color: green;
         font-weight: bold;
@@ -194,22 +190,21 @@ tbody img {
         color: white;
         line-height: 20px;
         border-radius: 5px;
-        font-size: 10px; /* Texto um pouco menor */
     }
 
     .btn-sala {
         display: inline-block;
-        width: 18px; /* Reduzido */
-        height: 18px; /* Reduzido */
-        background: url('images/botao-home.png') no-repeat center;
-        background-size: contain;
+        width: 18px; /* Ajuste no tamanho */
+        height: 18px; /* Ajuste no tamanho */
+        background-image: url('images/botao-home.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        text-decoration: none;
         border: none;
-        text-indent: -9999px; /* Oculta o texto */
-        vertical-align: middle;
-        transition: background-color 0.3s;
+        cursor: pointer;
     }
     
     .btn-sala:hover {
-        background-color: rgba(0, 0, 0, 0.2); /* Escurecimento ao passar o mouse */
+        opacity: 0.7; /* Escurecimento do botão */
     }
 }
