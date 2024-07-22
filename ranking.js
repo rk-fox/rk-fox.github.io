@@ -50,10 +50,10 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
             <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
             ${user.name}
         </td>
-        <td data-label="Miners">${userData.miners}</td>
+        <td data-label="Miners">${userData.miners.toFixed(2)}</td>
         <td data-label="Bônus (%)">${userData.bonus_percent.toFixed(2)}</td>
         <td data-label="Bônus">${userData.bonus.toFixed(2)}</td>
-        <td data-label="Racks">${userData.racks}</td>
+        <td data-label="Racks">${userData.racks.toFixed(2)}</td>
         <td data-label="Poder Total">${convertPower(totalPower)}</td>
         <td data-label="Progresso">
             <div class="progress-bar-container">
@@ -79,8 +79,7 @@ async function loadExcelData() {
             throw new Error('Erro ao carregar historico.xlsx: ' + response.statusText);
         }
         const arrayBuffer = await response.arrayBuffer();
-        const data = new Uint8Array(arrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(sheet);
@@ -100,7 +99,12 @@ async function fetchAndDisplayAllUsers() {
     for (const user of initialPowerData) {
         const userData = await fetchUserData(user.id);
         if (userData) {
-            userDataArray.push({ user, userData, initialPower: user.inicial, previousPosition: user.posicao });
+            userDataArray.push({
+                user,
+                userData,
+                initialPower: user.inicial,
+                previousPosition: user.posicao
+            });
         }
     }
 
