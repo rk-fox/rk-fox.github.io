@@ -61,7 +61,6 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
             <div style="text-align: center; font-size: 0.75rem;">${progressPercentage.toFixed(2)}%</div>
             <div class="progress-bar-container">
                 <div class="progress-bar" style="width: ${progressPercentage.toFixed(2)}%;">
-                    <!-- Texto gerado dinamicamente com ::after no CSS -->
                 </div>
             </div>
             <div style="text-align: center; font-size: 0.75rem;">${convertPower(powerGain)}</div>
