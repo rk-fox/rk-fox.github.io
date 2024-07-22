@@ -39,9 +39,15 @@ body {
     margin-bottom: 20px;
 }
 
-.profile-pic, .banner-img {
+.profile-pic {
     width: 100%;
     max-width: 150px;
+    border-radius: 50%;
+}
+
+.banner-img {
+    width: 500px;
+    max-width: 500px;
     border-radius: 50%;
 }
 
