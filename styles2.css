@@ -46,16 +46,11 @@ body {
 }
 
 .banner-img {
-    width: 100%;
+    width: 50%;
+    max-width: 500px;
     height: auto;
     border-radius: 10px;
 }
-
-/* Reset some default styles .banner-img {
-    width: 500px;
-    max-width: 500px;
-    border-radius: 10px;
-}*/
 
 .ranking {
     padding: 15px;
