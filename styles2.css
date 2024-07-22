@@ -124,7 +124,6 @@ tbody img {
         border-radius: 5px;
     }
 
-
 /* Responsive design */
 @media (max-width: 768px) {
     .profile-pic, .banner-img {
@@ -167,32 +166,16 @@ tbody img {
         font-weight: bold;
     }
 
-    .up {
-        color: green;
-        font-weight: bold;
-    }
+/* Cores das setas de posição */
+.up {
+    color: green !important; /* Verde para ganho de posição */
+    font-weight: bold;
+}
 
-    .down {
-        color: red;
-        font-weight: bold;
-    }
-
-    .progress-bar-container {
-        background-color: #e0e0e0;
-        border-radius: 5px;
-        overflow: hidden;
-        width: 100%;
-        max-width: 200px;
-    }
-
-    .progress-bar {
-        height: 20px;
-        background-color: #007bff;
-        text-align: center;
-        color: white;
-        line-height: 20px;
-        border-radius: 5px;
-    }
+.down {
+    color: red !important; /* Vermelho para perda de posição */
+    font-weight: bold;
+}
 
     .btn-sala {
         display: inline-block;
