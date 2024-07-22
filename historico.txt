@@ -1,3 +1,0 @@
-{ id: '61e852b4dc27dc001969efa3', name: 'RKFox' , inicial: '800000' },
-{ id: '61e484ca5aa1be001868f065', name: 'HANTAROGAMER' inicial: '1800000' },
-{ id: '65de9e82a1e9f41193e2f6cc', name: 'GUERDE' inicial: '80000' }
