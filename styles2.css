@@ -188,19 +188,24 @@ tbody img {
         border-radius: 5px;
     }
     
+    /* Estilos para o botão com imagem */
     .btn-sala {
         display: inline-block;
-        padding: 8px 16px;
+        padding: 4px; /* Ajuste do padding para centralizar a imagem */
         background-color: #007bff;
-        color: white;
-        text-decoration: none;
         border-radius: 5px;
         text-align: center;
-        font-size: 14px;
+        font-size: 0; /* Remove o texto do botão */
     }
     
-    .btn-sala:hover {
-        background-color: #0056b3;
-        text-decoration: none;
+    .btn-sala img {
+        width: 10px;
+        height: 10px;
+        display: block;
+        transition: opacity 0.3s;
+    }
+    
+    .btn-sala:hover img {
+        opacity: 0.7; /* Escurece a imagem ao passar o mouse */
     }
 }
