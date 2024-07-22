@@ -37,11 +37,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const row = document.createElement('tr');
 
     const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/48/${user.id}.png?v=1652150400524`;
-
-    // Calcula o Poder Total
     const totalPower = userData.miners + userData.bonus + userData.racks;
-
-    // Calcula o progresso e a mudança de posição
     const powerGain = totalPower - initialPower;
     const progressPercentage = (powerGain / initialPower) * 100;
     const positionChangeClass = positionChange > 0 ? 'up' : positionChange < 0 ? 'down' : '';
@@ -50,8 +46,10 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     row.innerHTML = `
         <td data-label="Rank">${rank}</td>
         <td data-label="Posição" class="${positionChangeClass}">${positionChangeIcon}</td>
-        <td data-label="Avatar"><img src="${avatarUrl}" alt="Avatar de ${user.name}"></td>
-        <td data-label="Nome do Personagem">${user.name}</td>
+        <td data-label="Nick">
+            <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
+            ${user.name}
+        </td>
         <td data-label="Miners">${userData.miners}</td>
         <td data-label="Bônus (%)">${userData.bonus_percent.toFixed(2)}</td>
         <td data-label="Bônus">${userData.bonus.toFixed(2)}</td>
@@ -64,6 +62,9 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
                 </div>
             </div>
             <div>${convertPower(powerGain)}</div>
+        </td>
+        <td data-label="Link">
+            <a href="${user.link}" class="btn-sala">SALA</a>
         </td>
     `;
 
