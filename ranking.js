@@ -43,7 +43,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const powerGain = totalPower - initialPower;
     const progressPercentage = (powerGain / initialPower) * 100;
     const positionChangeClass = positionChange > 0 ? 'up' : positionChange < 0 ? 'down' : '';
-    const positionChangeIcon = positionChange > 0 ? `▲ ${positionChange}` : positionChange < 0 ? `▼ ${Math.abs(positionChange)}` : '';
+    const positionChangeIcon = positionChange > 0 ? `▲ ${positionChange}` : positionChange < 0 ? `▼ ${Math.abs(positionChange)}` : '-';
 
     row.innerHTML = `
         <td data-label="Rank">${rank}</td>
