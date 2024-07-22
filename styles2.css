@@ -190,8 +190,8 @@ tbody img {
  
     .btn-sala {
         display: inline-block;
-        width: 30px;  /* Define a largura do botão */
-        height: 30px; /* Define a altura do botão */
+        width: 20px;  /* Define a largura do botão */
+        height: 20px; /* Define a altura do botão */
         background-color: #007bff;
         border-radius: 5px;
         text-align: center;
@@ -199,8 +199,8 @@ tbody img {
     }
     
     .btn-sala img {
-        width: 100%;  /* Faz a imagem ocupar toda a largura do botão */
-        height: 100%; /* Faz a imagem ocupar toda a altura do botão */
+        width: 90%;  /* Faz a imagem ocupar toda a largura do botão */
+        height: 90%; /* Faz a imagem ocupar toda a altura do botão */
         object-fit: contain; /* Ajusta a imagem para caber bem no botão */
         transition: opacity 0.3s ease; /* Adiciona uma transição suave para o efeito de hover */
     }
