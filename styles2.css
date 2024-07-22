@@ -46,7 +46,7 @@ body {
 }
 
 .banner-img {
-    width: 500px;
+    width: 100%;
     max-width: 500px;
     border-radius: 10px;
 }
@@ -160,6 +160,7 @@ tbody img {
         text-align: left;
         font-weight: bold;
     }
+    
     .up {
         color: green;
         font-weight: bold;
@@ -186,6 +187,7 @@ tbody img {
         line-height: 20px;
         border-radius: 5px;
     }
+    
     .btn-sala {
         display: inline-block;
         padding: 8px 16px;
