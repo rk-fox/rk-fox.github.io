@@ -58,9 +58,9 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
         <td data-label="Racks">${convertPower(userData.racks)}</td>
         <td data-label="Poder Total">${convertPower(totalPower)}</td>
         <td data-label="Progresso">
+            <div style="text-align: center; font-size: 0.75rem;">${progressPercentage.toFixed(2)}%</div>
             <div class="progress-bar-container">
-                <div style="text-align: center; font-size: 0.75rem;">${progressPercentage.toFixed(2)}%</div>
-                    <div class="progress-bar" style="width: ${progressPercentage.toFixed(2)}%;">
+                <div class="progress-bar" style="width: ${progressPercentage.toFixed(2)}%;">
                     <!-- Texto gerado dinamicamente com ::after no CSS -->
                 </div>
             </div>
