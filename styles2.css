@@ -103,7 +103,7 @@ tbody img {
 
 /* Progress bar styles */
 .progress-bar-container {
-    position: relative;
+    position: relative; /* Contêiner relativo para posicionamento absoluto da barra */
     height: 20px;
     background-color: #e0e0e0;
     border-radius: 10px;
@@ -112,15 +112,26 @@ tbody img {
 }
 
 .progress-bar {
+    position: absolute; /* Barra de progresso posicionada absolutamente */
+    top: 0; /* Alinha ao topo do contêiner */
+    left: 0; /* Alinha à esquerda do contêiner */
     height: 100%;
     background-color: #007bff;
     text-align: center;
-    color: white;
-    line-height: 20px;
+    color: grey;
+    line-height: 20px; /* Centraliza verticalmente o texto */
     border-radius: 10px 0 0 10px;
     white-space: nowrap;
-    position: absolute; /* Alinha o texto no contêiner */
-    width: 100%;
+    width: 100%; /* Faz a barra de progresso ocupar 100% do contêiner */
+}
+
+/* Para centralizar o texto dentro da barra de progresso */
+.progress-bar-text {
+    position: absolute;
+    top: 50%; /* Centraliza verticalmente o texto */
+    left: 50%; /* Centraliza horizontalmente o texto */
+    transform: translate(-50%, -50%); /* Ajusta a posição para centralizar */
+    font-size: 0.75rem; /* Tamanho do texto menor */
 }
 
 /* Responsive design */
