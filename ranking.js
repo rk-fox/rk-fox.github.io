@@ -39,7 +39,11 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const row = document.createElement('tr');
 
     const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/48/${user.id}.png?v=1652150400524`;
-    const totalPower = userData.miners + userData.bonus + userData.racks;
+    const minersPower = userData.miners;
+    const bonusPercent = userData.bonus_percent / 100;
+    const bonusPower = minersPower * bonusPercent;
+    const racksPower = userData.racks;
+    const totalPower = minersPower + bonusPower + racksPower;
     const powerGain = totalPower - initialPower;
     const progressPercentage = (powerGain / initialPower) * 100;
     let positionChangeContent = '-';
@@ -65,10 +69,10 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
             <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
             ${user.name}
         </td>
-        <td data-label="Miners">${convertPower(userData.miners)}</td>
-        <td data-label="Bônus (%)">${(userData.bonus_percent / 100).toFixed(2)}%</td>
-        <td data-label="Bônus">${convertPower(userData.bonus)}</td>
-        <td data-label="Racks">${convertPower(userData.racks)}</td>
+        <td data-label="Miners">${convertPower(minersPower)}</td>
+        <td data-label="Bônus (%)">${bonusPercent.toFixed(2)}%</td>
+        <td data-label="Bônus">${convertPower(bonusPower)}</td>
+        <td data-label="Racks">${convertPower(racksPower)}</td>
         <td data-label="Poder Total">${convertPower(totalPower)}</td>
         <td data-label="Progresso">
             <div style="text-align: center; font-size: 0.75rem;">${progressPercentage.toFixed(2)}%</div>
@@ -123,9 +127,9 @@ async function fetchAndDisplayAllUsers() {
 
     // Ordena os dados pelo Poder Total
     userDataArray.sort((a, b) => {
-        const totalPowerA = a.userData.miners + a.userData.bonus + a.userData.racks;
-        const totalPowerB = b.userData.miners + b.userData.bonus + b.userData.racks;
-        return totalPowerB - totalPowerA;
+        const totalPowerA = b.userData.miners + b.userData.miners * (b.userData.bonus_percent / 100) + b.userData.racks;
+        const totalPowerB = a.userData.miners + a.userData.miners * (a.userData.bonus_percent / 100) + a.userData.racks;
+        return totalPowerA - totalPowerB;
     });
 
     // Adiciona os dados ordenados à tabela
