@@ -41,7 +41,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/48/${user.id}.png?v=1652150400524`;
     const minersPower = userData.miners;
     const bonusPercent = userData.bonus_percent / 100;
-    const bonusPower = minersPower * bonusPercent / 100;
+    const bonusPower = minersPower * bonusPercent;
     const racksPower = userData.racks;
     const totalPower = minersPower + bonusPower + racksPower;
     const powerGain = totalPower - initialPower;
@@ -62,8 +62,17 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
         progressBarClass = 'negative';
     }
 
+    let rankContent = rank;
+    if (rank === 1) {
+        rankContent = `<img src="images/ouro.png" alt="Ouro" style="width: 30px; height: 30px; vertical-align: middle;">`;
+    } else if (rank === 2) {
+        rankContent = `<img src="images/prata.png" alt="Prata" style="width: 30px; height: 30px; vertical-align: middle;">`;
+    } else if (rank === 3) {
+        rankContent = `<img src="images/bronze.png" alt="Bronze" style="width: 30px; height: 30px; vertical-align: middle;">`;
+    }
+
     row.innerHTML = `
-        <td data-label="Rank">${rank}</td>
+        <td data-label="Rank">${rankContent}</td>
         <td data-label="Posição" style="${positionChangeStyle}">${positionChangeContent}</td>
         <td data-label="Nick">
             <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
