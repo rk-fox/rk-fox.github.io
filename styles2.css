@@ -117,11 +117,15 @@ tbody img {
 
 .progress-bar {
     height: 20px;
-    background-color: #007bff;
+    background-color: #007bff; /* Azul para progresso positivo */
     text-align: center;
     color: white;
     line-height: 20px;
     border-radius: 5px;
+}
+
+.progress-bar.negative {
+    background-color: #ff0000; /* Vermelho para progresso negativo */
 }
 
 /* Responsive design */
@@ -172,17 +176,6 @@ tbody img {
         font-weight: bold;
     }
 
-/* Cores das setas de posição */
-.up {
-    color: green !important; /* Verde para ganho de posição */
-    font-weight: bold;
-}
-
-.down {
-    color: red !important; /* Vermelho para perda de posição */
-    font-weight: bold;
-}
-
     .btn-sala {
         display: inline-block;
         width: 15px; /* Ajuste no tamanho */
@@ -198,4 +191,15 @@ tbody img {
     .btn-sala:hover {
         opacity: 0.7; /* Escurecimento do botão */
     }
+}
+
+/* Cores das setas de posição */
+.up {
+    color: green !important; /* Verde para ganho de posição */
+    font-weight: bold;
+}
+
+.down {
+    color: red !important; /* Vermelho para perda de posição */
+    font-weight: bold;
 }
