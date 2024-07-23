@@ -41,7 +41,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/48/${user.id}.png?v=1652150400524`;
     const minersPower = userData.miners;
     const bonusPercent = userData.bonus_percent / 100;
-    const bonusPower = minersPower * bonusPercent;
+    const bonusPower = minersPower * bonusPercent / 100;
     const racksPower = userData.racks;
     const totalPower = minersPower + bonusPower + racksPower;
     const powerGain = totalPower - initialPower;
