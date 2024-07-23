@@ -55,11 +55,12 @@ body {
     background: #0056b3;
 }
 
-.links a.negative {
-    background-color: #ff0000; /* Vermelho para destaque */
+/* Estilos para o botão destacado */
+.links a.highlight {
+    background: #ff0000;
 }
 
-.links a.negative:hover {
+.links a.highlight:hover {
     background: #a10202;
 }
 
