@@ -40,7 +40,7 @@ body {
 .profile-pic {
     width: 150px;
     height: 150px;
-    border-radius: 50%;
+    border-radius: 30%;
     object-fit: cover;
 }
 
