@@ -55,6 +55,14 @@ body {
     background: #0056b3;
 }
 
+.links a.negative {
+    background-color: #ff0000; /* Vermelho para destaque */
+}
+
+.links a.negative:hover {
+    background: #a10202;
+}
+
 .ref, .email, .ads {
     margin-top: 20px;
     text-align: center;
