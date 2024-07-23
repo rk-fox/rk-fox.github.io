@@ -44,6 +44,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const progressPercentage = (powerGain / initialPower) * 100;
     let positionChangeContent = '-';
     let positionChangeStyle = '';
+    let progressBarClass = '';
 
     if (positionChange > 0) {
         positionChangeContent = `▲ ${positionChange}`;
@@ -51,6 +52,10 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     } else if (positionChange < 0) {
         positionChangeContent = `▼ ${Math.abs(positionChange)}`;
         positionChangeStyle = 'color: red; font-weight: bold;';
+    }
+
+    if (progressPercentage < 0) {
+        progressBarClass = 'negative';
     }
 
     row.innerHTML = `
@@ -68,7 +73,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
         <td data-label="Progresso">
             <div style="text-align: center; font-size: 0.75rem;">${progressPercentage.toFixed(2)}%</div>
             <div class="progress-bar-container">
-                <div class="progress-bar" style="width: ${progressPercentage.toFixed(2)}%;">
+                <div class="progress-bar ${progressBarClass}" style="width: ${Math.abs(progressPercentage).toFixed(2)}%;">
                 </div>
             </div>
             <div style="text-align: center; font-size: 0.75rem;">${convertPower(powerGain)}</div>
