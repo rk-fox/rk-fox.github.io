@@ -1,15 +1,21 @@
 // Função para converter o poder para a unidade apropriada
 function convertPower(power) {
-    if (power >= 1e9) {
-        return (power / 1e9).toFixed(2) + ' EHs';
-    } else if (power >= 1e6) {
-        return (power / 1e6).toFixed(2) + ' PHs';
-    } else if (power >= 1e3) {
-        return (power / 1e3).toFixed(2) + ' THs';
+    const absPower = Math.abs(power);
+    let convertedPower;
+
+    if (absPower >= 1e9) {
+        convertedPower = (absPower / 1e9).toFixed(2) + ' EHs';
+    } else if (absPower >= 1e6) {
+        convertedPower = (absPower / 1e6).toFixed(2) + ' PHs';
+    } else if (absPower >= 1e3) {
+        convertedPower = (absPower / 1e3).toFixed(2) + ' THs';
     } else {
-        return power.toFixed(2) + ' GHs';
+        convertedPower = absPower.toFixed(2) + ' GHs';
     }
+
+    return power < 0 ? '-' + convertedPower : convertedPower;
 }
+
 
 // Função para buscar dados do usuário
 async function fetchUserData(userId) {
