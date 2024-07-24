@@ -1,3 +1,4 @@
+/* Reset de margens e preenchimentos, e aplicação de box-sizing */
 * {
     margin: 0;
     padding: 0;
@@ -5,6 +6,7 @@
     font-family: Arial, sans-serif;
 }
 
+/* Estilo para o corpo da página */
 body {
     background-color: #f0f0f0;
     color: #333;
@@ -16,6 +18,7 @@ body {
     flex-direction: column;
 }
 
+/* Container principal */
 .container {
     width: 100%;
     max-width: 1200px;
@@ -26,12 +29,13 @@ body {
     overflow: hidden;
 }
 
+/* Área de referência */
 .ref {
     margin-top: 20px;
     text-align: center;
 }
 
-/* Adiciona estilo para profile e banner */
+/* Estilo para profile e banner */
 .profile, .banner {
     text-align: center;
     margin-bottom: 10px;
