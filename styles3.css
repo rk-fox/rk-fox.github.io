@@ -1,0 +1,67 @@
+/* Fonte CASIO-Calculator-Font */
+@font-face {
+    font-family: 'CASIO Calculator Font';
+    src: url('https://fonts.googleapis.com/css2?family=CASIO+Calculator+Font:wght@400&display=swap');
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    text-align: center;
+    margin: 20px;
+}
+
+.calculator {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+form {
+    margin: 20px 0;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input[type="number"] {
+    font-family: 'CASIO Calculator Font', sans-serif;
+    font-size: 1.2rem;
+    padding: 5px;
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 300px;
+}
+
+button {
+    font-family: 'CASIO Calculator Font', sans-serif;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#result {
+    margin-top: 20px;
+    font-family: 'CASIO Calculator Font', sans-serif;
+}
+
+h1, h2 {
+    font-family: 'CASIO Calculator Font', sans-serif;
+}
+
+#totalPower, #efficiency {
+    font-weight: bold;
+}
