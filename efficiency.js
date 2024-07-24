@@ -3,69 +3,47 @@ function convertPower(power) {
     const absPower = Math.abs(power);
     let convertedPower;
 
-    if (absPower >= 1e6) {
-        convertedPower = (absPower / 1e6).toFixed(2) + ' PHs';  // PHs para valores acima de 1e6
+    if (absPower >= 1e9) {
+        convertedPower = (absPower / 1e9).toFixed(2) + ' EHs';
+    } else if (absPower >= 1e6) {
+        convertedPower = (absPower / 1e6).toFixed(2) + ' PHs';
     } else if (absPower >= 1e3) {
-        convertedPower = (absPower / 1e3).toFixed(2) + ' THs';  // THs para valores acima de 1e3
+        convertedPower = (absPower / 1e3).toFixed(2) + ' THs';
     } else {
-        convertedPower = absPower.toFixed(2) + ' GHs';  // GHs para valores abaixo de 1e3
+        convertedPower = absPower.toFixed(2) + ' GHs';
     }
 
     return power < 0 ? '-' + convertedPower : convertedPower;
 }
 
-// Função para buscar dados do perfil do usuário
-async function fetchUserProfile(link) {
-    const profileUrl = `https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${link}`;
-    const profileResponse = await fetch(profileUrl);
-    const profileData = await profileResponse.json();
-    const avatarId = profileData.contents.data.avatar_id;
-    return avatarId;
-}
-
-// Função para buscar dados de poder do usuário
-async function fetchUserPowerData(avatarId) {
-    const powerUrl = `https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`;
-    const powerResponse = await fetch(powerUrl);
-    const powerData = await powerResponse.json();
-    return powerData.contents.data;
-}
-
 // Função para processar e exibir os dados
 async function processAndDisplayData() {
-    const linkInput = document.querySelector('#linkInput');
-    if (!linkInput) {
-        console.error('Elemento #linkInput não encontrado.');
-        return;
-    }
-    
-    const linkValue = linkInput.value.trim();
-    if (!linkValue) {
-        console.error('O campo de entrada está vazio.');
+    const roomLink = document.getElementById('roomLink').value;
+    if (!roomLink) {
+        alert('Por favor, digite o link da sala.');
         return;
     }
 
-    const avatarId = await fetchUserProfile(linkValue);
-    const powerData = await fetchUserPowerData(avatarId);
+    try {
+        // Obtendo avatar_id
+        const profileResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${roomLink}`);
+        const profileData = await profileResponse.json();
+        const avatarId = profileData.data.avatar_id;
 
-    const miners = powerData.miners;
-    const bonusPercent = powerData.bonus_percent / 100;
-    const bonusPower = (miners * bonusPercent) / 100;
-    const totalPower = miners + bonusPower;
+        // Obtendo dados de power
+        const powerResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+        const powerData = await powerResponse.json();
 
-    document.querySelector('#miners').textContent = convertPower(miners);
-    document.querySelector('#bonus-percent').textContent = `${bonusPercent.toFixed(2)}%`;
-    document.querySelector('#bonus').textContent = convertPower(bonusPower);
-    document.querySelector('#total-power').textContent = convertPower(totalPower);
+        const miners = powerData.data.miners;
+        const bonusPercent = powerData.data.bonus_percent / 100;
+        const bonus = miners * bonusPercent / 10000;
+        const totalPower = miners + bonus;
+
+        document.getElementById('minersValue').textContent = convertPower(miners);
+        document.getElementById('bonusPercentValue').textContent = (bonusPercent * 100).toFixed(2);
+        document.getElementById('bonusValue').textContent = convertPower(bonus);
+        document.getElementById('totalPowerValue').textContent = convertPower(totalPower);
+    } catch (error) {
+        console.error('Erro ao processar os dados:', error);
+    }
 }
-
-// Adiciona evento de clique ao botão Pesquisar
-document.addEventListener('DOMContentLoaded', () => {
-    const searchButton = document.querySelector('#searchButton');
-    if (!searchButton) {
-        console.error('Elemento #searchButton não encontrado.');
-        return;
-    }
-
-    searchButton.addEventListener('click', processAndDisplayData);
-});
