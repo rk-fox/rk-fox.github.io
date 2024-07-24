@@ -98,12 +98,12 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
         </td>
         <td data-label="Link">
             <a href="https://rollercoin.com/p/${user.link}" class="btn-home" target="_blank">
-                <img src="images/botao-home.png" alt="Botão Home" class="btn-home-img">
+                <img src="images/botao-home.png" alt="Botão Home" class="btn-home-img" style="width: 30px; height: 30px;>
             </a>
         </td>
         <td data-label="Farm">
             <a href="https://wminerrc.github.io/calculator/index.html?user=${user.link}" class="btn-home" target="_blank">
-                <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img" style="border-radius: 0;">
+                <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img" style="width: 30px; height: 30px; "border-radius: 0;">
             </a>
         </td>    
     `;
