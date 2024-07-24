@@ -16,7 +16,6 @@ function convertPower(power) {
     return power < 0 ? '-' + convertedPower : convertedPower;
 }
 
-
 // Função para buscar dados do usuário
 async function fetchUserData(userId) {
     const baseUrl = "https://rollercoin.com/api/profile/user-power-data/";
@@ -47,7 +46,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/48/${user.id}.png?v=1652150400524`;
     const minersPower = userData.miners;
     const bonusPercent = userData.bonus_percent / 100;
-    const bonusPower = minersPower * bonusPercent / 100;
+    const bonusPower = minersPower * bonusPercent;
     const racksPower = userData.racks;
     const totalPower = minersPower + bonusPower + racksPower;
     const powerGain = totalPower - initialPower;
@@ -128,22 +127,40 @@ async function loadExcelData() {
     }
 }
 
+// Função para buscar dados do usuário com tentativas adicionais
+async function fetchUserDataWithRetry(userId, retries = 3, delay = 1000) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        const userData = await fetchUserData(userId);
+        if (userData) {
+            return userData;
+        }
+        console.log(`Tentativa ${attempt} falhou. Tentando novamente em ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    return null;
+}
+
 // Função para buscar e exibir os dados de todos os usuários
 async function fetchAndDisplayAllUsers() {
     const initialPowerData = await loadExcelData();
     const userDataArray = [];
 
     for (const user of initialPowerData) {
-        const userData = await fetchUserData(user.id);
+        const userData = await fetchUserDataWithRetry(user.id);
         if (userData) {
             userDataArray.push({ user, userData, initialPower: user.inicial, previousPosition: user.posicao });
         }
     }
 
+    if (userDataArray.length < initialPowerData.length) {
+        alert("Erro de carregamento, por favor atualize o site");
+        return;
+    }
+
     // Ordena os dados pelo Poder Total
     userDataArray.sort((a, b) => {
-        const totalPowerA = b.userData.miners + b.userData.miners * (b.userData.bonus_percent / 10000) + b.userData.racks;
-        const totalPowerB = a.userData.miners + a.userData.miners * (a.userData.bonus_percent / 10000) + a.userData.racks;
+        const totalPowerA = b.userData.miners + b.userData.miners * (b.userData.bonus_percent / 100) + b.userData.racks;
+        const totalPowerB = a.userData.miners + a.userData.miners * (a.userData.bonus_percent / 100) + a.userData.racks;
         return totalPowerA - totalPowerB;
     });
 
