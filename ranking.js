@@ -103,9 +103,9 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
         </td>
         <td data-label="Farm">
             <a href="https://wminerrc.github.io/calculator/index.html?user=${user.link}" class="btn-home" target="_blank">
-                <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img">
+                <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img" style="width: 30px; height: 30px; vertical-align: middle;">
             </a>
-        </td>
+        </td>        
     `;
 
     tableBody.appendChild(row);
