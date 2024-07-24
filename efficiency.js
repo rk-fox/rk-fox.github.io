@@ -28,11 +28,22 @@ async function processAndDisplayData() {
         // Obtendo avatar_id
         const profileResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${roomLink}`);
         const profileData = await profileResponse.json();
+
+        // Verificar se a resposta contém os dados esperados
+        if (!profileData || !profileData.data || !profileData.data.avatar_id) {
+            throw new Error('Dados do perfil não encontrados.');
+        }
+
         const avatarId = profileData.data.avatar_id;
 
         // Obtendo dados de power
         const powerResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
         const powerData = await powerResponse.json();
+
+        // Verificar se a resposta contém os dados esperados
+        if (!powerData || !powerData.data) {
+            throw new Error('Dados de poder não encontrados.');
+        }
 
         const miners = powerData.data.miners;
         const bonusPercent = powerData.data.bonus_percent / 100;
@@ -45,5 +56,6 @@ async function processAndDisplayData() {
         document.getElementById('totalPowerValue').textContent = convertPower(totalPower);
     } catch (error) {
         console.error('Erro ao processar os dados:', error);
+        alert('Ocorreu um erro ao processar os dados. Verifique o link da sala e tente novamente.');
     }
 }
