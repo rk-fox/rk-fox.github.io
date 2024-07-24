@@ -33,8 +33,19 @@ async function fetchUserPowerData(avatarId) {
 
 // Função para processar e exibir os dados
 async function processAndDisplayData() {
-    const linkInput = document.querySelector('#linkInput').value.trim();
-    const avatarId = await fetchUserProfile(linkInput);
+    const linkInput = document.querySelector('#linkInput');
+    if (!linkInput) {
+        console.error('Elemento #linkInput não encontrado.');
+        return;
+    }
+    
+    const linkValue = linkInput.value.trim();
+    if (!linkValue) {
+        console.error('O campo de entrada está vazio.');
+        return;
+    }
+
+    const avatarId = await fetchUserProfile(linkValue);
     const powerData = await fetchUserPowerData(avatarId);
 
     const miners = powerData.miners;
@@ -49,4 +60,12 @@ async function processAndDisplayData() {
 }
 
 // Adiciona evento de clique ao botão Pesquisar
-document.querySelector('#searchButton').addEventListener('click', processAndDisplayData);
+document.addEventListener('DOMContentLoaded', () => {
+    const searchButton = document.querySelector('#searchButton');
+    if (!searchButton) {
+        console.error('Elemento #searchButton não encontrado.');
+        return;
+    }
+
+    searchButton.addEventListener('click', processAndDisplayData);
+});
