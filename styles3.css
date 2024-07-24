@@ -1,67 +1,65 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px; /* Adiciona espaçamento para o conteúdo */
+    flex-direction: column;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.ref {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Adiciona estilo para profile e banner */
+.profile, .banner {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Estilo para a imagem de perfil */
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 30%;
+    object-fit: cover;
+}
+
+/* Estilo para o banner */
+.banner-img {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    border-radius: 10px;
+}
+
 /* Fonte CASIO-Calculator-Font */
 @font-face {
     font-family: 'CASIO Calculator Font';
     src: url('https://fonts.googleapis.com/css2?family=CASIO+Calculator+Font:wght@400&display=swap');
 }
 
-body {
-    font-family: Arial, sans-serif;
-}
-
-.container {
-    text-align: center;
-    margin: 20px;
-}
-
-.calculator {
-    background: #f5f5f5;
-    padding: 20px;
-    border-radius: 10px;
-    display: inline-block;
-}
-
-form {
-    margin: 20px 0;
-}
-
-label {
-    display: block;
-    margin: 10px 0 5px;
-}
-
-input[type="number"] {
+/* Aplica a fonte CASIO Calculator Font onde necessário */
+.calculator-font {
     font-family: 'CASIO Calculator Font', sans-serif;
-    font-size: 1.2rem;
-    padding: 5px;
-    margin-bottom: 10px;
-    width: 100%;
-    max-width: 300px;
-}
-
-button {
-    font-family: 'CASIO Calculator Font', sans-serif;
-    font-size: 1.2rem;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#result {
-    margin-top: 20px;
-    font-family: 'CASIO Calculator Font', sans-serif;
-}
-
-h1, h2 {
-    font-family: 'CASIO Calculator Font', sans-serif;
-}
-
-#totalPower, #efficiency {
-    font-weight: bold;
 }
