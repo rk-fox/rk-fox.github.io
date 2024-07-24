@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RKFox - Calculadora de Eficiência</title>
+    <link rel="stylesheet" href="styles3.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=CASIO-Calculator-Font:wght@400;700&display=swap');
+
+        body {
+            font-family: 'CASIO-Calculator-Font', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        .calculator-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .calculator-button {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #e0e0e0;
+            cursor: pointer;
+            display: inline-block;
+            line-height: 60px;
+        }
+
+        .calculator-button:active {
+            background: #ccc;
+        }
+
+        .display {
+            font-size: 32px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #333;
+            color: #fff;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="display" id="display">0</div>
+        <div>
+            <button class="calculator-button" onclick="clearDisplay()">C</button>
+            <button class="calculator-button" onclick="appendNumber('7')">7</button>
+            <button class="calculator-button" onclick="appendNumber('8')">8</button>
+            <button class="calculator-button" onclick="appendNumber('9')">9</button>
+            <button class="calculator-button" onclick="appendOperator('/')">/</button>
+        </div>
+        <div>
+            <button class="calculator-button" onclick="appendNumber('4')">4</button>
+            <button class="calculator-button" onclick="appendNumber('5')">5</button>
+            <button class="calculator-button" onclick="appendNumber('6')">6</button>
+            <button class="calculator-button" onclick="appendOperator('*')">*</button>
+        </div>
+        <div>
+            <button class="calculator-button" onclick="appendNumber('1')">1</button>
+            <button class="calculator-button" onclick="appendNumber('2')">2</button>
+            <button class="calculator-button" onclick="appendNumber('3')">3</button>
+            <button class="calculator-button" onclick="appendOperator('-')">-</button>
+        </div>
+        <div>
+            <button class="calculator-button" onclick="appendNumber('0')">0</button>
+            <button class="calculator-button" onclick="appendOperator('.')">.</button>
+            <button class="calculator-button" onclick="calculateResult()">=</button>
+            <button class="calculator-button" onclick="appendOperator('+')">+</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentInput = '';
+        let operator = '';
+        let firstOperand = '';
+
+        function appendNumber(number) {
+            if (currentInput.length < 12) { // Limit the length of input
+                currentInput += number;
+                display.textContent = currentInput;
+            }
+        }
+
+        function appendOperator(op) {
+            if (currentInput !== '') {
+                firstOperand = currentInput;
+                operator = op;
+                currentInput = '';
+            }
+        }
+
+        function clearDisplay() {
+            currentInput = '';
+            operator = '';
+            firstOperand = '';
+            display.textContent = '0';
+        }
+
+        function calculateResult() {
+            if (firstOperand !== '' && currentInput !== '' && operator !== '') {
+                let result;
+                const num1 = parseFloat(firstOperand);
+                const num2 = parseFloat(currentInput);
+                
+                switch (operator) {
+                    case '+':
+                        result = num1 + num2;
+                        break;
+                    case '-':
+                        result = num1 - num2;
+                        break;
+                    case '*':
+                        result = num1 * num2;
+                        break;
+                    case '/':
+                        result = num1 / num2;
+                        break;
+                    default:
+                        result = 'Error';
+                }
+                
+                display.textContent = result;
+                currentInput = result.toString();
+                operator = '';
+                firstOperand = '';
+            }
+        }
+    </script>
+</body>
+</html>
