@@ -57,12 +57,6 @@ body {
     border-radius: 10px;
 }
 
-/* Fonte CASIO-Calculator-Font */
-@font-face {
-    font-family: 'CASIO Calculator Font';
-    src: url('https://fonts.googleapis.com/css2?family=CASIO+Calculator+Font:wght@400&display=swap');
-}
-
 /* Aplica a fonte CASIO Calculator Font onde necessário */
 .calculator-font {
     font-family: 'CASIO Calculator Font', sans-serif;
