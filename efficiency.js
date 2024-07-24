@@ -1,27 +1,41 @@
-function calculateEfficiency() {
-    const miners = parseFloat(document.getElementById('miners').value) || 0;
-    const bonus = parseFloat(document.getElementById('bonus').value) || 0;
-    const racks = parseFloat(document.getElementById('racks').value) || 0;
-
-    // Calcula o Bônus em poder
-    const bonusPower = miners * (bonus / 100);
-    const totalPower = miners + bonusPower + racks;
-
-    // Calcula a eficiência (este exemplo assume que a eficiência é o totalPower dividido por um valor fixo)
-    const efficiency = (totalPower / 1000000) * 100; // Exemplo de cálculo
-
-    document.getElementById('totalPower').textContent = convertPower(totalPower);
-    document.getElementById('efficiency').textContent = efficiency.toFixed(2) + '%';
-}
-
-function convertPower(power) {
-    if (power >= 1e9) {
-        return (power / 1e9).toFixed(2) + ' EHs';
-    } else if (power >= 1e6) {
-        return (power / 1e6).toFixed(2) + ' PHs';
-    } else if (power >= 1e3) {
-        return (power / 1e3).toFixed(2) + ' THs';
-    } else {
-        return power.toFixed(2) + ' GHs';
+document.getElementById('searchButton').addEventListener('click', async () => {
+    const userLink = document.getElementById('userLink').value;
+    const resultsDiv = document.getElementById('results');
+    
+    if (!userLink) {
+        alert('Por favor, digite o link da sala.');
+        return;
     }
-}
+
+    try {
+        // Buscar avatar_id
+        const profileResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
+        const profileData = await profileResponse.json();
+        const avatarId = JSON.parse(profileData.contents).data.avatar_id;
+
+        if (!avatarId) {
+            alert('Erro ao obter o avatar_id.');
+            return;
+        }
+
+        // Buscar dados de usuário
+        const powerResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+        const powerData = await powerResponse.json();
+        const data = JSON.parse(powerData.contents).data;
+
+        const miners = data.miners;
+        const bonusPercent = data.bonus_percent / 100;
+        const bonus = miners * bonusPercent / 100;
+        const totalPower = miners + bonus;
+
+        // Atualizar resultados na página
+        document.getElementById('miners').textContent = `Miners: ${miners}`;
+        document.getElementById('bonusPercent').textContent = `Bônus (%): ${bonusPercent.toFixed(2)}`;
+        document.getElementById('bonus').textContent = `Bônus: ${bonus.toFixed(2)}`;
+        document.getElementById('totalPower').textContent = `Poder Total: ${totalPower.toFixed(2)}`;
+
+    } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+        alert('Erro ao buscar dados. Verifique o link e tente novamente.');
+    }
+});
