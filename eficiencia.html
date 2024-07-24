@@ -22,16 +22,15 @@
         <div class="banner">
             <img src="/images/banner.png" alt="Banner" class="banner-img">
         </div>
-
-        <div class="ref">
-            <input type="text" id="roomLink" placeholder="Digite o link da sala">
-            <button onclick="processAndDisplayData()">Pesquisar</button>
+        <div class="input-container">
+            <input type="text" id="linkInput" placeholder="Insira o link da sala">
+            <button id="searchButton">Pesquisar</button>
         </div>
-        <div class="result">
-            <p>Miners: <span id="minersValue"></span></p>
-            <p>Bônus(%): <span id="bonusPercentValue"></span>%</p>
-            <p>Bônus: <span id="bonusValue"></span></p>
-            <p>Poder Total: <span id="totalPowerValue"></span></p>
+        <div id="results">
+            <p>Miners: <span id="miners"></span></p>
+            <p>Bônus(%): <span id="bonusPercent"></span></p>
+            <p>Bônus: <span id="bonus"></span></p>
+            <p>Poder Total: <span id="totalPower"></span></p>
         </div>
     </div>
     <script src="efficiency.js"></script>
