@@ -203,3 +203,10 @@ tbody img {
     color: red !important; /* Vermelho para perda de posição */
     font-weight: bold;
 }
+
+/* Caso precise centralizar imagens e outros elementos */
+.table-cell-center {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+}
