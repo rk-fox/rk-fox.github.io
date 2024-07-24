@@ -69,18 +69,18 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
 
     let rankContent = rank;
     if (rank === 1) {
-        rankContent = `<img src="images/ouro.png" alt="Ouro" style="width: 30px; height: 30px; vertical-align: middle;">`;
+        rankContent = `<img src="images/ouro.png" alt="Ouro" style="width: 35px; height: 35px; vertical-align: middle;">`;
     } else if (rank === 2) {
-        rankContent = `<img src="images/prata.png" alt="Prata" style="width: 30px; height: 30px; vertical-align: middle;">`;
+        rankContent = `<img src="images/prata.png" alt="Prata" style="width: 35px; height: 35px; vertical-align: middle;">`;
     } else if (rank === 3) {
-        rankContent = `<img src="images/bronze.png" alt="Bronze" style="width: 30px; height: 30px; vertical-align: middle;">`;
+        rankContent = `<img src="images/bronze.png" alt="Bronze" style="width: 35px; height: 35px; vertical-align: middle;">`;
     }
 
     row.innerHTML = `
         <td data-label="Rank">${rankContent}</td>
         <td data-label="Posição" style="${positionChangeStyle}">${positionChangeContent}</td>
         <td data-label="Nick">
-            <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 30px; height: 30px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
+            <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 35px; height: 35px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
             ${user.name}
         </td>
         <td data-label="Miners">${convertPower(minersPower)}</td>
@@ -98,12 +98,12 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
         </td>
         <td data-label="Link">
             <a href="https://rollercoin.com/p/${user.link}" class="btn-home" target="_blank">
-                <img src="images/botao-home.png" alt="Botão Home" class="btn-home-img" style="width: 30px; height: 30px;>
+                <img src="images/botao-home.png" alt="Botão Home" class="btn-home-img" style="width: 35px; height: 35px;>
             </a>
         </td>
         <td data-label="Farm">
             <a href="https://wminerrc.github.io/calculator/index.html?user=${user.link}" class="btn-home" target="_blank">
-                <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img" style="width: 30px; height: 30px; "border-radius: 0;">
+                <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img" style="width: 35px; height: 35px; "border-radius: 0;">
             </a>
         </td>    
     `;
