@@ -48,7 +48,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     const bonusPercent = userData.bonus_percent / 100;
     const bonusPower = minersPower * bonusPercent / 100;
     const racksPower = userData.racks;
-    const totalPower = minersPower + bonusPower + racksPower;
+    const totalPower = minersPower + (minersPower * bonusPercent / 100) + racksPower;
     const powerGain = totalPower - initialPower;
     const progressPercentage = (powerGain / initialPower) * 100;
     let positionChangeContent = '-';
@@ -164,8 +164,8 @@ async function fetchAndDisplayAllUsers() {
 
     // Ordena os dados pelo Poder Total
     userDataArray.sort((a, b) => {
-        const totalPowerA = b.userData.miners + b.userData.miners * (b.userData.bonus_percent / 10000) + b.userData.racks;
-        const totalPowerB = a.userData.miners + a.userData.miners * (a.userData.bonus_percent / 10000) + a.userData.racks;
+        const totalPowerA = b.userData.miners + (b.userData.miners * b.userData.bonus_percent / 10000) + b.userData.racks;
+        const totalPowerB = a.userData.miners + (a.userData.miners * a.userData.bonus_percent / 10000) + a.userData.racks;
         return totalPowerA - totalPowerB;
     });
 
