@@ -67,3 +67,27 @@ body {
 .calculator-font {
     font-family: 'CASIO Calculator Font', sans-serif;
 }
+
+#userLink {
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+#searchButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#searchButton:hover {
+    background-color: #0056b3;
+}
+
+.results {
+    margin-top: 20px;
+}
