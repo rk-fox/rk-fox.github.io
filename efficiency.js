@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const miners = data.miners;
             const bonusPercent = data.bonus_percent / 100;
             const bonus = miners * bonusPercent;
-            const totalPower = miners * ( 1 + bonus );
+            const totalPower = miners * ( 1 + bonusPercent );
 
             // Atualizar resultados na página
             document.getElementById('miners').textContent = (miners);
