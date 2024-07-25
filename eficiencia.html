@@ -31,25 +31,25 @@
             </div>
             <div id="results">
                 <table>
-                <tbody>
-                    <tr>
-                        <td>Miners:</td>
-                        <td><span id="miners"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Bônus(%):</td>
-                        <td><span id="bonusPercent"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Bônus:</td>
-                        <td><span id="bonus"></span></td>
-                    </tr>
-                    <tr>
-                        <td>Poder Total:</td>
-                        <td><span id="totalPower"></span></td>
-                    </tr>                    
-                </tbody>
-            </table>
+                    <tbody>
+                        <tr>
+                            <td>Miners:</td>
+                            <td><span id="miners"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Bônus(%):</td>
+                            <td><span id="bonusPercent"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Bônus:</td>
+                            <td><span id="bonus"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Poder Total:</td>
+                            <td><span id="totalPower"></span></td>
+                        </tr>                    
+                    </tbody>
+                </table>
             </div>
             <table>
                 <thead>
@@ -58,22 +58,22 @@
                         <th colspan="2">COMPRA/RECOMPENSA</th>
                     </tr>
                     <tr>
-                        <th>Poder(THs)</th>
+                        <th>Poder(PHs)</th>
                         <th>Bônus(%)</th>
-                        <th>Poder(THs)</th>
+                        <th>Poder(PHs)</th>
                         <th>Bônus(%)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input type="text" class="power-input" placeholder="PHs"></td>
-                        <td><input type="text" class="bonus-input" placeholder="%"></td>
-                        <td><input type="text" class="power-input" placeholder="PHs"></td>
-                        <td><input type="text" class="bonus-input" placeholder="%"></td>
+                        <td><input type="text" class="power-input" id="sellPower" placeholder="PHs"></td>
+                        <td><input type="text" class="bonus-input" id="sellBonus" placeholder="%"></td>
+                        <td><input type="text" class="power-input" id="buyPower" placeholder="PHs"></td>
+                        <td><input type="text" class="bonus-input" id="buyBonus" placeholder="%"></td>
                     </tr>
                 </tbody>
             </table>
-            <div class="calculate-button-container">
+            <div class="calculate-container">
                 <button id="calculateButton">Calcular</button>
             </div>
         </div>
