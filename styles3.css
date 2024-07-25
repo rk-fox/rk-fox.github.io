@@ -1,36 +1,144 @@
-/* Estilo da tabela */
+/* Reset de margens e preenchimentos, e aplicação de box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo para o corpo da página */
+body {
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px; /* Adiciona espaçamento para o conteúdo */
+    flex-direction: column;
+}
+
+/* Container principal */
+.container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    background: #fff;
+    justify-content: center; /* Centraliza horizontalmente */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Área de referência */
+.ref {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Estilo para profile e banner */
+.profile, .banner {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Estilo para a imagem de perfil */
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 30%;
+    object-fit: cover;
+}
+
+/* Estilo para o banner */
+.banner-img {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Estilo para o link da sala e o botão de pesquisa */
+.input-container {
+    margin-bottom: 15px; /* Adiciona margin-bottom */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#linkInput {
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+    flex: 1; /* Faz o input preencher o espaço disponível */
+}
+
+#searchButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#searchButton:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para os resultados */
+.results {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.calc {
+    padding: 15px;
+}
+
+.calc h1 {
+    text-align: center;
+    margin-bottom: 5px;
+    color: #007bff;
+}
+
+.calc h3 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Estilo para a tabela */
 table {
     width: 100%;
-    border-collapse: collapse; /* Remove espaçamentos entre as células */
+    border-collapse: collapse;
     margin-top: 20px;
 }
 
 th, td {
-    border: 1px solid #ddd; /* Borda sutil */
+    border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
 }
 
 th {
-    background-color: #f4f4f4;
-    font-weight: bold;
+    background-color: #007bff;
+    color: #fff;
 }
 
-/* Ajuste a largura das colunas */
-th, td {
-    width: 25%; /* Distribui igualmente as larguras das colunas */
-}
-
-/* Estilo para os inputs dentro da tabela */
-input[type="text"] {
+input.power-input, input.bonus-input {
     width: 100%;
     padding: 8px;
-    box-sizing: border-box; /* Inclui padding e border no cálculo da largura total */
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box; /* Garante que a largura dos inputs seja consistente */
 }
 
-/* Ajuste do margin-bottom para input-container */
-.input-container {
-    margin-bottom: 15px;
+input.power-input {
+    background-color: #f9f9f9;
+}
+
+input.bonus-input {
+    background-color: #f9f9f9;
 }
