@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let newPower = currentMiners * (1 + (currentBonusPercent));
 
         // Atualize os resultados na página
-        document.getElementById('newPower').textContent = (convertPower(newPower).replace('.', ',')-(totalPower));
+        document.getElementById('newPower').textContent = convertPower(newPower-totalPower).replace('.', ',');
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
