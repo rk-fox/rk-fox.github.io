@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para converter poder
     function convertPower(value) {
-        if (value >= 1e6) return (value / 1e6).toFixed(2) + ' PHs';
         if (value >= 1e3) return (value / 1e3).toFixed(2) + ' THs';
         return value + ' GHs';
     }
@@ -78,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let newPower = currentMiners * (1 + (currentBonusPercent));
 
         // Atualize os resultados na página
-        document.getElementById('newPower').textContent = convertPower(newPower).replace('.', ',');
+        document.getElementById('newPower').textContent = (convertPower(newPower).replace('.', ',')-(totalPower));
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
