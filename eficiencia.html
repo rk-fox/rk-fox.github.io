@@ -10,21 +10,18 @@
 <body>
     <div class="container">
         <div class="ref">
-            <!-- Start rollercoin.com code -->
+            <!--Start rollercoin.com code-->
             <a href="https://rollercoin.com/?r=kyluudij">
-                <img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png" alt="Rollercoin Ref Link"/>
-            </a>
-            <!-- End rollercoin.com code -->
-        </div>
-        
+                <img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png"/> 
+            </a> 
+            <!--End rollercoin.com code-->
+        </div>    
         <div class="profile">
             <img src="/images/profile.png" alt="Foto de Perfil" class="profile-pic">
         </div>
-        
         <div class="banner">
             <img src="/images/banner.png" alt="Banner" class="banner-img">
         </div>
-        
         <div class="calc">
             <h1>Calculadora de Eficiência</h1>
             <h3>Link da Sala</h3>
@@ -34,10 +31,39 @@
             </div>
             <div id="results">
                 <p>Miners: <span id="miners"></span></p>
-                <p>Bônus (%): <span id="bonusPercent"></span></p>
+                <p>Bônus(%): <span id="bonusPercent"></span></p>
                 <p>Bônus: <span id="bonus"></span></p>
                 <p>Poder Total: <span id="totalPower"></span></p>
             </div>
+            <h3>Dados de Venda/Queima e Compra/Recompensa</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">VENDA/QUEIMA</th>
+                        <th colspan="2">COMPRA/RECOMPENSA</th>
+                    </tr>
+                    <tr>
+                        <th>Poder</th>
+                        <th>Bônus(%)</th>
+                        <th>Poder</th>
+                        <th>Bônus(%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" class="power-input" placeholder="Insira o poder (PHs)"></td>
+                        <td><input type="text" class="bonus-input" placeholder="Insira o bônus (%)"></td>
+                        <td><input type="text" class="power-input" placeholder="Insira o poder (PHs)"></td>
+                        <td><input type="text" class="bonus-input" placeholder="Insira o bônus (%)"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" class="power-input" placeholder="Insira o poder (PHs)"></td>
+                        <td><input type="text" class="bonus-input" placeholder="Insira o bônus (%)"></td>
+                        <td><input type="text" class="power-input" placeholder="Insira o poder (PHs)"></td>
+                        <td><input type="text" class="bonus-input" placeholder="Insira o bônus (%)"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     <script src="efficiency.js"></script>
