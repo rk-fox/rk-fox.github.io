@@ -21,7 +21,7 @@ body {
 /* Container principal */
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 500px;
     padding: 20px;
     background: #fff;
     border-radius: 10px;
@@ -55,11 +55,6 @@ body {
     max-width: 480px;
     height: auto;
     border-radius: 10px;
-}
-
-/* Aplica a fonte CASIO Calculator Font onde necessário */
-.calculator-font {
-    font-family: 'CASIO Calculator Font', sans-serif;
 }
 
 #userLink {
