@@ -152,7 +152,7 @@ input.bonus-input {
 #calculateButton {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #28a745; /* Verde */
+    background-color: #007bff;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -160,7 +160,7 @@ input.bonus-input {
 }
 
 #calculateButton:hover {
-    background-color: #218838; /* Verde escuro */
+    background-color: #0056b3;
 }
 
 /* Adiciona a estilização dos resultados com cor */
