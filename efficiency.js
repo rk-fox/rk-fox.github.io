@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calcule os novos valores
         let newMiners = miners - sellPower + buyPower;
-        let newBonuspercent = bonusPercent - sellBonus + buyBonus;
+        let newBonuspercent = bonusPercent - ( sellBonus / 100 ) + ( buyBonus / 100 ) ;
         let newBonus = newMiners * newBonuspercent / 100;
         let newPower = newMiners + newBonus;
 
