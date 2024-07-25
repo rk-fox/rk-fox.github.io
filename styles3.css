@@ -191,3 +191,26 @@ input.bonus-input {
     display: inline-block;
     margin-left: 10px;
 }
+
+#calcButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block; /* Adicionado para centralizar */
+    margin: 10px auto; /* Adicionado para centralizar */
+}
+
+#calcButton:hover {
+    background-color: #0056b3;
+}
+
+#custoInput {
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+    flex: 1; /* Faz o input preencher o espaço disponível */
+}
