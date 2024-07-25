@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Atualizar resultados na página
             document.getElementById('miners').textContent = convertPower(miners);
-            document.getElementById('bonusPercent').textContent = `${(bonusPercent * 100).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonusPercent').textContent = `${(bonusPercent).toFixed(2).replace('.', ',')}%`;
             document.getElementById('bonus').textContent = convertPower(bonus);
             document.getElementById('totalPower').textContent = convertPower(totalPower);
 
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) || 0;
 
         // Calcule o novo poder total com a fórmula fornecida
-        let newPower = ((miners - sellPower + buyPower) * (1 + bonusPercent - (sellBonus / 100) + (buyBonus / 100)));
+        let newPower = ((miners - sellPower + buyPower) * ((1 + ( bonusPercent - sellBonus + buyBonus)) / 100));
 
         // Atualize os resultados na página
         document.getElementById('newPower').textContent = convertPower(newPower);
