@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentMiners = initialMiners - sellPower + buyPower;
         currentBonusPercent = initialBonusPercent - sellBonus + buyBonus;
         currentBonus = currentMiners * currentBonusPercent;
-        let newPower = currentMiners + currentBonus;
+        let newPower = currentMiners * (1 + (currentBonusPercent / 100));
 
         // Atualize os resultados na página
         document.getElementById('newPower').textContent = newPower;
