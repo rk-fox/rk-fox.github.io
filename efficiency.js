@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Atualizar resultados na página
             document.getElementById('miners').textContent = miners.toFixed(2).replace('.', ',');
-            document.getElementById('bonusPercent').textContent = `${(bonusPercent).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonusPercent').textContent = `${(bonusPercent * 100).toFixed(2).replace('.', ',')}%`;
             document.getElementById('bonus').textContent = bonus.toFixed(2).replace('.', ',');
             document.getElementById('totalPower').textContent = totalPower.toFixed(2).replace('.', ',');
 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let bonusPercent = parseFloat(document.getElementById('bonusPercent').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) / 100 || 0;
         let totalPower = parseFloat(document.getElementById('totalPower').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
 
-        // Pegue os valores de entrada do usuário
+        // Pegue os valores de entrada do usuário e converta de GHs para unidades adequadas
         let sellPower = parseFloat(document.getElementById('sellPower').value.replace(',', '.')) || 0;
         let sellBonus = parseFloat(document.getElementById('sellBonus').value.replace(',', '.')) || 0;
         let buyPower = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
@@ -57,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calcule os novos valores
         let newMiners = miners - sellPower + buyPower;
-        let newBonuspercent = bonusPercent - ( sellBonus / 100 ) + ( buyBonus / 100 ) ;
-        let newBonus = newMiners * newBonuspercent;
+        let newBonuspercent = bonusPercent - sellBonus + buyBonus;
+        let newBonus = newMiners * newBonuspercent / 100;
         let newPower = newMiners + newBonus;
 
         // Atualize os resultados na tabela
@@ -68,20 +68,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
+        let newPowerElement = document.getElementById('newPower');
+        
         if (newPower > totalPower) {
-            document.getElementById('newPower').textContent = newPower.toFixed(2).replace('.', ',');
-            document.getElementById('newPower').style.color = 'green';
+            newPowerElement.textContent = newPower.toFixed(2).replace('.', ',');
+            newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
         } else if (newPower < totalPower) {
-            document.getElementById('newPower').textContent = newPower.toFixed(2).replace('.', ',');
-            document.getElementById('newPower').style.color = 'red';
+            newPowerElement.textContent = newPower.toFixed(2).replace('.', ',');
+            newPowerElement.style.color = 'red';
             powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
         } else {
-            document.getElementById('newPower').textContent = newPower.toFixed(2).replace('.', ',');
-            document.getElementById('newPower').style.color = 'black';
-            powerChange.innerHTML = '-';
+            newPowerElement.textContent = newPower.toFixed(2).replace('.', ',');
+            newPowerElement.style.color = 'black';
+            powerChange.innerHTML = '';
         }
     });
 });
