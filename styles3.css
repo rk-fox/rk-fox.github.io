@@ -81,3 +81,14 @@ body {
 .results {
     margin-top: 20px;
 }
+
+.calc h1 {
+    text-align: center;
+    margin-bottom: 5px;
+    color: #007bff;
+}
+
+.calc h3 {
+    text-align: center;
+    margin-bottom: 10px;
+}
