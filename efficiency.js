@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const miners = data.miners;
             const bonusPercent = data.bonus_percent / 100;
-            const bonus = miners * bonusPercent / 100;
+            const bonus = miners * bonusPercent;
             const totalPower = miners + bonus;
 
             // Atualizar resultados na página
             document.getElementById('miners').textContent = convertPower(miners);
-            document.getElementById('bonusPercent').textContent = `${(bonusPercent).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonusPercent').textContent = `${(bonusPercent * 100).toFixed(2).replace('.', ',')}%`;
             document.getElementById('bonus').textContent = convertPower(bonus);
             document.getElementById('totalPower').textContent = convertPower(totalPower);
 
@@ -45,17 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('calculateButton').addEventListener('click', () => {
         // Pegue os valores atuais
         let miners = parseFloat(document.getElementById('miners').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
-        let bonusPercent = parseFloat(document.getElementById('bonusPercent').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
+        let bonusPercent = parseFloat(document.getElementById('bonusPercent').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) / 100 || 0;
         let totalPower = parseFloat(document.getElementById('totalPower').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
 
-        // Pegue os valores de entrada do usuário e converta de GHs para unidades adequadas
+        // Pegue os valores de entrada do usuário
         let sellPower = parseFloat(document.getElementById('sellPower').value.replace(',', '.')) || 0;
         let sellBonus = parseFloat(document.getElementById('sellBonus').value.replace(',', '.')) || 0;
         let buyPower = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) || 0;
 
         // Calcule o novo poder total com a fórmula fornecida
-        let newPower = ((miners - sellPower + buyPower) * ((1 + (bonusPercent - sellBonus + buyBonus))));
+        let newPower = ((miners - sellPower + buyPower) * (1 + bonusPercent - sellBonus + buyBonus));
 
         // Atualize os resultados na página
         document.getElementById('newPower').textContent = convertPower(newPower);
