@@ -58,10 +58,19 @@ body {
     border-radius: 10px;
 }
 
-#userLink {
+/* Estilo para o link da sala e o botão de pesquisa */
+.input-container {
+    margin-bottom: 15px; /* Adiciona margin-bottom */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#linkInput {
     padding: 10px;
     font-size: 16px;
     margin-right: 10px;
+    flex: 1; /* Faz o input preencher o espaço disponível */
 }
 
 #searchButton {
@@ -78,8 +87,10 @@ body {
     background-color: #0056b3;
 }
 
+/* Estilo para os resultados */
 .results {
     margin-top: 20px;
+    text-align: center;
 }
 
 .calc {
