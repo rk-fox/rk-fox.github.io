@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('calculateButton').addEventListener('click', () => {
         // Pegue os valores atuais
         let miners = parseFloat(document.getElementById('miners').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
-        let bonusPercent = parseFloat(document.getElementById('bonusPercent').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) / 100 || 0;
+        let bonusPercent = parseFloat(document.getElementById('bonusPercent').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
         let totalPower = parseFloat(document.getElementById('totalPower').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
 
         // Pegue os valores de entrada do usuário e converta de GHs para unidades adequadas
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) || 0;
 
         // Calcule o novo poder total com a fórmula fornecida
-        let newPower = ((miners - sellPower + buyPower) * ((1 + ( bonusPercent - sellBonus + buyBonus)) / 100));
+        let newPower = ((miners - sellPower + buyPower) * (1 + ( bonusPercent - sellBonus + buyBonus)));
 
         // Atualize os resultados na página
         document.getElementById('newPower').textContent = convertPower(newPower);
