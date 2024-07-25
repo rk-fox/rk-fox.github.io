@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Variáveis globais para armazenar os dados
+    let initialMiners = 0;
+    let initialBonusPercent = 0;
+    let initialBonus = 0;
+    let currentMiners = 0;
+    let currentBonusPercent = 0;
+    let currentBonus = 0;
+
     document.getElementById('searchButton').addEventListener('click', async () => {
         const userLink = document.getElementById('linkInput').value;
 
@@ -25,16 +33,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const powerContents = JSON.parse(powerData.contents);
             const data = powerContents.data;
 
-            const miners = data.miners;
-            const bonusPercent = data.bonus_percent / 100;
-            const bonus = miners * bonusPercent / 100;
-            const totalPower = miners * ( 1 + (bonusPercent/100) );
+            // Armazenar dados iniciais
+            initialMiners = data.miners;
+            initialBonusPercent = data.bonus_percent / 100;
+            initialBonus = initialMiners * initialBonusPercent;
+
+            // Atualizar dados atuais
+            currentMiners = initialMiners;
+            currentBonusPercent = initialBonusPercent;
+            currentBonus = initialBonus;
+
+            const totalPower = currentMiners + currentBonus;
 
             // Atualizar resultados na página
-            document.getElementById('miners').textContent = (miners);
-            document.getElementById('bonusPercent').textContent = `${(bonusPercent).toFixed(2).replace('.', ',')}%`;
-            document.getElementById('bonus').textContent = (bonus);
-            document.getElementById('totalPower').textContent = (totalPower);
+            document.getElementById('miners').textContent = currentMiners;
+            document.getElementById('bonusPercent').textContent = `${(currentBonusPercent * 100).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonus').textContent = currentBonus;
+            document.getElementById('totalPower').textContent = totalPower;
 
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
@@ -43,33 +58,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('calculateButton').addEventListener('click', () => {
-        // Pegue os valores atuais
-        let miners = parseFloat(document.getElementById('miners').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
-        let bonusPercent = parseFloat(document.getElementById('bonusPercent').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) / 100 || 0;
-        let totalPower = parseFloat(document.getElementById('totalPower').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
-
-        // Pegue os valores de entrada do usuário
+        // Pegue os valores atuais dos inputs do usuário
         let sellPower = parseFloat(document.getElementById('sellPower').value.replace(',', '.')) || 0;
         let sellBonus = parseFloat(document.getElementById('sellBonus').value.replace(',', '.')) / 100 || 0;
         let buyPower = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) / 100 || 0;
 
         // Calcule o novo poder total com a fórmula fornecida
-        let newPower = ((miners - sellPower + buyPower) * (1 + (bonusPercent/100) - (sellBonus/100) + (buyBonus/100)));
+        currentMiners = initialMiners - sellPower + buyPower;
+        currentBonusPercent = initialBonusPercent - sellBonus + buyBonus;
+        currentBonus = currentMiners * currentBonusPercent;
+        let newPower = currentMiners + currentBonus;
 
         // Atualize os resultados na página
-        document.getElementById('newPower').textContent = (newPower);
+        document.getElementById('newPower').textContent = newPower;
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
         let newPowerElement = document.getElementById('newPower');
 
         // Defina a cor com base na diferença entre newPower e totalPower
-        if (newPower > totalPower + 1) {
+        if (newPower > (initialMiners + initialBonus + 1)) {
             newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
-        } else if (newPower < totalPower - 1) {
+        } else if (newPower < (initialMiners + initialBonus - 1)) {
             newPowerElement.style.color = 'red';
             powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
