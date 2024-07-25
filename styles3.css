@@ -61,10 +61,10 @@ body {
 /* Centralizar os resultados */
 #results {
     text-align: left;
-    margin: 20px 0; /* Ajuste o espaçamento acima e abaixo */
+    margin: 100px 0; /* Ajuste o espaçamento acima e abaixo */
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centraliza o conteúdo horizontalmente */
+    align-items: left; /* Centraliza o conteúdo horizontalmente */
 }
 
 /* Estilo para a caixa de entrada e botão */
@@ -73,6 +73,7 @@ body {
 }
 
 #linkInput {
+    width: 400px
     padding: 10px;
     font-size: 16px;
     margin-right: 10px;
