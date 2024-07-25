@@ -157,9 +157,8 @@ input.bonus-input {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
     display: block; /* Adicionado para centralizar */
-    margin: 0 auto; /* Adicionado para centralizar */
+    margin: 10px auto; /* Adicionado para centralizar */
 }
 
 #calculateButton:hover {
