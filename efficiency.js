@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) || 0;
 
         // Calcule os novos valores
-        let newMiners = miners - sellPower + buyPower;
+        let newMiners = miners - (sellPower / 1000) + (buyPower / 1000);
         let newBonuspercent = bonusPercent - (sellBonus / 100) + (buyBonus / 100);
         let newBonus = newMiners * newBonuspercent;
         let newPower = newMiners + newBonus;
