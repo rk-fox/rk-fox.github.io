@@ -58,10 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Armazene o valor original de miners
         let minersOriginal = miners;
 
-        // Converta sellPower e buyPower de THs para o mesmo valor de miners
-        let sellPowerInMiners = sellPower * 1000; // Convert THs para GHs
-        let buyPowerInMiners = buyPower * 1000; // Convert THs para GHs
-
         // Calcule os novos valores
         let newMiners = minersOriginal - sellPowerInMiners + buyPowerInMiners;
         let newBonuspercent = bonusPercent - sellBonus + buyBonus;
