@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentBonusPercent = 0;
     let currentBonus = 0;
 
+    // Função para converter poder
+    function convertPower(value) {
+        if (value >= 1e9) return (value / 1e9).toFixed(2) + ' EHs';
+        if (value >= 1e6) return (value / 1e6).toFixed(2) + ' PHs';
+        if (value >= 1e3) return (value / 1e3).toFixed(2) + ' THs';
+        return value + ' GHs';
+    }
+
     document.getElementById('searchButton').addEventListener('click', async () => {
         const userLink = document.getElementById('linkInput').value;
 
@@ -43,13 +51,13 @@ document.addEventListener('DOMContentLoaded', () => {
             currentBonusPercent = initialBonusPercent / 100;
             currentBonus = initialBonus;
 
-            const totalPower = currentMiners * ( 1 + currentBonusPercent );
+            const totalPower = currentMiners * (1 + currentBonusPercent);
 
             // Atualizar resultados na página
-            document.getElementById('miners').textContent = initialMiners;
-            document.getElementById('bonusPercent').textContent = `${(initialBonusPercent).toFixed(2).replace('.', ',')}%`;
-            document.getElementById('bonus').textContent = initialBonus;
-            document.getElementById('totalPower').textContent = totalPower;
+            document.getElementById('miners').textContent = convertPower(initialMiners);
+            document.getElementById('bonusPercent').textContent = `${(initialBonusPercent * 100).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonus').textContent = convertPower(initialBonus).replace('.', ',');
+            document.getElementById('totalPower').textContent = convertPower(totalPower).replace('.', ',');
 
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
@@ -71,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let newPower = currentMiners * (1 + (currentBonusPercent / 100));
 
         // Atualize os resultados na página
-        document.getElementById('newPower').textContent = newPower;
+        document.getElementById('newPower').textContent = convertPower(newPower).replace('.', ',');
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
