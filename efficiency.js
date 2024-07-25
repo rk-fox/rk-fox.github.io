@@ -69,7 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
         let newPowerElement = document.getElementById('newPower');
-        
+
+        // Defina a cor com base na diferença entre newPower e totalPower
         if (newPower > totalPower) {
             newPowerElement.textContent = newPower.toFixed(2).replace('.', ',');
             newPowerElement.style.color = 'green';
