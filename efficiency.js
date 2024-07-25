@@ -32,10 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalPower = miners + bonus;
 
             // Atualizar resultados na página
-            document.getElementById('miners').textContent = `Miners: ${convertPower(miners)}`;
-            document.getElementById('bonusPercent').textContent = `Bônus (%): ${bonusPercent.toFixed(2)}%`;
-            document.getElementById('bonus').textContent = `Bônus: ${convertPower(bonus)}`;
-            document.getElementById('totalPower').textContent = `Poder Total: ${convertPower(totalPower)}`;
+            document.getElementById('miners').textContent = `${convertPower(miners)}`;
+            document.getElementById('bonusPercent').textContent = `${bonusPercent.toFixed(2)}%`;
+            document.getElementById('bonus').textContent = `${convertPower(bonus)}`;
+            document.getElementById('totalPower').textContent = `${convertPower(totalPower)}`;
 
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
