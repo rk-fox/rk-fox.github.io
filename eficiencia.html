@@ -100,6 +100,28 @@
                     </tbody>
                 </table>
             </div>
+            <div class="input-container">
+                <input type="text" id="custoInput" placeholder="Insira o custo em RLT">
+                <button id="calcButton">Calcular</button>
+            </div>
+            <div id="resultsEffic">
+                <table>
+                    <tbody>
+                        <tr style="font-weight: bold">
+                            <td>Custo por PHs(Miner):</td>
+                            <td><span id="effMiner"></span></td>
+                        </tr>
+                        <tr style="font-weight: bold">
+                            <td>Custo por PHs(Total):</td>
+                            <td><span id="effPower"></span></td>
+                        </tr>
+                        <tr style="font-weight: bold">
+                            <td>Conclusão:</td>
+                            <td><span id="conclusao"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <script src="efficiency.js"></script>
