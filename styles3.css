@@ -201,7 +201,7 @@ input.bonus-input {
     border-radius: 5px;
     cursor: pointer;
     display: block; /* Adicionado para centralizar */
-    margin: 10px auto; /* Adicionado para centralizar */
+    margin: 15px auto; /* Adicionado para centralizar */
 }
 
 #calcButton:hover {
@@ -211,6 +211,7 @@ input.bonus-input {
 #custoInput {
     padding: 10px;
     font-size: 16px;
+    margin-top: 15px;
     margin-right: 10px;
     flex: 1; /* Faz o input preencher o espaço disponível */
 }
