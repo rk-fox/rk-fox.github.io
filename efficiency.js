@@ -73,8 +73,8 @@ function convertPower(value) {
         currentMiners = initialMiners - sellPower + buyPower;
         currentBonusPercent = initialBonusPercent - sellBonus + buyBonus;
         currentBonus = currentMiners * currentBonusPercent;
-        newPower = currentMiners; // * (1 + (currentBonusPercent));
-        finalPower = newPower - initialMiners // totalPower ;
+        newPower = currentMiners * (1 + (currentBonusPercent));
+        finalPower = newPower - totalPower ;
 
         // Atualize os resultados na página
         document.getElementById('finalPower').textContent = convertPower(finalPower);
@@ -84,11 +84,11 @@ function convertPower(value) {
         let newPowerElement = document.getElementById('finalPower');
 
         // Defina a cor com base na diferença entre newPower e totalPower
-        if (initialMiners + finalPower > (initialMiners + 1)) { // * (1 + initialBonusPercent / 100) + 1)) {
+        if (finalPower > 1)) { 
             newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
-        } else if (initialMiners + finalPower < (initialMiners - 1)) { // * (1 + initialBonusPercent / 100) - 1)) {
+        } else if (finalPower < -1)) { 
             newPowerElement.style.color = 'red';
             powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
