@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Atualizar resultados na página
             document.getElementById('miners').textContent = convertPower(initialMiners);
-            document.getElementById('bonusPercent').textContent = `${(initialBonusPercent * 100).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonusPercent').textContent = `${(initialBonusPercent).toFixed(2).replace('.', ',')}%`;
             document.getElementById('bonus').textContent = convertPower(initialBonus).replace('.', ',');
             document.getElementById('totalPower').textContent = convertPower(totalPower).replace('.', ',');
 
@@ -66,16 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('calculateButton').addEventListener('click', () => {
         // Pegue os valores atuais dos inputs do usuário
-        let sellPower = parseFloat(document.getElementById('sellPower').value.replace(',', '.')) || 0;
+        let sellPower = parseFloat(document.getElementById('sellPower').value.replace(',', '.')) * 1000 || 0;
         let sellBonus = parseFloat(document.getElementById('sellBonus').value.replace(',', '.')) / 100 || 0;
-        let buyPower = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
+        let buyPower = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) * 1000 || 0;
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) / 100 || 0;
 
         // Calcule o novo poder total com a fórmula fornecida
-        currentMiners = initialMiners - sellPower + buyPower;
-        currentBonusPercent = initialBonusPercent - sellBonus + buyBonus;
+        currentMiners = currentMiners - sellPower + buyPower;
+        currentBonusPercent = currentBonusPercent - sellBonus + buyBonus;
         currentBonus = currentMiners * currentBonusPercent;
-        let newPower = currentMiners * (1 + (currentBonusPercent / 100));
+        let newPower = currentMiners * (1 + (currentBonusPercent));
 
         // Atualize os resultados na página
         document.getElementById('newPower').textContent = convertPower(newPower).replace('.', ',');
