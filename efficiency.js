@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalPower = miners * ( 1 + (bonusPercent/100) );
 
             // Atualizar resultados na página
-            document.getElementById('miners').textContent = `${(miners).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('miners').textContent = `${(miners).replace('.', ',')}`;
             document.getElementById('bonusPercent').textContent = `${(bonusPercent).toFixed(2).replace('.', ',')}%`;
-            document.getElementById('bonus').textContent = `${(bonus).toFixed(2).replace('.', ',')}%`;
-            document.getElementById('totalPower').textContent = `${(totalPower).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonus').textContent = `${(bonus).replace('.', ',')}`;
+            document.getElementById('totalPower').textContent = `${(totalPower).replace('.', ',')}`;
 
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
