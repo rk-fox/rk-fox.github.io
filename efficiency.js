@@ -83,11 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let newPowerElement = document.getElementById('finalPower');
 
         // Defina a cor com base na diferença entre newPower e totalPower
-        if (finalPower > (initialMiners)) { // * (1 + initialBonusPercent / 100) + 1)) {
+        if (initialMiners + finalPower > (initialMiners + 1)) { // * (1 + initialBonusPercent / 100) + 1)) {
             newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
-        } else if (finalPower < (initialMiners)) { // * (1 + initialBonusPercent / 100) - 1)) {
+        } else if (initialMiners + finalPower < (initialMiners - 1)) { // * (1 + initialBonusPercent / 100) - 1)) {
             newPowerElement.style.color = 'red';
             powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
