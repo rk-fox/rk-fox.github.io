@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = powerContents.data;
 
             const miners = data.miners;
-            const minersOriginal = data.miners;
             const bonusPercent = data.bonus_percent / 100;
             const bonus = miners * bonusPercent / 100;
             const totalPower = miners + bonus;
@@ -72,12 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newPower > totalPower) {
             document.getElementById('newPower').textContent = convertPower(newPower);
             document.getElementById('newPower').style.color = 'green';
-            powerChange.innerHTML = '↑';
+            powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
         } else if (newPower < totalPower) {
             document.getElementById('newPower').textContent = convertPower(newPower);
             document.getElementById('newPower').style.color = 'red';
-            powerChange.innerHTML = '↓';
+            powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
         } else {
             document.getElementById('newPower').textContent = convertPower(newPower);
