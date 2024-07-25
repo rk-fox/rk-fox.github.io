@@ -56,30 +56,30 @@ document.addEventListener('DOMContentLoaded', () => {
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) || 0;
 
         // Calcule os novos valores
-        let newMiners = miners - sellPower + buyPower;
+        let newMiners = miners - (sellPower / 1000) + (buyPower / 1000) ;
         let newBonuspercent = bonusPercent - sellBonus + buyBonus;
         let newBonus = newMiners * newBonuspercent / 100;
         let newPower = newMiners + newBonus;
 
         // Atualize os resultados na tabela
-        document.getElementById('newMiners').textContent = convertPower(newMiners);
-        document.getElementById('newBonuspercent').textContent = `${(newBonuspercent * 100).toFixed(2)}%`;
-        document.getElementById('newBonus').textContent = convertPower(newBonus);
+        document.getElementById('newMiners').textContent = newMiners;
+        document.getElementById('newBonuspercent').textContent = `${(newBonuspercent).toFixed(2)}%`;
+        document.getElementById('newBonus').textContent = newBonus;
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
         if (newPower > totalPower) {
-            document.getElementById('newPower').textContent = convertPower(newPower);
+            document.getElementById('newPower').textContent = newPower;
             document.getElementById('newPower').style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
         } else if (newPower < totalPower) {
-            document.getElementById('newPower').textContent = convertPower(newPower);
+            document.getElementById('newPower').textContent = newPower;
             document.getElementById('newPower').style.color = 'red';
             powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
         } else {
-            document.getElementById('newPower').textContent = convertPower(newPower);
+            document.getElementById('newPower').textContent = newPower;
             document.getElementById('newPower').style.color = 'black';
             powerChange.innerHTML = '';
         }
