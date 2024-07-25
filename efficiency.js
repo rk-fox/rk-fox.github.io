@@ -10,11 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let finalPower = 0;
     let newPower = 0;
 
-    // Função para converter poder
-    function convertPower(value) {
-        if (value >= 1e3) return (value / 1e3).toFixed(2) + ' THs';
-        return value + ' GHs';
-    }
+// Função para converter poder
+function convertPower(value) {
+    const absValue = Math.abs(value); // Obter o valor absoluto
+    if (absValue >= 1e3) return (value / 1e3).toFixed(2) + ' THs';
+    return value + ' GHs';
+}
 
     document.getElementById('searchButton').addEventListener('click', async () => {
         const userLink = document.getElementById('linkInput').value;
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finalPower = newPower - initialMiners // totalPower ;
 
         // Atualize os resultados na página
-        document.getElementById('finalPower').textContent = convertPower(finalPower);
+        document.getElementById('finalPower').textContent = convertPower(finalPower).toFixed(3).replace('.', ',')}%`;
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
