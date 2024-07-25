@@ -76,18 +76,18 @@ document.addEventListener('DOMContentLoaded', () => {
         finalPower = newPower - initialMiners // totalPower ;
 
         // Atualize os resultados na página
-        document.getElementById('finalPower').textContent = (finalPower);
+        document.getElementById('finalPower').textContent = convertPower(finalPower);
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
         let newPowerElement = document.getElementById('finalPower');
 
         // Defina a cor com base na diferença entre newPower e totalPower
-        if (finalPower > (initialMiners) { // * (1 + initialBonusPercent / 100) + 1)) {
+        if (finalPower > (initialMiners)) { // * (1 + initialBonusPercent / 100) + 1)) {
             newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
-        } else if (finalPower < (initialMiners) { // * (1 + initialBonusPercent / 100) - 1)) {
+        } else if (finalPower < (initialMiners)) { // * (1 + initialBonusPercent / 100) - 1)) {
             newPowerElement.style.color = 'red';
             powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
