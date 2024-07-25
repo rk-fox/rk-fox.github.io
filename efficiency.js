@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Atualizar resultados na página
             document.getElementById('miners').textContent = miners.toFixed(2).replace('.', ',');
-            document.getElementById('bonusPercent').textContent = `${(bonusPercent * 100).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonusPercent').textContent = `${(bonusPercent).toFixed(2).replace('.', ',')}%`;
             document.getElementById('bonus').textContent = bonus.toFixed(2).replace('.', ',');
             document.getElementById('totalPower').textContent = totalPower.toFixed(2).replace('.', ',');
 
