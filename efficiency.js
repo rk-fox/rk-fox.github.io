@@ -36,19 +36,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Armazenar dados iniciais
             initialMiners = data.miners;
             initialBonusPercent = data.bonus_percent / 100;
-            initialBonus = initialMiners * initialBonusPercent;
+            initialBonus = initialMiners * initialBonusPercent / 100;
 
             // Atualizar dados atuais
             currentMiners = initialMiners;
-            currentBonusPercent = initialBonusPercent;
+            currentBonusPercent = initialBonusPercent / 100;
             currentBonus = initialBonus;
 
-            const totalPower = currentMiners + currentBonus;
+            const totalPower = currentMiners * ( 1 + currentBonusPercent );
 
             // Atualizar resultados na página
-            document.getElementById('miners').textContent = currentMiners;
-            document.getElementById('bonusPercent').textContent = `${(currentBonusPercent * 100).toFixed(2).replace('.', ',')}%`;
-            document.getElementById('bonus').textContent = currentBonus;
+            document.getElementById('miners').textContent = initialMiners;
+            document.getElementById('bonusPercent').textContent = `${(initialBonusPercent).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonus').textContent = initialBonus;
             document.getElementById('totalPower').textContent = totalPower;
 
         } catch (error) {
