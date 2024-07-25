@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let finalPower = newPower - totalPower ;
 
         // Atualize os resultados na página
-        document.getElementById('finalPower').textContent = convertPower(finalPower);
+        document.getElementById('finalPower').textContent = (finalPower);
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
