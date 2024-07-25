@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Atualizar resultados na página
             document.getElementById('miners').textContent = convertPower(miners);
-            document.getElementById('bonusPercent').textContent = `${(bonusPercent).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonusPercent').textContent = `${(bonusPercent * 100).toFixed(2).replace('.', ',')}%`;
             document.getElementById('bonus').textContent = convertPower(bonus);
             document.getElementById('totalPower').textContent = convertPower(totalPower);
 
@@ -55,7 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) || 0;
 
         // Calcule os novos valores
-        let newPower = ((miners - (sellPower / 1000) + (buyPower / 1000)) * ( 1 + bonusPercent - (sellBonus / 100) + (buyBonus / 100))) ;
+        let newMiners = miners - (sellPower / 1000) + (buyPower / 1000);
+        let newBonusPercent = bonusPercent - (sellBonus / 100) + (buyBonus / 100);
+        let newBonus = newMiners * newBonusPercent;
+        let newPower = newMiners + newBonus;
+
+        // Atualize os resultados na tabela
+        document.getElementById('newMiners').textContent = convertPower(newMiners);
+        document.getElementById('newBonuspercent').textContent = `${(newBonusPercent * 100).toFixed(2).replace('.', ',')}%`;
+        document.getElementById('newBonus').textContent = convertPower(newBonus);
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
