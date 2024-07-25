@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Função para converter poder
 function convertPower(value) {
     const absValue = Math.abs(value); // Obter o valor absoluto
-    if (absValue >= 1e3) return (value / 1e3).toFixed(2) + ' THs';
+    if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
     return value + ' GHs';
 }
 
@@ -77,7 +77,7 @@ function convertPower(value) {
         finalPower = newPower - initialMiners // totalPower ;
 
         // Atualize os resultados na página
-        document.getElementById('finalPower').textContent = `${convertPower(finalPower).toFixed(3).replace('.', ',')}`;
+        document.getElementById('finalPower').textContent = convertPower(finalPower);
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
