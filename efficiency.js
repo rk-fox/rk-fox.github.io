@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = powerContents.data;
 
             const miners = data.miners;
+            const minersOriginal = data.miners;
             const bonusPercent = data.bonus_percent / 100;
             const bonus = miners * bonusPercent / 100;
             const totalPower = miners + bonus;
@@ -54,9 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let sellBonus = parseFloat(document.getElementById('sellBonus').value) || 0;
         let buyPower = parseFloat(document.getElementById('buyPower').value) || 0;
         let buyBonus = parseFloat(document.getElementById('buyBonus').value) || 0;
-
-        // Armazene o valor original de miners
-        let minersOriginal = miners;
 
         // Calcule os novos valores
         let newMiners = minersOriginal - (sellPower) + (buyPower);
