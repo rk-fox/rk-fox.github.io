@@ -142,3 +142,23 @@ input.power-input {
 input.bonus-input {
     background-color: #f9f9f9;
 }
+
+/* Estilo para o botão Calcular */
+.calculate-button-container {
+    text-align: center;
+    margin-top: 20px; /* Espaçamento acima do botão */
+}
+
+#calculateButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#calculateButton:hover {
+    background-color: #0056b3;
+}
