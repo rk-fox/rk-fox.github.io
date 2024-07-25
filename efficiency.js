@@ -77,7 +77,7 @@ function convertPower(value) {
         finalPower = newPower - initialMiners // totalPower ;
 
         // Atualize os resultados na página
-        document.getElementById('finalPower').textContent = convertPower(finalPower).toFixed(3).replace('.', ',');
+        document.getElementById('finalPower').textContent = `${convertPower(finalPower).toFixed(3).replace('.', ',')}`;
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
