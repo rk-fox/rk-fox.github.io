@@ -71,12 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let newPowerElement = document.getElementById('newPower');
 
         // Defina a cor com base na diferença entre newPower e totalPower
-        if (newPower > totalPower) {
+        if (newPower > totalPower + 1) {
             newPowerElement.textContent = newPower.toFixed(2).replace('.', ',');
             newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
-        } else if (newPower < totalPower) {
+        } else if (newPower < totalPower - 1) {
             newPowerElement.textContent = newPower.toFixed(2).replace('.', ',');
             newPowerElement.style.color = 'red';
             powerChange.innerHTML = '▼';
