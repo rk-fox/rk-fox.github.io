@@ -163,15 +163,29 @@ input.bonus-input {
     background-color: #0056b3;
 }
 
-/* Adiciona a estilização dos resultados com cor */
-#totalPower.increased {
-    color: #28a745; /* Verde */
+/* Estilo para os novos resultados */
+#newResults {
+    margin-top: 20px;
 }
 
-#totalPower.decreased {
-    color: #dc3545; /* Vermelho */
+#newResults table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
-#totalPower.unchanged {
-    color: #333; /* Preto */
+#newResults th, #newResults td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+#newResults th {
+    background-color: #007bff;
+    color: #fff;
+}
+
+#powerChange {
+    display: inline-block;
+    margin-left: 10px;
 }
