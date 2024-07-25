@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentMiners = 0;
     let currentBonusPercent = 0;
     let currentBonus = 0;
+    let totalPower = 0;
+    let finalPower = 0;
+    let newPower = 0;
 
     // Função para converter poder
     function convertPower(value) {
@@ -41,19 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Armazenar dados iniciais
             initialMiners = data.miners;
-            initialBonusPercent = data.bonus_percent / 100;
-            initialBonus = initialMiners * initialBonusPercent / 100;
+            initialBonusPercent = data.bonus_percent / 10000;
+            initialBonus = initialMiners * initialBonusPercent;
 
-            // Atualizar dados atuais
-            currentMiners = initialMiners;
-            currentBonusPercent = initialBonusPercent / 100;
-            currentBonus = initialBonus;
-
-            const totalPower = currentMiners * (1 + currentBonusPercent);
+            totalPower = initialMiners * (1 + initialBonusPercent);
 
             // Atualizar resultados na página
             document.getElementById('miners').textContent = convertPower(initialMiners);
-            document.getElementById('bonusPercent').textContent = `${(initialBonusPercent).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonusPercent').textContent = `${(initialBonusPercent * 100).toFixed(2).replace('.', ',')}%`;
             document.getElementById('bonus').textContent = convertPower(initialBonus).replace('.', ',');
             document.getElementById('totalPower').textContent = convertPower(totalPower).replace('.', ',');
 
@@ -71,11 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) / 100 || 0;
 
         // Calcule o novo poder total com a fórmula fornecida
-        currentMiners = currentMiners - sellPower + buyPower;
-        currentBonusPercent = currentBonusPercent - sellBonus + buyBonus;
+        currentMiners = initialMiners - sellPower + buyPower;
+        currentBonusPercent = initialBonusPercent - sellBonus + buyBonus;
         currentBonus = currentMiners * currentBonusPercent;
-        let newPower = currentMiners * (1 + (currentBonusPercent));
-        let finalPower = newPower - totalPower ;
+        newPower = currentMiners * (1 + (currentBonusPercent));
+        finalPower = newPower - totalPower ;
 
         // Atualize os resultados na página
         document.getElementById('finalPower').textContent = (finalPower);
