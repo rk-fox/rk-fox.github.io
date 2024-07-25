@@ -75,20 +75,21 @@ document.addEventListener('DOMContentLoaded', () => {
         currentBonusPercent = currentBonusPercent - sellBonus + buyBonus;
         currentBonus = currentMiners * currentBonusPercent;
         let newPower = currentMiners * (1 + (currentBonusPercent));
+        let finalPower = newPower - totalPower ;
 
         // Atualize os resultados na página
-        document.getElementById('newPower').textContent = convertPower(newPower-totalPower).replace('.', ',');
+        document.getElementById('finalPower').textContent = convertPower(finalPower).replace('.', ',');
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
-        let newPowerElement = document.getElementById('newPower');
+        let newPowerElement = document.getElementById('finalPower');
 
         // Defina a cor com base na diferença entre newPower e totalPower
-        if (newPower > (initialMiners + initialBonus + 1)) {
+        if (finalPower > (initialMiners * (1 + initialBonusPercent / 100) + 1) {
             newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
-        } else if (newPower < (initialMiners + initialBonus - 1)) {
+        } else if (finalPower < (initialMiners * (1 + initialBonusPercent / 100) - 1) {
             newPowerElement.style.color = 'red';
             powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
