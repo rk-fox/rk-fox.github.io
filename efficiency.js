@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('searchButton').addEventListener('click', async () => {
         const userLink = document.getElementById('linkInput').value;
-        const resultsDiv = document.getElementById('results');
 
         if (!userLink) {
             alert('Por favor, digite o link da sala.');
