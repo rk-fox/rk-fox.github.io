@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Atualizar resultados na página
             document.getElementById('miners').textContent = `${convertPower(miners)}`;
-            document.getElementById('bonusPercent').textContent = `${bonusPercent.toFixed(2)}%`;
+            document.getElementById('bonusPercent').textContent = `${(bonusPercent * 100).toFixed(2)}%`;
             document.getElementById('bonus').textContent = `${convertPower(bonus)}`;
             document.getElementById('totalPower').textContent = `${convertPower(totalPower)}`;
 
@@ -46,17 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('calculateButton').addEventListener('click', () => {
         // Pegue os valores atuais
         let miners = parseFloat(document.getElementById('miners').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
-        let bonusPercent = parseFloat(document.getElementById('bonusPercent').textContent) || 0;
+        let bonusPercent = parseFloat(document.getElementById('bonusPercent').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) / 100 || 0;
         let totalPower = parseFloat(document.getElementById('totalPower').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
 
-        // Pegue os valores de entrada do usuário
-        let sellPower = parseFloat(document.getElementById('sellPower').value) || 0;
-        let sellBonus = parseFloat(document.getElementById('sellBonus').value) || 0;
-        let buyPower = parseFloat(document.getElementById('buyPower').value) || 0;
-        let buyBonus = parseFloat(document.getElementById('buyBonus').value) || 0;
-
-        // Armazene o valor original de miners
-        let minersOriginal = miners;
+        // Pegue os valores de entrada do usuário e multiplique por 1000
+        let sellPower = parseFloat(document.getElementById('sellPower').value.replace(',', '.')) * 1000 || 0;
+        let sellBonus = parseFloat(document.getElementById('sellBonus').value.replace(',', '.')) || 0;
+        let buyPower = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) * 1000 || 0;
+        let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) || 0;
 
         // Calcule os novos valores
         let newMiners = miners - sellPower + buyPower;
@@ -66,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Atualize os resultados na tabela
         document.getElementById('newMiners').textContent = convertPower(newMiners);
-        document.getElementById('newBonuspercent').textContent = `${newBonuspercent.toFixed(2)}%`;
+        document.getElementById('newBonuspercent').textContent = `${(newBonuspercent * 100).toFixed(2)}%`;
         document.getElementById('newBonus').textContent = convertPower(newBonus);
 
         // Determine a cor e a seta para o newPower
