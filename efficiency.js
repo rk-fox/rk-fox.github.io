@@ -45,9 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('calculateButton').addEventListener('click', () => {
         // Pegue os valores atuais
-        let miners = parseFloat(document.getElementById('miners').textContent.replace(/[^0-9.,]/g, '')) || 0;
+        let miners = parseFloat(document.getElementById('miners').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
         let bonusPercent = parseFloat(document.getElementById('bonusPercent').textContent) || 0;
-        let totalPower = parseFloat(document.getElementById('totalPower').textContent.replace(/[^0-9.,]/g, '')) || 0;
+        let totalPower = parseFloat(document.getElementById('totalPower').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
 
         // Pegue os valores de entrada do usuário
         let sellPower = parseFloat(document.getElementById('sellPower').value) || 0;
@@ -55,8 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let buyPower = parseFloat(document.getElementById('buyPower').value) || 0;
         let buyBonus = parseFloat(document.getElementById('buyBonus').value) || 0;
 
+        // Armazene o valor original de miners
+        let minersOriginal = miners;
+
+        // Converta sellPower e buyPower de THs para o mesmo valor de miners
+        let sellPowerInMiners = sellPower * 1000; // Convert THs para GHs
+        let buyPowerInMiners = buyPower * 1000; // Convert THs para GHs
+
         // Calcule os novos valores
-        let newMiners = miners - (sellPower) + (buyPower);
+        let newMiners = minersOriginal - sellPowerInMiners + buyPowerInMiners;
         let newBonuspercent = bonusPercent - sellBonus + buyBonus;
         let newBonus = newMiners * newBonuspercent / 100;
         let newPower = newMiners + newBonus;
@@ -91,11 +98,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let convertedPower;
 
         if (absPower >= 1e6) {
-            convertedPower = (absPower / 1e6).toFixed(2) + ' PHs';
+            convertedPower = (absPower / 1e6).toFixed(2).replace('.', ',') + ' PHs';
         } else if (absPower >= 1e3) {
-            convertedPower = (absPower / 1e3).toFixed(2) + ' THs';
+            convertedPower = (absPower / 1e3).toFixed(2).replace('.', ',') + ' THs';
         } else {
-            convertedPower = absPower.toFixed(2) + ' GHs';
+            convertedPower = absPower.toFixed(2).replace('.', ',') + ' GHs';
         }
 
         return power < 0 ? '-' + convertedPower : convertedPower;
