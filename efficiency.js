@@ -84,11 +84,11 @@ function convertPower(value) {
         let newPowerElement = document.getElementById('finalPower');
 
         // Defina a cor com base na diferença entre newPower e totalPower
-        if (finalPower > 1)) { 
+        if (finalPower > 1) { 
             newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
-        } else if (finalPower < -1)) { 
+        } else if (finalPower < -1) { 
             newPowerElement.style.color = 'red';
             powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
