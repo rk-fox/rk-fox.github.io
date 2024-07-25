@@ -1,95 +1,61 @@
-// Função para converter o poder
-function convertPower(value) {
-    let convertedValue;
-    if (value.endsWith('PHs')) {
-        convertedValue = parseFloat(value) * 1e6;
-    } else if (value.endsWith('THs')) {
-        convertedValue = parseFloat(value) * 1e3;
-    } else if (value.endsWith('GHs')) {
-        convertedValue = parseFloat(value);
-    } else {
-        convertedValue = parseFloat(value);
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('searchButton').addEventListener('click', async () => {
+        const userLink = document.getElementById('linkInput').value;
+        const resultsDiv = document.getElementById('results');
+
+        if (!userLink) {
+            alert('Por favor, digite o link da sala.');
+            return;
+        }
+
+        try {
+            // Buscar avatar_id
+            const profileResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
+            const profileData = await profileResponse.json();
+            const profileContents = JSON.parse(profileData.contents);
+            const avatarId = profileContents.data.avatar_id;
+
+            if (!avatarId) {
+                alert('Erro ao obter o avatar_id.');
+                return;
+            }
+
+            // Buscar dados de usuário
+            const powerResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+            const powerData = await powerResponse.json();
+            const powerContents = JSON.parse(powerData.contents);
+            const data = powerContents.data;
+
+            const miners = data.miners;
+            const bonusPercent = data.bonus_percent / 100;
+            const bonus = miners * bonusPercent / 100;
+            const totalPower = miners + bonus;
+
+            // Atualizar resultados na página
+            document.getElementById('miners').textContent = `${convertPower(miners)}`;
+            document.getElementById('bonusPercent').textContent = `${bonusPercent.toFixed(2)}%`;
+            document.getElementById('bonus').textContent = `${convertPower(bonus)}`;
+            document.getElementById('totalPower').textContent = `${convertPower(totalPower)}`;
+
+        } catch (error) {
+            console.error('Erro ao buscar dados:', error);
+            alert('Erro ao buscar dados. Verifique o link e tente novamente.');
+        }
+    });
+
+    // Função para converter o poder para a unidade apropriada
+    function convertPower(power) {
+        const absPower = Math.abs(power);
+        let convertedPower;
+
+        if (absPower >= 1e6) {
+            convertedPower = (absPower / 1e6).toFixed(2) + ' PHs';
+        } else if (absPower >= 1e3) {
+            convertedPower = (absPower / 1e3).toFixed(2) + ' THs';
+        } else {
+            convertedPower = absPower.toFixed(2) + ' GHs';
+        }
+
+        return power < 0 ? '-' + convertedPower : convertedPower;
     }
-    return convertedValue;
-}
-
-// Função para buscar os dados da API
-async function fetchPowerData(url) {
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Erro ao buscar dados:', error);
-    }
-}
-
-// Função para exibir os dados na tela
-function displayPowerData(miners, bonusPercent) {
-    const minersElement = document.getElementById('miners');
-    const bonusPercentElement = document.getElementById('bonusPercent');
-    const bonusElement = document.getElementById('bonus');
-    const totalPowerElement = document.getElementById('totalPower');
-
-    const bonus = miners * (bonusPercent / 100);
-    const totalPower = miners + bonus;
-
-    minersElement.textContent = `${(miners / 1e6).toFixed(2)} PHs`;
-    bonusPercentElement.textContent = `${bonusPercent.toFixed(2)} %`;
-    bonusElement.textContent = `${(bonus / 1e6).toFixed(2)} PHs`;
-    totalPowerElement.textContent = `${(totalPower / 1e6).toFixed(2)} PHs`;
-}
-
-// Função para calcular novos valores com base nos inputs do usuário
-function calculateNewValues() {
-    const minersElement = document.getElementById('miners');
-    const bonusPercentElement = document.getElementById('bonusPercent');
-    const totalPowerElement = document.getElementById('totalPower');
-
-    const originalMiners = convertPower(minersElement.textContent);
-    const originalBonusPercent = parseFloat(bonusPercentElement.textContent);
-
-    const sellPowerInput = document.querySelectorAll('.power-input')[0].value + 'THs';
-    const sellBonusInput = document.querySelectorAll('.bonus-input')[0].value;
-    const buyPowerInput = document.querySelectorAll('.power-input')[1].value + 'THs';
-    const buyBonusInput = document.querySelectorAll('.bonus-input')[1].value;
-
-    const sellPower = convertPower(sellPowerInput);
-    const sellBonus = parseFloat(sellBonusInput);
-    const buyPower = convertPower(buyPowerInput);
-    const buyBonus = parseFloat(buyBonusInput);
-
-    const newMiners = originalMiners - sellPower + buyPower;
-    const newBonusPercent = originalBonusPercent - sellBonus + buyBonus;
-    const newBonus = newMiners * (newBonusPercent / 100);
-    const newTotalPower = newMiners + newBonus;
-
-    // Exibir resultados
-    let resultColorClass = 'unchanged';
-    if (newTotalPower > (originalMiners + originalMiners * (originalBonusPercent / 100))) {
-        resultColorClass = 'increased';
-    } else if (newTotalPower < (originalMiners + originalMiners * (originalBonusPercent / 100))) {
-        resultColorClass = 'decreased';
-    }
-
-    totalPowerElement.textContent = `${(newTotalPower / 1e6).toFixed(2)} PHs`;
-    totalPowerElement.className = resultColorClass;
-}
-
-// Adicionando evento ao botão de pesquisa
-document.getElementById('searchButton').addEventListener('click', async () => {
-    const linkInput = document.getElementById('linkInput').value;
-    const avatarId = linkInput.split('/').pop();
-    const powerDataUrl = `https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`;
-
-    const powerData = await fetchPowerData(powerDataUrl);
-    const miners = powerData.data.miners;
-    const bonusPercent = powerData.data.bonus_percent / 100;
-
-    displayPowerData(miners, bonusPercent);
-});
-
-// Adicionando evento ao botão de calcular
-document.getElementById('calculateButton').addEventListener('click', () => {
-    calculateNewValues();
 });
