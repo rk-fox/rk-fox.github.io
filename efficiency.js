@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Atualize os resultados na tabela
         document.getElementById('newMiners').textContent = newMiners.toFixed(2).replace('.', ',');
-        document.getElementById('newBonuspercent').textContent = `${(newBonuspercent).toFixed(2).replace('.', ',')}%`;
+        document.getElementById('newBonuspercent').textContent = `${(newBonuspercent * 100).toFixed(2).replace('.', ',')}%`;
         document.getElementById('newBonus').textContent = newBonus.toFixed(2).replace('.', ',');
 
         // Determine a cor e a seta para o newPower
