@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalPower = miners + bonus;
 
             // Atualizar resultados na página
-            document.getElementById('miners').textContent = convertPower(miners);
-            document.getElementById('bonusPercent').textContent = `${(bonusPercent * 100).toFixed(2).replace('.', ',')}%`;
-            document.getElementById('bonus').textContent = convertPower(bonus);
-            document.getElementById('totalPower').textContent = convertPower(totalPower);
+            document.getElementById('miners').textContent = (miners);
+            document.getElementById('bonusPercent').textContent = `${(bonusPercent).toFixed(2).replace('.', ',')}%`;
+            document.getElementById('bonus').textContent = (bonus);
+            document.getElementById('totalPower').textContent = (totalPower);
 
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let newPower = ((miners - sellPower + buyPower) * (1 + bonusPercent - sellBonus + buyBonus));
 
         // Atualize os resultados na página
-        document.getElementById('newPower').textContent = convertPower(newPower);
+        document.getElementById('newPower').textContent = (newPower);
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
@@ -78,20 +78,4 @@ document.addEventListener('DOMContentLoaded', () => {
             powerChange.innerHTML = '';
         }
     });
-
-    // Função para converter o poder para a unidade apropriada
-    function convertPower(power) {
-        const absPower = Math.abs(power);
-        let convertedPower;
-
-        if (absPower >= 1e6) {
-            convertedPower = (absPower / 1e6).toFixed(2).replace('.', ',') + ' PHs';
-        } else if (absPower >= 1e3) {
-            convertedPower = (absPower / 1e3).toFixed(2).replace('.', ',') + ' THs';
-        } else {
-            convertedPower = absPower.toFixed(2).replace('.', ',') + ' GHs';
-        }
-
-        return power < 0 ? '-' + convertedPower : convertedPower;
-    }
 });
