@@ -132,7 +132,6 @@ input.power-input, input.bonus-input {
     font-size: 14px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    box-sizing: border-box; /* Garante que a largura dos inputs seja consistente */
 }
 
 input.power-input {
@@ -143,16 +142,17 @@ input.bonus-input {
     background-color: #f9f9f9;
 }
 
-/* Estilo para o botão Calcular */
-.calculate-button-container {
-    text-align: center;
-    margin-top: 20px; /* Espaçamento acima do botão */
+/* Estilo para o botão de calcular */
+.calculate-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 #calculateButton {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #007bff;
+    background-color: #28a745; /* Verde */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -160,5 +160,18 @@ input.bonus-input {
 }
 
 #calculateButton:hover {
-    background-color: #0056b3;
+    background-color: #218838; /* Verde escuro */
+}
+
+/* Adiciona a estilização dos resultados com cor */
+#totalPower.increased {
+    color: #28a745; /* Verde */
+}
+
+#totalPower.decreased {
+    color: #dc3545; /* Vermelho */
+}
+
+#totalPower.unchanged {
+    color: #333; /* Preto */
 }
