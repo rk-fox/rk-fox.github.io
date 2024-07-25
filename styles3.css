@@ -193,7 +193,7 @@ input.bonus-input {
 }
 
 #calcButton {
-    padding: 10px 20px;
+    padding: 10px;
     font-size: 16px;
     background-color: #007bff;
     color: #fff;
@@ -201,7 +201,7 @@ input.bonus-input {
     border-radius: 5px;
     cursor: pointer;
     display: block; /* Adicionado para centralizar */
-    margin: 15px auto; /* Adicionado para centralizar */
+    margin-top: 15px; /* Adicionado para centralizar */
 }
 
 #calcButton:hover {
