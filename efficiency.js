@@ -49,21 +49,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalPower = parseFloat(document.getElementById('totalPower').textContent.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
 
         // Pegue os valores de entrada do usuário e converta de GHs para unidades adequadas
-        let sellPower = parseFloat(document.getElementById('sellPower').value.replace(',', '.')) * 1000 || 0;
+        let sellPower = parseFloat(document.getElementById('sellPower').value.replace(',', '.')) || 0;
         let sellBonus = parseFloat(document.getElementById('sellBonus').value.replace(',', '.')) || 0;
-        let buyPower = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) * 1000 || 0;
+        let buyPower = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
         let buyBonus = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) || 0;
 
-        // Calcule os novos valores
-        let newMiners = miners - (sellPower / 1000) + (buyPower / 1000);
-        let newBonusPercent = bonusPercent - (sellBonus / 100) + (buyBonus / 100);
-        let newBonus = newMiners * newBonusPercent;
-        let newPower = newMiners + newBonus;
+        // Calcule o novo poder total com a fórmula fornecida
+        let newPower = ((miners - sellPower + buyPower) * (1 + bonusPercent - (sellBonus / 100) + (buyBonus / 100)));
 
-        // Atualize os resultados na tabela
-        document.getElementById('newMiners').textContent = convertPower(newMiners);
-        document.getElementById('newBonuspercent').textContent = `${(newBonusPercent * 100).toFixed(2).replace('.', ',')}%`;
-        document.getElementById('newBonus').textContent = convertPower(newBonus);
+        // Atualize os resultados na página
+        document.getElementById('newPower').textContent = convertPower(newPower);
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
@@ -71,17 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Defina a cor com base na diferença entre newPower e totalPower
         if (newPower > totalPower + 1) {
-            newPowerElement.textContent = convertPower(newPower);
             newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
             powerChange.style.color = 'green';
         } else if (newPower < totalPower - 1) {
-            newPowerElement.textContent = convertPower(newPower);
             newPowerElement.style.color = 'red';
             powerChange.innerHTML = '▼';
             powerChange.style.color = 'red';
         } else {
-            newPowerElement.textContent = convertPower(newPower);
             newPowerElement.style.color = 'black';
             powerChange.innerHTML = '';
         }
