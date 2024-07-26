@@ -37,7 +37,7 @@ function convertPower(value) {
         // Exibir avatar e mensagem de boas-vindas
         const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
         document.getElementById('avatar').src = avatarUrl;
-        avatarElement.style.display = 'block';  // Tornar a imagem visível
+        document.getElementById('avatar').style.display = 'block';  // Tornar a imagem visível
         document.getElementById('welcomeMessage').innerText = `Olá, ${userName}!`;
 
     } catch (error) {
