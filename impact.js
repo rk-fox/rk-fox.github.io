@@ -40,6 +40,23 @@ function convertPower(value) {
         document.getElementById('avatar').style.display = 'block';  // Tornar a imagem visível
         document.getElementById('welcomeMessage').innerText = `Olá, ${userName}!`;
 
+        // Buscar dados de user-power-data usando avatarId
+        const powerDataResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+        const powerData = await powerDataResponse.json();
+        const powerContents = JSON.parse(powerData.contents);
+        const miners = powerContents.data.miners;
+        let bonusPercent = powerContents.data.bonus_percent;
+
+        // Processar bonus_percent
+        bonusPercent = (bonusPercent / 100).toFixed(2).replace('.', ',');
+
+        // Exibir os dados (miners e bonus_percent) no console ou usar conforme necessário
+        console.log('Miners:', miners);
+        console.log('Bonus Percent:', bonusPercent);
+
+
+            
+
     } catch (error) {
         console.error('Erro ao buscar dados do perfil:', error);
         alert('Erro ao buscar dados do perfil.');
