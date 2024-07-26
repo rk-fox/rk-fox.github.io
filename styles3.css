@@ -31,7 +31,7 @@ body {
 }
 
 /* Área de referência */
-.ref {
+.ref .email {
     margin-top: 20px;
     text-align: center;
 }
