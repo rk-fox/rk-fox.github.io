@@ -98,7 +98,7 @@ function convertPower(value) {
             powerChange.innerHTML = '';
         }
     });
-document.getElementById('calcButton').addEventListener('click', () => {
+/* document.getElementById('calcButton').addEventListener('click', () => {
     // Pegue os valores dos inputs do usuário
     let custoRLT = parseFloat(document.getElementById('custoInput').value.replace(',', '.')) || 0;
     let efiPower = parseFloat(document.getElementById('finalPower').textContent.replace(',', '.')) || 0;
@@ -123,5 +123,5 @@ document.getElementById('calcButton').addEventListener('click', () => {
         conclusao.innerHTML = 'X';
         conclusao.style.color = 'red';
     }
-});
+}); */
 });
