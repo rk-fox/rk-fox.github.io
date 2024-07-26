@@ -101,37 +101,29 @@ function convertPower(value) {
     document.getElementById('calcButton').addEventListener('click', () => {
         // Pegue o valor de RLT do input do usuário
         let custoRLT = parseFloat(document.getElementById('custoInput')) || 0;
-        let effPower = parseFloat(document.getElementById('finalPower').value.replace(',', '.')) || 0;
-        let effMiner = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
-
-
-        // Calcule o novo poder total com a fórmula fornecida
-        currentMiners = initialMiners - sellPower + buyPower;
-        currentBonusPercent = initialBonusPercent - sellBonus + buyBonus;
-        currentBonus = currentMiners * currentBonusPercent;
-        newPower = currentMiners * (1 + (currentBonusPercent));
-        finalPower = newPower - totalPower ;
+        let efiPower = parseFloat(document.getElementById('finalPower') || 0;
+        let efiMiner = parseFloat(document.getElementById('buyPower') || 0;
+        
+        // Calcule a eficiência em Miner e Power
+        efiMiner = custoRLT / (efiMiner / 1000);
+        efiPower = custoRLT / (efiPower / 1000);
 
         // Atualize os resultados na página
-        document.getElementById('finalPower').textContent = convertPower(finalPower);
-        document.getElementById('novoPower').textContent = convertPower(finalPower);
+        document.getElementById('effMiner').textContent = (efiMiner);
+        document.getElementById('effPower').textContent = (efiPower);
 
         // Determine a cor e a seta para o newPower
-        let powerChange = document.getElementById('powerChange');
-        let newPowerElement = document.getElementById('finalPower');
-
+        let conclusao = document.getElementById('conclusao');
+        
         // Defina a cor com base na eficiência TOTAL
-        if (finalPower > 1) { 
-            newPowerElement.style.color = 'green';
-            powerChange.innerHTML = '▲';
-            powerChange.style.color = 'green';
-        } else if (finalPower < -1) { 
-            newPowerElement.style.color = 'red';
-            powerChange.innerHTML = '▼';
-            powerChange.style.color = 'red';
-        } else {
-            newPowerElement.style.color = 'black';
-            powerChange.innerHTML = '';
+        if (efiPower <= 35) { 
+            conclusaoElement.style.color = 'green';
+            conclusao.innerHTML = 'EXCELENTE';
+            conclusao.style.color = 'green';
+        } else (finalPower > 35) { 
+            conclusaoElement.style.color = 'red';
+            conclusao.innerHTML = 'X';
+            conclusao.style.color = 'red';
         }
     });
 });
