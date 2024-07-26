@@ -2,12 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Variáveis globais para armazenar os dados
 
 
-// Função para converter poder
-function convertPower(value) {
-    const absValue = Math.abs(value); // Obter o valor absoluto
-    if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
-    return value + ' GHs';
-}
+        // Função para converter poder
+        function convertPower(value) {
+            const absValue = Math.abs(value); // Obter o valor absoluto
+            if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
+            return value + ' GHs';
+        }
 
     document.getElementById('searchButton').addEventListener('click', async () => {
         const userLink = document.getElementById('linkInput').value;
@@ -48,10 +48,10 @@ function convertPower(value) {
         let bonusPercent = powerContents.data.bonus_percent;
 
         // Processar bonus_percent
-        bonusPercent = (bonusPercent / 100).toFixed(2).replace('.', ',');
+        bonusPercent = parseFloat((bonusPercent / 100).toFixed(2));  // Dividir por 100 e garantir que é um número
 
         // Calcular Poder Total
-        const total_orig = miners * (miners * (bonusPercent / 100));
+        const total_orig = miners * (1 + (bonusPercent / 100));
 
         console.log('Poder Total:', convertPower(total_orig));
             
