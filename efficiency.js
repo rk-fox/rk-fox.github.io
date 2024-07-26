@@ -120,7 +120,7 @@ function convertPower(value) {
             conclusaoElement.style.color = 'green';
             conclusao.innerHTML = 'EXCELENTE';
             conclusao.style.color = 'green';
-        } else (finalPower > 35) { 
+        } else { 
             conclusaoElement.style.color = 'red';
             conclusao.innerHTML = 'X';
             conclusao.style.color = 'red';
