@@ -78,6 +78,43 @@ function convertPower(value) {
 
         // Atualize os resultados na página
         document.getElementById('finalPower').textContent = convertPower(finalPower);
+        document.getElementById('novoPower').textContent = convertPower(newPower);
+
+        // Determine a cor e a seta para o newPower
+        let powerChange = document.getElementById('powerChange');
+        let newPowerElement = document.getElementById('finalPower');
+
+        // Defina a cor com base na diferença entre newPower e totalPower
+        if (finalPower > 1) { 
+            newPowerElement.style.color = 'green';
+            powerChange.innerHTML = '▲';
+            powerChange.style.color = 'green';
+        } else if (finalPower < -1) { 
+            newPowerElement.style.color = 'red';
+            powerChange.innerHTML = '▼';
+            powerChange.style.color = 'red';
+        } else {
+            newPowerElement.style.color = 'black';
+            powerChange.innerHTML = '';
+        }
+    });
+    document.getElementById('calcButton').addEventListener('click', () => {
+        // Pegue o valor de RLT do input do usuário
+        let custoRLT = parseFloat(document.getElementById('custoInput') || 0;
+        let effPower = parseFloat(document.getElementById('finalPower').value.replace(',', '.')) / 100 || 0;
+        let effMiner = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) * 1000 || 0;
+
+
+        // Calcule o novo poder total com a fórmula fornecida
+        currentMiners = initialMiners - sellPower + buyPower;
+        currentBonusPercent = initialBonusPercent - sellBonus + buyBonus;
+        currentBonus = currentMiners * currentBonusPercent;
+        newPower = currentMiners * (1 + (currentBonusPercent));
+        finalPower = newPower - totalPower ;
+
+        // Atualize os resultados na página
+        document.getElementById('finalPower').textContent = convertPower(finalPower);
+        document.getElementById('novoPower').textContent = convertPower(finalPower);
 
         // Determine a cor e a seta para o newPower
         let powerChange = document.getElementById('powerChange');
