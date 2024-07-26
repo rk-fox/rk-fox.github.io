@@ -50,11 +50,10 @@ function convertPower(value) {
         // Processar bonus_percent
         bonusPercent = (bonusPercent / 100).toFixed(2).replace('.', ',');
 
-        // Exibir os dados (miners e bonus_percent) no console ou usar conforme necessário
-        console.log('Miners:', miners);
-        console.log('Bonus Percent:', bonusPercent);
+        // Calcular Poder Total
+        const total_orig = miners * (miners * (bonusPercent / 100));
 
-
+        console.log('Poder Total:', convertPower(total_orig));
             
 
     } catch (error) {
