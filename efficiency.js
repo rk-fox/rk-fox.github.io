@@ -100,9 +100,9 @@ function convertPower(value) {
     });
     document.getElementById('calcButton').addEventListener('click', () => {
         // Pegue o valor de RLT do input do usuário
-        let custoRLT = parseFloat(document.getElementById('custoInput') || 0;
-        let effPower = parseFloat(document.getElementById('finalPower').value.replace(',', '.')) / 100 || 0;
-        let effMiner = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) * 1000 || 0;
+        let custoRLT = parseFloat(document.getElementById('custoInput')) || 0;
+        let effPower = parseFloat(document.getElementById('finalPower').value.replace(',', '.')) || 0;
+        let effMiner = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
 
 
         // Calcule o novo poder total com a fórmula fornecida
@@ -120,7 +120,7 @@ function convertPower(value) {
         let powerChange = document.getElementById('powerChange');
         let newPowerElement = document.getElementById('finalPower');
 
-        // Defina a cor com base na diferença entre newPower e totalPower
+        // Defina a cor com base na eficiência TOTAL
         if (finalPower > 1) { 
             newPowerElement.style.color = 'green';
             powerChange.innerHTML = '▲';
