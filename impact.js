@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Variáveis globais para armazenar os dados
 
-
         // Função para converter poder
         function convertPower(value) {
             const absValue = Math.abs(value); // Obter o valor absoluto
@@ -53,8 +52,37 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calcular Poder Total
         const total_orig = miners * (1 + (bonusPercent / 100));
 
-        console.log('Poder Total:', convertPower(total_orig));
-            
+        console.log('Poder Total Original:', convertPower(total_orig));
+
+        // Buscar dados de room-config usando avatarId
+        const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
+        const roomConfigData = await roomConfigResponse.json();
+        const roomConfigContents = JSON.parse(roomConfigData.contents);
+
+        let minersData = roomConfigContents.data.map(miner => {
+            return {
+                miner_id: miner.miner_id,
+                power: miner.power,
+                bonus_percent: miner.bonus_percent / 100  // Converter bonus_percent
+            };
+        });
+
+        // Calcular newpower e encontrar os 3 menores valores negativos
+        let results = minersData.map(miner => {
+            let newpower = (((miners - miner.power) * (1 + ((bonusPercent - miner.bonus_percent) / 100))) - total_orig);
+            return {
+                miner_id: miner.miner_id,
+                newpower: newpower
+            };
+        });
+
+        results.sort((a, b) => a.newpower - b.newpower);  // Ordenar por newpower
+
+        // Encontrar os 3 miner_id com os menores valores negativos de newpower
+        let top3Miners = results.filter(item => item.newpower < 0).slice(0, 3);
+
+        console.log('Top 3 Miners com os menores valores negativos de newpower:', top3Miners);
+
 
     } catch (error) {
         console.error('Erro ao buscar dados do perfil:', error);
