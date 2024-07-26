@@ -98,32 +98,30 @@ function convertPower(value) {
             powerChange.innerHTML = '';
         }
     });
-    document.getElementById('calcButton').addEventListener('click', () => {
-        // Pegue o valor de RLT do input do usuário
-        let custoRLT = parseFloat(document.getElementById('custoInput')) || 0;
-        let efiPower = parseFloat(document.getElementById('finalPower')) || 0;
-        let efiMiner = parseFloat(document.getElementById('buyPower')) || 0;
-        
-        // Calcule a eficiência em Miner e Power
-        efiMiner = custoRLT / (efiMiner / 1000);
-        efiPower = custoRLT / (efiPower / 1000);
+document.getElementById('calcButton').addEventListener('click', () => {
+    // Pegue os valores dos inputs do usuário
+    let custoRLT = parseFloat(document.getElementById('custoInput').value.replace(',', '.')) || 0;
+    let efiPower = parseFloat(document.getElementById('finalPower').textContent.replace(',', '.')) || 0;
+    let efiMiner = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
+    
+    // Calcule a eficiência em Miner e Power
+    efiMiner = custoRLT / (efiMiner / 1000);
+    efiPower = custoRLT / (efiPower / 1000);
 
-        // Atualize os resultados na página
-        document.getElementById('effMiner').textContent = (efiMiner);
-        document.getElementById('effPower').textContent = (efiPower);
+    // Atualize os resultados na página
+    document.getElementById('effMiner').textContent = efiMiner.toFixed(2);
+    document.getElementById('effPower').textContent = efiPower.toFixed(2);
 
-        // Determine a cor e a seta para o newPower
-        let conclusao = document.getElementById('conclusao');
-        
-        // Defina a cor com base na eficiência TOTAL
-        if (efiPower <= 35) { 
-            conclusaoElement.style.color = 'green';
-            conclusao.innerHTML = 'EXCELENTE';
-            conclusao.style.color = 'green';
-        } else { 
-            conclusaoElement.style.color = 'red';
-            conclusao.innerHTML = 'X';
-            conclusao.style.color = 'red';
-        }
-    });
+    // Determine a cor e a seta para o newPower
+    let conclusao = document.getElementById('conclusao');
+    
+    // Defina a cor com base na eficiência TOTAL
+    if (efiPower <= 35) { 
+        conclusao.innerHTML = 'EXCELENTE';
+        conclusao.style.color = 'green';
+    } else { 
+        conclusao.innerHTML = 'X';
+        conclusao.style.color = 'red';
+    }
+});
 });
