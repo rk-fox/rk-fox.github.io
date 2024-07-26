@@ -101,8 +101,8 @@ function convertPower(value) {
     document.getElementById('calcButton').addEventListener('click', () => {
         // Pegue o valor de RLT do input do usuário
         let custoRLT = parseFloat(document.getElementById('custoInput')) || 0;
-        let efiPower = parseFloat(document.getElementById('finalPower') || 0;
-        let efiMiner = parseFloat(document.getElementById('buyPower') || 0;
+        let efiPower = parseFloat(document.getElementById('finalPower')) || 0;
+        let efiMiner = parseFloat(document.getElementById('buyPower')) || 0;
         
         // Calcule a eficiência em Miner e Power
         efiMiner = custoRLT / (efiMiner / 1000);
