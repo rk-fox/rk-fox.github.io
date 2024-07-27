@@ -59,19 +59,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const roomConfigData = await roomConfigResponse.json();
         const roomConfigContents = JSON.parse(roomConfigData.contents);
 
-        if (!Array.isArray(roomConfigContents.data)) {
-            console.error('Dados inesperados em roomConfigContents:', roomConfigContents.data);
+        // Verificar a estrutura dos dados e extrair miners
+        if (!Array.isArray(roomConfigContents.rooms)) {
+            console.error('Dados inesperados em roomConfigContents:', roomConfigContents);
             alert('Erro ao buscar dados da configuração da sala.');
             return;
         }
 
-        let minersData = roomConfigContents.data.map(miner => {
-            return {
-                miner_id: miner.miner_id,
-                power: miner.power,
-                bonus_percent: miner.bonus_percent / 100  // Converter bonus_percent
-            };
-        });
+        // Mapear os dados de miners
+        let minersData = roomConfigContents.rooms.map(room => {
+            if (room.miners && Array.isArray(room.miners)) {
+                return room.miners.map(miner => ({
+                    miner_id: miner.miner_id,
+                    power: miner.power,
+                    bonus_percent: miner.bonus_percent / 100  // Converter bonus_percent
+                }));
+            }
+            return [];
+        }).flat();
 
         // Calcular newpower e encontrar os 3 menores valores negativos
         let results = minersData.map(miner => {
