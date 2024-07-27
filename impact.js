@@ -75,6 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);            
             const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
 
+            console.log('poderminer:', (miner.power));
+            console.log('newpower:', (newpower));
+            
             return {
                 ...miner,
                 newpower: newpower
