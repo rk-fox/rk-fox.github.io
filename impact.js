@@ -90,19 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Preencher os dados na tabela HTML
         if (topThreeNegatives.length > 0) {
-            document.getElementById('nome1').innerText = topThreeNegatives[0].name;
-            document.getElementById('img1').src = `https://static.rollercoin.com/static/img/market/miners/${topThreeNegatives[0].filename}.gif?v=1`; // Ajuste o caminho da imagem conforme necessário
+            document.getElementById('nome1').innerText = topThreeNegatives[0]?.name || '';
+            document.getElementById('img1').src = `https://static.rollercoin.com/static/img/market/miners/${topThreeNegatives[0].filename}.gif?v=1`;
             document.getElementById('img1').style.display = 'block';  // Tornar a imagem visível
-            document.getElementById('poder1').innerText = convertPower(topThreeNegatives[0].power);
+            document.getElementById('poder1').innerText = topThreeNegatives[0] ? (topThreeNegatives[0].power) : '';
             document.getElementById('bonus1').innerText = topThreeNegatives[0] ? `${(topThreeNegatives[0].bonus_percent / 100).toFixed(2)}%` : '';
-            document.getElementById('impact1').innerText = convertPower(topThreeNegatives[0].newpower);
-            document.getElementById('set1').innerText = topThreeNegatives[0].is_in_set ? 'Sim' : 'Não';
+            document.getElementById('impact1').innerText = topThreeNegatives[0] ? convertPower(topThreeNegatives[0].newpower) : '';
+            document.getElementById('set1').innerText = topThreeNegatives[0] ? (topThreeNegatives[0].is_in_set ? 'Sim' : 'Não') : '';
             
 
             document.getElementById('nome2').innerText = topThreeNegatives[1]?.name || '';
             document.getElementById('img2').src = `https://static.rollercoin.com/static/img/market/miners/${topThreeNegatives[1].filename}.gif?v=1`;
             document.getElementById('img2').style.display = 'block';  // Tornar a imagem visível
-            document.getElementById('poder2').innerText = topThreeNegatives[1] ? convertPower(topThreeNegatives[1].power) : '';
+            document.getElementById('poder2').innerText = topThreeNegatives[1] ? (topThreeNegatives[1].power) : '';
             document.getElementById('bonus2').innerText = topThreeNegatives[1] ? `${(topThreeNegatives[1].bonus_percent / 100).toFixed(2)}%` : '';
             document.getElementById('impact2').innerText = topThreeNegatives[1] ? convertPower(topThreeNegatives[1].newpower) : '';
             document.getElementById('set2').innerText = topThreeNegatives[1] ? (topThreeNegatives[1].is_in_set ? 'Sim' : 'Não') : '';
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('nome3').innerText = topThreeNegatives[2]?.name || '';
             document.getElementById('img3').src = `https://static.rollercoin.com/static/img/market/miners/${topThreeNegatives[2].filename}.gif?v=1`;
             document.getElementById('img3').style.display = 'block';  // Tornar a imagem visível
-            document.getElementById('poder3').innerText = topThreeNegatives[2] ? convertPower(topThreeNegatives[2].power) : '';
+            document.getElementById('poder3').innerText = topThreeNegatives[2] ? (topThreeNegatives[2].power) : '';
             document.getElementById('bonus3').innerText = topThreeNegatives[2] ? `${(topThreeNegatives[2].bonus_percent / 100).toFixed(2)}%` : '';
             document.getElementById('impact3').innerText = topThreeNegatives[2] ? convertPower(topThreeNegatives[2].newpower) : '';
             document.getElementById('set3').innerText = topThreeNegatives[2] ? (topThreeNegatives[2].is_in_set ? 'Sim' : 'Não') : '';
