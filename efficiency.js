@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function convertPower(value) {
     const absValue = Math.abs(value); // Obter o valor absoluto
     if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
-    return value + ' GHs';
+    return (value).toFixed(3).replace('.', ',') + ' GHs';
 }
 
     document.getElementById('searchButton').addEventListener('click', async () => {
