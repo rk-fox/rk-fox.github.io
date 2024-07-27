@@ -54,74 +54,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log('Poder Total Original:', convertPower(total_orig));
 
-        const fetchRoomConfig = async (avatarId, totalPower, bonusPercent) => {
-  try {
-    const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
-    const roomConfigData = await roomConfigResponse.json();
-    const roomConfigContents = JSON.parse(roomConfigData.contents);
-
-    if (!Array.isArray(roomConfigContents.rooms)) {
-      console.error('Dados inesperados em roomConfigContents:', roomConfigContents);
-      alert('Erro ao buscar dados da configuração da sala.');
-      return [];
-    }
-
-    // Map miners and calculate newpower (assuming totalPower and bonusPercent are available)
-    const minersData = roomConfigContents.rooms.flatMap(room => {
-      if (room.miners && Array.isArray(room.miners)) {
-        return room.miners.map(miner => ({
-          miner_id: miner.miner_id,
-          power: miner.power,
-          bonus_percent: miner.bonus_percent / 100,
-          newpower: totalPower - miner.power
-        }));
-      }
-      return [];
-    });
-
-    // Sort and filter top 3 miners with negative newpower
-    const top3
-      /*
-
         // Buscar dados de room-config usando avatarId
         const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
         const roomConfigData = await roomConfigResponse.json();
         const roomConfigContents = JSON.parse(roomConfigData.contents);
 
-        // Verificar a estrutura dos dados e extrair miners
-        if (!Array.isArray(roomConfigContents.rooms)) {
-            console.error('Dados inesperados em roomConfigContents:', roomConfigContents);
-            alert('Erro ao buscar dados da configuração da sala.');
-            return;
-        }
+        const minerData = roomConfigContents.data.miners.map(miner => {
+            return {
+                miner_id: miner.miner_id,
+                power: miner.power,
+                bonus_percent: miner.bonus_percent
+            };
+        });
 
-        // Mapear os dados de miners
-        let minersData = roomConfigContents.rooms.map(room => {
-            if (room.miners && Array.isArray(room.miners)) {
-                return room.miners.map(miner => ({
-                    miner_id: miner.miner_id,
-                    power: miner.power,
-                    bonus_percent: miner.bonus_percent / 100  // Converter bonus_percent
-                }));
-            }
-            return [];
-        }).flat();
-
-        // Calcular newpower e encontrar os 3 menores valores negativos
-        let results = minersData.map(miner => {
-            let newpower = (((miners - miner.power) * (1 + ((bonusPercent - miner.bonus_percent) / 100))) - total_orig);
+        // Calcular newpower para cada miner e armazenar os três menores valores negativos
+        const results = minerData.map(miner => {
+            const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);
+            const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
             return {
                 miner_id: miner.miner_id,
                 newpower: newpower
             };
         });
 
-        results.sort((a, b) => a.newpower - b.newpower);  // Ordenar por newpower
+        const sortedResults = results.sort((a, b) => a.newpower - b.newpower);
+        const topThreeNegatives = sortedResults.filter(result => result.newpower < 0).slice(0, 3);
 
-        // Encontrar os 3 miner_id com os menores valores negativos de newpower
-        let top3Miners = results.filter(item => item.newpower < 0).slice(0, 3);
+        console.log('Top 3 Miner IDs com menores valores de newpower:', topThreeNegatives);
 
-        console.log('Top 3 Miners com os menores valores negativos de newpower:', top3Miners); */
 
     } catch (error) {
         console.error('Erro ao buscar dados do perfil:', error);
