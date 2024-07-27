@@ -111,6 +111,34 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('bonus3').innerText = topThreeNegatives[2] ? `${topThreeNegatives[2].bonus_percent}%` : '';
             document.getElementById('impact3').innerText = topThreeNegatives[2] ? convertPower(topThreeNegatives[2].newpower) : '';
             document.getElementById('set3').innerText = topThreeNegatives[2] ? (topThreeNegatives[2].is_in_set ? 'Sim' : 'Não') : '';
+
+            // Função para contar as repetições de miner_id
+            function countRepetitions(minerIds) {
+                const counts = minerIds.reduce((acc, id) => {
+                acc[id] = (acc[id] || 0) + 1;
+                return acc;
+            }, {});
+
+            return counts;
+            }
+
+            // Array com os miner_id das 3 máquinas
+            const minerIds = [
+                topThreeNegatives[0].miner_id,
+                topThreeNegatives[1] ? topThreeNegatives[1].miner_id : null,
+                topThreeNegatives[2] ? topThreeNegatives[2].miner_id : null
+            ].filter(id => id !== null); // Filtrar IDs nulos
+
+            // Contar as repetições
+            const counts = countRepetitions(minerIds);
+
+            // Verificar se há mais de um merge
+            const merge = Object.values(counts).some(count => count > 1);
+
+            // Atualizar a tabela com o status de merge
+            document.getElementById('merge1').innerText = merge ? 'True' : 'False';
+            document.getElementById('merge2').innerText = merge ? 'True' : 'False';
+            document.getElementById('merge3').innerText = merge ? 'True' : 'False';
             
         } else {
             alert('Não há resultados negativos próximos de zero.');
