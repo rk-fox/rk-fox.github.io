@@ -136,9 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const merge = Object.values(counts).some(count => count > 1);
 
             // Atualizar a tabela com o status de merge
-            document.getElementById('merge1').innerText = merge ? 'True' : 'False';
-            document.getElementById('merge2').innerText = merge ? 'True' : 'False';
-            document.getElementById('merge3').innerText = merge ? 'True' : 'False';
+            document.getElementById('merge1').innerText = merge ? 'Sim' : 'Não';
+            document.getElementById('merge2').innerText = merge ? 'Sim' : 'Não';
+            document.getElementById('merge3').innerText = merge ? 'Sim' : 'Não';
             
         } else {
             alert('Não há resultados negativos próximos de zero.');
