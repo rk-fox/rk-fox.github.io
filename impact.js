@@ -54,6 +54,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log('Poder Total Original:', convertPower(total_orig));
 
+        const fetchRoomConfig = async (avatarId, totalPower, bonusPercent) => {
+  try {
+    const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
+    const roomConfigData = await roomConfigResponse.json();
+    const roomConfigContents = JSON.parse(roomConfigData.contents);
+
+    if (!Array.isArray(roomConfigContents.rooms)) {
+      console.error('Dados inesperados em roomConfigContents:', roomConfigContents);
+      alert('Erro ao buscar dados da configuração da sala.');
+      return [];
+    }
+
+    // Map miners and calculate newpower (assuming totalPower and bonusPercent are available)
+    const minersData = roomConfigContents.rooms.flatMap(room => {
+      if (room.miners && Array.isArray(room.miners)) {
+        return room.miners.map(miner => ({
+          miner_id: miner.miner_id,
+          power: miner.power,
+          bonus_percent: miner.bonus_percent / 100,
+          newpower: totalPower - miner.power
+        }));
+      }
+      return [];
+    });
+
+    // Sort and filter top 3 miners with negative newpower
+    const top3
+      /*
+
         // Buscar dados de room-config usando avatarId
         const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
         const roomConfigData = await roomConfigResponse.json();
@@ -92,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Encontrar os 3 miner_id com os menores valores negativos de newpower
         let top3Miners = results.filter(item => item.newpower < 0).slice(0, 3);
 
-        console.log('Top 3 Miners com os menores valores negativos de newpower:', top3Miners);
+        console.log('Top 3 Miners com os menores valores negativos de newpower:', top3Miners); */
 
     } catch (error) {
         console.error('Erro ao buscar dados do perfil:', error);
