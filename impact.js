@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('img1').src = `https://static.rollercoin.com/static/img/market/miners/${topThreeNegatives[0].filename}.gif?v=1`; // Ajuste o caminho da imagem conforme necessário
             document.getElementById('img1').style.display = 'block';  // Tornar a imagem visível
             document.getElementById('poder1').innerText = convertPower(topThreeNegatives[0].power);
-            document.getElementById('bonus1').innerText = `${topThreeNegatives[0].bonus_percent / 100).toFixed(2)}%`;
+            document.getElementById('bonus1').innerText = topThreeNegatives[0] ? `${topThreeNegatives[0].bonus_percent / 100).toFixed(2)}%` : '';
             document.getElementById('impact1').innerText = convertPower(topThreeNegatives[0].newpower);
             document.getElementById('set1').innerText = topThreeNegatives[0].is_in_set ? 'Sim' : 'Não';
             
