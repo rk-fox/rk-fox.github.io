@@ -73,7 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calcular newpower para cada miner e armazenar os três menores valores negativos próximos de 0
         const results = minerData.map(miner => {
             const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);
+
+            console.log('newbonus:', (newBonusPercent));
+            
             const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
+
+            console.log('newpower:', convertPower(newpower));
+            
             return {
                 ...miner,
                 newpower: newpower
