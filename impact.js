@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
 
-        // Calcular newpower para cada miner e armazenar os três menores valores negativos
+        // Calcular newpower para cada miner e armazenar os três menores valores negativos próximos de 0
         const results = minerData.map(miner => {
             const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);
             const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
@@ -77,11 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
 
-        const sortedResults = results.sort((a, b) => a.newpower - b.newpower);
-        const topThreeNegatives = sortedResults.filter(result => result.newpower < 0).slice(0, 3);
+        const negativeResults = results.filter(result => result.newpower < 0);
+        const sortedResults = negativeResults.sort((a, b) => b.newpower - a.newpower);
+        const topThreeNegatives = sortedResults.slice(0, 3);
 
         console.log('Top 3 Miner IDs com menores valores de newpower:', topThreeNegatives);
-
 
     } catch (error) {
         console.error('Erro ao buscar dados do perfil:', error);
