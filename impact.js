@@ -63,7 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return {
                 miner_id: miner.miner_id,
                 power: miner.power,
-                bonus_percent: miner.bonus_percent
+                bonus_percent: miner.bonus_percent,
+                name: miner.name,
+                filename: miner.filename,
+                is_in_set: miner.is_in_set
             };
         });
 
@@ -72,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);
             const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
             return {
-                miner_id: miner.miner_id,
+                ...miner,
                 newpower: newpower
             };
         });
@@ -81,8 +84,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortedResults = negativeResults.sort((a, b) => b.newpower - a.newpower);
         const topThreeNegatives = sortedResults.slice(0, 3);
 
-        console.log('Top 3 Miner IDs com menores valores de newpower:', topThreeNegatives);
-
+        if (topThreeNegatives.length > 0) {
+            var { name: name1, filename: img1, power: power1, bonus_percent: bonus1, is_in_set: set1 } = topThreeNegatives[0];
+            console.log('1st Miner:', name1, img1, power1, bonus1, set1);
+        }
+        if (topThreeNegatives.length > 1) {
+            var { name: name2, filename: img2, power: power2, bonus_percent: bonus2, is_in_set: set2 } = topThreeNegatives[1];
+            console.log('2nd Miner:', name2, img2, power2, bonus2, set2);
+        }
+        if (topThreeNegatives.length > 2) {
+            var { name: name3, filename: img3, power: power3, bonus_percent: bonus3, is_in_set: set3 } = topThreeNegatives[2];
+            console.log('3rd Miner:', name3, img3, power3, bonus3, set3);
+        }
+            
     } catch (error) {
         console.error('Erro ao buscar dados do perfil:', error);
         alert('Erro ao buscar dados do perfil.');
