@@ -52,8 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calcular Poder Total
         const total_orig = miners * (1 + (bonusPercent / 100));
 
-        console.log('Poder Total Original:', convertPower(total_orig));
-
         // Buscar dados de room-config usando avatarId
         const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
         const roomConfigData = await roomConfigResponse.json();
@@ -74,9 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const results = minerData.map(miner => {
             const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);            
             const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
-
-            console.log('poderminer:', (miner.power));
-            console.log('newpower:', (newpower));
             
             return {
                 ...miner,
