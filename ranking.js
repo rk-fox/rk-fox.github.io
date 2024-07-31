@@ -4,13 +4,13 @@ function convertPower(power) {
     let convertedPower;
 
     if (absPower >= 1e9) {
-        convertedPower = (absPower / 1e9).toFixed(2) + ' EHs';
+        convertedPower = (absPower / 1e9).toFixed(3).replace('.', ',') + ' EHs';
     } else if (absPower >= 1e6) {
-        convertedPower = (absPower / 1e6).toFixed(2) + ' PHs';
+        convertedPower = (absPower / 1e6).toFixed(3).replace('.', ',') + ' PHs';
     } else if (absPower >= 1e3) {
-        convertedPower = (absPower / 1e3).toFixed(2) + ' THs';
+        convertedPower = (absPower / 1e3).toFixed(3).replace('.', ',') + ' THs';
     } else {
-        convertedPower = absPower.toFixed(2) + ' GHs';
+        convertedPower = absPower.toFixed(3) + ' GHs';
     }
 
     return power < 0 ? '-' + convertedPower : convertedPower;
