@@ -77,7 +77,7 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     }
 
     row.innerHTML = `
-        <td data-label="Rank" class="table-cell-center" style="position: absolute; top: 50%; left: 50%;">${rankContent}</td>
+        <td data-label="Rank" class="table-cell-center" style="display: flex; justify-content: center; align-items: center;">${rankContent}</td>
         <td data-label="Posição" style="${positionChangeStyle}">${positionChangeContent}</td>
         <td data-label="Nick">
             <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 35px; height: 35px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
