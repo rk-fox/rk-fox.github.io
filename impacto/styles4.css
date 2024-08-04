@@ -5,6 +5,7 @@
     box-sizing: border-box;
 }
 
+/* Modo Claro (padrão) */
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -13,6 +14,7 @@ body {
     align-items: flex-start;
     min-height: 100vh;
     padding: 20px; /* Adiciona espaçamento para o conteúdo */
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .container {
@@ -23,6 +25,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     max-width: 500px;
     width: 100%;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 /* Estilo para profile e banner */
@@ -151,4 +154,85 @@ input.miner-data {
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #f9f9f9;
+}
+
+/* Modo Escuro */
+body.dark-mode {
+    background-color: #1e1e1e;
+    color: #ddd;
+}
+
+body.dark-mode .container {
+    background: #333333;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .links a {
+    background: #0056b3;
+    color: #ddd;
+}
+
+body.dark-mode .links a:hover {
+    background: #003d80;
+}
+
+body.dark-mode .calc h1,
+body.dark-mode .calc h3 {
+    color: #ddd;
+}
+
+body.dark-mode table {
+    border-color: #555;
+}
+
+body.dark-mode th {
+    background-color: #777;
+}
+
+/* Estilo para o toggle switch */
+.switch {
+    display: block;
+    margin: 20px auto; /* Centraliza o switch horizontalmente e adiciona margem */
+    width: 60px;
+    height: 34px;
+    position: relative; /* Removido para centralização */
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #fff;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+    background-color: #000;
 }
