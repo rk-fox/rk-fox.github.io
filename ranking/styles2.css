@@ -15,7 +15,6 @@ body {
     min-height: 100vh;
     padding: 20px; /* Adiciona espaçamento para o conteúdo */
     flex-direction: column;
-    transition: background-color 0.3s, color 0.3s;
 }
 
 .container {
@@ -212,71 +211,43 @@ tbody img {
     align-items: center; /* Centraliza verticalmente */
 }
 
-/* Estilos para o modo escuro */
-body.dark-mode {
-    background-color: #333;
-    color: #fff;
+/* Toggle Switch Styles */
+.toggle-switch {
+    display: flex;
+    justify-content: center; /* Centraliza o toggle switch */
+    align-items: center;
+    margin-top: 20px; /* Espaçamento acima do toggle */
 }
 
-.dark-mode .container {
-    background-color: #444;
-}
-
-.dark-mode thead {
-    background-color: #555;
-}
-
-.dark-mode tbody tr:nth-child(even) {
-    background-color: #666;
-}
-
-.dark-mode tbody tr:hover {
-    background-color: #777;
-}
-
-/* Toggle Switch */
-.switch {
-    display: block;
-    margin: 20px auto; /* Centraliza o switch horizontalmente e adiciona margem */
+.toggle-switch input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
     width: 60px;
-    height: 34px;
-    position: relative; /* Removido para centralização */
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
+    height: 30px;
+    background-color: #333; /* Cor preta */
+    border-radius: 15px;
+    position: relative;
+    outline: none;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #000; /* Preto */
-    transition: 0.4s;
-    border-radius: 34px;
+    transition: background-color 0.3s ease;
 }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
+.toggle-switch input[type="checkbox"]:checked {
+    background-color: #007bff; /* Azul quando ativado */
+}
+
+.toggle-switch input[type="checkbox"]::before {
+    content: '';
     width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: 0.4s;
+    height: 26px;
+    background-color: #fff;
     border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
 }
 
-input:checked + .slider {
-    background-color: #2196F3;
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
+.toggle-switch input[type="checkbox"]:checked::before {
+    transform: translateX(30px);
 }
