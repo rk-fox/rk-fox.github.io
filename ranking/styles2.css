@@ -236,11 +236,11 @@ body.dark-mode {
 
 /* Toggle Switch */
 .switch {
-    position: relative;
-    display: inline-block;
+    display: block;
+    margin: 20px auto; /* Centraliza o switch horizontalmente e adiciona margem */
     width: 60px;
     height: 34px;
-    margin: 20px 0;
+    position: relative; /* Removido para centralização */
 }
 
 .switch input {
