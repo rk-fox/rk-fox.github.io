@@ -214,12 +214,12 @@ tbody img {
 
 /* Estilos para o modo escuro */
 body.dark-mode {
-    background-color: #333;
+    background-color: #1e1e1e;
     color: #fff;
 }
 
 .dark-mode .container {
-    background-color: #444;
+    background-color: #333333;
 }
 
 .dark-mode thead {
