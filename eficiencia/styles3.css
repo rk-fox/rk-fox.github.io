@@ -218,19 +218,19 @@ input.bonus-input {
 
 /* Modo Escuro */
 body.dark-mode {
-    background-color: #333;
+    background-color: #1e1e1e;
     color: #ddd;
 }
 
 body.dark-mode .container {
-    background: #444;
+    background: #333333;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 body.dark-mode #searchButton,
 body.dark-mode #calculateButton,
 body.dark-mode #calcButton {
-    background-color: #0056b3;
+    background-color: #1e90ff;
     color: #ddd;
 }
 
@@ -242,11 +242,11 @@ body.dark-mode #calcButton:hover {
 
 body.dark-mode th,
 body.dark-mode #newResults th {
-    background-color: #0056b3;
+    background-color: #1e90ff;
 }
 
 body.dark-mode table {
-    border-color: #555;
+    border-color: #1e1e1e;
 }
 
 body.dark-mode input.power-input,
