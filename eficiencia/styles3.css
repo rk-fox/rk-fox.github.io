@@ -252,8 +252,7 @@ body.dark-mode table {
 
 body.dark-mode input.power-input,
 body.dark-mode input.bonus-input {
-    background-color: #555;
-    color: #ddd;
+    background-color: #f0f0f0;
 }
 
 /* Estilo para o toggle switch */
