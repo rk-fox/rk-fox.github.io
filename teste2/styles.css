@@ -1,0 +1,192 @@
+/* Reset some basic styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background-light: #f0f0f0;
+    --background-dark: #1e1e1e;
+    --text-light: #000000;
+    --text-dark: #f0f0f0;
+    --container-light: #ffffff;
+    --container-dark: #333333;
+    --link-light: #007bff;
+    --link-dark: #1e90ff;
+    --link-hover-light: #0056b3;
+    --link-hover-dark: #1c75bc;
+    --highlight-light: #ff0000;
+    --highlight-dark: #ff4500;
+    --highlight-hover-light: #a10202;
+    --highlight-hover-dark: #cc2900;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-light);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px; /* Adiciona espaçamento para o conteúdo */
+}
+
+.container {
+    text-align: center;
+    background: var(--container-light);
+    color: var(--text-light);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.banner-img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.links a {
+    display: block;
+    background: var(--link-light);
+    color: white;
+    padding: 10px;
+    margin: 10px 0;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.links a:hover {
+    background: var(--link-hover-light);
+}
+
+/* Estilos para o botão destacado */
+.links a.highlight {
+    background: var(--highlight-light);
+}
+
+.links a.highlight:hover {
+    background: var(--highlight-hover-light);
+}
+
+.ref, .email, .ads {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.adsbygoogle {
+    display: block;
+    margin: 20px auto;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: var(--background-dark);
+    color: var(--text-dark);
+}
+
+body.dark-mode .container {
+    background: var(--container-dark);
+    color: var(--text-dark);
+}
+
+body.dark-mode .links a {
+    background: var(--link-dark);
+}
+
+body.dark-mode .links a:hover {
+    background: var(--link-hover-dark);
+}
+
+body.dark-mode .links a.highlight {
+    background: var(--highlight-dark);
+}
+
+body.dark-mode .links a.highlight:hover {
+    background: var(--highlight-hover-dark);
+}
+
+/* Estilos globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.dark-mode {
+    background-color: #000;
+    color: #fff;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin: 20px 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #fff;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+    background-color: #000;
+}
