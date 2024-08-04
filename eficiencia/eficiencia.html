@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RKFox - Calculadora de Eficiência</title>
+    <link rel="stylesheet" href="styles3.css">
+</head>
+<body>
+    <div class="container">
+        <div class="ref">
+            <!--Start rollercoin.com code-->
+            <a href="https://rollercoin.com/?r=kyluudij">
+                <img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png"/> 
+            </a> 
+            <!--End rollercoin.com code-->
+        </div>    
+        <div class="profile">
+            <a href="https://rk-fox.github.io/">
+                <img src="/images/profile.png" alt="Foto de Perfil" class="profile-pic">
+            </a>
+        </div>
+        <div class="banner">
+            <a href="https://rk-fox.github.io/">
+                <img src="/images/banner.png" alt="Banner" class="banner-img">
+            </a>
+        </div>
+        <div class="calc">
+            <h1>Calculadora de Eficiência</h1>
+            <h3>Link da Sala (após /p/)</h3>
+            <div class="input-container">
+                <input type="text" id="linkInput" placeholder="RKFox">
+                <button id="searchButton">Pesquisar</button>
+            </div>
+            <div id="results">
+                <table>
+                <tbody>
+                    <tr>
+                        <td>Miners:</td>
+                        <td><span id="miners"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Bônus(%):</td>
+                        <td><span id="bonusPercent"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Bônus:</td>
+                        <td><span id="bonus"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Poder Total:</td>
+                        <td><span id="totalPower"></span></td>
+                    </tr>                    
+                </tbody>
+            </table>
+            </div>
+            <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2" style="background-color: #ff0000">VENDA/QUEIMA</th>
+                    </tr>
+                    <tr>
+                        <th style="background-color: #ff0000">Poder(THs)</th>
+                        <th style="background-color: #ff0000">Bônus(%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" class="power-input" placeholder="THs" id="sellPower"></td>
+                        <td><input type="text" class="bonus-input" placeholder="%" id="sellBonus"></td>
+                    </tr>
+                </tbody>
+            </table>                  
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2">COMPRA/RECOMPENSA</th>
+                    </tr>
+                    <tr>
+                        <th>Poder(THs)</th>
+                        <th>Bônus(%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" class="power-input" placeholder="THs" id="buyPower"></td>
+                        <td><input type="text" class="bonus-input" placeholder="%" id="buyBonus"></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+            <div class="calculate-button-container">
+                <button id="calculateButton">Calcular</button>
+            </div>
+            <div id="newResults">
+                <table>
+                    <tbody>
+                        <tr style="font-weight: bold">
+                            <td>Ganho/Perda:</td>
+                            <td><span id="finalPower"></span> <span id="powerChange"></span></td>
+                        </tr>
+                        <tr style="font-weight: bold">
+                            <td>Novo Poder:</td>
+                            <td><span id="novoPower"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="input-container">
+                <input type="text" id="custoInput" placeholder="Insira o custo em RLT">
+                <button id="calcButton">Calcular</button>
+            </div>
+            <div id="resultsEffic">
+                <table>
+                    <tbody>
+                        <tr style="font-weight: bold">
+                            <td>Custo por PHs(Miner):</td>
+                            <td><span id="effMiner"></span></td>
+                        </tr>
+                        <tr style="font-weight: bold">
+                            <td>Custo por PHs(Total):</td>
+                            <td><span id="effPower"></span></td>
+                        </tr>
+                        <tr style="font-weight: bold">
+                            <td>Conclusão:</td>
+                            <td><span id="conclusao"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="efficiency.js"></script>
+</body>
+</html>
