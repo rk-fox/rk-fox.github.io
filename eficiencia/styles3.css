@@ -215,3 +215,90 @@ input.bonus-input {
     margin-right: 10px;
     flex: 1; /* Faz o input preencher o espaço disponível */
 }
+
+/* Modo Escuro */
+body.dark-mode {
+    background-color: #333;
+    color: #ddd;
+}
+
+body.dark-mode .container {
+    background: #444;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode #searchButton,
+body.dark-mode #calculateButton,
+body.dark-mode #calcButton {
+    background-color: #0056b3;
+    color: #ddd;
+}
+
+body.dark-mode #searchButton:hover,
+body.dark-mode #calculateButton:hover,
+body.dark-mode #calcButton:hover {
+    background-color: #003d80;
+}
+
+body.dark-mode th,
+body.dark-mode #newResults th {
+    background-color: #0056b3;
+}
+
+body.dark-mode table {
+    border-color: #555;
+}
+
+body.dark-mode input.power-input,
+body.dark-mode input.bonus-input {
+    background-color: #555;
+    color: #ddd;
+}
+
+/* Estilo para o toggle switch */
+.switch {
+    display: block;
+    margin: 20px auto; /* Centraliza o switch horizontalmente e adiciona margem */
+    width: 60px;
+    height: 34px;
+    position: relative; /* Removido para centralização */
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #fff;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+    background-color: #000;
+}
