@@ -176,7 +176,10 @@ body.dark-mode .links a:hover {
     background: #003d80;
 }
 
-body.dark-mode .calc h1,
+body.dark-mode .calc h1 {
+    color: #0056b3;
+}
+
 body.dark-mode .calc h3 {
     color: #ddd;
 }
