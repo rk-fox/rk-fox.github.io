@@ -223,11 +223,11 @@ body.dark-mode {
 }
 
 .dark-mode thead {
-    background-color: #555;
+    background-color: #777;
 }
 
 .dark-mode tbody tr:nth-child(even) {
-    background-color: #666;
+    background-color: #444;
 }
 
 .dark-mode tbody tr:hover {
