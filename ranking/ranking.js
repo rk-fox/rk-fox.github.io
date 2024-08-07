@@ -111,6 +111,50 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     tableBody.appendChild(row);
 }
 
+    let rankContent = rank;
+    if (rank === 1) {
+        rankContent = `<img src="images/ouro.png" alt="Ouro" style="width: 35px; height: 35px; vertical-align: middle;">`;
+    } else if (rank === 2) {
+        rankContent = `<img src="images/prata.png" alt="Prata" style="width: 35px; height: 35px; vertical-align: middle;">`;
+    } else if (rank === 3) {
+        rankContent = `<img src="images/bronze.png" alt="Bronze" style="width: 35px; height: 35px; vertical-align: middle;">`;
+    }
+
+    row.innerHTML = `
+        <td data-label="Rank" class="table-cell-center" style="height: 73px; vertical-align: middle;">${rankContent}</td>
+        <td data-label="Posição" style="${positionChangeStyle}">${positionChangeContent}</td>
+        <td data-label="Nick">
+            <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 35px; height: 35px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
+            ${user.name}
+        </td>
+        <td data-label="Miners">${convertPower(minersPower)}</td>
+        <td data-label="Bônus (%)">${bonusPercent.toFixed(2)}%</td>
+        <td data-label="Bônus">${convertPower(bonusPower)}</td>
+        <td data-label="Racks">${convertPower(racksPower)}</td>
+        <td data-label="Poder Total">${convertPower(totalPower)}</td>
+        <td data-label="Progresso">
+            <div style="text-align: center; font-size: 0.75rem;">${progressPercentage.toFixed(2)}%</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar ${progressBarClass}" style="width: ${Math.abs(progressPercentage).toFixed(2)}%;">
+                </div>
+            </div>
+            <div style="text-align: center; font-size: 0.75rem;">${convertPower(powerGain)}</div>
+        </td>
+        <td data-label="Link">
+            <a href="https://rollercoin.com/p/${user.link}" class="btn-home" target="_blank">
+                <img src="images/botao-home.png" alt="Botão Home" class="btn-home-img" style="width: 35px; height: 35px;">
+            </a>
+        </td>
+        <td data-label="Farm">
+            <a href="https://wminerrc.github.io/calculator/index.html?user=${user.link}" class="btn-home" target="_blank">
+                <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img" style="width: 35px; height: 35px; border-radius: 0;">
+            </a>
+        </td>    
+    `;
+
+    tableBody.appendChild(row);
+}
+
 // Função para carregar dados do Excel
 async function loadExcelData() {
     try {
