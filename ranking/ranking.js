@@ -145,37 +145,70 @@ async function fetchUserDataWithRetry(userId, retries = 3, delay = 1000) {
     return null;
 }
 
+// Função para exibir a barra de carregamento
+function showLoadingBar() {
+    const loadingBar = document.createElement('div');
+    loadingBar.id = 'loadingBar';
+    loadingBar.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-bar"></div>
+            <p>Carregando dados, por favor aguarde...</p>
+        </div>
+    `;
+    document.body.appendChild(loadingBar);
+}
+
+// Função para esconder a barra de carregamento
+function hideLoadingBar() {
+    const loadingBar = document.getElementById('loadingBar');
+    if (loadingBar) {
+        loadingBar.remove();
+    }
+}
+
 // Função para buscar e exibir os dados de todos os usuários
 async function fetchAndDisplayAllUsers() {
+    showLoadingBar();
     const initialPowerData = await loadExcelData();
     const userDataArray = [];
+    let errorCount = 0;
 
     for (const user of initialPowerData) {
         const userData = await fetchUserDataWithRetry(user.id);
         if (userData) {
             userDataArray.push({ user, userData, initialPower: user.inicial, previousPosition: user.posicao });
+        } else {
+            errorCount++;
+            if (errorCount >= 3) {
+                alert("Erro de carregamento, por favor pressione F5 para atualizar o site.");
+                hideLoadingBar();
+                return;
+            }
         }
     }
 
     if (userDataArray.length < initialPowerData.length) {
-        alert("Erro de carregamento, por favor atualize o site");
+        alert("Erro de carregamento, por favor atualize o site.");
+        hideLoadingBar();
         return;
     }
 
     // Ordena os dados pelo Poder Total
     userDataArray.sort((a, b) => {
-        const totalPowerA = b.userData.miners + (b.userData.miners * b.userData.bonus_percent / 10000) + b.userData.racks;
-        const totalPowerB = a.userData.miners + (a.userData.miners * a.userData.bonus_percent / 10000) + a.userData.racks;
-        return totalPowerA - totalPowerB;
+        const totalPowerA = b.userData.miners + (b.userData.miners * (b.userData.bonus_percent / 100)) + b.userData.racks;
+        const totalPowerB = a.userData.miners + (a.userData.miners * (a.userData.bonus_percent / 100)) + a.userData.racks;
+        return totalPowerB - totalPowerA;
     });
 
-    // Adiciona os dados ordenados à tabela
-    userDataArray.forEach((item, index) => {
-        const rank = index + 1;
-        const positionChange = item.previousPosition - rank;
-        addDataToTable(item.user, item.userData, item.initialPower, rank, positionChange);
-    });
+    let rank = 1;
+    for (const { user, userData, initialPower, previousPosition } of userDataArray) {
+        const currentIndex = userDataArray.indexOf(userData);
+        const positionChange = previousPosition - (currentIndex + 1);
+        addDataToTable(user, userData, initialPower, rank, positionChange);
+        rank++;
+    }
+
+    hideLoadingBar();
 }
 
-// Inicia a busca e exibição dos dados ao carregar a página
-window.onload = fetchAndDisplayAllUsers;
+document.addEventListener('DOMContentLoaded', fetchAndDisplayAllUsers);
