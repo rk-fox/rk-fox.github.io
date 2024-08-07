@@ -149,35 +149,20 @@ async function fetchUserDataWithRetry(userId, retries = 3, delay = 1000) {
 async function fetchAndDisplayAllUsers() {
     const initialPowerData = await loadExcelData();
     const userDataArray = [];
-    const totalUsers = initialPowerData.length;
-    const loadingBar = document.getElementById('loadingBar');
-    const loadingProgress = document.getElementById('loadingProgress');
 
-    if (!loadingBar || !loadingProgress) {
-        console.error("Elementos de barra de progresso não encontrados.");
+    for (const user of initialPowerData) {
+        const userData = await fetchUserDataWithRetry(user.id);
+        if (userData) {
+            userDataArray.push({ user, userData, initialPower: user.inicial, previousPosition: user.posicao });
+        }
+    }
+
+    if (userDataArray.length < initialPowerData.length) {
+        alert("Erro de carregamento, por favor atualize o site");
         return;
     }
 
-    loadingBar.style.display = 'flex';
-
-    for (let i = 0; i < totalUsers; i++) {
-        const user = initialPowerData[i];
-        const userData = await fetchUserDataWithRetry(user.id);
-        if (userData === null) {
-            alert('Erro ao carregar dados. Pressione F5 para recarregar o site.');
-            return;
-        }
-        const initialPower = parseFloat(String(user.inicial).replace('.', '').replace(',', '.')); // Ajuste aqui
-        userDataArray.push({ user, userData, initialPower });
-
-        // Atualiza a barra de progresso
-        const progress = ((i + 1) / totalUsers) * 100;
-        loadingProgress.style.width = `${progress}%`;
-    }
-
-    loadingBar.style.display = 'none';
-
-    // Ordena o array de dados pelo poder total (decrescente)
+    // Ordena os dados pelo Poder Total
     userDataArray.sort((a, b) => {
         const totalPowerA = b.userData.miners + (b.userData.miners * b.userData.bonus_percent / 10000) + b.userData.racks;
         const totalPowerB = a.userData.miners + (a.userData.miners * a.userData.bonus_percent / 10000) + a.userData.racks;
@@ -185,12 +170,12 @@ async function fetchAndDisplayAllUsers() {
     });
 
     // Adiciona os dados ordenados à tabela
-    userDataArray.forEach((userDataObj, index) => {
+    userDataArray.forEach((item, index) => {
         const rank = index + 1;
-        const positionChange = userDataObj.previousPosition ? userDataObj.previousPosition - rank : 0;
-        addDataToTable(userDataObj.user, userDataObj.userData, userDataObj.initialPower, rank, positionChange);
+        const positionChange = item.previousPosition - rank;
+        addDataToTable(item.user, item.userData, item.initialPower, rank, positionChange);
     });
 }
 
-// Chama a função para buscar e exibir os dados dos usuários ao carregar a página
-document.addEventListener('DOMContentLoaded', fetchAndDisplayAllUsers);
+// Inicia a busca e exibição dos dados ao carregar a página
+window.onload = fetchAndDisplayAllUsers;
