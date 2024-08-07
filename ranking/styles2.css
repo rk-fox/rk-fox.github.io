@@ -110,6 +110,7 @@ tbody img {
 /* Progress bar styles */
 .progress-bar-container {
     background-color: #e0e0e0;
+    border: 1px solid #ccc;
     border-radius: 5px;
     overflow: hidden;
     width: 100%;
@@ -118,11 +119,12 @@ tbody img {
 
 .progress-bar {
     height: 20px;
-    background-color: #007bff; /* Azul para progresso positivo */
+    background-color: #4caf50; /* Verde para progresso positivo */
     text-align: center;
     color: white;
     line-height: 20px;
     border-radius: 5px;
+    transition: width 0.5s;
 }
 
 .progress-bar.negative {
@@ -215,7 +217,7 @@ tbody img {
 /* Estilos para o modo escuro */
 body.dark-mode {
     background-color: #1e1e1e;
-    color: #fff;
+    color: #e0e0e0;
 }
 
 .dark-mode .container {
@@ -223,15 +225,15 @@ body.dark-mode {
 }
 
 .dark-mode thead {
-    background-color: #777;
+    background-color: #777777;
 }
 
 .dark-mode tbody tr:nth-child(even) {
-    background-color: #444;
+    background-color: #444444;
 }
 
 .dark-mode tbody tr:hover {
-    background-color: #777;
+    background-color: #777777;
 }
 
 /* Toggle Switch */
@@ -282,21 +284,3 @@ input:checked + .slider:before {
     background-color: #000;
 }
 
-/* Loading Bar */
-        .progress-container {
-            width: 100%;
-            background-color: #f3f3f3;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 24px;
-            background-color: #4caf50;
-            width: 0;
-            text-align: center;
-            line-height: 24px;
-            color: white;
-            transition: width 0.5s;
-        }
