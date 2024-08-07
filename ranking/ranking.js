@@ -1,56 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carregamento de Usuários</title>
-    <style>
-        .progress-container {
-            width: 100%;
-            background-color: #f3f3f3;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 24px;
-            background-color: #4caf50;
-            width: 0;
-            text-align: center;
-            line-height: 24px;
-            color: white;
-            transition: width 0.5s;
-        }
-    </style>
-</head>
-<body>
-    <div class="progress-container">
-        <div id="progress-bar" class="progress-bar">0%</div>
-    </div>
-
-    <table id="rankingTable">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Posição</th>
-                <th>Nick</th>
-                <th>Miners</th>
-                <th>Bônus (%)</th>
-                <th>Bônus</th>
-                <th>Racks</th>
-                <th>Poder Total</th>
-                <th>Progresso</th>
-                <th>Link</th>
-                <th>Farm</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <script>
         function convertPower(power) {
             const absPower = Math.abs(power);
             let convertedPower;
@@ -236,6 +183,3 @@
         }
 
         fetchAndDisplayAllUsers();
-    </script>
-</body>
-</html>
