@@ -33,7 +33,7 @@ async function fetchUserData(userId) {
         const data = JSON.parse(responseData.contents).data; // Parseia a string JSON dos dados
         return data;
     } catch (error) {
-        console.error('Erro ao buscar dados dos usuários:', Error);
+        console.error('Erro ao buscar dados dos usuários:', error);
         return null;
     }
 }
