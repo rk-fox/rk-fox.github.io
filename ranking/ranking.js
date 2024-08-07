@@ -153,27 +153,30 @@ async function fetchAndDisplayAllUsers() {
     const loadingBar = document.getElementById('loadingBar');
     const loadingProgress = document.getElementById('loadingProgress');
 
+    if (!loadingBar || !loadingProgress) {
+        console.error("Elementos de barra de progresso não encontrados.");
+        return;
+    }
+
     loadingBar.style.display = 'flex';
 
     for (let i = 0; i < totalUsers; i++) {
         const user = initialPowerData[i];
         const userData = await fetchUserDataWithRetry(user.id);
-
-        if (!userData) {
-            alert("Erro de carregamento, por favor atualize o site");
-            loadingBar.style.display = 'none';
+        if (userData === null) {
+            alert('Erro ao carregar dados. Pressione F5 para recarregar o site.');
             return;
         }
+        userDataArray.push({ user, userData, initialPower: parseFloat(user.inicial.replace('.', '').replace(',', '.')) });
 
-        userDataArray.push({ user, userData, initialPower: user.inicial, previousPosition: user.posicao });
-
+        // Atualiza a barra de progresso
         const progress = ((i + 1) / totalUsers) * 100;
         loadingProgress.style.width = `${progress}%`;
     }
 
     loadingBar.style.display = 'none';
 
-    // Ordena os dados pelo Poder Total
+    // Ordena o array de dados pelo poder total (decrescente)
     userDataArray.sort((a, b) => {
         const totalPowerA = b.userData.miners + (b.userData.miners * b.userData.bonus_percent / 10000) + b.userData.racks;
         const totalPowerB = a.userData.miners + (a.userData.miners * a.userData.bonus_percent / 10000) + a.userData.racks;
