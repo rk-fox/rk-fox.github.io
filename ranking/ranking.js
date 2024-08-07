@@ -149,21 +149,29 @@ async function fetchUserDataWithRetry(userId, retries = 3, delay = 1000) {
 async function fetchAndDisplayAllUsers() {
     const initialPowerData = await loadExcelData();
     const userDataArray = [];
-    const progressBar = document.querySelector('#loadingProgress');
     const totalUsers = initialPowerData.length;
-    let loadedUsers = 0;
+    const loadingBar = document.getElementById('loadingBar');
+    const loadingProgress = document.getElementById('loadingProgress');
 
-    for (const user of initialPowerData) {
+    loadingBar.style.display = 'flex';
+
+    for (let i = 0; i < totalUsers; i++) {
+        const user = initialPowerData[i];
         const userData = await fetchUserDataWithRetry(user.id);
-        if (userData) {
-            userDataArray.push({ user, userData, initialPower: user.inicial, previousPosition: user.posicao });
-        } else {
-            alert(`Erro ao carregar dados do usuário ${user.name}. Por favor, pressione F5 para recarregar o site.`);
+
+        if (!userData) {
+            alert("Erro de carregamento, por favor atualize o site");
+            loadingBar.style.display = 'none';
             return;
         }
-        loadedUsers++;
-        progressBar.style.width = `${(loadedUsers / totalUsers) * 100}%`;
+
+        userDataArray.push({ user, userData, initialPower: user.inicial, previousPosition: user.posicao });
+
+        const progress = ((i + 1) / totalUsers) * 100;
+        loadingProgress.style.width = `${progress}%`;
     }
+
+    loadingBar.style.display = 'none';
 
     // Ordena os dados pelo Poder Total
     userDataArray.sort((a, b) => {
@@ -173,12 +181,12 @@ async function fetchAndDisplayAllUsers() {
     });
 
     // Adiciona os dados ordenados à tabela
-    userDataArray.forEach((item, index) => {
+    userDataArray.forEach((userDataObj, index) => {
         const rank = index + 1;
-        const positionChange = item.previousPosition - rank;
-        addDataToTable(item.user, item.userData, item.initialPower, rank, positionChange);
+        const positionChange = userDataObj.previousPosition ? userDataObj.previousPosition - rank : 0;
+        addDataToTable(userDataObj.user, userDataObj.userData, userDataObj.initialPower, rank, positionChange);
     });
 }
 
-// Chama a função para buscar e exibir os dados de todos os usuários quando a página é carregada
+// Chama a função para buscar e exibir os dados dos usuários ao carregar a página
 document.addEventListener('DOMContentLoaded', fetchAndDisplayAllUsers);
