@@ -192,7 +192,7 @@ async function fetchAndDisplayAllUsers() {
         hideLoadingBar();
         return;
     }
-
+    
  // Ordena os dados pelo Poder Total
     userDataArray.sort((a, b) => {
         const totalPowerA = b.userData.miners + (b.userData.miners * b.userData.bonus_percent / 10000) + b.userData.racks;
