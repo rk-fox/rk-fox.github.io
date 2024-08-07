@@ -193,11 +193,11 @@ async function fetchAndDisplayAllUsers() {
         return;
     }
 
-    // Ordena os dados pelo Poder Total
+ // Ordena os dados pelo Poder Total
     userDataArray.sort((a, b) => {
-        const totalPowerA = b.userData.miners + (b.userData.miners * (b.userData.bonus_percent / 100)) + b.userData.racks;
-        const totalPowerB = a.userData.miners + (a.userData.miners * (a.userData.bonus_percent / 100)) + a.userData.racks;
-        return totalPowerB - totalPowerA;
+        const totalPowerA = b.userData.miners + (b.userData.miners * b.userData.bonus_percent / 10000) + b.userData.racks;
+        const totalPowerB = a.userData.miners + (a.userData.miners * a.userData.bonus_percent / 10000) + a.userData.racks;
+        return totalPowerA - totalPowerB;
     });
 
     let rank = 1;
