@@ -33,7 +33,7 @@ async function fetchUserData(userId) {
         const data = JSON.parse(responseData.contents).data; // Parseia a string JSON dos dados
         return data;
     } catch (error) {
-        console.error('Erro ao buscar dados dos usuários, pressione F5!');
+        console.error('Erro ao buscar dados dos usuários:', Error);
         return null;
     }
 }
@@ -167,7 +167,7 @@ async function fetchAndDisplayAllUsers() {
             loadedUsers++;
             updateProgressBar(loadedUsers, totalUsers);
         } else {
-            alert(`Erro ao carregar dados do usuário ID: ${user.id}`);
+            alert(`Erro ao carregar dados do usuário ID: ${user.id}. Pressione F5!`);
             return;
         }
     }
