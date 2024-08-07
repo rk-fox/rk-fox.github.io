@@ -167,7 +167,8 @@ async function fetchAndDisplayAllUsers() {
             alert('Erro ao carregar dados. Pressione F5 para recarregar o site.');
             return;
         }
-        userDataArray.push({ user, userData, initialPower: parseFloat(user.inicial.replace('.', '').replace(',', '.')) });
+        const initialPower = parseFloat(String(user.inicial).replace('.', '').replace(',', '.')); // Ajuste aqui
+        userDataArray.push({ user, userData, initialPower });
 
         // Atualiza a barra de progresso
         const progress = ((i + 1) / totalUsers) * 100;
