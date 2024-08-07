@@ -228,7 +228,7 @@ body.dark-mode {
     background-color: #777777;
 }
 
-.dark-mode tbody tr:nth-child(even) {
+.dark-mode tbody tr {
     background-color: #444444;
 }
 
