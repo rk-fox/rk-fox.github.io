@@ -33,7 +33,7 @@ async function fetchUserData(userId) {
         const data = JSON.parse(responseData.contents).data; // Parseia a string JSON dos dados
         return data;
     } catch (error) {
-        console.error('Erro ao buscar dados do usuário:', error);
+        console.error('Erro ao buscar dados dos usuários, pressione F5!');
         return null;
     }
 }
@@ -133,7 +133,7 @@ async function loadExcelData() {
 }
 
 // Função para buscar dados do usuário com tentativas adicionais
-async function fetchUserDataWithRetry(userId, retries = 3, delay = 1000) {
+async function fetchUserDataWithRetry(userId, retries = 5, delay = 500) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         const userData = await fetchUserData(userId);
         if (userData) {
