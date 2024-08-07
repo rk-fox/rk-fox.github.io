@@ -111,50 +111,6 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
     tableBody.appendChild(row);
 }
 
-    let rankContent = rank;
-    if (rank === 1) {
-        rankContent = `<img src="images/ouro.png" alt="Ouro" style="width: 35px; height: 35px; vertical-align: middle;">`;
-    } else if (rank === 2) {
-        rankContent = `<img src="images/prata.png" alt="Prata" style="width: 35px; height: 35px; vertical-align: middle;">`;
-    } else if (rank === 3) {
-        rankContent = `<img src="images/bronze.png" alt="Bronze" style="width: 35px; height: 35px; vertical-align: middle;">`;
-    }
-
-    row.innerHTML = `
-        <td data-label="Rank" class="table-cell-center" style="height: 73px; vertical-align: middle;">${rankContent}</td>
-        <td data-label="Posição" style="${positionChangeStyle}">${positionChangeContent}</td>
-        <td data-label="Nick">
-            <img src="${avatarUrl}" alt="Avatar de ${user.name}" style="width: 35px; height: 35px; border-radius: 50%; vertical-align: middle; margin-right: 8px;">
-            ${user.name}
-        </td>
-        <td data-label="Miners">${convertPower(minersPower)}</td>
-        <td data-label="Bônus (%)">${bonusPercent.toFixed(2)}%</td>
-        <td data-label="Bônus">${convertPower(bonusPower)}</td>
-        <td data-label="Racks">${convertPower(racksPower)}</td>
-        <td data-label="Poder Total">${convertPower(totalPower)}</td>
-        <td data-label="Progresso">
-            <div style="text-align: center; font-size: 0.75rem;">${progressPercentage.toFixed(2)}%</div>
-            <div class="progress-bar-container">
-                <div class="progress-bar ${progressBarClass}" style="width: ${Math.abs(progressPercentage).toFixed(2)}%;">
-                </div>
-            </div>
-            <div style="text-align: center; font-size: 0.75rem;">${convertPower(powerGain)}</div>
-        </td>
-        <td data-label="Link">
-            <a href="https://rollercoin.com/p/${user.link}" class="btn-home" target="_blank">
-                <img src="images/botao-home.png" alt="Botão Home" class="btn-home-img" style="width: 35px; height: 35px;">
-            </a>
-        </td>
-        <td data-label="Farm">
-            <a href="https://wminerrc.github.io/calculator/index.html?user=${user.link}" class="btn-home" target="_blank">
-                <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img" style="width: 35px; height: 35px; border-radius: 0;">
-            </a>
-        </td>    
-    `;
-
-    tableBody.appendChild(row);
-}
-
 // Função para carregar dados do Excel
 async function loadExcelData() {
     try {
@@ -189,70 +145,40 @@ async function fetchUserDataWithRetry(userId, retries = 3, delay = 1000) {
     return null;
 }
 
-// Função para exibir a barra de carregamento
-function showLoadingBar() {
-    const loadingBar = document.createElement('div');
-    loadingBar.id = 'loadingBar';
-    loadingBar.innerHTML = `
-        <div class="loading-container">
-            <div class="loading-bar"></div>
-            <p>Carregando dados, por favor aguarde...</p>
-        </div>
-    `;
-    document.body.appendChild(loadingBar);
-}
-
-// Função para esconder a barra de carregamento
-function hideLoadingBar() {
-    const loadingBar = document.getElementById('loadingBar');
-    if (loadingBar) {
-        loadingBar.remove();
-    }
-}
-
 // Função para buscar e exibir os dados de todos os usuários
 async function fetchAndDisplayAllUsers() {
-    showLoadingBar();
     const initialPowerData = await loadExcelData();
     const userDataArray = [];
-    let errorCount = 0;
+    const progressBar = document.querySelector('#loadingProgress');
+    const totalUsers = initialPowerData.length;
+    let loadedUsers = 0;
 
     for (const user of initialPowerData) {
         const userData = await fetchUserDataWithRetry(user.id);
         if (userData) {
             userDataArray.push({ user, userData, initialPower: user.inicial, previousPosition: user.posicao });
         } else {
-            errorCount++;
-            if (errorCount >= 3) {
-                alert("Erro de carregamento, por favor pressione F5 para atualizar o site.");
-                hideLoadingBar();
-                return;
-            }
+            alert(`Erro ao carregar dados do usuário ${user.name}. Por favor, pressione F5 para recarregar o site.`);
+            return;
         }
+        loadedUsers++;
+        progressBar.style.width = `${(loadedUsers / totalUsers) * 100}%`;
     }
 
-    if (userDataArray.length < initialPowerData.length) {
-        alert("Erro de carregamento, por favor atualize o site.");
-        hideLoadingBar();
-        return;
-    }
-    
- // Ordena os dados pelo Poder Total
+    // Ordena os dados pelo Poder Total
     userDataArray.sort((a, b) => {
         const totalPowerA = b.userData.miners + (b.userData.miners * b.userData.bonus_percent / 10000) + b.userData.racks;
         const totalPowerB = a.userData.miners + (a.userData.miners * a.userData.bonus_percent / 10000) + a.userData.racks;
         return totalPowerA - totalPowerB;
     });
 
-    let rank = 1;
-    for (const { user, userData, initialPower, previousPosition } of userDataArray) {
-        const currentIndex = userDataArray.indexOf(userData);
-        const positionChange = previousPosition - (currentIndex + 1);
-        addDataToTable(user, userData, initialPower, rank, positionChange);
-        rank++;
-    }
-
-    hideLoadingBar();
+    // Adiciona os dados ordenados à tabela
+    userDataArray.forEach((item, index) => {
+        const rank = index + 1;
+        const positionChange = item.previousPosition - rank;
+        addDataToTable(item.user, item.userData, item.initialPower, rank, positionChange);
+    });
 }
 
+// Chama a função para buscar e exibir os dados de todos os usuários quando a página é carregada
 document.addEventListener('DOMContentLoaded', fetchAndDisplayAllUsers);
