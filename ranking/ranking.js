@@ -133,7 +133,7 @@ async function loadExcelData() {
 }
 
 // Função para buscar dados do usuário com tentativas adicionais
-async function fetchUserDataWithRetry(userId, retries = 5, delay = 500) {
+async function fetchUserDataWithRetry(userId, retries = 8, delay = 375) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         const userData = await fetchUserData(userId);
         if (userData) {
