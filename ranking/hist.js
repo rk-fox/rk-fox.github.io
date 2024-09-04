@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const fileUrl = 'historico.xlsm'; // Caminho para o arquivo no servidor
+    const fileUrl = 'files/historico.xlsm'; // Caminho para o arquivo no servidor
     let workbook;
 
     // Função para carregar o arquivo Excel
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const ctx = document.getElementById('userChart').getContext('2d');
 
         // Verifica se o gráfico já foi criado e remove se necessário
-        if (window.userChart) {
+        if (window.userChart && window.userChart.destroy) {
             window.userChart.destroy();
         }
 
