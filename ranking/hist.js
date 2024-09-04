@@ -1,45 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const fileInput = document.getElementById('fileInput');
+    const fileUrl = 'files/historico.xlsm'; // Caminho para o arquivo no servidor
     let workbook;
 
-    // Verifique se o elemento fileInput foi encontrado
-    if (!fileInput) {
-        console.error('Elemento fileInput não encontrado.');
-        return;
+    // Função para carregar o arquivo Excel
+    async function loadWorkbook() {
+        try {
+            const response = await fetch(fileUrl);
+            if (!response.ok) {
+                throw new Error('Erro ao carregar o arquivo Excel');
+            }
+            const arrayBuffer = await response.arrayBuffer();
+            const data = new Uint8Array(arrayBuffer);
+            workbook = XLSX.read(data, { type: 'array' });
+            console.log('Arquivo Excel carregado com sucesso.');
+            console.log('Sheets disponíveis:', workbook.SheetNames); // Adicione para depuração
+        } catch (error) {
+            console.error('Erro ao ler o arquivo Excel:', error);
+        }
     }
 
-    // Função para ler o arquivo Excel
-    fileInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (!file) {
-            console.error('Nenhum arquivo selecionado.');
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function(e) {
-            try {
-                const data = new Uint8Array(e.target.result);
-                workbook = XLSX.read(data, { type: 'array' });
-                console.log('Arquivo Excel carregado com sucesso.');
-                console.log('Sheets disponíveis:', workbook.SheetNames); // Adicione para depuração
-            } catch (error) {
-                console.error('Erro ao ler o arquivo Excel:', error);
-            }
-        };
-
-        reader.onerror = function(error) {
-            console.error('Erro ao ler o arquivo:', error);
-        };
-
-        reader.readAsArrayBuffer(file);
-    });
+    loadWorkbook(); // Carregue o arquivo Excel quando o DOM estiver pronto
 
     // Função para abrir o popup com o gráfico
     window.openPopup = function(userId) {
         if (!workbook) {
-            alert('Por favor, carregue o arquivo Excel primeiro.');
+            alert('Por favor, aguarde o carregamento do arquivo Excel.');
             return;
         }
 
