@@ -33,36 +33,37 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Encontra a linha do usuário com base no userId na coluna B
         const userRow = Object.keys(sheet).find(cell => cell.startsWith('B') && sheet[cell].v == userId);
         if (!userRow) {
             alert('Usuário não encontrado.');
             return;
         }
 
-        const rowNumber = parseInt(userRow.substring(1)) - 1; // Ajuste o índice para a base 0
+        const rowNumber = parseInt(userRow.substring(1)); // Pega o número da linha do usuário
         const labels = [];
         const dataMinerPower = [];
         const dataBonus = [];
         const dataTotalPower = [];
 
-        let col = 3; // Começa na coluna D (index 3)
+        let col = 3; // Coluna D (index 3)
         let foundData = false;
 
         while (true) {
-            const cellDate = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col })];
-            const cellMinerPower = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 1 })];
-            const cellBonus = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 2 })];
-            const cellTotalPower = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 3 })];
+            const cellDate = sheet[XLSX.utils.encode_cell({ r: 0, c: col })]; // Data na linha 1
+            const cellMinerPower = sheet[XLSX.utils.encode_cell({ r: rowNumber - 1, c: col })]; // Miners Power na linha do usuário
+            const cellBonus = sheet[XLSX.utils.encode_cell({ r: rowNumber - 1, c: col + 1 })]; // Bonus Power na linha do usuário
+            const cellTotalPower = sheet[XLSX.utils.encode_cell({ r: rowNumber - 1, c: col + 2 })]; // Total Power na linha do usuário
 
-            // Verifique se as células existem
-            if (!cellDate || !cellMinerPower || !cellBonus || !cellTotalPower) {
-                break; // Sai do loop se qualquer célula estiver faltando
+            // Verifique se as células de Miner Power, Bonus e Total Power existem
+            if (!cellMinerPower && !cellBonus && !cellTotalPower) {
+                break; // Sai do loop se todas as células estiverem faltando
             }
 
-            // Adicione o rótulo para o eixo X
-            let label = 'Data não encontrada'; // Valor padrão se a data não for encontrada
+            // Adicione o rótulo da data para o eixo X
             if (cellDate) {
                 const dateValue = cellDate.v;
+                let label = 'Data não encontrada';
                 if (typeof dateValue === 'number') {
                     try {
                         const date = XLSX.SSF.parse_date_code(dateValue);
@@ -75,16 +76,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     label = dateValue;
                 }
+                labels.push(label);
             }
-            labels.push(label);
 
             // Adicione os valores aos arrays
-            dataMinerPower.push(cellMinerPower.v || 0); // Use 0 se o valor for indefinido
-            dataBonus.push(cellBonus.v || 0); // Use 0 se o valor for indefinido
-            dataTotalPower.push(cellTotalPower.v || 0); // Use 0 se o valor for indefinido
+            dataMinerPower.push(cellMinerPower ? cellMinerPower.v : 0);
+            dataBonus.push(cellBonus ? cellBonus.v : 0);
+            dataTotalPower.push(cellTotalPower ? cellTotalPower.v : 0);
 
             // Avança para a próxima coluna de dados
-            col = col + 3;
+            col += 3;
             foundData = true;
         }
 
