@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = new Uint8Array(arrayBuffer);
             workbook = XLSX.read(data, { type: 'array' });
             console.log('Arquivo Excel carregado com sucesso.');
-            console.log('Sheets disponíveis:', workbook.SheetNames); // Adicione para depuração
         } catch (error) {
             console.error('Erro ao ler o arquivo Excel:', error);
         }
@@ -70,8 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (dateCell) {
                 const dateValue = dateCell.v;
                 if (typeof dateValue === 'number') {
-                    const date = XLSX.SSF.parse_date_code(dateValue);
-                    label = `${date.y}-${date.m}-${date.d}`;
+                    try {
+                        const date = XLSX.SSF.parse_date_code(dateValue);
+                        if (date) {
+                            label = `${date.y}-${date.m}-${date.d}`;
+                        }
+                    } catch (e) {
+                        console.error('Erro ao converter a data:', e);
+                    }
                 } else {
                     label = dateValue;
                 }
