@@ -2,14 +2,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('fileInput');
     let workbook;
 
+    // Verifique se o elemento fileInput foi encontrado
+    if (!fileInput) {
+        console.error('Elemento fileInput não encontrado.');
+        return;
+    }
+
     // Função para ler o arquivo Excel
     fileInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
+        if (!file) {
+            console.error('Nenhum arquivo selecionado.');
+            return;
+        }
+
         const reader = new FileReader();
-        
+
         reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            workbook = XLSX.read(data, { type: 'array' });
+            try {
+                const data = new Uint8Array(e.target.result);
+                workbook = XLSX.read(data, { type: 'array' });
+                console.log('Arquivo Excel carregado com sucesso.');
+            } catch (error) {
+                console.error('Erro ao ler o arquivo Excel:', error);
+            }
+        };
+
+        reader.onerror = function(error) {
+            console.error('Erro ao ler o arquivo:', error);
         };
 
         reader.readAsArrayBuffer(file);
@@ -78,16 +98,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const popup = document.getElementById('popup');
-        popup.style.display = 'flex';
+        if (popup) {
+            popup.style.display = 'flex';
+        } else {
+            console.error('Elemento popup não encontrado.');
+        }
     };
 
     // Função para fechar o popup
     window.closePopup = function() {
         const popup = document.getElementById('popup');
-        popup.style.display = 'none';
+        if (popup) {
+            popup.style.display = 'none';
+        } else {
+            console.error('Elemento popup não encontrado.');
+        }
     };
 
     // Adiciona o evento de fechar o popup ao botão de fechar
-    document.getElementById('close-btn').addEventListener('click', window.closePopup);
+    const closeButton = document.getElementById('close-btn');
+    if (closeButton) {
+        closeButton.addEventListener('click', window.closePopup);
+    } else {
+        console.error('Botão de fechar não encontrado.');
+    }
 });
-
