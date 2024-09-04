@@ -6,6 +6,7 @@
     <title>RKFox - Ranking da Comunidade</title>
     <link rel="stylesheet" href="styles2.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -54,6 +55,7 @@
                         <th>Progresso</th>
                         <th>Link</th>
                         <th>Farm</th>
+                        <th>Hist</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,8 +63,16 @@
                 </tbody>
             </table>
         </div>
+        <!-- Popup HTML -->
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <span id="close-btn" class="close-btn">&times;</span>
+                <canvas id="userChart"></canvas>
+            </div>
+        </div>
         <script src="ranking.js"></script>
         <script src="script2.js"></script>
+        <script src="hist.js"></script>
     </div>
 </body>
 </html>
