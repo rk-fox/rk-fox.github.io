@@ -45,34 +45,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataBonus = [];
         const dataTotalPower = [];
 
-        let col = 4; // Começa na coluna D
+        let col = 3; // Começa na coluna D (index 3)
         let foundData = false;
 
         while (true) {
-            const cellMinerPower = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col })];
-            const cellBonus = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 1 })];
-            const cellTotalPower = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 2 })];
+            const cellDate = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col })];
+            const cellMinerPower = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 1 })];
+            const cellBonus = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 2 })];
+            const cellTotalPower = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 3 })];
 
             // Verifique se as células existem
-            if (!cellMinerPower || !cellBonus || !cellTotalPower) {
+            if (!cellDate || !cellMinerPower || !cellBonus || !cellTotalPower) {
                 break; // Sai do loop se qualquer célula estiver faltando
             }
 
-            // Adicione os valores aos arrays
-            dataMinerPower.push(cellMinerPower.v || 0); // Use 0 se o valor for indefinido
-            dataBonus.push(cellBonus.v || 0); // Use 0 se o valor for indefinido
-            dataTotalPower.push(cellTotalPower.v || 0); // Use 0 se o valor for indefinido
-
             // Adicione o rótulo para o eixo X
-            const dateCell = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col - 1 })];
-            let label = `Medição ${col}`; // Valor padrão se a data não for encontrada
-            if (dateCell) {
-                const dateValue = dateCell.v;
+            let label = 'Data não encontrada'; // Valor padrão se a data não for encontrada
+            if (cellDate) {
+                const dateValue = cellDate.v;
                 if (typeof dateValue === 'number') {
                     try {
                         const date = XLSX.SSF.parse_date_code(dateValue);
                         if (date) {
-                            label = `${date.y}-${date.m}-${date.d}`;
+                            label = `${String(date.d).padStart(2, '0')}/${String(date.m).padStart(2, '0')}/${date.y}`;
                         }
                     } catch (e) {
                         console.error('Erro ao converter a data:', e);
@@ -82,6 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             labels.push(label);
+
+            // Adicione os valores aos arrays
+            dataMinerPower.push(cellMinerPower.v || 0); // Use 0 se o valor for indefinido
+            dataBonus.push(cellBonus.v || 0); // Use 0 se o valor for indefinido
+            dataTotalPower.push(cellTotalPower.v || 0); // Use 0 se o valor for indefinido
 
             // Avança para a próxima coluna de dados
             col = col + 3;
