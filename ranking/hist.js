@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = new Uint8Array(e.target.result);
                 workbook = XLSX.read(data, { type: 'array' });
                 console.log('Arquivo Excel carregado com sucesso.');
+                console.log('Sheets disponíveis:', workbook.SheetNames); // Adicione para depuração
             } catch (error) {
                 console.error('Erro ao ler o arquivo Excel:', error);
             }
