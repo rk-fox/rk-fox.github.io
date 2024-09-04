@@ -90,3 +90,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Adiciona o evento de fechar o popup ao botão de fechar
     document.getElementById('close-btn').addEventListener('click', window.closePopup);
 });
+
