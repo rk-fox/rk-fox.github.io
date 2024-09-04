@@ -66,7 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const ctx = document.getElementById('userChart').getContext('2d');
-        new Chart(ctx, {
+
+        // Verifica se o gráfico já foi criado e remove se necessário
+        if (window.userChart) {
+            window.userChart.destroy();
+        }
+
+        // Cria um novo gráfico
+        window.userChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
