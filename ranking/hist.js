@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataTotalPower = [];
 
         let col = 4; // Começa na coluna D
+        let foundData = false;
+
         while (true) {
             const cellMinerPower = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col })];
             const cellBonus = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 1 })];
@@ -64,11 +66,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Adicione o rótulo para o eixo X
             const dateCell = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col - 1 })];
-            const date = dateCell ? XLSX.SSF.parse_date_code(dateCell.v) : null;
-            const label = date ? `${date.y}-${date.m}-${date.d}` : `Medição ${col}`;
+            let label = `Medição ${col}`; // Valor padrão se a data não for encontrada
+            if (dateCell) {
+                const dateValue = dateCell.v;
+                if (typeof dateValue === 'number') {
+                    const date = XLSX.SSF.parse_date_code(dateValue);
+                    label = `${date.y}-${date.m}-${date.d}`;
+                } else {
+                    label = dateValue;
+                }
+            }
             labels.push(label);
 
-            col = col + 3; // Avança para a próxima coluna de dados
+            // Avança para a próxima coluna de dados
+            col = col + 3;
+            foundData = true;
+        }
+
+        if (!foundData) {
+            alert('Nenhum dado encontrado.');
+            return;
         }
 
         const ctx = document.getElementById('userChart').getContext('2d');
@@ -91,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         fill: false
                     },
                     {
-                        label: 'Bonus (%)',
+                        label: 'Bonus Power',
                         data: dataBonus,
                         borderColor: 'green',
                         fill: false
