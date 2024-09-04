@@ -97,23 +97,36 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
             <div style="text-align: center; font-size: 0.75rem;">${convertPower(powerGain)}</div>
         </td>
         <td data-label="Link">
-            <a href="https://rollercoin.com/p/${user.link}" class="btn-home" target="_blank">
-                <img src="images/botao-home.png" alt="Botão Home" class="btn-home-img" style="width: 35px; height: 35px;">
+            <a href="https://rollercoin.com/p/${user.link}" class="btn-sala" target="_blank">
+                <img src="images/botao-home.png" alt="Botão Home" class="btn-sala-img" style="width: 35px; height: 35px;">
             </a>
         </td>
         <td data-label="Farm">
-            <a href="https://wminerrc.github.io/calculator/index.html?user=${user.link}" class="btn-home" target="_blank">
-                <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img" style="width: 35px; height: 35px; border-radius: 0;">
+            <a href="https://wminerrc.github.io/calculator/index.html?user=${user.link}" class="btn-sala" target="_blank">
+                <img src="images/calculadora.png" alt="Calculadora" class="btn-sala-img" style="width: 35px; height: 35px; border-radius: 0;">
             </a>
         </td>
         <td data-label="Hist">
-            
-                <img src="images/bt_hist.png" alt="Calculadora" class="btn-home-img" style="width: 35px; height: 35px; border-radius: 0;">
-            
+            <img src="images/bt_hist.png" alt="Calculadora" class="btn-sala-img" style="width: 35px; height: 35px; border-radius: 0;" id="btn-hist-${user.id}">
         </td>    
     `;
 
     tableBody.appendChild(row);
+}
+
+// Função para abrir o popup com base no ID do usuário
+function openPopup(userId) {
+    // Atualize o conteúdo do popup com base no ID do usuário
+    const popupContent = document.querySelector('.popup-content p');
+    popupContent.textContent = `Conteúdo específico para o usuário ${userId}`;
+    const popup = document.getElementById('popup');
+    popup.style.display = 'flex';
+}
+
+// Função para fechar o popup
+function closePopup() {
+    const popup = document.getElementById('popup');
+    popup.style.display = 'none';
 }
 
 // Função para carregar dados do Excel
@@ -196,9 +209,25 @@ async function fetchAndDisplayAllUsers() {
         addDataToTable(userEntry.user, userEntry.userData, userEntry.initialPower, newRank, positionChange);
     });
 
+    // Adiciona os event listeners para os botões do popup
+    userDataArray.forEach(userEntry => {
+        const btnHist = document.getElementById(`btn-hist-${userEntry.user.id}`);
+        if (btnHist) {
+            btnHist.addEventListener('click', () => openPopup(userEntry.user.id));
+        }
+    });
+
     // Atualiza a tabela com os novos dados e mudanças de posição
     console.log('Dados dos usuários carregados e tabela atualizada.');
 }
+
+// Adiciona o event listener para fechar o popup
+document.getElementById('close-btn').addEventListener('click', closePopup);
+window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('popup')) {
+        closePopup();
+    }
+});
 
 // Chama a função para buscar e exibir todos os usuários ao carregar a página
 window.addEventListener('load', fetchAndDisplayAllUsers);
