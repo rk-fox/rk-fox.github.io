@@ -132,9 +132,9 @@ function closePopup() {
 // Função para carregar dados do Excel
 async function loadExcelData() {
     try {
-        const response = await fetch('historico.xlsx');
+        const response = await fetch('historico.xlsm');
         if (!response.ok) {
-            throw new Error('Erro ao carregar historico.xlsx: ' + response.statusText);
+            throw new Error('Erro ao carregar historico.xlsm: ' + response.statusText);
         }
         const arrayBuffer = await response.arrayBuffer();
         const data = new Uint8Array(arrayBuffer);
