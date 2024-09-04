@@ -105,6 +105,11 @@ function addDataToTable(user, userData, initialPower, rank, positionChange) {
             <a href="https://wminerrc.github.io/calculator/index.html?user=${user.link}" class="btn-home" target="_blank">
                 <img src="images/calculadora.png" alt="Calculadora" class="btn-home-img" style="width: 35px; height: 35px; border-radius: 0;">
             </a>
+        </td>
+        <td data-label="Histórico">
+            <a href="https://wminerrc.github.io/calculator/index.html?user=${user.link}" class="btn-home" target="_blank">
+                <img src="images/bt_hist.png" alt="Calculadora" class="btn-home-img" style="width: 35px; height: 35px; border-radius: 0;">
+            </a>
         </td>    
     `;
 
