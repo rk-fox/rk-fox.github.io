@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const fileUrl = 'historico.xlsm'; // Caminho para o arquivo no servidor
+    const fileUrl = 'files/historico.xlsm'; // Caminho para o arquivo no servidor
     let workbook;
 
     // Função para carregar o arquivo Excel
@@ -40,19 +40,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const rowNumber = parseInt(userRow.substring(1));
+        const rowNumber = parseInt(userRow.substring(1)) - 1; // Ajuste o índice para a base 0
         const labels = [];
         const dataMinerPower = [];
         const dataBonus = [];
         const dataTotalPower = [];
 
         let col = 4; // Começa na coluna D
-        while (sheet[XLSX.utils.encode_cell({ r: rowNumber - 1, c: col })]) {
+        while (true) {
+            const cellMinerPower = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col })];
+            const cellBonus = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 1 })];
+            const cellTotalPower = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col + 2 })];
+
+            // Verifique se as células existem
+            if (!cellMinerPower || !cellBonus || !cellTotalPower) {
+                break; // Sai do loop se qualquer célula estiver faltando
+            }
+
             labels.push(`Medição ${col}`);
-            dataMinerPower.push(sheet[XLSX.utils.encode_cell({ r: rowNumber - 1, c: col })].v);
-            dataBonus.push(sheet[XLSX.utils.encode_cell({ r: rowNumber - 1, c: col + 1 })].v);
-            dataTotalPower.push(sheet[XLSX.utils.encode_cell({ r: rowNumber - 1, c: col + 2 })].v);
-            col += 3;
+            dataMinerPower.push(cellMinerPower.v || 0); // Use 0 se o valor for indefinido
+            dataBonus.push(cellBonus.v || 0); // Use 0 se o valor for indefinido
+            dataTotalPower.push(cellTotalPower.v || 0); // Use 0 se o valor for indefinido
+
+            col += 3; // Avança para a próxima coluna de dados
         }
 
         const ctx = document.getElementById('userChart').getContext('2d');
