@@ -57,10 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 break; // Sai do loop se qualquer célula estiver faltando
             }
 
-            labels.push(`Medição ${col}`);
+            // Adicione os valores aos arrays
             dataMinerPower.push(cellMinerPower.v || 0); // Use 0 se o valor for indefinido
             dataBonus.push(cellBonus.v || 0); // Use 0 se o valor for indefinido
             dataTotalPower.push(cellTotalPower.v || 0); // Use 0 se o valor for indefinido
+
+            // Adicione o rótulo para o eixo X
+            const dateCell = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col - 1 })];
+            const label = dateCell ? dateCell.v : `Medição ${col}`;
+            labels.push(label);
 
             col += 3; // Avança para a próxima coluna de dados
         }
