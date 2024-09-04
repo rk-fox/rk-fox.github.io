@@ -64,10 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Adicione o rótulo para o eixo X
             const dateCell = sheet[XLSX.utils.encode_cell({ r: rowNumber, c: col - 1 })];
-            const label = dateCell ? dateCell.v : `Medição ${col}`;
+            const date = dateCell ? XLSX.SSF.parse_date_code(dateCell.v) : null;
+            const label = date ? `${date.y}-${date.m}-${date.d}` : `Medição ${col}`;
             labels.push(label);
 
-            col = col + 33; // Avança para a próxima coluna de dados
+            col = col + 3; // Avança para a próxima coluna de dados
         }
 
         const ctx = document.getElementById('userChart').getContext('2d');
