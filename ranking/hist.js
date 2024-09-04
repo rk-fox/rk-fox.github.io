@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const fileUrl = 'files/historico.xlsm'; // Caminho para o arquivo no servidor
+    const fileUrl = 'historico.xlsm'; // Caminho para o arquivo no servidor
     let workbook;
 
     // Função para carregar o arquivo Excel
