@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const label = dateCell ? dateCell.v : `Medição ${col}`;
             labels.push(label);
 
-            col += 3; // Avança para a próxima coluna de dados
+            col = col + 33; // Avança para a próxima coluna de dados
         }
 
         const ctx = document.getElementById('userChart').getContext('2d');
