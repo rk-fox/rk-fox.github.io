@@ -26,6 +26,10 @@
             <tr>
                 <th>Level</th>
                 <th>Amount</th>
+                <th>Power</th>
+                <th>Bonus</th>
+                <th>Can Be Sold On MP</th>
+                <th>XP</th>
             </tr>
         </thead>
         <tbody>
@@ -43,6 +47,13 @@
         // Extrai informações do JSON
         const eventDescription = jsonData.event.description.en;
         const rewards = jsonData.rewards;
+        const levelsConfig = jsonData.levels_config || [];
+
+        // Cria um mapa de níveis para XP
+        const levelXPMap = levelsConfig.reduce((acc, level) => {
+            acc[level.level] = level.level_xp;
+            return acc;
+        }, {});
 
         // Preenche a tabela com os dados
         const tableBody = document.querySelector('#dataTable tbody');
@@ -56,7 +67,7 @@
 
             let cellAmount = document.createElement('td');
             if (reward.type === 'money') {
-                cellAmount.textContent = `${reward.amount} ${reward.currency}`;
+                cellAmount.textContent = (reward.amount / 100000).toFixed(2) + ' ' + reward.currency;
             } else if (reward.type === 'miner') {
                 const item = reward.item || {};
                 cellAmount.textContent = `${item.name?.en || '-'} (Level: ${item.level || '-'})`;
@@ -64,6 +75,22 @@
                 cellAmount.textContent = '-';
             }
             row.appendChild(cellAmount);
+
+            let cellPower = document.createElement('td');
+            cellPower.textContent = reward.item?.power || '-';
+            row.appendChild(cellPower);
+
+            let cellBonus = document.createElement('td');
+            cellBonus.textContent = (reward.bonus / 100).toFixed(2) || '-';
+            row.appendChild(cellBonus);
+
+            let cellCanBeSoldOnMP = document.createElement('td');
+            cellCanBeSoldOnMP.textContent = reward.is_can_be_sold_on_mp ? '' : 'X';
+            row.appendChild(cellCanBeSoldOnMP);
+
+            let cellXP = document.createElement('td');
+            cellXP.textContent = levelXPMap[reward.required_level] || '-';
+            row.appendChild(cellXP);
 
             tableBody.appendChild(row);
         });
