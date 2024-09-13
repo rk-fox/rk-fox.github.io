@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decodificador BASE64 e Tabela</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dados Decodificados</h1>
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Level</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        // Substitua esta string pelo seu código BASE64
+        const base64String = 'eyJldmVudCI6eyJfaWQiOiI2NmUyZmI5MmUwZGMzNTMwZGFhODA4MSIsIm1heF94cCI6NDQ5MzAwMDAwLCJtYXhfbXVsdGlwbGllciI6MTAwMDAwLCJtYXhfbGV2ZWwiOjMwLCJwcm9ncmVzc2lvbl9ldmVudF90eXBlIjoiZGVmYXVsdCIsImVuZF9kYXRlIjoiMjAyNC0wOS0xNlQxNjozMDozMC4wMDBaIiwiTGFzdF91cGRhdGVkIjoxNzI2MTUxNTcwNjczLCJkZXNjcmlwdGlvbiI6eyJlbl9hcnIiOiJbMTItMTYgVHJvcGljYWwgUGFyYWRpc2UiLCJjbjoiWzEyLTE2IFRyb3Bpy1My0gUGFyYWRpc2UifSwiVGl0bGUiOnsiZW4iOiJUb3BpbmFsaXphIiwicm4iIlwiVHJvcGljYWwgUGFyYWRpc2UifX0sInJld2FyZHMiOlt7ImlkIjoiNjZlMmZiOTNhMjZjMzdjMzBmMmEwMjI1IiwiaXRlbF9pZCI6bnVsbCwiYW1vdW50IjoxNTAsImN1cnJlbmN5IjoiUkxUIiwidHRsX3RpbWUiOjAsInJlcXVpcmVkX2xldmVsIjoxLCJ0eXBlIjoibW9uZXkiLCJ0aXRsZSI6eyJlbl9hcnIiOiJNb25leSBUaXRsZSIsImNuiOiJNb25leSBUaXRsZSJ9LCJkZXNjcmlwdGlvbiI6eyJlbl9hcnIiOiJNb25leSBSZXdhcmQgRGVzY3JpcHRpb24iLCJjbjoiTW9uZXkgUmV3YXJkIERlc2NyaXB0aW9uIn19LHsiaWQiOiI2NmUyZmI5M2EyNmMzN2MzMGYyYTAyMyIsIml0ZW1faWQiOiJkYjY2YTY5NTgzMDYxNTMwZWJiNTQ0YzgyNDgwMTU0IiwiYW1vdW50IjoxLCJjdXJyZW5jeSI6bnVsbCwidHRsX3RpbWUiOjAsInJlcXVpcmVkX2xldmVsIjoxLCJ0eXBlIjoibW9uZXkiLCJ0aXRsZSI6eyJlbl9hcnIiOiJNb25leSBUaXRsZSIsImNuiOiJNb25leSBUaXRsZSJ9LCJkZXNjcmlwdGlvbiI6eyJlbl9hcnIiOiJNb25leSBSZXdhcmQgRGVzY3JpcHRpb24iLCJjbjoiTW9uZXkgUmV3YXJkIERlc2NyaXB0aW9uIn19LHsiaWQiOiI2NmUyZmI5M2EyNmMzN2MzMGYyYTAyMyIsIml0ZW1faWQiOiJkYjY2YTY5NTgzMDYxNTMwZWJiNTQ0YzgyNDgwMTU0IiwiYW1vdW50Ijoibm9uZXkiLCJjdXJyZW5jeSI6bnVsbCwidHRsX3RpbWUiOjAsInJlcXVpcmVkX2xldmVsIjoxLCJ0eXBlIjoibW9uZXkiLCJ0aXRsZSI6eyJlbl9hcnIiOiJNb25leSBUaXRsZSIsImNuiOiJNb25leSBUaXRsZSJ9LCJkZXNjcmlwdGlvbiI6eyJlbl9hcnIiOiJNb25leSBSZXdhcmQgRGVzY3JpcHRpb24iLCJjbjoiTW9uZXkgUmV3YXJkIERlc2NyaXB0aW9uIn19XQ==';
+
+        // Decodifica a string BASE64
+        const decodedString = atob(base64String);
+        const jsonData = JSON.parse(decodedString);
+
+        // Extrai informações do JSON
+        const eventDescription = jsonData.event.description.en;
+        const rewards = jsonData.rewards;
+
+        // Preenche a tabela com os dados
+        const tableBody = document.querySelector('#dataTable tbody');
+
+        rewards.forEach(reward => {
+            let row = document.createElement('tr');
+
+            let cellLevel = document.createElement('td');
+            cellLevel.textContent = reward.required_level || '-';
+            row.appendChild(cellLevel);
+
+            let cellAmount = document.createElement('td');
+            if (reward.type === 'money') {
+                cellAmount.textContent = `${reward.amount} ${reward.currency}`;
+            } else if (reward.type === 'miner') {
+                const item = reward.item || {};
+                cellAmount.textContent = `${item.name?.en || '-'} (Level: ${item.level || '-'})`;
+            } else {
+                cellAmount.textContent = '-';
+            }
+            row.appendChild(cellAmount);
+
+            tableBody.appendChild(row);
+        });
+
+        // Define o título da tabela
+        document.title = `Tabela - ${eventDescription}`;
+        const tableHeader = document.createElement('h2');
+        tableHeader.textContent = `Título do Evento: ${eventDescription}`;
+        document.body.insertBefore(tableHeader, document.querySelector('#dataTable'));
+    </script>
+</body>
+</html>
