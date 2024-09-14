@@ -101,12 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Contar as repetições
             const counts = countRepetitions(minerIds);
 
-            // Logar contagens de repetições no console
-            console.log('Contagem de repetições de miner_id:');
-            Object.entries(counts).forEach(([id, count]) => {
-                console.log(`Miner ID: ${id}, Repetições: ${count}`);
-            });
-
             // Calcular newpower para cada miner e armazenar todos os mineradores negativos
             const results = filteredMiners.map(miner => {
                 // Ajustar o cálculo do newBonusPercent com base nas repetições
