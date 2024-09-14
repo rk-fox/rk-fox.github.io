@@ -94,9 +94,9 @@ const minerIdCounts = filteredMiners.reduce((counts, miner) => {
 // Passo 2: Calcular newpower para cada miner e armazenar os três menores valores negativos próximos de 0
 const results = filteredMiners.map(miner => {
     const count = minerIdCounts[miner.miner_id];
-    if (minerIdCounts[miner.miner_id] = 1) {
+    if (minerIdCounts[miner.miner_id] === 1) {
     const newBonusPercent = bonusPercent - (miner.bonus_percent / 100); 
-    } else if (minerIdCounts[miner.miner_id] > 1) {
+    } else {
         const newBonusPercent = bonusPercent; 
     }
     const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig) * count;
