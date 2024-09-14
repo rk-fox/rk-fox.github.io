@@ -85,19 +85,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 filteredMiners = minerData.filter(miner => miner.slots === 2);
             }
 
-// Passo 1: Contar a ocorrência de cada miner_id
-const minerIdCount = filteredMiners.reduce((countMap, miner) => {
-    countMap[miner.miner_id] = (countMap[miner.miner_id] || 0) + 1;
-    return countMap;
+// Passo 1: Contar a frequência de cada miner_id
+const minerIdCounts = filteredMiners.reduce((counts, miner) => {
+    counts[miner.miner_id] = (counts[miner.miner_id] || 0) + 1;
+    return counts;
 }, {});
 
-// Passo 2: Calcular newpower para cada minerador, considerando a contagem individual
+// Passo 2: Calcular newpower para cada miner e armazenar os três menores valores negativos próximos de 0
 const results = filteredMiners.map(miner => {
-    const count = minerIdCount[miner.miner_id];
-    const newBonusPercent = count > 1 ? bonusPercent : bonusPercent - (miner.bonus_percent / 100);
-    
-    // Aplicar a fórmula
-    const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
+    const count = minerIdCounts[miner.miner_id];
+    const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);            
+    const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig) * count;
     
     return {
         ...miner,
@@ -105,10 +103,16 @@ const results = filteredMiners.map(miner => {
     };
 });
 
-// Filtrar, ordenar e pegar os três menores valores negativos
 const negativeResults = results.filter(result => result.newpower < 0);
 const sortedResults = negativeResults.sort((a, b) => b.newpower - a.newpower);
 const topThreeNegatives = sortedResults.slice(0, 3);
+
+console.log(topThreeNegatives);
+
+
+            const negativeResults = results.filter(result => result.newpower < 0);
+            const sortedResults = negativeResults.sort((a, b) => b.newpower - a.newpower);
+            const topThreeNegatives = sortedResults.slice(0, 3);
 
             // Preencher os dados na tabela HTML
             if (topThreeNegatives.length > 0) {
