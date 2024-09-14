@@ -239,3 +239,13 @@ input:checked + .slider:before {
     transform: translateX(26px);
     background-color: #000;
 }
+
+        /* Adicione o estilo para garantir que os radio buttons estejam centralizados e em linha */
+.radio-buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+.radio-buttons label {
+    margin: 0 10px;
+}
