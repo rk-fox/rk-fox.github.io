@@ -100,7 +100,7 @@ const results = filteredMiners.map(miner => {
     } else {
         const newBonusPercent = bonusPercent; 
     }
-    const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig) * count;
+    const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
     
     return {
         ...miner,
