@@ -187,21 +187,21 @@
                 // Cálculo para Craft 1
                 const divisorCraft1 = ((quantidadeCraft1 * precoPecaCraft1 * xpRltMarket) + ((precoCraft1 + precoSpeed1) * xpRltCraft)) * multi;
                 const valorCraft1 = Math.ceil(xpDesejado / divisorCraft1);
-                const custoCraft1 = (quantidadeCraft1 * precoPecaCraft1) + precoCraft1 + precoSpeed1;
+                const custoCraft1 = ((quantidadeCraft1 * precoPecaCraft1) + precoCraft1 + precoSpeed1) * valorCraft1;
                 const exchangeCraft1 = custoCraft1 * 0.68;
                 const cashCraft1 = valorCraft1 * cash1;
 
                 // Cálculo para Craft 2
                 const divisorCraft2 = ((quantidadeCraft2 * precoPecaCraft2 * xpRltMarket) + ((precoCraft2 + precoSpeed2) * xpRltCraft)) * multi;
                 const valorCraft2 = Math.ceil(xpDesejado / divisorCraft2);
-                const custoCraft2 = (quantidadeCraft2 * precoPecaCraft2) + precoCraft2 + precoSpeed2;
+                const custoCraft2 = ((quantidadeCraft2 * precoPecaCraft2) + precoCraft2 + precoSpeed2) * valorCraft2;
                 const exchangeCraft2 = custoCraft2 * 0.68;
                 const cashCraft2 = valorCraft2 * cash2;
 
                 // Cálculo para Craft 3
                 const divisorCraft3 = ((quantidadeCraft3 * precoPecaCraft3 * xpRltMarket) + ((precoCraft3 + precoSpeed3) * xpRltCraft)) * multi;
                 const valorCraft3 = Math.ceil(xpDesejado / divisorCraft3);
-                const custoCraft3 = (quantidadeCraft3 * precoPecaCraft3) + precoCraft3 + precoSpeed3;
+                const custoCraft3 = ((quantidadeCraft3 * precoPecaCraft3) + precoCraft3 + precoSpeed3) * valorCraft3;
                 const exchangeCraft3 = custoCraft3 * 0.68;
                 const cashCraft3 = valorCraft3 * cash3;
 
