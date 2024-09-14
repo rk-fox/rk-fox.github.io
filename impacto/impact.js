@@ -13,15 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return (value) + ' GHs';
     }
 
-    // Função para contar as repetições de miner_id
-    function countRepetitions(minerIds) {
-        const counts = minerIds.reduce((acc, id) => {
-            acc[id] = (acc[id] || 0) + 1;
-            return acc;
-        }, {});
-        return counts;
-    }
-
     document.getElementById('searchButton').addEventListener('click', async () => {
         const userLink = document.getElementById('linkInput').value;
 
@@ -94,17 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 filteredMiners = minerData.filter(miner => miner.slots === 2);
             }
 
-            // Contar as repetições de miner_id antes de calcular newpower
-            const minerIds = filteredMiners.map(miner => miner.miner_id);
-            const counts = countRepetitions(minerIds);
-
             // Calcular newpower para cada miner e armazenar os três menores valores negativos próximos de 0
             const results = filteredMiners.map(miner => {
-                // Ajustar a fórmula para newBonusPercent baseado no count do miner_id
-                const newBonusPercent = counts[miner.miner_id] > 1
-                    ? bonusPercent
-                    : bonusPercent - (miner.bonus_percent / 100);
-
+                const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);            
                 const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
                 
                 return {
@@ -163,13 +146,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Contar as repetições
                 const counts = countRepetitions(minerIds);
 
-                // Verificar se há mais de um merge para cada miner
-                const mergeResults = topThreeNegatives.map(miner => counts[miner.miner_id] > 1 ? 'Sim' : 'Não');
+                // Verificar se há mais de um merge
+                const merge = Object.values(counts).some(count => count > 1);
 
                 // Atualizar a tabela com o status de merge
-                document.getElementById('merge1').innerText = mergeResults[0] || 'Não';
-                document.getElementById('merge2').innerText = mergeResults[1] || 'Não';
-                document.getElementById('merge3').innerText = mergeResults[2] || 'Não';
+                document.getElementById('merge1').innerText = merge ? 'Sim' : 'Não';
+                document.getElementById('merge2').innerText = merge ? 'Sim' : 'Não';
+                document.getElementById('merge3').innerText = merge ? 'Sim' : 'Não';
                 
             } else {
                 alert('Não há resultados negativos próximos de zero.');
@@ -181,3 +164,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
