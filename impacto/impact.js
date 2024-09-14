@@ -85,13 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 filteredMiners = minerData.filter(miner => miner.slots === 2);
             }
 
-            // Passo 1: Contar a ocorrência de cada miner_id
+// Passo 1: Contar a ocorrência de cada miner_id
 const minerIdCount = filteredMiners.reduce((countMap, miner) => {
     countMap[miner.miner_id] = (countMap[miner.miner_id] || 0) + 1;
     return countMap;
 }, {});
 
-// Passo 2: Calcular newpower para cada minerador, considerando a contagem
+// Passo 2: Calcular newpower para cada minerador, considerando a contagem individual
 const results = filteredMiners.map(miner => {
     const count = minerIdCount[miner.miner_id];
     const newBonusPercent = count > 1 ? bonusPercent : bonusPercent - (miner.bonus_percent / 100);
