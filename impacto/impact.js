@@ -85,9 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 filteredMiners = minerData.filter(miner => miner.slots === 2);
             }
 
-            // Calcular newpower para cada miner e armazenar os três menores valores negativos próximos de 0
+            // Calcular newpower para cada miner e armazenar todos os mineradores negativos
             const results = filteredMiners.map(miner => {
-                const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);            
+                const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);
                 const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
                 
                 return {
@@ -97,34 +97,43 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const negativeResults = results.filter(result => result.newpower < 0);
-            const sortedResults = negativeResults.sort((a, b) => b.newpower - a.newpower);
-            const topThreeNegatives = sortedResults.slice(0, 3);
 
-            // Preencher os dados na tabela HTML
-            if (topThreeNegatives.length > 0) {
-                document.getElementById('nome1').innerText = topThreeNegatives[0]?.name || '';
-                document.getElementById('img1').src = `https://static.rollercoin.com/static/img/market/miners/${topThreeNegatives[0].filename}.gif?v=1`;
+            // Logar todos os mineradores negativos no console
+            console.log('Mineradores com valores negativos:');
+            negativeResults.forEach(miner => {
+                console.log(`Nome: ${miner.name}`);
+                console.log(`Poder: ${convertPower2(miner.power)}`);
+                console.log(`Bônus: ${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`);
+                console.log(`Impacto: ${convertPower(miner.newpower)}`);
+                console.log(`Está em conjunto: ${miner.is_in_set ? 'Sim' : 'Não'}`);
+                console.log('---');
+            });
+
+            // Exibir informações dos mineradores negativos no HTML (caso haja)
+            if (negativeResults.length > 0) {
+                document.getElementById('nome1').innerText = negativeResults[0]?.name || '';
+                document.getElementById('img1').src = `https://static.rollercoin.com/static/img/market/miners/${negativeResults[0].filename}.gif?v=1`;
                 document.getElementById('img1').style.display = 'block';  // Tornar a imagem visível
-                document.getElementById('poder1').innerText = topThreeNegatives[0] ? convertPower2(topThreeNegatives[0].power) : '';
-                document.getElementById('bonus1').innerText = topThreeNegatives[0] ? `${(topThreeNegatives[0].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
-                document.getElementById('impact1').innerText = topThreeNegatives[0] ? convertPower(topThreeNegatives[0].newpower) : '';
-                document.getElementById('set1').innerText = topThreeNegatives[0] ? (topThreeNegatives[0].is_in_set ? 'Sim' : 'Não') : '';
+                document.getElementById('poder1').innerText = negativeResults[0] ? convertPower2(negativeResults[0].power) : '';
+                document.getElementById('bonus1').innerText = negativeResults[0] ? `${(negativeResults[0].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
+                document.getElementById('impact1').innerText = negativeResults[0] ? convertPower(negativeResults[0].newpower) : '';
+                document.getElementById('set1').innerText = negativeResults[0] ? (negativeResults[0].is_in_set ? 'Sim' : 'Não') : '';
                 
-                document.getElementById('nome2').innerText = topThreeNegatives[1]?.name || '';
-                document.getElementById('img2').src = `https://static.rollercoin.com/static/img/market/miners/${topThreeNegatives[1].filename}.gif?v=1`;
+                document.getElementById('nome2').innerText = negativeResults[1]?.name || '';
+                document.getElementById('img2').src = `https://static.rollercoin.com/static/img/market/miners/${negativeResults[1].filename}.gif?v=1`;
                 document.getElementById('img2').style.display = 'block';  // Tornar a imagem visível
-                document.getElementById('poder2').innerText = topThreeNegatives[1] ? convertPower2(topThreeNegatives[1].power) : '';
-                document.getElementById('bonus2').innerText = topThreeNegatives[1] ? `${(topThreeNegatives[1].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
-                document.getElementById('impact2').innerText = topThreeNegatives[1] ? convertPower(topThreeNegatives[1].newpower) : '';
-                document.getElementById('set2').innerText = topThreeNegatives[1] ? (topThreeNegatives[1].is_in_set ? 'Sim' : 'Não') : '';
+                document.getElementById('poder2').innerText = negativeResults[1] ? convertPower2(negativeResults[1].power) : '';
+                document.getElementById('bonus2').innerText = negativeResults[1] ? `${(negativeResults[1].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
+                document.getElementById('impact2').innerText = negativeResults[1] ? convertPower(negativeResults[1].newpower) : '';
+                document.getElementById('set2').innerText = negativeResults[1] ? (negativeResults[1].is_in_set ? 'Sim' : 'Não') : '';
                 
-                document.getElementById('nome3').innerText = topThreeNegatives[2]?.name || '';
-                document.getElementById('img3').src = `https://static.rollercoin.com/static/img/market/miners/${topThreeNegatives[2].filename}.gif?v=1`;
+                document.getElementById('nome3').innerText = negativeResults[2]?.name || '';
+                document.getElementById('img3').src = `https://static.rollercoin.com/static/img/market/miners/${negativeResults[2].filename}.gif?v=1`;
                 document.getElementById('img3').style.display = 'block';  // Tornar a imagem visível
-                document.getElementById('poder3').innerText = topThreeNegatives[2] ? convertPower2(topThreeNegatives[2].power) : '';
-                document.getElementById('bonus3').innerText = topThreeNegatives[2] ? `${(topThreeNegatives[2].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
-                document.getElementById('impact3').innerText = topThreeNegatives[2] ? convertPower(topThreeNegatives[2].newpower) : '';
-                document.getElementById('set3').innerText = topThreeNegatives[2] ? (topThreeNegatives[2].is_in_set ? 'Sim' : 'Não') : '';
+                document.getElementById('poder3').innerText = negativeResults[2] ? convertPower2(negativeResults[2].power) : '';
+                document.getElementById('bonus3').innerText = negativeResults[2] ? `${(negativeResults[2].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
+                document.getElementById('impact3').innerText = negativeResults[2] ? convertPower(negativeResults[2].newpower) : '';
+                document.getElementById('set3').innerText = negativeResults[2] ? (negativeResults[2].is_in_set ? 'Sim' : 'Não') : '';
 
                 // Função para contar as repetições de miner_id
                 function countRepetitions(minerIds) {
@@ -136,12 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     return counts;
                 }
 
-                // Array com os miner_id das 3 máquinas
-                const minerIds = [
-                    topThreeNegatives[0].miner_id,
-                    topThreeNegatives[1] ? topThreeNegatives[1].miner_id : null,
-                    topThreeNegatives[2] ? topThreeNegatives[2].miner_id : null
-                ].filter(id => id !== null); // Filtrar IDs nulos
+                // Array com os miner_id dos mineradores negativos
+                const minerIds = negativeResults.map(result => result.miner_id);
 
                 // Contar as repetições
                 const counts = countRepetitions(minerIds);
@@ -149,18 +154,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Verificar se há mais de um merge
                 const merge = Object.values(counts).some(count => count > 1);
 
-                // Atualizar a tabela com o status de merge
-                document.getElementById('merge1').innerText = merge ? 'Sim' : 'Não';
-                document.getElementById('merge2').innerText = merge ? 'Sim' : 'Não';
-                document.getElementById('merge3').innerText = merge ? 'Sim' : 'Não';
-                
+                // Exibir aviso se houver múltiplas repetições
+                if (merge) {
+                    document.getElementById('result').innerText = 'Aviso: Existem mineradores duplicados.';
+                } else {
+                    document.getElementById('result').innerText = 'Nenhum minerador duplicado encontrado.';
+                }
             } else {
-                alert('Não há resultados negativos próximos de zero.');
+                document.getElementById('result').innerText = 'Nenhum minerador negativo encontrado.';
             }
-            
         } catch (error) {
-            console.error('Erro ao buscar dados do perfil:', error);
-            alert('Erro ao buscar dados do perfil.');
+            console.error('Erro ao buscar dados:', error);
+            alert('Ocorreu um erro ao buscar os dados.');
         }
     });
 });
