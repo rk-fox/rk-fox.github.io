@@ -154,35 +154,21 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Atualizar os elementos da página com informações dos mineradores negativos
-            document.getElementById('nome1').innerText = top3NegativeResults[0] ? `${getLevelDescription(top3NegativeResults[0].level)} ${top3NegativeResults[0].name}` : '';
-            document.getElementById('img1').src = `https://static.rollercoin.com/static/img/market/miners/${top3NegativeResults[0]?.filename}.gif?v=1`;
-            document.getElementById('img1').style.display = 'block';  // Tornar a imagem visível
-            document.getElementById('poder1').innerText = top3NegativeResults[0] ? convertPower2(top3NegativeResults[0].power) : '';
-            document.getElementById('bonus1').innerText = top3NegativeResults[0] ? `${(top3NegativeResults[0].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
-            document.getElementById('impact1').innerText = top3NegativeResults[0] ? convertPower(top3NegativeResults[0].newpower) : '';
-            document.getElementById('set1').innerText = top3NegativeResults[0] ? (top3NegativeResults[0].is_in_set ? 'Sim' : 'Não') : '';
+            const updateElement = (index, miner) => {
+                document.getElementById(`nome${index}`).innerText = miner ? `${getLevelDescription(miner.level)} ${miner.name}` : '';
+                document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner?.filename}.gif?v=1`;
+                document.getElementById(`img${index}`).style.display = 'block';  // Tornar a imagem visível
+                document.getElementById(`poder${index}`).innerText = miner ? convertPower2(miner.power) : '';
+                document.getElementById(`bonus${index}`).innerText = miner ? `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
+                document.getElementById(`impact${index}`).innerText = miner ? convertPower(miner.newpower) : '';
+                document.getElementById(`set${index}`).innerText = miner ? (miner.is_in_set ? 'Sim' : 'Não') : '';
+                document.getElementById(`merge${index}`).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
+            };
 
-            document.getElementById('nome2').innerText = top3NegativeResults[1] ? `${getLevelDescription(top3NegativeResults[1].level)} ${top3NegativeResults[1].name}` : '';
-            document.getElementById('img2').src = `https://static.rollercoin.com/static/img/market/miners/${top3NegativeResults[1]?.filename}.gif?v=1`;
-            document.getElementById('img2').style.display = 'block';  // Tornar a imagem visível
-            document.getElementById('poder2').innerText = top3NegativeResults[1] ? convertPower2(top3NegativeResults[1].power) : '';
-            document.getElementById('bonus2').innerText = top3NegativeResults[1] ? `${(top3NegativeResults[1].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
-            document.getElementById('impact2').innerText = top3NegativeResults[1] ? convertPower(top3NegativeResults[1].newpower) : '';
-            document.getElementById('set2').innerText = top3NegativeResults[1] ? (top3NegativeResults[1].is_in_set ? 'Sim' : 'Não') : '';
+            updateElement(1, top3NegativeResults[0]);
+            updateElement(2, top3NegativeResults[1]);
+            updateElement(3, top3NegativeResults[2]);
 
-            document.getElementById('nome3').innerText = top3NegativeResults[2] ? `${getLevelDescription(top3NegativeResults[2].level)} ${top3NegativeResults[2].name}` : '';
-            document.getElementById('img3').src = `https://static.rollercoin.com/static/img/market/miners/${top3NegativeResults[2]?.filename}.gif?v=1`;
-            document.getElementById('img3').style.display = 'block';  // Tornar a imagem visível
-            document.getElementById('poder3').innerText = top3NegativeResults[2] ? convertPower2(top3NegativeResults[2].power) : '';
-            document.getElementById('bonus3').innerText = top3NegativeResults[2] ? `${(top3NegativeResults[2].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
-            document.getElementById('impact3').innerText = top3NegativeResults[2] ? convertPower(top3NegativeResults[2].newpower) : '';
-            document.getElementById('set3').innerText = top3NegativeResults[2] ? (top3NegativeResults[2].is_in_set ? 'Sim' : 'Não') : '';
-
-            // Atualizar a tabela com o status de merge
-            document.getElementById('merge1').innerText = 'Não';
-            document.getElementById('merge2').innerText = 'Não';
-            document.getElementById('merge3').innerText = 'Não';
-            
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
             alert('Ocorreu um erro ao buscar os dados.');
