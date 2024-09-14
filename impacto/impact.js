@@ -13,6 +13,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return (value) + ' GHs';
     }
 
+    function getLevelDescription(level) {
+    switch (level) {
+        case 0:
+            return 'Common';
+        case 1:
+            return 'Uncommon';
+        case 2:
+            return 'Rare';
+        case 3:
+            return 'Epic';
+        case 4:
+            return 'Legendary';
+        case 5:
+            return 'Unreal';
+        default:
+            return 'Unknown'; // Para qualquer valor inesperado
+    }
+}
+
     document.getElementById('searchButton').addEventListener('click', async () => {
         const userLink = document.getElementById('linkInput').value;
 
@@ -68,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     power: miner.power,
                     bonus_percent: miner.bonus_percent,
                     name: miner.name,
+                    level: miner.level,
                     slots: miner.width,
                     filename: miner.filename,
                     is_in_set: miner.is_in_set
@@ -115,17 +135,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const negativeResults = results.filter(result => result.newpower < 0);
 
-            // Logar todos os mineradores negativos no console
-            console.log('Mineradores com valores negativos:');
-            negativeResults.forEach(miner => {
-                console.log(`Nome: ${miner.name}`);
-                console.log(`Poder: ${convertPower2(miner.power)}`);
-                console.log(`Bônus: ${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`);
-                console.log(`Impacto: ${convertPower(miner.newpower)}`);
-                console.log(`Está em conjunto: ${miner.is_in_set ? 'Sim' : 'Não'}`);
-                console.log(`Repetições: ${counts[miner.miner_id] || 1}`);
-                console.log('---');
-            });
+// Logar todos os mineradores negativos no console
+console.log('Mineradores com valores negativos:');
+negativeResults.forEach(miner => {
+    console.log(`Nome: ${getLevelDescription(miner.level)} ${miner.name}`);
+    console.log(`Poder: ${convertPower2(miner.power)}`);
+    console.log(`Bônus: ${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`);
+    console.log(`Impacto: ${convertPower(miner.newpower)}`);
+    console.log(`Está em conjunto: ${miner.is_in_set ? 'Sim' : 'Não'}`);
+    console.log(`Repetições: ${counts[miner.miner_id] || 1}`);
+    console.log('---');
+});
 
             // Exibir informações dos mineradores negativos no HTML (caso haja)
             if (negativeResults.length > 0) {
