@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
             document.getElementById('avatar').src = avatarUrl;
             document.getElementById('avatar').style.display = 'block';  // Tornar a imagem visível
-            document.getElementById('welcomeMessage').innerText = Olá, ${userName}!;
+            document.getElementById('welcomeMessage').innerText =`Olá, ${userName}!`;
 
             // Buscar dados de user-power-data usando avatarId
             const powerDataResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
