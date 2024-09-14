@@ -85,9 +85,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 filteredMiners = minerData.filter(miner => miner.slots === 2);
             }
 
+            // Contar as repetições de miner_id
+            function countRepetitions(minerIds) {
+                const counts = minerIds.reduce((acc, id) => {
+                    acc[id] = (acc[id] || 0) + 1;
+                    return acc;
+                }, {});
+
+                return counts;
+            }
+
+            // Array com os miner_id dos mineradores filtrados
+            const minerIds = filteredMiners.map(miner => miner.miner_id);
+
+            // Contar as repetições
+            const counts = countRepetitions(minerIds);
+
+            // Logar contagens de repetições no console
+            console.log('Contagem de repetições de miner_id:');
+            Object.entries(counts).forEach(([id, count]) => {
+                console.log(`Miner ID: ${id}, Repetições: ${count}`);
+            });
+
             // Calcular newpower para cada miner e armazenar todos os mineradores negativos
             const results = filteredMiners.map(miner => {
-                const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);
+                // Ajustar o cálculo do newBonusPercent com base nas repetições
+                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - (miner.bonus_percent / 100));
                 const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
                 
                 return {
@@ -106,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`Bônus: ${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`);
                 console.log(`Impacto: ${convertPower(miner.newpower)}`);
                 console.log(`Está em conjunto: ${miner.is_in_set ? 'Sim' : 'Não'}`);
+                console.log(`Repetições: ${counts[miner.miner_id] || 1}`);
                 console.log('---');
             });
 
@@ -135,48 +159,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('impact3').innerText = negativeResults[2] ? convertPower(negativeResults[2].newpower) : '';
                 document.getElementById('set3').innerText = negativeResults[2] ? (negativeResults[2].is_in_set ? 'Sim' : 'Não') : '';
 
-                // Função para contar as repetições de miner_id
-                function countRepetitions(minerIds) {
-                    const counts = minerIds.reduce((acc, id) => {
-                        acc[id] = (acc[id] || 0) + 1;
-                        return acc;
-                    }, {});
-
-                    return counts;
-                }
-
-                // Array com os miner_id dos mineradores negativos
-                const minerIds = negativeResults.map(result => result.miner_id);
-
-                // Contar as repetições
-                const counts = countRepetitions(minerIds);
-
-                // Logar contagens de repetições no console
-                console.log('Contagem de repetições de miner_id:');
-                Object.entries(counts).forEach(([id, count]) => {
-                    console.log(`Miner ID: ${id}, Repetições: ${count}`);
-                });
-
-                // Verificar se há mais de um merge
-                const merge = Object.values(counts).some(count => count > 1);
-
                 // Atualizar a tabela com o status de merge
-                document.getElementById('merge1').innerText = merge ? 'Sim' : 'Não';
-                document.getElementById('merge2').innerText = merge ? 'Sim' : 'Não';
-                document.getElementById('merge3').innerText = merge ? 'Sim' : 'Não';
-
-                // Exibir aviso no console se houver múltiplas repetições
-                if (merge) {
-                    console.log('Aviso: Existem mineradores duplicados.');
-                    document.getElementById('result').innerText = 'Aviso: Existem mineradores duplicados.';
-                } else {
-                    console.log('Nenhum minerador duplicado encontrado.');
-                    document.getElementById('result').innerText = 'Nenhum minerador duplicado encontrado.';
-                }
+                document.getElementById('merge1').innerText = 'Não';
+                document.getElementById('merge2').innerText = 'Não';
+                document.getElementById('merge3').innerText = 'Não';
+                
             } else {
                 console.log('Nenhum minerador negativo encontrado.');
                 document.getElementById('result').innerText = 'Nenhum minerador negativo encontrado.';
             }
+            
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
             alert('Ocorreu um erro ao buscar os dados.');
