@@ -110,10 +110,6 @@ const topThreeNegatives = sortedResults.slice(0, 3);
 console.log(topThreeNegatives);
 
 
-            const negativeResults = results.filter(result => result.newpower < 0);
-            const sortedResults = negativeResults.sort((a, b) => b.newpower - a.newpower);
-            const topThreeNegatives = sortedResults.slice(0, 3);
-
             // Preencher os dados na tabela HTML
             if (topThreeNegatives.length > 0) {
                 document.getElementById('nome1').innerText = topThreeNegatives[0]?.name || '';
