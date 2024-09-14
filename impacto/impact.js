@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Buscar avatar_id
-            const profileResponse = await fetch(https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${userLink});
+            const profileResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
             const profileData = await profileResponse.json();
             const profileContents = JSON.parse(profileData.contents);
             const userName = profileContents.data.name;
