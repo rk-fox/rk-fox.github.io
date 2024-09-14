@@ -87,18 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Calcular newpower para cada miner e armazenar os três menores valores negativos próximos de 0
             const results = filteredMiners.map(miner => {
-                // Ajustar a fórmula com base na quantidade de minerIds únicos
-                const minerIds = filteredMiners.map(m => m.miner_id);
-                const uniqueMinerIds = new Set(minerIds).size;
-                let newBonusPercent, newpower;
+                // Calcular newBonusPercent baseado no count de miner_id
+                const newBonusPercent = countRepetitions(filteredMiners.map(m => m.miner_id))[miner.miner_id] > 1
+                    ? bonusPercent
+                    : bonusPercent - (miner.bonus_percent / 100);
 
-                if (uniqueMinerIds > 1) {
-                    newBonusPercent = bonusPercent;
-                } else {
-                    newBonusPercent = bonusPercent - (miner.bonus_percent / 100);
-                }
-                
-                newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
+                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
                 
                 return {
                     ...miner,
@@ -109,6 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const negativeResults = results.filter(result => result.newpower < 0);
             const sortedResults = negativeResults.sort((a, b) => b.newpower - a.newpower);
             const topThreeNegatives = sortedResults.slice(0, 3);
+
+            // Função para contar as repetições de miner_id
+            function countRepetitions(minerIds) {
+                const counts = minerIds.reduce((acc, id) => {
+                    acc[id] = (acc[id] || 0) + 1;
+                    return acc;
+                }, {});
+                return counts;
+            }
 
             // Preencher os dados na tabela HTML
             if (topThreeNegatives.length > 0) {
@@ -135,16 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('bonus3').innerText = topThreeNegatives[2] ? `${(topThreeNegatives[2].bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
                 document.getElementById('impact3').innerText = topThreeNegatives[2] ? convertPower(topThreeNegatives[2].newpower) : '';
                 document.getElementById('set3').innerText = topThreeNegatives[2] ? (topThreeNegatives[2].is_in_set ? 'Sim' : 'Não') : '';
-
-                // Função para contar as repetições de miner_id
-                function countRepetitions(minerIds) {
-                    const counts = minerIds.reduce((acc, id) => {
-                        acc[id] = (acc[id] || 0) + 1;
-                        return acc;
-                    }, {});
-
-                    return counts;
-                }
 
                 // Array com os miner_id das 3 máquinas
                 const minerIds = [
