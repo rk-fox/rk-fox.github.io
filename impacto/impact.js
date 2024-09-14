@@ -1,4 +1,106 @@
-// Preencher os dados na tabela HTML
+document.addEventListener('DOMContentLoaded', () => {
+    // Função para converter poder
+    function convertPower(value) {
+        const absValue = Math.abs(value); // Obter o valor absoluto
+        if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
+        return (value).toFixed(3).replace('.', ',') + ' GHs';
+    }
+
+    // Função para converter poder (apenas na exibição de miner em GHs)
+    function convertPower2(value) {
+        const absValue = Math.abs(value); // Obter o valor absoluto
+        if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
+        return (value) + ' GHs';
+    }
+
+    document.getElementById('searchButton').addEventListener('click', async () => {
+        const userLink = document.getElementById('linkInput').value;
+
+        if (!userLink) {
+            alert('Por favor, digite o link da sala.');
+            return;
+        }
+
+        try {
+            // Buscar avatar_id
+            const profileResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
+            const profileData = await profileResponse.json();
+            const profileContents = JSON.parse(profileData.contents);
+            const userName = profileContents.data.name;
+            const avatarId = profileContents.data.avatar_id;
+
+            if (!avatarId) {
+                alert('Erro ao obter o avatar_id.');
+                return;
+            }
+            if (!userName) {
+                alert('Erro ao obter o avatar_id.');
+                return;
+            }
+
+            // Exibir avatar e mensagem de boas-vindas
+            const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
+            document.getElementById('avatar').src = avatarUrl;
+            document.getElementById('avatar').style.display = 'block';  // Tornar a imagem visível
+            document.getElementById('welcomeMessage').innerText = `Olá, ${userName}!`;
+
+            // Buscar dados de user-power-data usando avatarId
+            const powerDataResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+            const powerData = await powerDataResponse.json();
+            const powerContents = JSON.parse(powerData.contents);
+            const miners = powerContents.data.miners;
+            let bonusPercent = powerContents.data.bonus_percent;
+
+            // Processar bonus_percent
+            bonusPercent = parseFloat((bonusPercent / 100).toFixed(2));  // Dividir por 100 e garantir que é um número
+
+            // Calcular Poder Total
+            const total_orig = miners * (1 + (bonusPercent / 100));
+
+            // Buscar dados de room-config usando avatarId
+            const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
+            const roomConfigData = await roomConfigResponse.json();
+            const roomConfigContents = JSON.parse(roomConfigData.contents);
+
+            const minerData = roomConfigContents.data.miners.map(miner => {
+                return {
+                    miner_id: miner.miner_id,
+                    power: miner.power,
+                    bonus_percent: miner.bonus_percent,
+                    name: miner.name,
+                    slots: miner.width,
+                    filename: miner.filename,
+                    is_in_set: miner.is_in_set
+                };
+            });
+
+            // Obter valor do rádio selecionado
+            const selectedOption = document.querySelector('input[name="option"]:checked').value;
+
+            // Filtrar minerData com base na opção selecionada
+            let filteredMiners = minerData;
+            if (selectedOption === 'op1') {
+                filteredMiners = minerData.filter(miner => miner.slots === 1);
+            } else if (selectedOption === 'op2') {
+                filteredMiners = minerData.filter(miner => miner.slots === 2);
+            }
+
+            // Calcular newpower para cada miner e armazenar os três menores valores negativos próximos de 0
+            const results = filteredMiners.map(miner => {
+                const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);            
+                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
+                
+                return {
+                    ...miner,
+                    newpower: newpower
+                };
+            });
+
+            const negativeResults = results.filter(result => result.newpower < 0);
+            const sortedResults = negativeResults.sort((a, b) => b.newpower - a.newpower);
+            const topThreeNegatives = sortedResults.slice(0, 3);
+
+            // Preencher os dados na tabela HTML
             if (topThreeNegatives.length > 0) {
                 document.getElementById('nome1').innerText = topThreeNegatives[0]?.name || '';
                 document.getElementById('img1').src = `https://static.rollercoin.com/static/img/market/miners/${topThreeNegatives[0].filename}.gif?v=1`;
@@ -62,4 +164,3 @@
         }
     });
 });
-
