@@ -96,7 +96,7 @@ const results = filteredMiners.map(miner => {
     const count = minerIdCounts[miner.miner_id];
     if (minerIdCounts[miner.miner_id] = 1) {
     const newBonusPercent = bonusPercent - (miner.bonus_percent / 100); 
-    } else {
+    } else if (minerIdCounts[miner.miner_id] > 1) {
         const newBonusPercent = bonusPercent; 
     }
     const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig) * count;
