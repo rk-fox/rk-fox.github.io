@@ -87,8 +87,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Calcular newpower para cada miner e armazenar os três menores valores negativos próximos de 0
             const results = filteredMiners.map(miner => {
-                const newBonusPercent = bonusPercent - (miner.bonus_percent / 100);            
-                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
+                // Ajustar a fórmula com base na quantidade de minerIds únicos
+                const minerIds = filteredMiners.map(m => m.miner_id);
+                const uniqueMinerIds = new Set(minerIds).size;
+                let newBonusPercent, newpower;
+
+                if (uniqueMinerIds > 1) {
+                    newBonusPercent = bonusPercent;
+                } else {
+                    newBonusPercent = bonusPercent - (miner.bonus_percent / 100);
+                }
+                
+                newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
                 
                 return {
                     ...miner,
