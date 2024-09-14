@@ -151,16 +151,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Contar as repetições
                 const counts = countRepetitions(minerIds);
 
+                // Logar contagens de repetições no console
+                console.log('Contagem de repetições de miner_id:');
+                Object.entries(counts).forEach(([id, count]) => {
+                    console.log(`Miner ID: ${id}, Repetições: ${count}`);
+                });
+
                 // Verificar se há mais de um merge
                 const merge = Object.values(counts).some(count => count > 1);
 
-                // Exibir aviso se houver múltiplas repetições
+                // Atualizar a tabela com o status de merge
+                document.getElementById('merge1').innerText = merge ? 'Sim' : 'Não';
+                document.getElementById('merge2').innerText = merge ? 'Sim' : 'Não';
+                document.getElementById('merge3').innerText = merge ? 'Sim' : 'Não';
+
+                // Exibir aviso no console se houver múltiplas repetições
                 if (merge) {
+                    console.log('Aviso: Existem mineradores duplicados.');
                     document.getElementById('result').innerText = 'Aviso: Existem mineradores duplicados.';
                 } else {
+                    console.log('Nenhum minerador duplicado encontrado.');
                     document.getElementById('result').innerText = 'Nenhum minerador duplicado encontrado.';
                 }
             } else {
+                console.log('Nenhum minerador negativo encontrado.');
                 document.getElementById('result').innerText = 'Nenhum minerador negativo encontrado.';
             }
         } catch (error) {
