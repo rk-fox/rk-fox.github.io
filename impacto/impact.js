@@ -177,10 +177,6 @@ document.getElementById('set3').innerText = negativeResults[2] ? (negativeResult
                 document.getElementById('merge2').innerText = 'Não';
                 document.getElementById('merge3').innerText = 'Não';
                 
-            } else {
-                console.log('Nenhum minerador negativo encontrado.');
-                document.getElementById('result').innerText = 'Nenhum minerador negativo encontrado.';
-            }
             
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
