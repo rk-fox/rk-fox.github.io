@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bonusPercent = parseFloat((bonusPercent / 100).toFixed(2)); // Dividir por 100 e garantir que é um número
 
             // Calcular Poder Total
-            const total_orig = miners * (1 + bonusPercent); // Corrigido: Remover divisão adicional por 100, pois bonusPercent já é um decimal
+            const total_orig = miners * (1 + bonusPercent/100); 
 
             // Buscar dados de room-config usando avatarId
             const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
