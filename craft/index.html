@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RKFox - Calculadora de Craf</title>
+    <title>RKFox - Calculadora de Craft</title>
     <link rel="stylesheet" href="styles5.css">
-    </head>
+</head>
 <body>
     <div class="container">
         <div class="ref1">
-            <!--Start rollercoin.com code-->
+            <!-- Start rollercoin.com code -->
             <a href="https://rollercoin.com/?r=kyluudij">
                 <img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png" alt="Rollercoin Referral">
             </a>
-            <!--End rollercoin.com code-->
+            <!-- End rollercoin.com code -->
         </div>
         <div class="profile">
             <a href="https://rk-fox.github.io/">
@@ -31,107 +30,110 @@
             <input type="checkbox" id="toggle-dark-mode">
             <span class="slider"></span>
         </label>
-<div class="calc">
-        <h1>Calculadora de Craft</h1>
-        <form id="craft-form">
-            <div class="form-group">
-                <label for="xp-desejado">XP Desejado:</label>
-                <input type="number" id="xp-desejado" required>
+
+        <div class="calc">
+            <h1>Calculadora de Craft</h1>
+            <form id="craft-form">
+                <div class="form-group">
+                    <label for="xp-desejado">XP Desejado:</label>
+                    <input type="number" id="xp-desejado" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="xp-rlt-craft">XP/RLT Craft:</label>
+                    <input type="number" id="xp-rlt-craft" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="xp-rlt-market">XP/RLT Market:</label>
+                    <input type="number" id="xp-rlt-market" required>
+                </div>
+
+                <div class="form-group">
+                    <h3>Peca Craft 1</h3>
+                    <label for="quantidade-craft1">Quantidade peça:</label>
+                    <input type="number" id="quantidade-craft1" required>
+                    <label for="preco-peca-craft1">Preço peça:</label>
+                    <input type="number" id="preco-peca-craft1" required>
+                    <label for="preco-craft1">Preço craft:</label>
+                    <input type="number" id="preco-craft1" required>
+                    <label for="preco-speed1">Preço speed:</label>
+                    <input type="number" id="preco-speed1" required>
+                    <label for="cash1">Cash1:</label>
+                    <input type="number" id="cash1" required>
+                </div>
+
+                <div class="form-group">
+                    <h3>Peca Craft 2</h3>
+                    <label for="quantidade-craft2">Quantidade peça:</label>
+                    <input type="number" id="quantidade-craft2" required>
+                    <label for="preco-peca-craft2">Preço peça:</label>
+                    <input type="number" id="preco-peca-craft2" required>
+                    <label for="preco-craft2">Preço craft:</label>
+                    <input type="number" id="preco-craft2" required>
+                    <label for="preco-speed2">Preço speed:</label>
+                    <input type="number" id="preco-speed2" required>
+                    <label for="cash2">Cash2:</label>
+                    <input type="number" id="cash2" required>
+                </div>
+
+                <div class="form-group">
+                    <h3>Peca Craft 3</h3>
+                    <label for="quantidade-craft3">Quantidade peça:</label>
+                    <input type="number" id="quantidade-craft3" required>
+                    <label for="preco-peca-craft3">Preço peça:</label>
+                    <input type="number" id="preco-peca-craft3" required>
+                    <label for="preco-craft3">Preço craft:</label>
+                    <input type="number" id="preco-craft3" required>
+                    <label for="preco-speed3">Preço speed:</label>
+                    <input type="number" id="preco-speed3" required>
+                    <label for="cash3">Cash3:</label>
+                    <input type="number" id="cash3" required>
+                </div>
+
+                <button type="button" onclick="calcular()">Calcular</button>
+            </form>
+
+            <div class="result">
+                <table id="resultado-tabela">
+                    <thead>
+                        <tr>
+                            <th>Multi</th>
+                            <th>Craft1</th>
+                            <th>Exchange1</th>
+                            <th>Custo1</th>
+                            <th>Cash1</th>
+                            <th>Craft2</th>
+                            <th>Exchange2</th>
+                            <th>Custo2</th>
+                            <th>Cash2</th>
+                            <th>Craft3</th>
+                            <th>Exchange3</th>
+                            <th>Custo3</th>
+                            <th>Cash3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- As linhas da tabela serão geradas aqui pelo JavaScript -->
+                    </tbody>
+                </table>
             </div>
-
-            <div class="form-group">
-                <label for="xp-rlt-craft">XP/RLT Craft:</label>
-                <input type="number" id="xp-rlt-craft" required>
-            </div>
-
-            <div class="form-group">
-                <label for="xp-rlt-market">XP/RLT Market:</label>
-                <input type="number" id="xp-rlt-market" required>
-            </div>
-
-            <div class="form-group">
-                <h3>Peca Craft 1</h3>
-                <label for="quantidade-craft1">Quantidade peça:</label>
-                <input type="number" id="quantidade-craft1" required>
-                <label for="preco-peca-craft1">Preço peça:</label>
-                <input type="number" id="preco-peca-craft1" required>
-                <label for="preco-craft1">Preço craft:</label>
-                <input type="number" id="preco-craft1" required>
-                <label for="preco-speed1">Preço speed:</label>
-                <input type="number" id="preco-speed1" required>
-                <label for="cash1">Cash1:</label>
-                <input type="number" id="cash1" required>
-            </div>
-
-            <div class="form-group">
-                <h3>Peca Craft 2</h3>
-                <label for="quantidade-craft2">Quantidade peça:</label>
-                <input type="number" id="quantidade-craft2" required>
-                <label for="preco-peca-craft2">Preço peça:</label>
-                <input type="number" id="preco-peca-craft2" required>
-                <label for="preco-craft2">Preço craft:</label>
-                <input type="number" id="preco-craft2" required>
-                <label for="preco-speed2">Preço speed:</label>
-                <input type="number" id="preco-speed2" required>
-                <label for="cash2">Cash2:</label>
-                <input type="number" id="cash2" required>
-            </div>
-
-            <div class="form-group">
-                <h3>Peca Craft 3</h3>
-                <label for="quantidade-craft3">Quantidade peça:</label>
-                <input type="number" id="quantidade-craft3" required>
-                <label for="preco-peca-craft3">Preço peça:</label>
-                <input type="number" id="preco-peca-craft3" required>
-                <label for="preco-craft3">Preço craft:</label>
-                <input type="number" id="preco-craft3" required>
-                <label for="preco-speed3">Preço speed:</label>
-                <input type="number" id="preco-speed3" required>
-                <label for="cash3">Cash3:</label>
-                <input type="number" id="cash3" required>
-            </div>
-
-            <button type="button" onclick="calcular()">Calcular</button>
-        </form>
-
-        <div class="result">
-            <table id="resultado-tabela">
-                <thead>
-                    <tr>
-                        <th>Multi</th>
-                        <th>Craft1</th>
-                        <th>Exchange1</th>
-                        <th>Custo1</th>
-                        <th>Cash1</th>
-                        <th>Craft2</th>
-                        <th>Exchange2</th>
-                        <th>Custo2</th>
-                        <th>Cash2</th>
-                        <th>Craft3</th>
-                        <th>Exchange3</th>
-                        <th>Custo3</th>
-                        <th>Cash3</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <!-- As linhas da tabela serão geradas aqui pelo JavaScript -->
-                </tbody>
-            </table>
         </div>
-    </div>
-</div>
+
         <div class="ref">
-            <!--Start rollercoin.com code-->
+            <!-- Start rollercoin.com code -->
             <a href="https://rollercoin.com/?r=kyluudij">
-                <center><img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png" alt="Rollercoin Referral"></center>
+                <img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png" alt="Rollercoin Referral">
             </a>
-            <!--End rollercoin.com code-->
+            <!-- End rollercoin.com code -->
         </div>
+
         <div class="email">
-            <h4><p><center>Contato Profissional: <a href="mailto:canalrkfox@gmail.com">canalrkfox@gmail.com</a></center></p></h4>
+            <h4>Contato Profissional: <a href="mailto:canalrkfox@gmail.com">canalrkfox@gmail.com</a></h4>
         </div>
     </div>
+
     <script src="craft.js"></script>
-    <script src="script2.js"></script>   
+    <script src="script2.js"></script>
 </body>
 </html>
