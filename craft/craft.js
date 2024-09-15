@@ -4,8 +4,8 @@ function calcular() {
             const xpRltMarket = parseFloat(document.getElementById('xp-rlt-market').value);
 
             // Peca Craft 1
-            const quantidadeMiner1 = parseFloat(document.getElementById('quantidade-craft1').value);
-            const precoMiner1 = parseFloat(document.getElementById('preco-peca-craft1').value);
+            const quantidadeMiner1 = parseFloat(document.getElementById('quantidade-miner1').value);
+            const precoMiner1 = parseFloat(document.getElementById('preco-miner1').value);
             const quantidadeCraft1 = parseFloat(document.getElementById('quantidade-craft1').value);
             const precoPecaCraft1 = parseFloat(document.getElementById('preco-peca-craft1').value);
             const precoCraft1 = parseFloat(document.getElementById('preco-craft1').value);
