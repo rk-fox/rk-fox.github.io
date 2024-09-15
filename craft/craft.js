@@ -21,10 +21,10 @@ function calcular() {
                 // Cálculo para Craft 1
                 const divisorCraft1 = ((((quantidadeCraft1 * precoPecaCraft1)+(quantidadeMiner1 * precoMiner1)) * xpRltMarket) + ((precoCraft1 + precoSpeed1) * xpRltCraft)) * multi;
                 const valorCraft1 = Math.ceil(xpDesejado / divisorCraft1);
-                const custoCraft1 = ((quantidadeCraft1 * precoPecaCraft1) + (quantidadeMiner1 * precoMiner1) + precoCraft1 + precoSpeed1) * valorCraft1;
+                const custoCraft1 = (((quantidadeCraft1 * precoPecaCraft1) + (quantidadeMiner1 * precoMiner1) + precoCraft1 + precoSpeed1) * valorCraft1) * -1;
                 const exchangeCraft1 = custoCraft1 * 0.68;
                 const cashCraft1 = valorCraft1 * cash1;
-                const saldoCraft1 = cashCraft1 - custoCraft1;
+                const saldoCraft1 = custoCraft1 + cashCraft1;
 
                 // Adiciona uma nova linha à tabela
                 const novaLinha = tabela.insertRow();
@@ -34,6 +34,6 @@ function calcular() {
                 novaLinha.insertCell(2).textContent = exchangeCraft1.toFixed(2);
                 novaLinha.insertCell(3).textContent = custoCraft1.toFixed(2);
                 novaLinha.insertCell(4).textContent = cashCraft1.toFixed(2);
-                novaLinha.insertCell(4).textContent = saldoCraft1.toFixed(2);
+                novaLinha.insertCell(5).textContent = saldoCraft1.toFixed(2);
             }
 }
