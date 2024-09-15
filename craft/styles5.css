@@ -145,6 +145,44 @@ input.miner-data {
     background-color: #f9f9f9;
 }
 
+/* Estilo para a tabela do formulário sem bordas */
+.form-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px; /* Espaço inferior para separar da próxima seção */
+}
+
+.form-table th, .form-table td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.form-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.form-table label {
+    display: block;
+    font-weight: bold;
+}
+
+.form-table input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd; /* Mantém a borda dos inputs visível */
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+/* Estilo adicional para a linha de cabeçalho */
+.form-table th[colspan="4"] {
+    text-align: center;
+    background-color: #007bff;
+    color: #fff;
+}
+
 
 /* Modo Escuro */
 body.dark-mode {
