@@ -148,6 +148,7 @@ input.miner-data {
 /* Estilo para a tabela do formulário sem bordas */
 .form-table {
     width: 100%;
+    border: 0px solid #333;
     border-collapse: collapse;
     margin-bottom: 20px; /* Espaço inferior para separar da próxima seção */
 }
