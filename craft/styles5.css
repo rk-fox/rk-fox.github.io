@@ -223,7 +223,7 @@ body.dark-mode th {
     background-color: #0056b3;
 }
 
-body.dark-mode td {
+body.dark-mode .form-table td {
     border: 0px solid #333;
 }
 
