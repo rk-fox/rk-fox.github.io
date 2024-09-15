@@ -51,39 +51,11 @@ body {
     border-radius: 10px;
 }
 
-.links a {
-    display: block;
-    background: #007bff;
-    color: white;
-    padding: 10px;
-    margin: 10px 0;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background 0.3s;
-}
 
 .form-group {
     margin-bottom: 15px;
 }
 
-
-.links a:hover {
-    background: #0056b3;
-}
-
-/* Estilos para o botão destacado */
-.links a.highlight {
-    background: #ff0000;
-}
-
-.links a.highlight:hover {
-    background: #a10202;
-}
-
-.ref, .email, .ads {
-    margin-top: 20px;
-    text-align: center;
-}
 
 /* Estilo para o link da sala e o botão de pesquisa */
 .input-container {
@@ -93,14 +65,8 @@ body {
     align-items: center;
 }
 
-#linkInput {
-    padding: 10px;
-    font-size: 16px;
-    margin-right: 10px;
-    flex: 1; /* Faz o input preencher o espaço disponível */
-}
 
-#searchButton {
+button {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #007bff;
@@ -108,11 +74,14 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-#searchButton:hover {
+
+button:hover {
     background-color: #0056b3;
 }
+
 
 /* Estilo para os resultados */
 .result {
@@ -120,9 +89,21 @@ body {
     text-align: center;
 }
 
+
+input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+
 .calc {
     padding: 15px;
 }
+
 
 .calc h1 {
     text-align: center;
@@ -130,10 +111,12 @@ body {
     color: #007bff;
 }
 
+
 .calc h3 {
     text-align: center;
     margin-bottom: 10px;
 }
+
 
 /* Estilo para a tabela */
 table {
@@ -162,29 +145,33 @@ input.miner-data {
     background-color: #f9f9f9;
 }
 
+
 /* Modo Escuro */
 body.dark-mode {
     background-color: #1e1e1e;
     color: #ddd;
 }
 
+
 body.dark-mode .container {
     background: #333333;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-body.dark-mode .links a {
-    background: #0056b3;
-    color: #ddd;
+
+body.dark-mode button {
+    background-color: #0056b3;
 }
 
-body.dark-mode .links a:hover {
-    background: #003d80;
+body.dark-mode button:hover {
+    background-color: #003d80;
 }
+
 
 body.dark-mode .calc h1 {
     color: #007BFF;
 }
+
 
 body.dark-mode .calc h3 {
     color: #ddd;
@@ -254,4 +241,24 @@ input:checked + .slider:before {
 }
 .radio-buttons label {
     margin: 0 10px;
+}
+
+
+/* Estilo para referências e email */
+.ref, .email {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.email h4 {
+    margin-top: 10px;
+}
+
+.email a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.email a:hover {
+    text-decoration: underline;
 }
