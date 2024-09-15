@@ -33,9 +33,10 @@
 
         <div class="calc">
             <h1>Calculadora de Craft</h1><br>
-            <h3>Dados do Evento</h3>
+            
             <form id="craft-form">
                 <table class="form-table">
+                    <th colspan="2">Dados do Evento</th>
                     <tr>
                         <td><label for="xp-desejado">XP Desejado:</label></td>
                         <td><input type="number" id="xp-desejado" required></td>
@@ -48,37 +49,34 @@
                         <td><label for="xp-rlt-market">XP/RLT Market:</label></td>
                         <td><input type="number" id="xp-rlt-market" required></td>
                     </tr>
+                </table>
+                <table class="form-table">    
+                    <th colspan="4">Receita do Craft</th>
                 <tr>
-                <th colspan="4">Receita do Craft</th>
-            </tr>
-            <!-- Primeira linha com 4 colunas -->
-            <tr>
-                <td><label for="quantidade-miner1">Quantidade de Miners:</label></td>
-                <td><input type="number" id="quantidade-miner1" required></td>
-                <td><label for="preco-miner1">Preço das Miners:</label></td>
-                <td><input type="number" id="preco-miner1" required></td>
-            </tr>
-            <tr>
-                <td><label for="quantidade-craft1">Quantidade de Peças:</label></td>
-                <td><input type="number" id="quantidade-craft1" required></td>
-                <td><label for="preco-peca-craft1">Preço das Peças:</label></td>
-                <td><input type="number" id="preco-peca-craft1" required></td>
-            </tr>
-            <tr>
-                <td><label for="preco-craft1">Preço do Craft:</label></td>
-                <td><input type="number" id="preco-craft1" required></td>
-                <td><label for="preco-speed1">Preço do Speed-Up:</label></td>
-                <td><input type="number" id="preco-speed1" required></td>
-            </tr>
+                    <td><label for="quantidade-miner1">Quantidade de Miners:</label></td>
+                    <td><input type="number" id="quantidade-miner1" required></td>
+                    <td><label for="preco-miner1">Preço das Miners:</label></td>
+                    <td><input type="number" id="preco-miner1" required></td>
+                </tr>
+                <tr>
+                    <td><label for="quantidade-craft1">Quantidade de Peças:</label></td>
+                    <td><input type="number" id="quantidade-craft1" required></td>
+                    <td><label for="preco-peca-craft1">Preço das Peças:</label></td>
+                    <td><input type="number" id="preco-peca-craft1" required></td>
+                </tr>
+                <tr>
+                    <td><label for="preco-craft1">Preço do Craft:</label></td>
+                    <td><input type="number" id="preco-craft1" required></td>
+                    <td><label for="preco-speed1">Preço do Speed-Up:</label></td>
+                    <td><input type="number" id="preco-speed1" required></td>
+                </tr>
             <!-- Linha final com uma célula mesclada -->
-            <tr>
-                <td colspan="2"><label for="cash1">Preço de Venda do Craft:</label></td>
-                <td colspan="2"><input type="number" id="cash1" required></td>
-            </tr>
-        </table>
-
-    </form>
-
+                <tr>
+                    <td colspan="2"><label for="cash1">Preço de Venda do Craft:</label></td>
+                    <td colspan="2"><input type="number" id="cash1" required></td>
+                </tr>
+                </table>
+                
                 <button type="button" onclick="calcular()">Calcular</button>
             </form>
 
