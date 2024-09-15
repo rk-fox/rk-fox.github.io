@@ -223,6 +223,10 @@ body.dark-mode th {
     background-color: #0056b3;
 }
 
+body.dark-mode td {
+    border: 0px solid #333;
+}
+
 /* Estilo para o toggle switch */
 .switch {
     display: block;
