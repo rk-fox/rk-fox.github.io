@@ -59,7 +59,7 @@ body {
 
 /* Estilos para o campo de entrada personalizado */
 .input-custom {
-    width: 100px;
+    width: 70px;
     border: 0px;
     background-color: #fff; /* Cor de fundo da célula */
     color: #000; /* Cor do texto para combinar com o fundo da célula */
