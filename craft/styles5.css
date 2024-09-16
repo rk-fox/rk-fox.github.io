@@ -305,40 +305,8 @@ input:checked + .slider:before {
     text-decoration: underline;
 }
 
-/* Adiciona rolagem horizontal para tabelas em telas pequenas */
+
 @media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
-
-    .profile-pic {
-        width: 100px;
-        height: 100px;
-    }
-
-    .banner-img {
-        max-width: 100%;
-    }
-
-    input[type="number"], button {
-        width: 100%;
-    }
-
-    table {
-        font-size: 12px;
-        overflow-x: auto; /* Permite rolagem horizontal se necessário */
-    }
-
-    /* Esconde a coluna 3 em telas menores */
-    @media only screen and (max-width: 768px) {
-        table th:nth-child(3),
-        table td:nth-child(3) {
-            display: none;
-        }
-    }
-}
-
-@media (max-width: 480px) {
     .profile-pic {
         width: 80px;
         height: 80px;
@@ -359,7 +327,7 @@ input:checked + .slider:before {
     }
 
     /* Esconde a coluna 3 em telas ainda menores */
-    @media only screen and (max-width: 480px) {
+    @media only screen and (max-width: 768px) {
         table th:nth-child(3),
         table td:nth-child(3) {
             display: none;
