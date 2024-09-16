@@ -59,7 +59,7 @@ body {
 
 /* Estilos para o campo de entrada personalizado */
 .input-custom {
-    width: 100%;
+    width: 100px;
     border: 0px;
     background-color: #fff; /* Cor de fundo da célula */
     color: #000; /* Cor do texto para combinar com o fundo da célula */
@@ -89,16 +89,6 @@ button:hover {
 .result {
     margin-top: 20px;
     text-align: center;
-}
-
-
-input[type="number"] {
-    width: 200px;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
 }
 
 
@@ -213,7 +203,7 @@ body.dark-mode .form-table td {
 }
 
 body.dark-mode .input-custom {
-    background-color: #333333
+    background-color: #333333;
     border: 0px solid #333333;
     color: #ddd;
 }
