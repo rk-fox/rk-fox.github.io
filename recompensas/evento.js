@@ -253,27 +253,50 @@ rewards.forEach(reward => {
         // Adiciona os containers à célula
         cellAmount.appendChild(imageContainer);
         cellAmount.appendChild(textContainer);
+    } else if (reward.type === 'rack') {
+        const item = reward.item || {};
+
+        // Cria uma <div> para a imagem e a outra <div> para o texto
+        let imageContainer = document.createElement('div');
+        let textContainer = document.createElement('div');
+
+        // Construa a URL da imagem do minerador
+        const baseURL = "https://static.rollercoin.com/static/img/market/racks/";
+        const filename = item.filename;
+        const imageURL = `${baseURL}${filename}.png`;
+
+        // Cria a imagem para o minerador
+        let minerImage = document.createElement('img');
+        minerImage.src = imageURL;
+        minerImage.alt = item.name.en;
+        minerImage.style.width = '50px'; // Define o tamanho da imagem
+        minerImage.style.height = 'auto'; // Mantém a proporção da altura
+
+        // Adiciona a imagem ao container da imagem
+        imageContainer.appendChild(minerImage);
+
+        // Cria o texto para o nome do item
+        let itemDetails = document.createElement('span');
+        itemDetails.textContent = `${item.name?.en}`;
+
+        // Adiciona o texto ao container de texto
+        textContainer.appendChild(itemDetails);
+
+        // Adiciona os containers à célula
+        cellAmount.appendChild(imageContainer);
+        cellAmount.appendChild(textContainer);
     } else {
         cellAmount.textContent = '-';
     }
 
     row.appendChild(cellAmount);
 
-    let cellPower = document.createElement('td');
-    let rawPowerValue = reward.item?.power || 0;
-    if (rawPowerValue) {
-    totalPower += rawPowerValue;
-}
-    cellPower.textContent = reward.item?.power ? formatPower(reward.item.power) : '-';
-    row.appendChild(cellPower);
-
     let cellBonus = document.createElement('td');
-    const bonus = reward.item?.bonus != null ? (reward.item?.bonus / 100).toFixed(2) : '-';
-    cellBonus.textContent = bonus !== '-' ? `${bonus} %` : '-';
+    cellBonus.textContent = '-';
     row.appendChild(cellBonus);
 
     let cellCanBeSoldOnMP = document.createElement('td');
-    cellCanBeSoldOnMP.textContent = reward.item?.is_can_be_sold_on_mp ? '' : 'X';
+    cellCanBeSoldOnMP.textContent = '';
     row.appendChild(cellCanBeSoldOnMP);
 
     // Nova célula para o valor personalizado, editável pelo usuário
