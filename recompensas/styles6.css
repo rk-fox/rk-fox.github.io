@@ -57,12 +57,25 @@ body {
 }
 
 
-/* Estilo para o link da sala e o botão de pesquisa */
-.input-container {
-    margin-bottom: 15px; /* Adiciona margin-bottom */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* Estilos para o campo de entrada personalizado */
+.input-custom {
+    width: 100%;
+    border: none;
+    background-color: inherit; /* Cor de fundo da célula */
+    color: inherit; /* Cor do texto para combinar com o fundo da célula */
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Estilos para o modo escuro */
+.dark-mode .input-custom {
+    color: #fff; /* Cor do texto para modo escuro */
+}
+
+/* Estilo de célula para o modo escuro */
+.dark-mode td {
+    background-color: #333; /* Cor de fundo escura para as células */
+    color: #fff; /* Cor do texto clara para as células */
 }
 
 
@@ -136,15 +149,6 @@ th {
     color: #fff;
 }
 
-input.miner-data {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-}
-
 /* Estilo para a tabela do formulário sem bordas */
 .form-table {
     width: 100%;
@@ -164,14 +168,6 @@ input.miner-data {
     font-weight: bold;
 }
 
-.form-table input[type="number"] {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ddd; /* Mantém a borda dos inputs visível */
-    border-radius: 5px;
-    background-color: #f9f9f9;
-}
 
 /* Estilo adicional para a linha de cabeçalho */
 .form-table th {
