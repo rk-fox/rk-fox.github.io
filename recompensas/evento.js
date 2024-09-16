@@ -72,8 +72,8 @@ rewards.forEach(reward => {
 
         // Define a imagem fixa baseada na moeda
         let currencyImageURL = reward.currency === 'rlt'
-            ? 'https://static.rollercoin.com/static/img/icons/currencies/rlt.svg'
-            : 'https://static.rollercoin.com/static/img/icons/currencies/rst.svg';
+            ? 'https://rollercoin.com/static/img/seasonPass/reward_RLT.png'
+            : 'https://rollercoin.com/static/img/seasonPass/reward_RST.png';
 
         // Cria a imagem para a moeda
         let currencyImage = document.createElement('img');
@@ -131,15 +131,36 @@ rewards.forEach(reward => {
         cellAmount.appendChild(imageContainer);
         cellAmount.appendChild(textContainer);
     } else if (reward.type === 'power') {
+        // Cria uma <div> para a imagem e a outra <div> para o texto
+        let imageContainer = document.createElement('div');
+        let textContainer = document.createElement('div');
+
+        // Define a URL da imagem do poder temporário
+        const powerImageURL = 'https://rollercoin.com/static/img/seasonPass/reward_power.png';
+
+        // Cria a imagem para o poder temporário
+        let powerImage = document.createElement('img');
+        powerImage.src = powerImageURL;
+        powerImage.alt = 'Power';
+        powerImage.style.width = '30px'; // Define o tamanho da imagem
+        powerImage.style.height = 'auto'; // Mantém a proporção da altura
+
+        // Adiciona a imagem ao container da imagem
+        imageContainer.appendChild(powerImage);
+
         // Formata o valor do poder
         let formattedPower = (reward.amount / 1000000).toFixed(2);
-        
+
         // Cria o texto para a quantidade de poder
         let powerText = document.createElement('span');
         powerText.textContent = `${formattedPower} PHs Temporário`;
 
-        // Adiciona o texto à célula
-        cellAmount.appendChild(powerText);
+        // Adiciona o texto ao container de texto
+        textContainer.appendChild(powerText);
+
+        // Adiciona os containers à célula
+        cellAmount.appendChild(imageContainer);
+        cellAmount.appendChild(textContainer);
     } else {
         cellAmount.textContent = '-';
     }
