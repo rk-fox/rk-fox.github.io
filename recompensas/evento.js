@@ -262,7 +262,7 @@ rewards.forEach(reward => {
 
         // Construa a URL da imagem do minerador
         const baseURL = "https://static.rollercoin.com/static/img/market/racks/";
-        const filename = item.item_id;
+        const filename = item._id;
         const imageURL = `${baseURL}${filename}.png`;
 
         // Cria a imagem para o minerador
