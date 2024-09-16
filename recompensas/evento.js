@@ -109,7 +109,7 @@ rewards.forEach(reward => {
 
         // Cria o texto para o nível e nome do item
         let itemDetails = document.createElement('span');
-        itemDetails.textContent = `Level: ${item.level || '-'} ${item.name?.en || '-'}`;
+        itemDetails.textContent = `Level: ${item.level? || '-'} ${item.name?.en || '-'}`;
         itemDetails.style.marginLeft = '10px'; // Adiciona espaçamento entre a imagem e o texto
 
         // Adiciona o texto ao container de texto
