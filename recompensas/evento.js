@@ -49,7 +49,7 @@ function levelToName(level) {
     }
 }
 
-// Função para calcular e atualizar os totais
+// Função para atualizar os totais
 function updateTotals() {
     totalPower = 0;
     totalBonus = 0;
@@ -64,8 +64,11 @@ function updateTotals() {
         // Atualiza o total de Power
         if (powerCell) {
             let powerText = powerCell.textContent;
-            let powerValue = powerText ? parseFloat(powerText) : 0; // Converte o texto para número
-            totalPower += isNaN(powerValue) ? 0 : powerValue;
+            // Extrai o número antes da unidade de formatação
+            let powerValue = parseFloat(powerText);
+            if (!isNaN(powerValue)) {
+                totalPower += powerValue;
+            }
         }
 
         // Atualiza o total de Bonus
