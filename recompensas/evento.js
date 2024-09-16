@@ -23,7 +23,7 @@ const levelXPMap = levelsConfig.reduce((acc, level) => {
 const tableHeaderRow = document.querySelector('#nomeevento');
 const headerCell = document.createElement('th');
 headerCell.colSpan = 8; // Como há 8 colunas, faz sentido usar colSpan=8
-headerCell.textContent = ${eventDescription};
+headerCell.textContent = `${eventDescription}`;
 tableHeaderRow.appendChild(headerCell);
 
 // Preenche a tabela com os dados
