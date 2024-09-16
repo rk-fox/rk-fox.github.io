@@ -60,22 +60,11 @@ body {
 /* Estilos para o campo de entrada personalizado */
 .input-custom {
     width: 100%;
-    border: none;
-    background-color: inherit; /* Cor de fundo da célula */
-    color: inherit; /* Cor do texto para combinar com o fundo da célula */
+    border: 0px;
+    background-color: #fff; /* Cor de fundo da célula */
+    color: #000; /* Cor do texto para combinar com o fundo da célula */
     text-align: center;
     box-sizing: border-box;
-}
-
-/* Estilos para o modo escuro */
-.dark-mode .input-custom {
-    color: #fff; /* Cor do texto para modo escuro */
-}
-
-/* Estilo de célula para o modo escuro */
-.dark-mode td {
-    background-color: #333; /* Cor de fundo escura para as células */
-    color: #fff; /* Cor do texto clara para as células */
 }
 
 
@@ -222,6 +211,13 @@ body.dark-mode th {
 body.dark-mode .form-table td {
     border: 0px solid #333;
 }
+
+body.dark-mode .input-custom {
+    background-color: #333333
+    border: 0px solid #333333;
+    color: #ddd;
+}
+
 
 /* Estilo para o toggle switch */
 .switch {
