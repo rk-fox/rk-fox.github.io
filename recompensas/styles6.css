@@ -114,8 +114,7 @@ button:hover {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px auto; /* Centraliza horizontalmente e adiciona margem */
-    position: relative; /* Removido para centralização */
+    margin-top: 20px;
 }
 
 th, td {
@@ -324,11 +323,11 @@ input:checked + .slider:before {
 
     input[type="number"], button {
         width: 100%;
-        font-size: 10px;
+        font-size: 12px;
     }
 
     table {
-        font-size: 12px;
+        font-size: 10px;
         overflow-x: auto; /* Caso queira testar, remova este se não quiser rolagem horizontal */
     }
 
