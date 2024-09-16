@@ -107,18 +107,6 @@ if (reward.type === 'money') {
 
 row.appendChild(cellAmount);
 
-        // Cria um texto para o nível e nome do item
-        let itemDetails = document.createElement('span');
-        itemDetails.textContent = ` Level: ${item.level || '-'} ${item.name?.en || '-'}`;
-        itemDetails.style.marginLeft = '10px'; // Adiciona espaçamento entre a imagem e o texto
-
-        // Adiciona o texto à célula
-        cellAmount.appendChild(itemDetails);
-    } else {
-        cellAmount.textContent = '-';
-    }
-
-    row.appendChild(cellAmount);
 
     let cellPower = document.createElement('td');
     cellPower.textContent = reward.item?.power || '-';
