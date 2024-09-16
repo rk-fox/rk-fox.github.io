@@ -3,18 +3,15 @@ const base64String = "eyJldmVudCI6eyJfaWQiOiI2NmUyZmI5MmUwZGQzNTMwZGE4YTcwODEiLC
 
 // Função para converter valor em GHs, THs ou PHs com base no valor
 function formatPower(value) {
-    if (value >= 1e9) {
+    if (value >= 1e6) {
         // Base 9: PHs (Petahashes)
-        return `${(value / 1e9).toFixed(2)} PHs`;
-    } else if (value >= 1e6) {
-        // Base 6: THs (Terahashes)
-        return `${(value / 1e6).toFixed(2)} THs`;
+        return `${(value / 1e6).toFixed(2)} PHs`;
     } else if (value >= 1e3) {
-        // Base 3: GHs (Gigahashes)
-        return `${(value / 1e3).toFixed(2)} GHs`;
+        // Base 6: THs (Terahashes)
+        return `${(value / 1e3).toFixed(2)} THs`;
     } else {
         // Valores menores que 1000
-        return `${value} Hs`; // Supondo que para valores menores que 1000 a unidade seja Hashes
+        return `${(value / 1e3).toFixed(2)} GHs`; // Supondo que para valores menores que 1000 a unidade seja Hashes
     }
 }
 
@@ -189,8 +186,8 @@ rewards.forEach(reward => {
     row.appendChild(cellPower);
 
     let cellBonus = document.createElement('td');
-    cellBonus.textContent = (reward.item?.bonus / 100).toFixed(2) || '-';
-    row.appendChild(cellBonus);
+    const bonus = reward.bonus != null ? (reward.bonus / 100).toFixed(2) : '-';
+    cellBonus.textContent = bonus !== '-' ? `${bonus} %` : '-';
 
     let cellCanBeSoldOnMP = document.createElement('td');
     cellCanBeSoldOnMP.textContent = reward.item?.is_can_be_sold_on_mp ? '' : 'X';
