@@ -50,63 +50,79 @@ rewards.forEach(reward => {
     row.appendChild(cellTotalXP);
 
     // Cria a célula para a quantidade e imagem
-let cellAmount = document.createElement('td');
+    let cellAmount = document.createElement('td');
 
-if (reward.type === 'money') {
-    // Define a imagem fixa baseada na moeda
-    let currencyImageURL = reward.currency === 'rlt'
-        ? 'https://static.rollercoin.com/static/img/icons/currencies/rlt.svg'
-        : 'https://static.rollercoin.com/static/img/icons/currencies/rst.svg';
+    if (reward.type === 'money') {
+        // Cria uma <div> para a imagem e a outra <div> para o texto
+        let imageContainer = document.createElement('div');
+        let textContainer = document.createElement('div');
 
-    // Cria a imagem para a moeda
-    let currencyImage = document.createElement('img');
-    currencyImage.src = currencyImageURL;
-    currencyImage.alt = reward.currency;
-    currencyImage.style.width = '20px'; // Define o tamanho da imagem
-    currencyImage.style.height = 'auto'; // Mantém a proporção da altura
+        // Define a imagem fixa baseada na moeda
+        let currencyImageURL = reward.currency === 'rlt'
+            ? 'https://static.rollercoin.com/static/img/icons/currencies/rlt.svg'
+            : 'https://static.rollercoin.com/static/img/icons/currencies/rst.svg';
 
-    // Adiciona a imagem e a quantidade formatada à célula
-    cellAmount.appendChild(currencyImage);
-    cellAmount.appendChild(document.createTextNode(` ${(reward.amount / 1000000).toFixed(2)} ${reward.currency}`));
-} else if (reward.type === 'miner') {
-    const item = reward.item || {};
+        // Cria a imagem para a moeda
+        let currencyImage = document.createElement('img');
+        currencyImage.src = currencyImageURL;
+        currencyImage.alt = reward.currency;
+        currencyImage.style.width = '20px'; // Define o tamanho da imagem
+        currencyImage.style.height = 'auto'; // Mantém a proporção da altura
 
-    // Cria uma <div> para a imagem e a outra <div> para o texto
-    let imageContainer = document.createElement('div');
-    let textContainer = document.createElement('div');
+        // Adiciona a imagem ao container da imagem
+        imageContainer.appendChild(currencyImage);
 
-    // Construa a URL da imagem do minerador
-    const baseURL = "https://static.rollercoin.com/static/img/market/miners/";
-    const filename = item.filename;
-    const imageURL = `${baseURL}${filename}.gif`;
+        // Adiciona o container da imagem e o texto à célula
+        cellAmount.appendChild(imageContainer);
 
-    // Cria a imagem para o minerador
-    let minerImage = document.createElement('img');
-    minerImage.src = imageURL;
-    minerImage.alt = item.name.en;
-    minerImage.style.width = '50px'; // Define o tamanho da imagem
-    minerImage.style.height = 'auto'; // Mantém a proporção da altura
+        // Cria o texto para a quantidade
+        let amountText = document.createElement('span');
+        amountText.textContent = ` ${(reward.amount / 1000000).toFixed(2)} ${reward.currency}`;
+        amountText.style.marginTop = '5px'; // Espaçamento acima do texto
 
-    // Adiciona a imagem ao container da imagem
-    imageContainer.appendChild(minerImage);
+        // Adiciona o texto ao container do texto
+        textContainer.appendChild(amountText);
 
-    // Cria o texto para o nível e nome do item
-    let itemDetails = document.createElement('span');
-    itemDetails.textContent = `Level: ${item.level || '-'} ${item.name?.en || '-'}`;
-    itemDetails.style.marginLeft = '10px'; // Adiciona espaçamento entre a imagem e o texto
+        // Adiciona o container do texto à célula
+        cellAmount.appendChild(textContainer);
+    } else if (reward.type === 'miner') {
+        const item = reward.item || {};
 
-    // Adiciona o texto ao container de texto
-    textContainer.appendChild(itemDetails);
+        // Cria uma <div> para a imagem e a outra <div> para o texto
+        let imageContainer = document.createElement('div');
+        let textContainer = document.createElement('div');
 
-    // Adiciona os containers à célula
-    cellAmount.appendChild(imageContainer);
-    cellAmount.appendChild(textContainer);
-} else {
-    cellAmount.textContent = '-';
-}
+        // Construa a URL da imagem do minerador
+        const baseURL = "https://static.rollercoin.com/static/img/market/miners/";
+        const filename = item.filename;
+        const imageURL = `${baseURL}${filename}.gif`;
 
-row.appendChild(cellAmount);
+        // Cria a imagem para o minerador
+        let minerImage = document.createElement('img');
+        minerImage.src = imageURL;
+        minerImage.alt = item.name.en;
+        minerImage.style.width = '50px'; // Define o tamanho da imagem
+        minerImage.style.height = 'auto'; // Mantém a proporção da altura
 
+        // Adiciona a imagem ao container da imagem
+        imageContainer.appendChild(minerImage);
+
+        // Cria o texto para o nível e nome do item
+        let itemDetails = document.createElement('span');
+        itemDetails.textContent = `Level: ${item.level || '-'} ${item.name?.en || '-'}`;
+        itemDetails.style.marginLeft = '10px'; // Adiciona espaçamento entre a imagem e o texto
+
+        // Adiciona o texto ao container de texto
+        textContainer.appendChild(itemDetails);
+
+        // Adiciona os containers à célula
+        cellAmount.appendChild(imageContainer);
+        cellAmount.appendChild(textContainer);
+    } else {
+        cellAmount.textContent = '-';
+    }
+
+    row.appendChild(cellAmount);
 
     let cellPower = document.createElement('td');
     cellPower.textContent = reward.item?.power || '-';
