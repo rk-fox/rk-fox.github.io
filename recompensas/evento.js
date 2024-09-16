@@ -22,7 +22,7 @@ const levelXPMap = levelsConfig.reduce((acc, level) => {
 // Preenche o cabeçalho da tabela com o título do evento
 const tableHeaderRow = document.querySelector('#nomeevento');
 const headerCell = document.createElement('th');
-headerCell.colSpan = 7; // Como há 7 colunas, faz sentido usar colSpan=7
+headerCell.colSpan = 8; // Como há 8 colunas, faz sentido usar colSpan=8
 headerCell.textContent = `${eventDescription}`;
 tableHeaderRow.appendChild(headerCell);
 
@@ -38,7 +38,7 @@ rewards.forEach(reward => {
     
     // Calcula e atualiza o XP total
     let cellXPValue = levelXPMap[reward.required_level] || 0;
-    totalXP += parseFloat(cellXPValue);
+    cellXPTotal += parseFloat(cellXPValue);
 
     let cellXP = document.createElement('td');
     cellXP.textContent = cellXPValue || '-';
