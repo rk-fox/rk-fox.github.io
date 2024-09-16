@@ -349,14 +349,4 @@ input:checked + .slider:before {
         font-size: 10px;
         overflow-x: auto; /* Caso queira testar, remova este se não quiser rolagem horizontal */
     }
-
-    .switch {
-        width: 50px;
-        height: 28px;
-    }
-
-    .slider:before {
-        height: 22px;
-        width: 22px;
-    }
 }
