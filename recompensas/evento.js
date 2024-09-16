@@ -26,6 +26,9 @@ const levelsConfig = jsonData.levels_config || [];
 
 // Inicializa o total acumulado de XP
 let totalXP = 0;
+let totalPower = 0;
+let totalBonus = 0;
+let totalCustomValue = 0;
 
 // Cria um mapa de níveis para XP
 const levelXPMap = levelsConfig.reduce((acc, level) => {
@@ -44,6 +47,76 @@ function levelToName(level) {
         case 5: return "Unreal";
         default: return "Desconhecido";
     }
+}
+
+// Função para calcular e atualizar os totais
+function updateTotals() {
+    totalPower = 0;
+    totalBonus = 0;
+    totalCustomValue = 0;
+
+    // Itera sobre as linhas da tabela para somar os valores
+    tableBody.querySelectorAll('tr').forEach(row => {
+        let powerCell = row.children[4]; // Coluna 5 (Power)
+        let bonusCell = row.children[5]; // Coluna 6 (Bonus)
+        let customValueCell = row.children[7]; // Coluna 8 (Valores Personalizados)
+
+        // Atualiza o total de Power
+        if (powerCell && !isNaN(parseFloat(powerCell.textContent))) {
+            totalPower += parseFloat(powerCell.textContent);
+        }
+
+        // Atualiza o total de Bonus
+        if (bonusCell && bonusCell.textContent.endsWith('%')) {
+            let bonusValue = parseFloat(bonusCell.textContent);
+            if (!isNaN(bonusValue)) {
+                totalBonus += bonusValue;
+            }
+        }
+
+        // Atualiza o total de Valores Personalizados
+        let inputValue = customValueCell.querySelector('input');
+        if (inputValue) {
+            let inputValueNumber = parseFloat(inputValue.value) || 0;
+            totalCustomValue += inputValueNumber;
+        }
+    });
+
+    // Atualiza a linha de totais
+    let totalRow = tableBody.querySelector('tr.total-row');
+    if (totalRow) {
+        // Atualiza a célula de Power
+        totalRow.children[4].innerHTML = `Total Power<br>${formatPower(totalPower)}`;
+
+        // Atualiza a célula de Bonus
+        totalRow.children[5].innerHTML = `Total Bonus<br>${(totalBonus).toFixed(2)} %`;
+
+        // Atualiza a célula de Valores Personalizados
+        totalRow.children[7].innerHTML = `Valor Total<br>${totalCustomValue.toFixed(2)}`;
+    }
+}
+
+// Função para adicionar a linha de totais
+function addTotalsRow() {
+    let row = document.createElement('tr');
+    row.className = 'total-row';
+
+    // Cria a célula para cada coluna, inicialmente vazia ou com rótulo
+    for (let i = 0; i < 8; i++) {
+        let cell = document.createElement('td');
+        if (i === 4) { // Power
+            cell.innerHTML = `Total Power<br>${formatPower(totalPower)}`;
+        } else if (i === 5) { // Bonus
+            cell.innerHTML = `Total Bonus<br>${(totalBonus).toFixed(2)} %`;
+        } else if (i === 7) { // Custom Value
+            cell.innerHTML = `Valor Total<br>${totalCustomValue.toFixed(2)}`;
+        } else {
+            cell.textContent = '-';
+        }
+        row.appendChild(cell);
+    }
+
+    tableBody.appendChild(row);
 }
 
 // Preenche o cabeçalho da tabela com o título do evento
@@ -211,52 +284,8 @@ rewards.forEach(reward => {
 // Adiciona a linha de totais
 addTotalsRow();
 
-// Função para calcular e atualizar os totais
-function updateTotals() {
-    let totalPower = 0;
-    let totalBonus = 0;
-    let totalCustomValue = 0;
-
-    // Itera sobre as linhas da tabela para somar os valores
-    tableBody.querySelectorAll('tr').forEach(row => {
-        let powerCell = row.children[4]; // Coluna 5 (Power)
-        let bonusCell = row.children[5]; // Coluna 6 (Bonus)
-        let customValueCell = row.children[7]; // Coluna 8 (Valores Personalizados)
-
-        // Atualiza o total de Power
-        if (powerCell && !isNaN(parseFloat(powerCell.textContent))) {
-            totalPower += parseFloat(powerCell.textContent);
-        }
-
-        // Atualiza o total de Bonus
-        if (bonusCell && bonusCell.textContent.endsWith('%')) {
-            let bonusValue = parseFloat(bonusCell.textContent);
-            if (!isNaN(bonusValue)) {
-                totalBonus += bonusValue;
-            }
-        }
-
-        // Atualiza o total de Valores Personalizados
-        let inputValue = customValueCell.querySelector('input');
-        if (inputValue) {
-            let inputValueNumber = parseFloat(inputValue.value) || 0;
-            totalCustomValue += inputValueNumber;
-        }
-    });
-
-    // Atualiza a linha de totais
-    let totalRow = tableBody.querySelector('tr:last-child');
-    if (totalRow) {
-        // Atualiza a célula de Power
-        totalRow.children[4].innerHTML = `Total Power<br>${totalPower}`;
-
-        // Atualiza a célula de Bonus
-        totalRow.children[5].innerHTML = `Total Bonus<br>${(totalBonus).toFixed(2)} %`;
-
-        // Atualiza a célula de Valores Personalizados
-        totalRow.children[7].innerHTML = `Valor Total<br>${totalCustomValue.toFixed(2)}`;
-    }
-}
+// Atualiza os totais inicialmente
+updateTotals();
 
 // Adiciona um evento de mudança a cada input da coluna 8
 tableBody.addEventListener('input', event => {
