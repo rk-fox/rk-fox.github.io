@@ -163,7 +163,7 @@ rewards.forEach(reward => {
         let textContainer = document.createElement('div');
 
         // Define a imagem fixa baseada na moeda
-        let currencyImageURL = reward.currency === 'rlt'
+        let currencyImageURL = reward.currency === 'RLT'
             ? 'https://rollercoin.com/static/img/seasonPass/reward_RLT.png'
             : 'https://rollercoin.com/static/img/seasonPass/reward_RST.png';
 
