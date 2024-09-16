@@ -1,11 +1,11 @@
-/* Reset some basic styles */
+/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Modo Claro (padrão) */
+/* Estilos gerais */
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -13,7 +13,7 @@ body {
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 20px; /* Adiciona espaçamento para o conteúdo */
+    padding: 20px;
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -35,7 +35,6 @@ body {
     margin-bottom: 10px;
 }
 
-/* Estilo para a imagem de perfil */
 .profile-pic {
     width: 150px;
     height: 150px;
@@ -43,7 +42,6 @@ body {
     object-fit: cover;
 }
 
-/* Estilo para o banner */
 .banner-img {
     width: 100%;
     max-width: 480px;
@@ -51,46 +49,8 @@ body {
     border-radius: 10px;
 }
 
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-
-/* Estilo para o link da sala e o botão de pesquisa */
-.input-container {
-    margin-bottom: 15px; /* Adiciona margin-bottom */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-
-button:hover {
-    background-color: #0056b3;
-}
-
-
-/* Estilo para os resultados */
-.result {
-    margin-top: 20px;
-    text-align: center;
-}
-
-
-input[type="number"] {
+/* Estilo para input e botão */
+input[type="number"], button {
     width: 200px;
     padding: 8px;
     font-size: 14px;
@@ -99,30 +59,26 @@ input[type="number"] {
     background-color: #f9f9f9;
 }
 
-
-.calc {
-    padding: 15px;
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-
-.calc h1 {
-    text-align: center;
-    margin-bottom: 5px;
-    color: #007bff;
+button:hover {
+    background-color: #0056b3;
 }
-
-
-.calc h3 {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
 
 /* Estilo para a tabela */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    overflow-x: auto;
 }
 
 th, td {
@@ -145,19 +101,17 @@ input.miner-data {
     background-color: #f9f9f9;
 }
 
-/* Estilo para a tabela do formulário sem bordas */
 .form-table {
     width: 100%;
-    border: 0px solid #333;
+    border: 0;
     border-collapse: collapse;
-    margin-bottom: 20px; /* Espaço inferior para separar da próxima seção */
+    margin-bottom: 20px;
 }
 
 .form-table td {
     padding: 10px;
     vertical-align: middle;
 }
-
 
 .form-table label {
     display: block;
@@ -166,23 +120,7 @@ input.miner-data {
 
 .form-table input[type="number"] {
     width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ddd; /* Mantém a borda dos inputs visível */
-    border-radius: 5px;
-    background-color: #f9f9f9;
 }
-
-/* Estilo adicional para a linha de cabeçalho */
-.form-table th {
-    text-align: center;
-    background-color: #007bff;
-    color: #fff;
-    font-weight: bold
-    padding: 10px;
-    vertical-align: middle;
-}
-
 
 /* Modo Escuro */
 body.dark-mode {
@@ -190,12 +128,10 @@ body.dark-mode {
     color: #ddd;
 }
 
-
 body.dark-mode .container {
     background: #333333;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
-
 
 body.dark-mode button {
     background-color: #0056b3;
@@ -205,11 +141,9 @@ body.dark-mode button:hover {
     background-color: #003d80;
 }
 
-
 body.dark-mode .calc h1 {
     color: #007BFF;
 }
-
 
 body.dark-mode .calc h3 {
     color: #ddd;
@@ -224,16 +158,16 @@ body.dark-mode th {
 }
 
 body.dark-mode .form-table td {
-    border: 0px solid #333;
+    border: 0;
 }
 
-/* Estilo para o toggle switch */
+/* Toggle Switch */
 .switch {
     display: block;
-    margin: 20px auto; /* Centraliza o switch horizontalmente e adiciona margem */
+    margin: 20px auto;
     width: 60px;
     height: 34px;
-    position: relative; /* Removido para centralização */
+    position: relative;
 }
 
 .switch input {
@@ -275,32 +209,56 @@ input:checked + .slider:before {
     background-color: #000;
 }
 
-        /* Adicione o estilo para garantir que os radio buttons estejam centralizados e em linha */
-.radio-buttons {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-}
-.radio-buttons label {
-    margin: 0 10px;
-}
+/* Adiciona rolagem horizontal para tabelas em telas pequenas */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
 
+    .profile-pic {
+        width: 100px;
+        height: 100px;
+    }
 
-/* Estilo para referências e email */
-.ref, .email {
-    margin-top: 20px;
-    text-align: center;
-}
+    .banner-img {
+        max-width: 100%;
+    }
 
-.email h4 {
-    margin-top: 10px;
-}
+    input[type="number"], button {
+        width: 100%;
+    }
 
-.email a {
-    color: #007bff;
-    text-decoration: none;
+    table {
+        font-size: 14px;
+    }
 }
 
-.email a:hover {
-    text-decoration: underline;
+@media (max-width: 480px) {
+    .profile-pic {
+        width: 80px;
+        height: 80px;
+    }
+
+    .banner-img {
+        max-width: 100%;
+    }
+
+    input[type="number"], button {
+        width: 100%;
+        font-size: 12px;
+    }
+
+    table {
+        font-size: 12px;
+    }
+
+    .switch {
+        width: 50px;
+        height: 28px;
+    }
+
+    .slider:before {
+        height: 22px;
+        width: 22px;
+    }
 }
