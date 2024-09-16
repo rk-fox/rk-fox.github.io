@@ -51,7 +51,6 @@ function levelToName(level) {
 
 // Função para atualizar os totais
 function updateTotals() {
-    totalPower = 0;
     totalBonus = 0;
     totalCustomValue = 0;
 
@@ -261,6 +260,10 @@ rewards.forEach(reward => {
     row.appendChild(cellAmount);
 
     let cellPower = document.createElement('td');
+    let rawPowerValue = reward.item?.power || 0;
+    if (rawPowerValue) {
+    totalPower += rawPowerValue;
+}
     cellPower.textContent = reward.item?.power ? formatPower(reward.item.power) : '-';
     row.appendChild(cellPower);
 
