@@ -211,21 +211,24 @@ rewards.forEach(reward => {
 // Adiciona a linha de totais
 addTotalsRow();
 
-// Função para atualizar os totais
+// Função para calcular e atualizar os totais
 function updateTotals() {
     let totalPower = 0;
     let totalBonus = 0;
     let totalCustomValue = 0;
 
+    // Itera sobre as linhas da tabela para somar os valores
     tableBody.querySelectorAll('tr').forEach(row => {
-        let powerCell = row.children[4];
-        let bonusCell = row.children[5];
-        let customValueCell = row.children[7];
+        let powerCell = row.children[4]; // Coluna 5 (Power)
+        let bonusCell = row.children[5]; // Coluna 6 (Bonus)
+        let customValueCell = row.children[7]; // Coluna 8 (Valores Personalizados)
 
+        // Atualiza o total de Power
         if (powerCell && !isNaN(parseFloat(powerCell.textContent))) {
             totalPower += parseFloat(powerCell.textContent);
         }
 
+        // Atualiza o total de Bonus
         if (bonusCell && bonusCell.textContent.endsWith('%')) {
             let bonusValue = parseFloat(bonusCell.textContent);
             if (!isNaN(bonusValue)) {
@@ -233,6 +236,7 @@ function updateTotals() {
             }
         }
 
+        // Atualiza o total de Valores Personalizados
         let inputValue = customValueCell.querySelector('input');
         if (inputValue) {
             let inputValueNumber = parseFloat(inputValue.value) || 0;
@@ -240,11 +244,17 @@ function updateTotals() {
         }
     });
 
+    // Atualiza a linha de totais
     let totalRow = tableBody.querySelector('tr:last-child');
     if (totalRow) {
-        totalRow.children[4].textContent = `Total Power: ${totalPower}`;
-        totalRow.children[5].textContent = `Total Bonus: ${(totalBonus).toFixed(2)} %`;
-        totalRow.children[7].textContent = `Total Custom Value: ${totalCustomValue.toFixed(2)}`;
+        // Atualiza a célula de Power
+        totalRow.children[4].innerHTML = `Total Power<br>${totalPower}`;
+
+        // Atualiza a célula de Bonus
+        totalRow.children[5].innerHTML = `Total Bonus<br>${(totalBonus).toFixed(2)} %`;
+
+        // Atualiza a célula de Valores Personalizados
+        totalRow.children[7].innerHTML = `Valor Total<br>${totalCustomValue.toFixed(2)}`;
     }
 }
 
