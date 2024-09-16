@@ -96,6 +96,3 @@ document.getElementById('toggle-dark-mode').addEventListener('change', (event) =
         document.body.classList.remove('dark-mode');
     }
 });
-
-    }
-});
