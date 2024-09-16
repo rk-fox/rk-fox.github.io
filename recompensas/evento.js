@@ -62,8 +62,10 @@ function updateTotals() {
         let customValueCell = row.children[7]; // Coluna 8 (Valores Personalizados)
 
         // Atualiza o total de Power
-        if (powerCell && !isNaN(parseFloat(powerCell.textContent))) {
-            totalPower += parseFloat(powerCell.textContent);
+        if (powerCell) {
+            let powerText = powerCell.textContent;
+            let powerValue = powerText ? parseFloat(powerText) : 0; // Converte o texto para número
+            totalPower += isNaN(powerValue) ? 0 : powerValue;
         }
 
         // Atualiza o total de Bonus
