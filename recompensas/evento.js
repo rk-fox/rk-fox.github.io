@@ -186,7 +186,7 @@ rewards.forEach(reward => {
     row.appendChild(cellPower);
 
     let cellBonus = document.createElement('td');
-    const bonus = reward.bonus != null ? (reward.bonus / 100).toFixed(2) : '-';
+    const bonus = reward.item?.bonus != null ? (reward.item?.bonus / 100).toFixed(2) : '-';
     cellBonus.textContent = bonus !== '-' ? `${bonus} %` : '-';
     row.appendChild(cellBonus);
 
