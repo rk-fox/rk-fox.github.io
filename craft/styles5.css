@@ -345,12 +345,18 @@ input:checked + .slider:before {
     }
 
     table {
+        width: 100%;
+        border-collapse: collapse;
         font-size: 12px;
     }
-
+   
     .switch {
         width: 50px;
         height: 28px;
+    }
+
+    .slider {
+        border-radius: 28px; /* Ajusta o border-radius para caber melhor */
     }
 
     .slider:before {
