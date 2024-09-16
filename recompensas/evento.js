@@ -64,11 +64,11 @@ rewards.forEach(reward => {
     row.appendChild(cellPower);
 
     let cellBonus = document.createElement('td');
-    cellBonus.textContent = (reward.bonus / 100).toFixed(2) || '-';
+    cellBonus.textContent = (reward.item?.bonus / 100).toFixed(2) || '-';
     row.appendChild(cellBonus);
 
     let cellCanBeSoldOnMP = document.createElement('td');
-    cellCanBeSoldOnMP.textContent = reward.is_can_be_sold_on_mp ? '' : 'X';
+    cellCanBeSoldOnMP.textContent = reward.item?.is_can_be_sold_on_mp ? '' : 'X';
     row.appendChild(cellCanBeSoldOnMP);
 
     // Nova célula para o valor personalizado, editável pelo usuário
