@@ -6,7 +6,7 @@ const decodedString = atob(base64String);
 const jsonData = JSON.parse(decodedString);
 
 // Extrai informações do JSON
-const eventDescription = jsonData.event.description.en;
+const eventDescription = jsonData.event.title.en;
 const rewards = jsonData.rewards;
 const levelsConfig = jsonData.levels_config || [];
 
