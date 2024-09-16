@@ -40,7 +40,7 @@ rewards.forEach(reward => {
 
     let cellXPTotal = document.createElement('td');
     cellXPTotal.textContent = cellXPTotal + cellXP || '-';
-    row.appendChild(cellXP);
+    row.appendChild(cellXPTotal);
 
     let cellAmount = document.createElement('td');
     if (reward.type === 'money') {
@@ -64,8 +64,6 @@ rewards.forEach(reward => {
     let cellCanBeSoldOnMP = document.createElement('td');
     cellCanBeSoldOnMP.textContent = reward.is_can_be_sold_on_mp ? '' : 'X';
     row.appendChild(cellCanBeSoldOnMP);
-
-
 
     tableBody.appendChild(row);
 });
