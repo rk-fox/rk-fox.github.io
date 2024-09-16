@@ -50,42 +50,70 @@ rewards.forEach(reward => {
     row.appendChild(cellTotalXP);
 
     // Cria a célula para a quantidade e imagem
-    let cellAmount = document.createElement('td');
+let cellAmount = document.createElement('td');
 
-    if (reward.type === 'money') {
-        // Define a imagem fixa baseada na moeda
-        let currencyImageURL = reward.currency === 'rlt'
-            ? 'https://static.rollercoin.com/static/img/icons/currencies/rlt.svg'
-            : 'https://static.rollercoin.com/static/img/icons/currencies/rst.svg';
+if (reward.type === 'money') {
+    // Define a imagem fixa baseada na moeda
+    let currencyImageURL = reward.currency === 'rlt'
+        ? 'https://static.rollercoin.com/static/img/icons/currencies/rlt.svg'
+        : 'https://static.rollercoin.com/static/img/icons/currencies/rst.svg';
 
-        // Cria a imagem para a moeda
-        let currencyImage = document.createElement('img');
-        currencyImage.src = currencyImageURL;
-        currencyImage.alt = reward.currency;
-        currencyImage.style.width = '20px'; // Define o tamanho da imagem
-        currencyImage.style.height = 'auto'; // Mantém a proporção da altura
+    // Cria a imagem para a moeda
+    let currencyImage = document.createElement('img');
+    currencyImage.src = currencyImageURL;
+    currencyImage.alt = reward.currency;
+    currencyImage.style.width = '20px'; // Define o tamanho da imagem
+    currencyImage.style.height = 'auto'; // Mantém a proporção da altura
 
-        // Adiciona a imagem e a quantidade formatada à célula
-        cellAmount.appendChild(currencyImage);
-        cellAmount.appendChild(document.createTextNode(` ${(reward.amount / 1000000).toFixed(2)} ${reward.currency}`));
-    } else if (reward.type === 'miner') {
-        const item = reward.item || {};
+    // Adiciona a imagem e a quantidade formatada à célula
+    cellAmount.appendChild(currencyImage);
+    cellAmount.appendChild(document.createTextNode(` ${(reward.amount / 1000000).toFixed(2)} ${reward.currency}`));
+} else if (reward.type === 'miner') {
+    const item = reward.item || {};
 
-        // Construa a URL da imagem do minerador
-        const baseURL = "https://static.rollercoin.com/static/img/market/miners/";
-        const filename = item.filename;
-        const imageURL = `${baseURL}${filename}.gif`;
+    // Cria uma <div> para a imagem e a outra <div> para o texto
+    let imageContainer = document.createElement('div');
+    let textContainer = document.createElement('div');
 
-        // Cria a imagem para o minerador
-        let minerImage = document.createElement('img');
-        minerImage.src = imageURL;
-        minerImage.alt = item.name.en;
-        minerImage.style.width = '50px'; // Define o tamanho da imagem
-        minerImage.style.height = 'auto'; // Mantém a proporção da altura
+    // Construa a URL da imagem do minerador
+    const baseURL = "https://static.rollercoin.com/static/img/market/miners/";
+    const filename = item.filename;
+    const imageURL = `${baseURL}${filename}.gif`;
 
-        // Adiciona a imagem, nível e nome do item à célula
-        cellAmount.appendChild(minerImage);
-        cellAmount.appendChild(document.createTextNode(` Level: ${item.level || '-'} ${item.name?.en || '-'}`));
+    // Cria a imagem para o minerador
+    let minerImage = document.createElement('img');
+    minerImage.src = imageURL;
+    minerImage.alt = item.name.en;
+    minerImage.style.width = '50px'; // Define o tamanho da imagem
+    minerImage.style.height = 'auto'; // Mantém a proporção da altura
+
+    // Adiciona a imagem ao container da imagem
+    imageContainer.appendChild(minerImage);
+
+    // Cria o texto para o nível e nome do item
+    let itemDetails = document.createElement('span');
+    itemDetails.textContent = `Level: ${item.level || '-'} ${item.name?.en || '-'}`;
+    itemDetails.style.marginLeft = '10px'; // Adiciona espaçamento entre a imagem e o texto
+
+    // Adiciona o texto ao container de texto
+    textContainer.appendChild(itemDetails);
+
+    // Adiciona os containers à célula
+    cellAmount.appendChild(imageContainer);
+    cellAmount.appendChild(textContainer);
+} else {
+    cellAmount.textContent = '-';
+}
+
+row.appendChild(cellAmount);
+
+        // Cria um texto para o nível e nome do item
+        let itemDetails = document.createElement('span');
+        itemDetails.textContent = ` Level: ${item.level || '-'} ${item.name?.en || '-'}`;
+        itemDetails.style.marginLeft = '10px'; // Adiciona espaçamento entre a imagem e o texto
+
+        // Adiciona o texto à célula
+        cellAmount.appendChild(itemDetails);
     } else {
         cellAmount.textContent = '-';
     }
