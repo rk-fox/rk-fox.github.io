@@ -10,8 +10,10 @@ const eventDescription = jsonData.event.title.en;
 const rewards = jsonData.rewards;
 const levelsConfig = jsonData.levels_config || [];
 
+// Inicializa o total acumulado de XP
+let cellXPTotal = 0;
+
 // Cria um mapa de níveis para XP
-const cellXPTotal = 0;
 const levelXPMap = levelsConfig.reduce((acc, level) => {
     acc[level.level] = level.level_xp;
     return acc;
@@ -34,12 +36,16 @@ rewards.forEach(reward => {
     cellLevel.textContent = reward.required_level || '-';
     row.appendChild(cellLevel);
     
+    // Calcula e atualiza o XP total
+    let cellXPValue = levelXPMap[reward.required_level] || 0;
+    totalXP += parseFloat(cellXPValue);
+
     let cellXP = document.createElement('td');
-    cellXP.textContent = levelXPMap[reward.required_level] || '-';
+    cellXP.textContent = cellXPValue || '-';
     row.appendChild(cellXP);
 
     let cellXPTotal = document.createElement('td');
-    cellXPTotal.textContent = cellXPTotal + cellXP || '-';
+    cellXPTotal.textContent = totalXP.toFixed(2); // Mantém duas casas decimais
     row.appendChild(cellXPTotal);
 
     let cellAmount = document.createElement('td');
