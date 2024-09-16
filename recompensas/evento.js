@@ -208,6 +208,53 @@ rewards.forEach(reward => {
     tableBody.appendChild(row);
 });
 
+// Adiciona a linha de totais
+addTotalsRow();
+
+// Função para atualizar os totais
+function updateTotals() {
+    let totalPower = 0;
+    let totalBonus = 0;
+    let totalCustomValue = 0;
+
+    tableBody.querySelectorAll('tr').forEach(row => {
+        let powerCell = row.children[4];
+        let bonusCell = row.children[5];
+        let customValueCell = row.children[7];
+
+        if (powerCell && !isNaN(parseFloat(powerCell.textContent))) {
+            totalPower += parseFloat(powerCell.textContent);
+        }
+
+        if (bonusCell && bonusCell.textContent.endsWith('%')) {
+            let bonusValue = parseFloat(bonusCell.textContent);
+            if (!isNaN(bonusValue)) {
+                totalBonus += bonusValue;
+            }
+        }
+
+        let inputValue = customValueCell.querySelector('input');
+        if (inputValue) {
+            let inputValueNumber = parseFloat(inputValue.value) || 0;
+            totalCustomValue += inputValueNumber;
+        }
+    });
+
+    let totalRow = tableBody.querySelector('tr:last-child');
+    if (totalRow) {
+        totalRow.children[4].textContent = `Total Power: ${totalPower}`;
+        totalRow.children[5].textContent = `Total Bonus: ${(totalBonus).toFixed(2)} %`;
+        totalRow.children[7].textContent = `Total Custom Value: ${totalCustomValue.toFixed(2)}`;
+    }
+}
+
+// Adiciona um evento de mudança a cada input da coluna 8
+tableBody.addEventListener('input', event => {
+    if (event.target.tagName === 'INPUT') {
+        updateTotals();
+    }
+});
+
 // Define o título da página
 document.title = `RKFox - ${eventDescription}`;
 
