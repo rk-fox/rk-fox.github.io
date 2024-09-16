@@ -185,7 +185,7 @@ rewards.forEach(reward => {
     row.appendChild(cellAmount);
 
     let cellPower = document.createElement('td');
-    cellPower.textContent = reward.item?.power || '-';
+    cellPower.textContent = reward.item?.power ? formatPower(reward.item.power) : '-';
     row.appendChild(cellPower);
 
     let cellBonus = document.createElement('td');
