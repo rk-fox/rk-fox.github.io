@@ -11,7 +11,7 @@ const rewards = jsonData.rewards;
 const levelsConfig = jsonData.levels_config || [];
 
 // Inicializa o total acumulado de XP
-let totalXP = 0;  // Corrigido de cellXPTotal para totalXP
+let totalXP = 0;
 
 // Cria um mapa de níveis para XP
 const levelXPMap = levelsConfig.reduce((acc, level) => {
@@ -21,12 +21,10 @@ const levelXPMap = levelsConfig.reduce((acc, level) => {
 
 // Preenche o cabeçalho da tabela com o título do evento
 const tableHeaderRow = document.querySelector('#nomeevento');
-const headerCells = ['Nível', 'XP', 'Total XP', 'Quantidade', 'Poder', 'Bônus', 'Vendável no MP', 'Valor Personalizado'];
-headerCells.forEach((headerText, index) => {
-    const headerCell = document.createElement('th');
-    headerCell.textContent = headerText;
-    tableHeaderRow.appendChild(headerCell);
-});
+const headerCell = document.createElement('th');
+headerCell.colSpan = 8; // Como há 8 colunas, faz sentido usar colSpan=8
+headerCell.textContent = ${eventDescription};
+tableHeaderRow.appendChild(headerCell);
 
 // Preenche a tabela com os dados
 const tableBody = document.querySelector('#dataTable tbody');
@@ -47,7 +45,7 @@ rewards.forEach(reward => {
     row.appendChild(cellXP);
 
     let cellTotalXP = document.createElement('td');
-    cellTotalXP.textContent = totalXP.toFixed(2); // Mantém duas casas decimais
+    cellTotalXP.textContent = Math.floor(totalXP); // Remove as casas decimais
     row.appendChild(cellTotalXP);
 
     let cellAmount = document.createElement('td');
