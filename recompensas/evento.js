@@ -11,7 +11,7 @@ const rewards = jsonData.rewards;
 const levelsConfig = jsonData.levels_config || [];
 
 // Inicializa o total acumulado de XP
-let cellXPTotal = 0;
+let totalXP = 0;  // Corrigido de cellXPTotal para totalXP
 
 // Cria um mapa de níveis para XP
 const levelXPMap = levelsConfig.reduce((acc, level) => {
@@ -21,10 +21,12 @@ const levelXPMap = levelsConfig.reduce((acc, level) => {
 
 // Preenche o cabeçalho da tabela com o título do evento
 const tableHeaderRow = document.querySelector('#nomeevento');
-const headerCell = document.createElement('th');
-headerCell.colSpan = 8; // Como há 8 colunas, faz sentido usar colSpan=8
-headerCell.textContent = `${eventDescription}`;
-tableHeaderRow.appendChild(headerCell);
+const headerCells = ['Nível', 'XP', 'Total XP', 'Quantidade', 'Poder', 'Bônus', 'Vendável no MP', 'Valor Personalizado'];
+headerCells.forEach((headerText, index) => {
+    const headerCell = document.createElement('th');
+    headerCell.textContent = headerText;
+    tableHeaderRow.appendChild(headerCell);
+});
 
 // Preenche a tabela com os dados
 const tableBody = document.querySelector('#dataTable tbody');
@@ -38,15 +40,15 @@ rewards.forEach(reward => {
     
     // Calcula e atualiza o XP total
     let cellXPValue = levelXPMap[reward.required_level] || 0;
-    cellXPTotal += parseFloat(cellXPValue);
+    totalXP += parseFloat(cellXPValue);
 
     let cellXP = document.createElement('td');
     cellXP.textContent = cellXPValue || '-';
     row.appendChild(cellXP);
 
-    let cellXPTotal = document.createElement('td');
-    cellXPTotal.textContent = totalXP.toFixed(2); // Mantém duas casas decimais
-    row.appendChild(cellXPTotal);
+    let cellTotalXP = document.createElement('td');
+    cellTotalXP.textContent = totalXP.toFixed(2); // Mantém duas casas decimais
+    row.appendChild(cellTotalXP);
 
     let cellAmount = document.createElement('td');
     if (reward.type === 'money') {
@@ -70,6 +72,15 @@ rewards.forEach(reward => {
     let cellCanBeSoldOnMP = document.createElement('td');
     cellCanBeSoldOnMP.textContent = reward.is_can_be_sold_on_mp ? '' : 'X';
     row.appendChild(cellCanBeSoldOnMP);
+
+    // Nova célula para o valor personalizado, editável pelo usuário
+    let cellCustomValue = document.createElement('td');
+    let input = document.createElement('input');
+    input.type = 'text';
+    input.name = 'cellValor';  // Nome para identificação do input
+    input.value = '';  // Valor padrão
+    cellCustomValue.appendChild(input);
+    row.appendChild(cellCustomValue);
 
     tableBody.appendChild(row);
 });
