@@ -312,7 +312,7 @@ input:checked + .slider:before {
     }
 
 /* Esconde colunas específicas em telas menores */
-    @media only screen and (max-width: 768px) {
+    @media only screen and (max-width: 480px) {
         #dataTable th:nth-child(5),
         #dataTable td:nth-child(5),
         #dataTable th:nth-child(6),
@@ -346,12 +346,16 @@ input:checked + .slider:before {
         overflow-x: auto; /* Permite rolagem horizontal se necessário */
     }
 
-    /* Esconde colunas adicionais em telas ainda menores */
-    @media only screen and (max-width: 480px) {
-        #dataTable th:nth-child(3),
-        #dataTable td:nth-child(3),
-        #dataTable th:nth-child(4),
-        #dataTable td:nth-child(4) {
+/* Esconde colunas específicas em telas menores */
+    @media only screen and (max-width: 768px) {
+        #dataTable th:nth-child(5),
+        #dataTable td:nth-child(5),
+        #dataTable th:nth-child(6),
+        #dataTable td:nth-child(6),
+        #dataTable th:nth-child(7),
+        #dataTable td:nth-child(7),
+        #dataTable th:nth-child(8),
+        #dataTable td:nth-child(8) {
             display: none;
         }
     }
