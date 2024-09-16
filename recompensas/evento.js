@@ -20,7 +20,7 @@ const levelXPMap = levelsConfig.reduce((acc, level) => {
 const tableHeaderRow = document.querySelector('#nomeevento');
 const headerCell = document.createElement('th');
 headerCell.colSpan = 7; // Como há 7 colunas, faz sentido usar colSpan=7
-headerCell.textContent = `Título do Evento: ${eventDescription}`;
+headerCell.textContent = `${eventDescription}`;
 tableHeaderRow.appendChild(headerCell);
 
 // Preenche a tabela com os dados
@@ -64,13 +64,7 @@ rewards.forEach(reward => {
 });
 
 // Define o título da página
-document.title = `Tabela - ${eventDescription}`;
-
-// Adiciona o título do evento acima da tabela
-const tableContainer = document.querySelector('.calc');
-const tableHeader = document.createElement('h2');
-tableHeader.textContent = `Título do Evento: ${eventDescription}`;
-tableContainer.insertBefore(tableHeader, document.querySelector('#dataTable'));
+document.title = `RKFox - ${eventDescription}`;
 
 // Adiciona funcionalidade de modo escuro
 document.getElementById('toggle-dark-mode').addEventListener('change', (event) => {
