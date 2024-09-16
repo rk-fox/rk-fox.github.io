@@ -114,7 +114,8 @@ button:hover {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 10px auto; /* Centraliza horizontalmente e adiciona margem */
+    position: relative; /* Removido para centralização */
 }
 
 th, td {
