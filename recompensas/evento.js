@@ -188,6 +188,7 @@ rewards.forEach(reward => {
     let cellBonus = document.createElement('td');
     const bonus = reward.bonus != null ? (reward.bonus / 100).toFixed(2) : '-';
     cellBonus.textContent = bonus !== '-' ? `${bonus} %` : '-';
+    row.appendChild(cellBonus);
 
     let cellCanBeSoldOnMP = document.createElement('td');
     cellCanBeSoldOnMP.textContent = reward.item?.is_can_be_sold_on_mp ? '' : 'X';
