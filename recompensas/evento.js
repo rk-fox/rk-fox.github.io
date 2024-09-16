@@ -11,6 +11,7 @@ const rewards = jsonData.rewards;
 const levelsConfig = jsonData.levels_config || [];
 
 // Cria um mapa de níveis para XP
+const cellXPTotal = 0;
 const levelXPMap = levelsConfig.reduce((acc, level) => {
     acc[level.level] = level.level_xp;
     return acc;
@@ -28,10 +29,18 @@ const tableBody = document.querySelector('#dataTable tbody');
 
 rewards.forEach(reward => {
     let row = document.createElement('tr');
-
+    
     let cellLevel = document.createElement('td');
     cellLevel.textContent = reward.required_level || '-';
     row.appendChild(cellLevel);
+    
+    let cellXP = document.createElement('td');
+    cellXP.textContent = levelXPMap[reward.required_level] || '-';
+    row.appendChild(cellXP);
+
+    let cellXPTotal = document.createElement('td');
+    cellXPTotal.textContent = cellXPTotal + cellXP || '-';
+    row.appendChild(cellXP);
 
     let cellAmount = document.createElement('td');
     if (reward.type === 'money') {
@@ -56,9 +65,7 @@ rewards.forEach(reward => {
     cellCanBeSoldOnMP.textContent = reward.is_can_be_sold_on_mp ? '' : 'X';
     row.appendChild(cellCanBeSoldOnMP);
 
-    let cellXP = document.createElement('td');
-    cellXP.textContent = levelXPMap[reward.required_level] || '-';
-    row.appendChild(cellXP);
+
 
     tableBody.appendChild(row);
 });
