@@ -122,7 +122,7 @@ rewards.forEach(reward => {
         // Cria o texto para o nível e nome do item
         let itemDetails = document.createElement('span');
         let levelName = levelToName(item.level); // Converte o nível para nome
-        itemDetails.textContent = `${item.name?.en ${levelName}`;
+        itemDetails.textContent = `${item.name?.en} ${levelName}`;
 
         // Adiciona o texto ao container de texto
         textContainer.appendChild(itemDetails);
@@ -130,6 +130,16 @@ rewards.forEach(reward => {
         // Adiciona os containers à célula
         cellAmount.appendChild(imageContainer);
         cellAmount.appendChild(textContainer);
+    } else if (reward.type === 'power') {
+        // Formata o valor do poder
+        let formattedPower = (reward.amount / 1000000).toFixed(2);
+        
+        // Cria o texto para a quantidade de poder
+        let powerText = document.createElement('span');
+        powerText.textContent = `${formattedPower} PHs Temporário`;
+
+        // Adiciona o texto à célula
+        cellAmount.appendChild(powerText);
     } else {
         cellAmount.textContent = '-';
     }
