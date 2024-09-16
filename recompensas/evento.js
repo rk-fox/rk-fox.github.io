@@ -11,7 +11,7 @@ function formatPower(value) {
         return `${(value / 1e3).toFixed(2)} THs`;
     } else {
         // Valores menores que 1000
-        return `${(value / 1e3).toFixed(2)} GHs`; // Supondo que para valores menores que 1000 a unidade seja Hashes
+        return `${(value)} GHs`; // Supondo que para valores menores que 1000 a unidade seja Hashes
     }
 }
 
@@ -111,7 +111,8 @@ function addTotalsRow() {
         } else if (i === 7) { // Custom Value
             cell.innerHTML = `Valor Total<br>${totalCustomValue.toFixed(2)}`;
         } else {
-            cell.textContent = '-';
+            cell.style.backgroundColor = '#ddd'; // Define o fundo da célula como cinza
+            cell.textContent = ''; // Deixa o conteúdo da célula vazio
         }
         row.appendChild(cell);
     }
