@@ -74,9 +74,11 @@ rewards.forEach(reward => {
     // Nova célula para o valor personalizado, editável pelo usuário
     let cellCustomValue = document.createElement('td');
     let input = document.createElement('input');
-    input.type = 'text';
+    input.type = 'number';  // Define o tipo como numérico
     input.name = 'cellValor';  // Nome para identificação do input
     input.value = '';  // Valor padrão
+
+    input.className = 'input-custom'; // Adiciona a classe personalizada
     cellCustomValue.appendChild(input);
     row.appendChild(cellCustomValue);
 
@@ -92,5 +94,8 @@ document.getElementById('toggle-dark-mode').addEventListener('change', (event) =
         document.body.classList.add('dark-mode');
     } else {
         document.body.classList.remove('dark-mode');
+    }
+});
+
     }
 });
