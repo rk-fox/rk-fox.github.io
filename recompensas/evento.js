@@ -291,13 +291,28 @@ rewards.forEach(reward => {
 
     row.appendChild(cellAmount);
 
+    let cellPower = document.createElement('td');
+    let rawPowerValue = reward.item?.power || 0;
+    if (rawPowerValue) {
+    totalPower += rawPowerValue;
+}
+    cellPower.textContent = reward.item?.power ? formatPower(reward.item.power) : '-';
+    row.appendChild(cellPower);
+
     let cellBonus = document.createElement('td');
-    cellBonus.textContent = '-';
+    const bonus = reward.item?.bonus != null ? (reward.item?.bonus / 100).toFixed(2) : '-';
+    cellBonus.textContent = bonus !== '-' ? `${bonus} %` : '-';
     row.appendChild(cellBonus);
 
     let cellCanBeSoldOnMP = document.createElement('td');
+if (reward.type === 'rack') {
+    // Se o tipo for 'rack', o conteúdo será sempre vazio (resultando em true)
     cellCanBeSoldOnMP.textContent = '';
-    row.appendChild(cellCanBeSoldOnMP);
+} else {
+    // Caso contrário, mantém a lógica original
+    cellCanBeSoldOnMP.textContent = reward.item?.is_can_be_sold_on_mp ? '' : 'X';
+}
+row.appendChild(cellCanBeSoldOnMP);
 
     // Nova célula para o valor personalizado, editável pelo usuário
     let cellCustomValue = document.createElement('td');
