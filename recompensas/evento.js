@@ -39,12 +39,12 @@ const levelXPMap = levelsConfig.reduce((acc, level) => {
 // Função para converter nível em nome
 function levelToName(level) {
     switch (level) {
-        case 0: return "Comum";
-        case 1: return "Incomum";
-        case 2: return "Rara";
-        case 3: return "Épica";
-        case 4: return "Lendária";
-        case 5: return "Unreal";
+        case 0: return "COMUM";
+        case 1: return "INCOMUM";
+        case 2: return "RARA";
+        case 3: return "ÉPICA";
+        case 4: return "LENDÁRIA";
+        case 5: return "UNREAL";
         default: return "Desconhecido";
     }
 }
@@ -220,12 +220,39 @@ rewards.forEach(reward => {
     imageContainer.appendChild(minerLink);
 
     // Cria o texto para o nível e nome do item
-    let itemDetails = document.createElement('span');
-    let levelName = levelToName(item.level); // Converte o nível para nome
-    itemDetails.textContent = `${item.name?.en} ${levelName}`;
+let itemDetails = document.createElement('span');
+let levelName = levelToName(item.level); // Converte o nível para nome
 
-    // Adiciona o texto ao container de texto
-    textContainer.appendChild(itemDetails);
+// Adiciona o nível em negrito e aplica a cor correta baseado no nome
+let levelSpan = document.createElement('span');
+levelSpan.style.fontWeight = 'bold'; // Aplica o negrito
+switch (levelName) {
+    case "INCOMUM":
+        levelSpan.style.color = '#2bff00'; // Verde para INCOMUM
+        break;
+    case "RARA":
+        levelSpan.style.color = '#00eaff'; // Azul para RARA
+        break;
+    case "ÉPICA":
+        levelSpan.style.color = '#ff00bb'; // Rosa para ÉPICA
+        break;
+    case "UNREAL":
+        levelSpan.style.color = '#ff0000'; // Vermelho para UNREAL
+        break;
+    default:
+        levelSpan.style.color = ''; // Mantém a cor padrão para COMUM ou desconhecido
+}
+
+// Define o texto com o nível
+levelSpan.textContent = ` ${levelName}`;
+
+// Adiciona o nome do item e o nível ao container de texto
+itemDetails.textContent = item.name?.en;
+itemDetails.appendChild(levelSpan);
+
+// Adiciona o texto ao container de texto
+textContainer.appendChild(itemDetails);
+
 
     // Adiciona os containers à célula
     cellAmount.appendChild(imageContainer);
