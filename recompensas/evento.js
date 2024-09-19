@@ -190,39 +190,47 @@ rewards.forEach(reward => {
         // Adiciona o container do texto à célula
         cellAmount.appendChild(textContainer);
     } else if (reward.type === 'miner') {
-        const item = reward.item || {};
+    const item = reward.item || {};
+    
+    // Cria uma <div> para a imagem e a outra <div> para o texto
+    let imageContainer = document.createElement('div');
+    let textContainer = document.createElement('div');
 
-        // Cria uma <div> para a imagem e a outra <div> para o texto
-        let imageContainer = document.createElement('div');
-        let textContainer = document.createElement('div');
+    // Construa a URL da imagem do minerador
+    const baseURL = "https://static.rollercoin.com/static/img/market/miners/";
+    const filename = item.filename;
+    const imageURL = `${baseURL}${filename}.gif`;
 
-        // Construa a URL da imagem do minerador
-        const baseURL = "https://static.rollercoin.com/static/img/market/miners/";
-        const filename = item.filename;
-        const imageURL = `${baseURL}${filename}.gif`;
+    // Cria o link para o minerador
+    let minerLink = document.createElement('a');
+    minerLink.href = `https://rollercoin.com/marketplace/buy/miner/${item._id}`;
+    minerLink.target = "_blank"; // Abre em nova aba
 
-        // Cria a imagem para o minerador
-        let minerImage = document.createElement('img');
-        minerImage.src = imageURL;
-        minerImage.alt = item.name.en;
-        minerImage.style.width = '50px'; // Define o tamanho da imagem
-        minerImage.style.height = 'auto'; // Mantém a proporção da altura
+    // Cria a imagem para o minerador
+    let minerImage = document.createElement('img');
+    minerImage.src = imageURL;
+    minerImage.alt = item.name.en;
+    minerImage.style.width = '50px'; // Define o tamanho da imagem
+    minerImage.style.height = 'auto'; // Mantém a proporção da altura
 
-        // Adiciona a imagem ao container da imagem
-        imageContainer.appendChild(minerImage);
+    // Adiciona a imagem ao link
+    minerLink.appendChild(minerImage);
+    
+    // Adiciona o link ao container da imagem
+    imageContainer.appendChild(minerLink);
 
-        // Cria o texto para o nível e nome do item
-        let itemDetails = document.createElement('span');
-        let levelName = levelToName(item.level); // Converte o nível para nome
-        itemDetails.textContent = `${item.name?.en} ${levelName}`;
+    // Cria o texto para o nível e nome do item
+    let itemDetails = document.createElement('span');
+    let levelName = levelToName(item.level); // Converte o nível para nome
+    itemDetails.textContent = `${item.name?.en} ${levelName}`;
 
-        // Adiciona o texto ao container de texto
-        textContainer.appendChild(itemDetails);
+    // Adiciona o texto ao container de texto
+    textContainer.appendChild(itemDetails);
 
-        // Adiciona os containers à célula
-        cellAmount.appendChild(imageContainer);
-        cellAmount.appendChild(textContainer);
-    } else if (reward.type === 'power') {
+    // Adiciona os containers à célula
+    cellAmount.appendChild(imageContainer);
+    cellAmount.appendChild(textContainer);
+} else if (reward.type === 'power') {
         // Cria uma <div> para a imagem e a outra <div> para o texto
         let imageContainer = document.createElement('div');
         let textContainer = document.createElement('div');
@@ -254,40 +262,48 @@ rewards.forEach(reward => {
         cellAmount.appendChild(imageContainer);
         cellAmount.appendChild(textContainer);
     } else if (reward.type === 'rack') {
-        const item = reward.item || {};
+    const item = reward.item || {};
 
-        // Cria uma <div> para a imagem e a outra <div> para o texto
-        let imageContainer = document.createElement('div');
-        let textContainer = document.createElement('div');
+    // Cria uma <div> para a imagem e a outra <div> para o texto
+    let imageContainer = document.createElement('div');
+    let textContainer = document.createElement('div');
 
-        // Construa a URL da imagem do minerador
-        const baseURL = "https://static.rollercoin.com/static/img/market/racks/";
-        const filename = item._id;
-        const imageURL = `${baseURL}${filename}.png`;
+    // Construa a URL da imagem do rack
+    const baseURL = "https://static.rollercoin.com/static/img/market/racks/";
+    const filename = item._id;
+    const imageURL = `${baseURL}${filename}.png`;
 
-        // Cria a imagem para o minerador
-        let minerImage = document.createElement('img');
-        minerImage.src = imageURL;
-        minerImage.alt = item.name.en;
-        minerImage.style.width = '50px'; // Define o tamanho da imagem
-        minerImage.style.height = 'auto'; // Mantém a proporção da altura
+    // Cria o link para o rack
+    let rackLink = document.createElement('a');
+    rackLink.href = `https://rollercoin.com/marketplace/buy/rack/${item._id}`;
+    rackLink.target = "_blank"; // Abre em nova aba
 
-        // Adiciona a imagem ao container da imagem
-        imageContainer.appendChild(minerImage);
+    // Cria a imagem para o rack
+    let rackImage = document.createElement('img');
+    rackImage.src = imageURL;
+    rackImage.alt = item.name.en;
+    rackImage.style.width = '50px'; // Define o tamanho da imagem
+    rackImage.style.height = 'auto'; // Mantém a proporção da altura
 
-        // Cria o texto para o nome do item
-        let itemDetails = document.createElement('span');
-        itemDetails.textContent = `${item.name?.en}`;
+    // Adiciona a imagem ao link
+    rackLink.appendChild(rackImage);
+    
+    // Adiciona o link ao container da imagem
+    imageContainer.appendChild(rackLink);
 
-        // Adiciona o texto ao container de texto
-        textContainer.appendChild(itemDetails);
+    // Cria o texto para o nome do item
+    let itemDetails = document.createElement('span');
+    itemDetails.textContent = `${item.name?.en}`;
 
-        // Adiciona os containers à célula
-        cellAmount.appendChild(imageContainer);
-        cellAmount.appendChild(textContainer);
-    } else {
-        cellAmount.textContent = '-';
-    }
+    // Adiciona o texto ao container de texto
+    textContainer.appendChild(itemDetails);
+
+    // Adiciona os containers à célula
+    cellAmount.appendChild(imageContainer);
+    cellAmount.appendChild(textContainer);
+} else {
+    cellAmount.textContent = '-';
+}
 
     row.appendChild(cellAmount);
 
