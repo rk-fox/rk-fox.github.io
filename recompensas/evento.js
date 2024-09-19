@@ -147,11 +147,11 @@ rewards.forEach(reward => {
     totalXP += parseFloat(cellXPValue);
 
     let cellXP = document.createElement('td');
-    cellXP.textContent = cellXPValue || '-';
+    cellXP.textContent = cellXPValue.toLocaleString() || '-';
     row.appendChild(cellXP);
 
     let cellTotalXP = document.createElement('td');
-    cellTotalXP.textContent = Math.floor(totalXP); // Remove as casas decimais
+    cellTotalXP.textContent = Math.floor(totalXP).toLocaleString();
     row.appendChild(cellTotalXP);
 
     // Cria a célula para a quantidade e imagem
