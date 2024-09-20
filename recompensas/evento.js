@@ -236,6 +236,9 @@ switch (levelName) {
     case "ÉPICA":
         levelSpan.style.color = '#ff00bb'; // Rosa para ÉPICA
         break;
+    case "LENDÁRIA":
+        levelSpan.style.color = '##fffb00'; // Rosa para ÉPICA
+        break;
     case "UNREAL":
         levelSpan.style.color = '#ff0000'; // Vermelho para UNREAL
         break;
