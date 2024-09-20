@@ -15,20 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getLevelDescription(level) {
         switch (level) {
-            case 0:
-                return 'Common';
-            case 1:
-                return 'Uncommon';
-            case 2:
-                return 'Rare';
-            case 3:
-                return 'Epic';
-            case 4:
-                return 'Legendary';
-            case 5:
-                return 'Unreal';
-            default:
-                return 'Unknown'; // Para qualquer valor inesperado
+            case 0: return { text: 'Common', color: '' };
+            case 1: return { text: 'Uncommon', color: '#2bff00' };
+            case 2: return { text: 'Rare', color: '#00eaff' };
+            case 3: return { text: 'Epic', color: '#ff00bb' };
+            case 4: return { text: 'Legendary', color: '#fffb00' };
+            case 5: return { text: 'Unreal', color: '#ff0000' };
+            default: return { text: 'Unknown', color: '' };
         }
     }
 
@@ -134,35 +127,25 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const negativeResults = results.filter(result => result.newpower < 0);
-
-            // Ordenar os mineradores negativos com base no impacto (newpower), mais próximo de zero
             negativeResults.sort((a, b) => Math.abs(a.newpower) - Math.abs(b.newpower));
-
-            // Selecionar os 3 mineradores com impacto mais próximo de zero
             const top3NegativeResults = negativeResults.slice(0, 3);
-
-            // Logar todos os mineradores negativos no console
-            console.log('Mineradores com valores negativos:');
-            top3NegativeResults.forEach(miner => {
-                console.log(`Nome: ${getLevelDescription(miner.level)} ${miner.name}`);
-                console.log(`Poder: ${convertPower2(miner.power)}`);
-                console.log(`Bônus: ${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`);
-                console.log(`Impacto: ${convertPower(miner.newpower)}`);
-                console.log(`Está em conjunto: ${miner.is_in_set ? 'Sim' : 'Não'}`);
-                console.log(`Repetições: ${counts[miner.miner_id] || 1}`);
-                console.log('---');
-            });
 
             // Atualizar os elementos da página com informações dos mineradores negativos
             const updateElement = (index, miner) => {
-                document.getElementById(`nome${index}`).innerText = miner ? `${getLevelDescription(miner.level)} ${miner.name}` : '';
-                document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner?.filename}.gif?v=1`;
-                document.getElementById(`img${index}`).style.display = 'block';  // Tornar a imagem visível
-                document.getElementById(`poder${index}`).innerText = miner ? convertPower2(miner.power) : '';
-                document.getElementById(`bonus${index}`).innerText = miner ? `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%` : '';
-                document.getElementById(`impact${index}`).innerText = miner ? convertPower(miner.newpower) : '';
-                document.getElementById(`set${index}`).innerText = miner ? (miner.is_in_set ? 'Sim' : 'Não') : '';
-                document.getElementById(`merge${index}`).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
+                if (miner) {
+                    const levelInfo = getLevelDescription(miner.level);
+                    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
+                    document.getElementById(`nome${index}`).innerHTML = levelSpan; // Usar innerHTML para aplicar o estilo
+                    document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
+                    document.getElementById(`img${index}`).style.display = 'block';
+                    document.getElementById(`poder${index}`).innerText = convertPower2(miner.power);
+                    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`;
+                    document.getElementById(`impact${index}`).innerText = convertPower(miner.newpower);
+                    document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
+                    document.getElementById(`merge${index}`).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
+                } else {
+                    document.getElementById(`nome${index}`).innerText = '';
+                }
             };
 
             updateElement(1, top3NegativeResults[0]);
