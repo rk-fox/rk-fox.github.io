@@ -15,8 +15,14 @@ function formatPower(value) {
     }
 }
 
+// Função para decodificar a string BASE64
+function base64Decode(str) {
+    const decoded = atob(str);
+    return decodeURIComponent(escape(decoded));
+}
+
 // Decodifica a string BASE64 
-const decodedString = atob(base64String);
+const decodedString = base64Decode(base64String);
 const jsonData = JSON.parse(decodedString);
 
 // Extrai informações do JSON
@@ -190,77 +196,76 @@ rewards.forEach(reward => {
         // Adiciona o container do texto à célula
         cellAmount.appendChild(textContainer);
     } else if (reward.type === 'miner') {
-    const item = reward.item || {};
-    
-    // Cria uma <div> para a imagem e a outra <div> para o texto
-    let imageContainer = document.createElement('div');
-    let textContainer = document.createElement('div');
+        const item = reward.item || {};
+        
+        // Cria uma <div> para a imagem e a outra <div> para o texto
+        let imageContainer = document.createElement('div');
+        let textContainer = document.createElement('div');
 
-    // Construa a URL da imagem do minerador
-    const baseURL = "https://static.rollercoin.com/static/img/market/miners/";
-    const filename = item.filename;
-    const imageURL = `${baseURL}${filename}.gif`;
+        // Construa a URL da imagem do minerador
+        const baseURL = "https://static.rollercoin.com/static/img/market/miners/";
+        const filename = item.filename;
+        const imageURL = `${baseURL}${filename}.gif`;
 
-    // Cria o link para o minerador
-    let minerLink = document.createElement('a');
-    minerLink.href = `https://rollercoin.com/marketplace/buy/miner/${item._id}`;
-    minerLink.target = "_blank"; // Abre em nova aba
+        // Cria o link para o minerador
+        let minerLink = document.createElement('a');
+        minerLink.href = `https://rollercoin.com/marketplace/buy/miner/${item._id}`;
+        minerLink.target = "_blank"; // Abre em nova aba
 
-    // Cria a imagem para o minerador
-    let minerImage = document.createElement('img');
-    minerImage.src = imageURL;
-    minerImage.alt = item.name.en;
-    minerImage.style.width = '50px'; // Define o tamanho da imagem
-    minerImage.style.height = 'auto'; // Mantém a proporção da altura
+        // Cria a imagem para o minerador
+        let minerImage = document.createElement('img');
+        minerImage.src = imageURL;
+        minerImage.alt = item.name.en;
+        minerImage.style.width = '50px'; // Define o tamanho da imagem
+        minerImage.style.height = 'auto'; // Mantém a proporção da altura
 
-    // Adiciona a imagem ao link
-    minerLink.appendChild(minerImage);
-    
-    // Adiciona o link ao container da imagem
-    imageContainer.appendChild(minerLink);
+        // Adiciona a imagem ao link
+        minerLink.appendChild(minerImage);
+        
+        // Adiciona o link ao container da imagem
+        imageContainer.appendChild(minerLink);
 
-    // Cria o texto para o nível e nome do item
-let itemDetails = document.createElement('span');
-let levelName = levelToName(item.level); // Converte o nível para nome
+        // Cria o texto para o nível e nome do item
+        let itemDetails = document.createElement('span');
+        let levelName = levelToName(item.level); // Converte o nível para nome
 
-// Adiciona o nível em negrito e aplica a cor correta baseado no nome
-let levelSpan = document.createElement('span');
-levelSpan.style.fontWeight = 'bold'; // Aplica o negrito
-switch (levelName) {
-    case "INCOMUM":
-        levelSpan.style.color = '#2bff00'; // Verde para INCOMUM
-        break;
-    case "RARA":
-        levelSpan.style.color = '#00eaff'; // Azul para RARA
-        break;
-    case "ÉPICA":
-        levelSpan.style.color = '#ff00bb'; // Rosa para ÉPICA
-        break;
-    case "LENDÁRIA":
-        levelSpan.style.color = '#fffb00'; // Rosa para ÉPICA
-        break;
-    case "UNREAL":
-        levelSpan.style.color = '#ff0000'; // Vermelho para UNREAL
-        break;
-    default:
-        levelSpan.style.color = ''; // Mantém a cor padrão para COMUM ou desconhecido
-}
+        // Adiciona o nível em negrito e aplica a cor correta baseado no nome
+        let levelSpan = document.createElement('span');
+        levelSpan.style.fontWeight = 'bold'; // Aplica o negrito
+        switch (levelName) {
+            case "INCOMUM":
+                levelSpan.style.color = '#2bff00'; // Verde para INCOMUM
+                break;
+            case "RARA":
+                levelSpan.style.color = '#00eaff'; // Azul para RARA
+                break;
+            case "ÉPICA":
+                levelSpan.style.color = '#ff00bb'; // Rosa para ÉPICA
+                break;
+            case "LENDÁRIA":
+                levelSpan.style.color = '#fffb00'; // Amarelo para LENDÁRIA
+                break;
+            case "UNREAL":
+                levelSpan.style.color = '#ff0000'; // Vermelho para UNREAL
+                break;
+            default:
+                levelSpan.style.color = ''; // Mantém a cor padrão para COMUM ou desconhecido
+        }
 
-// Define o texto com o nível
-levelSpan.textContent = ` ${levelName}`;
+        // Define o texto com o nível
+        levelSpan.textContent = ` ${levelName}`;
 
-// Adiciona o nome do item e o nível ao container de texto
-itemDetails.textContent = item.name?.en;
-itemDetails.appendChild(levelSpan);
+        // Adiciona o nome do item e o nível ao container de texto
+        itemDetails.textContent = item.name?.en;
+        itemDetails.appendChild(levelSpan);
 
-// Adiciona o texto ao container de texto
-textContainer.appendChild(itemDetails);
+        // Adiciona o texto ao container de texto
+        textContainer.appendChild(itemDetails);
 
-
-    // Adiciona os containers à célula
-    cellAmount.appendChild(imageContainer);
-    cellAmount.appendChild(textContainer);
-} else if (reward.type === 'power') {
+        // Adiciona os containers à célula
+        cellAmount.appendChild(imageContainer);
+        cellAmount.appendChild(textContainer);
+    } else if (reward.type === 'power') {
         // Cria uma <div> para a imagem e a outra <div> para o texto
         let imageContainer = document.createElement('div');
         let textContainer = document.createElement('div');
@@ -292,56 +297,56 @@ textContainer.appendChild(itemDetails);
         cellAmount.appendChild(imageContainer);
         cellAmount.appendChild(textContainer);
     } else if (reward.type === 'rack') {
-    const item = reward.item || {};
+        const item = reward.item || {};
 
-    // Cria uma <div> para a imagem e a outra <div> para o texto
-    let imageContainer = document.createElement('div');
-    let textContainer = document.createElement('div');
+        // Cria uma <div> para a imagem e a outra <div> para o texto
+        let imageContainer = document.createElement('div');
+        let textContainer = document.createElement('div');
 
-    // Construa a URL da imagem do rack
-    const baseURL = "https://static.rollercoin.com/static/img/market/racks/";
-    const filename = item._id;
-    const imageURL = `${baseURL}${filename}.png`;
+        // Construa a URL da imagem do rack
+        const baseURL = "https://static.rollercoin.com/static/img/market/racks/";
+        const filename = item._id;
+        const imageURL = `${baseURL}${filename}.png`;
 
-    // Cria o link para o rack
-    let rackLink = document.createElement('a');
-    rackLink.href = `https://rollercoin.com/marketplace/buy/rack/${item._id}`;
-    rackLink.target = "_blank"; // Abre em nova aba
+        // Cria o link para o rack
+        let rackLink = document.createElement('a');
+        rackLink.href = `https://rollercoin.com/marketplace/buy/rack/${item._id}`;
+        rackLink.target = "_blank"; // Abre em nova aba
 
-    // Cria a imagem para o rack
-    let rackImage = document.createElement('img');
-    rackImage.src = imageURL;
-    rackImage.alt = item.name.en;
-    rackImage.style.width = '50px'; // Define o tamanho da imagem
-    rackImage.style.height = 'auto'; // Mantém a proporção da altura
+        // Cria a imagem para o rack
+        let rackImage = document.createElement('img');
+        rackImage.src = imageURL;
+        rackImage.alt = item.name.en;
+        rackImage.style.width = '50px'; // Define o tamanho da imagem
+        rackImage.style.height = 'auto'; // Mantém a proporção da altura
 
-    // Adiciona a imagem ao link
-    rackLink.appendChild(rackImage);
-    
-    // Adiciona o link ao container da imagem
-    imageContainer.appendChild(rackLink);
+        // Adiciona a imagem ao link
+        rackLink.appendChild(rackImage);
+        
+        // Adiciona o link ao container da imagem
+        imageContainer.appendChild(rackLink);
 
-    // Cria o texto para o nome do item
-    let itemDetails = document.createElement('span');
-    itemDetails.textContent = `${item.name?.en}`;
+        // Cria o texto para o nome do item
+        let itemDetails = document.createElement('span');
+        itemDetails.textContent = `${item.name?.en}`;
 
-    // Adiciona o texto ao container de texto
-    textContainer.appendChild(itemDetails);
+        // Adiciona o texto ao container de texto
+        textContainer.appendChild(itemDetails);
 
-    // Adiciona os containers à célula
-    cellAmount.appendChild(imageContainer);
-    cellAmount.appendChild(textContainer);
-} else {
-    cellAmount.textContent = '-';
-}
+        // Adiciona os containers à célula
+        cellAmount.appendChild(imageContainer);
+        cellAmount.appendChild(textContainer);
+    } else {
+        cellAmount.textContent = '-';
+    }
 
     row.appendChild(cellAmount);
 
     let cellPower = document.createElement('td');
     let rawPowerValue = reward.item?.power || 0;
     if (rawPowerValue) {
-    totalPower += rawPowerValue;
-}
+        totalPower += rawPowerValue;
+    }
     cellPower.textContent = reward.item?.power ? formatPower(reward.item.power) : '-';
     row.appendChild(cellPower);
 
@@ -351,14 +356,14 @@ textContainer.appendChild(itemDetails);
     row.appendChild(cellBonus);
 
     let cellCanBeSoldOnMP = document.createElement('td');
-if (reward.type === 'rack') {
-    // Se o tipo for 'rack', o conteúdo será sempre vazio (resultando em true)
-    cellCanBeSoldOnMP.textContent = '';
-} else {
-    // Caso contrário, mantém a lógica original
-    cellCanBeSoldOnMP.textContent = reward.item?.is_can_be_sold_on_mp ? '' : 'X';
-}
-row.appendChild(cellCanBeSoldOnMP);
+    if (reward.type === 'rack') {
+        // Se o tipo for 'rack', o conteúdo será sempre vazio (resultando em true)
+        cellCanBeSoldOnMP.textContent = '';
+    } else {
+        // Caso contrário, mantém a lógica original
+        cellCanBeSoldOnMP.textContent = reward.item?.is_can_be_sold_on_mp ? '' : 'X';
+    }
+    row.appendChild(cellCanBeSoldOnMP);
 
     // Nova célula para o valor personalizado, editável pelo usuário
     let cellCustomValue = document.createElement('td');
