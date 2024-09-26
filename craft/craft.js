@@ -30,8 +30,8 @@ function calcular() {
 
                 novaLinha.insertCell(0).textContent = multi;
                 novaLinha.insertCell(1).textContent = valorCraft1;
-                novaLinha.insertCell(3).textContent = custoCraft1.toFixed(2);
-                novaLinha.insertCell(4).textContent = cashCraft1.toFixed(2);
-                novaLinha.insertCell(5).textContent = saldoCraft1.toFixed(2);
+                novaLinha.insertCell(2).textContent = custoCraft1.toFixed(2);
+                novaLinha.insertCell(3).textContent = cashCraft1.toFixed(2);
+                novaLinha.insertCell(4).textContent = saldoCraft1.toFixed(2);
             }
 }
