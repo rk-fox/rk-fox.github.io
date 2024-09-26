@@ -325,12 +325,4 @@ input:checked + .slider:before {
         font-size: 10px;
         overflow-x: auto; /* Permite rolagem horizontal se necessário */
     }
-
-    /* Esconde a coluna 3 em telas ainda menores */
-    @media only screen and (max-width: 768px) {
-        table th:nth-child(3),
-        table td:nth-child(3) {
-            display: none;
-        }
-    }
 }
