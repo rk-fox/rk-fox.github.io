@@ -336,9 +336,37 @@ rewards.forEach(reward => {
         // Adiciona os containers à célula
         cellAmount.appendChild(imageContainer);
         cellAmount.appendChild(textContainer);
-    } else {
-        cellAmount.textContent = '-';
-    }
+    } else if (reward.type === 'season_pass_xp') {
+    // Cria uma <div> para a imagem e a outra <div> para o texto
+    let imageContainer = document.createElement('div');
+    let textContainer = document.createElement('div');
+
+    // URL da imagem XP
+    const xpImageURL = 'https://minaryganar.com/wp-content/uploads/2024/03/EXP.png';
+
+    // Cria a imagem para XP
+    let xpImage = document.createElement('img');
+    xpImage.src = xpImageURL;
+    xpImage.alt = 'XP';
+    xpImage.style.width = '50px'; // Define o tamanho da imagem
+    xpImage.style.height = 'auto'; // Mantém a proporção da altura
+
+    // Adiciona a imagem ao container da imagem
+    imageContainer.appendChild(xpImage);
+
+    // Cria o texto para a quantidade de XP
+    let amountText = document.createElement('span');
+    amountText.textContent = ` ${reward.amount} XP`; // Exibe o amount seguido de XP
+
+    // Adiciona o texto ao container de texto
+    textContainer.appendChild(amountText);
+
+    // Adiciona os containers à célula
+    cellAmount.appendChild(imageContainer);
+    cellAmount.appendChild(textContainer);
+} else {
+    cellAmount.textContent = '-';
+}
 
     row.appendChild(cellAmount);
 
