@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Função para converter poder
     function convertPower(value) {
-        const absValue = Math.abs(value);
+        const absValue = Math.abs(value); // Obter o valor absoluto
         if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
         return (value).toFixed(3).replace('.', ',') + ' GHs';
     }
 
     // Função para converter poder (apenas na exibição de miner em GHs)
     function convertPower2(value) {
-        const absValue = Math.abs(value);
+        const absValue = Math.abs(value); // Obter o valor absoluto
         if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
         return (value) + ' GHs';
     }
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Exibir avatar e mensagem de boas-vindas
             const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
             document.getElementById('avatar').src = avatarUrl;
-            document.getElementById('avatar').style.display = 'block';  
+            document.getElementById('avatar').style.display = 'block';  // Tornar a imagem visível
             document.getElementById('welcomeMessage').innerText = `Olá, ${userName}!`;
 
             // Buscar dados de user-power-data usando avatarId
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let bonusPercent = powerContents.data.bonus_percent;
 
             // Processar bonus_percent
-            bonusPercent = parseFloat((bonusPercent / 100).toFixed(2));
+            bonusPercent = parseFloat((bonusPercent / 100).toFixed(2));  // Dividir por 100 e garantir que é um número
 
             // Calcular Poder Total
             const total_orig = miners * (1 + (bonusPercent / 100));
@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Calcular newpower para cada miner e armazenar todos os mineradores negativos
             const results = filteredMiners.map(miner => {
+                // Ajustar o cálculo do newBonusPercent com base nas repetições
                 const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - (miner.bonus_percent / 100));
                 const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
                 
@@ -127,14 +128,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const negativeResults = results.filter(result => result.newpower < 0);
             negativeResults.sort((a, b) => Math.abs(a.newpower) - Math.abs(b.newpower));
-            const top15NegativeResults = negativeResults.slice(0, 15); // Obter os 15 resultados negativos
+            const top3NegativeResults = negativeResults.slice(0, 3);
+
+            // Logar 15 resultados negativos no console
+            const top15NegativeResults = negativeResults.slice(0, 15);
+            console.log(top15NegativeResults.map(miner => ({
+                name: miner.name,
+                power: convertPower(miner.power),
+                newpower: convertPower(miner.newpower),
+                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`
+            })));
 
             // Atualizar os elementos da página com informações dos mineradores negativos
             const updateElement = (index, miner) => {
                 if (miner) {
                     const levelInfo = getLevelDescription(miner.level);
                     const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-                    document.getElementById(`nome${index}`).innerHTML = levelSpan;
+                    document.getElementById(`nome${index}`).innerHTML = levelSpan; // Usar innerHTML para aplicar o estilo
                     document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
                     document.getElementById(`img${index}`).style.display = 'block';
                     document.getElementById(`poder${index}`).innerText = convertPower2(miner.power);
@@ -147,18 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
 
-            // Atualizar elementos da página
-            for (let i = 0; i < top15NegativeResults.length; i++) {
-                updateElement(i + 1, top15NegativeResults[i]); // Ajustar índice para exibir na página
-            }
-
-            // Exibir os resultados negativos no console log
-            console.log(top15NegativeResults.map(miner => ({
-                name: miner.name,
-                power: convertPower(miner.power),
-                newpower: convertPower(miner.newpower),
-                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`
-            })));
+            updateElement(1, top3NegativeResults[0]);
+            updateElement(2, top3NegativeResults[1]);
+            updateElement(3, top3NegativeResults[2]);
 
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
