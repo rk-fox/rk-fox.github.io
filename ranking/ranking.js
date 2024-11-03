@@ -30,13 +30,21 @@ async function fetchUserData(userId) {
         }
 
         const responseData = await response.json();
-        const data = JSON.parse(responseData.contents).data; // Parseia a string JSON dos dados
-        return data;
+        console.log('Resposta da API:', responseData); // Verifique a resposta
+
+        // Agora você pode acessar os dados diretamente de responseData.data
+        if (responseData.success) {
+            return responseData.data; // Retorna os dados diretamente
+        } else {
+            console.error('Erro: A resposta não indica sucesso.', responseData);
+            return null;
+        }
     } catch (error) {
         console.error('Erro ao buscar dados dos usuários:', error);
         return null;
     }
 }
+
 
 // Função para adicionar dados à tabela
 function addDataToTable(user, userData, initialPower, rank, positionChange) {
