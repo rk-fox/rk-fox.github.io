@@ -10,12 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let finalPower = 0;
     let newPower = 0;
 
-// Função para converter poder
-function convertPower(value) {
-    const absValue = Math.abs(value); // Obter o valor absoluto
-    if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
-    return (value).toFixed(3).replace('.', ',') + ' GHs';
-}
+    // Função para converter poder
+    function convertPower(value) {
+        const absValue = Math.abs(value); // Obter o valor absoluto
+        if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' THs';
+        return (value).toFixed(3).replace('.', ',') + ' GHs';
+    }
 
     document.getElementById('searchButton').addEventListener('click', async () => {
         const userLink = document.getElementById('linkInput').value;
@@ -27,10 +27,9 @@ function convertPower(value) {
 
         try {
             // Buscar avatar_id
-            const profileResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
+            const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
             const profileData = await profileResponse.json();
-            const profileContents = JSON.parse(profileData.contents);
-            const avatarId = profileContents.data.avatar_id;
+            const avatarId = profileData.data.avatar_id; // Acesso direto aos dados
 
             if (!avatarId) {
                 alert('Erro ao obter o avatar_id.');
@@ -38,14 +37,13 @@ function convertPower(value) {
             }
 
             // Buscar dados de usuário
-            const powerResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+            const powerResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
             const powerData = await powerResponse.json();
-            const powerContents = JSON.parse(powerData.contents);
-            const data = powerContents.data;
+            const data = powerData.data; // Acesso direto aos dados
 
             // Armazenar dados iniciais
             initialMiners = data.miners;
-            initialBonusPercent = data.bonus_percent / 10000;
+            initialBonusPercent = data.bonus_percent / 100; // Ajuste para divisão correta
             initialBonus = initialMiners * initialBonusPercent;
 
             totalPower = initialMiners * (1 + initialBonusPercent);
@@ -73,8 +71,8 @@ function convertPower(value) {
         currentMiners = initialMiners - sellPower + buyPower;
         currentBonusPercent = initialBonusPercent - sellBonus + buyBonus;
         currentBonus = currentMiners * currentBonusPercent;
-        newPower = currentMiners * (1 + (currentBonusPercent));
-        finalPower = newPower - totalPower ;
+        newPower = currentMiners * (1 + currentBonusPercent);
+        finalPower = newPower - totalPower;
 
         // Atualize os resultados na página
         document.getElementById('finalPower').textContent = convertPower(finalPower);
@@ -98,30 +96,31 @@ function convertPower(value) {
             powerChange.innerHTML = '';
         }
     });
-document.getElementById('calcButton').addEventListener('click', () => {
-    // Pegue os valores dos inputs do usuário
-    let custoRLT = parseFloat(document.getElementById('custoInput').value.replace(',', '.')) || 0;
-    let efiPower = parseFloat(document.getElementById('finalPower').textContent.replace(',', '.')) || 0;
-    let efiMiner = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
-    
-    // Calcule a eficiência em Miner e Power
-    efiMiner = custoRLT / (efiMiner / 1000);
-    efiPower = custoRLT / (efiPower / 1000);
 
-    // Atualize os resultados na página
-    document.getElementById('effMiner').textContent = efiMiner.toFixed(2);
-    document.getElementById('effPower').textContent = efiPower.toFixed(2);
+    document.getElementById('calcButton').addEventListener('click', () => {
+        // Pegue os valores dos inputs do usuário
+        let custoRLT = parseFloat(document.getElementById('custoInput').value.replace(',', '.')) || 0;
+        let efiPower = parseFloat(document.getElementById('finalPower').textContent.replace(',', '.')) || 0;
+        let efiMiner = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
+        
+        // Calcule a eficiência em Miner e Power
+        efiMiner = custoRLT / (efiMiner / 1000);
+        efiPower = custoRLT / (efiPower / 1000);
 
-    // Determine a cor e a seta para o newPower
-    let conclusao = document.getElementById('conclusao');
-    
-    // Defina a cor com base na eficiência TOTAL
-    if (efiPower <= 35) { 
-        conclusao.innerHTML = 'EXCELENTE';
-        conclusao.style.color = 'green';
-    } else { 
-        conclusao.innerHTML = 'X';
-        conclusao.style.color = 'red';
-    }
-});
+        // Atualize os resultados na página
+        document.getElementById('effMiner').textContent = efiMiner.toFixed(2);
+        document.getElementById('effPower').textContent = efiPower.toFixed(2);
+
+        // Determine a cor e a seta para o newPower
+        let conclusao = document.getElementById('conclusao');
+        
+        // Defina a cor com base na eficiência TOTAL
+        if (efiPower <= 35) { 
+            conclusao.innerHTML = 'EXCELENTE';
+            conclusao.style.color = 'green';
+        } else { 
+            conclusao.innerHTML = 'X';
+            conclusao.style.color = 'red';
+        }
+    });
 });
