@@ -35,18 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Buscar avatar_id
-            const profileResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
+            const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`); 
             const profileData = await profileResponse.json();
-            const profileContents = JSON.parse(profileData.contents);
-            const userName = profileContents.data.name;
-            const avatarId = profileContents.data.avatar_id;
+            const userName = profileData.data.name; // Acessando diretamente profileData.data
+            const avatarId = profileData.data.avatar_id;
 
-            if (!avatarId) {
-                alert('Erro ao obter o avatar_id.');
-                return;
-            }
-            if (!userName) {
-                alert('Erro ao obter o avatar_id.');
+            if (!avatarId || !userName) {
+                alert('Erro ao obter o avatar_id ou nome.');
                 return;
             }
 
@@ -59,9 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Buscar dados de user-power-data usando avatarId
             const powerDataResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
             const powerData = await powerDataResponse.json();
-            const powerContents = JSON.parse(powerData.contents);
-            const miners = powerContents.data.miners;
-            let bonusPercent = powerContents.data.bonus_percent;
+            const miners = powerData.data.miners; // Acessando diretamente powerData.data
+            let bonusPercent = powerData.data.bonus_percent;
 
             // Processar bonus_percent
             bonusPercent = parseFloat((bonusPercent / 100).toFixed(2));  // Dividir por 100 e garantir que é um número
@@ -72,20 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Buscar dados de room-config usando avatarId
             const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
             const roomConfigData = await roomConfigResponse.json();
-            const roomConfigContents = JSON.parse(roomConfigData.contents);
-
-            const minerData = roomConfigContents.data.miners.map(miner => {
-                return {
-                    miner_id: miner.miner_id,
-                    power: miner.power,
-                    bonus_percent: miner.bonus_percent,
-                    name: miner.name,
-                    level: miner.level,
-                    slots: miner.width,
-                    filename: miner.filename,
-                    is_in_set: miner.is_in_set
-                };
-            });
+            const minerData = roomConfigData.data.miners; // Acessando diretamente roomConfigData.data
 
             // Obter valor do rádio selecionado
             const selectedOption = document.querySelector('input[name="option"]:checked').value;
@@ -93,9 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Filtrar minerData com base na opção selecionada
             let filteredMiners = minerData;
             if (selectedOption === 'op1') {
-                filteredMiners = minerData.filter(miner => miner.slots === 1);
+                filteredMiners = minerData.filter(miner => miner.width === 1);
             } else if (selectedOption === 'op2') {
-                filteredMiners = minerData.filter(miner => miner.slots === 2);
+                filteredMiners = minerData.filter(miner => miner.width === 2);
             }
 
             // Contar as repetições de miner_id
