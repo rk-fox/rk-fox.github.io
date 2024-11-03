@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Armazenar dados iniciais
             initialMiners = data.miners;
-            initialBonusPercent = data.bonus_percent / 100; // Ajuste para divisão correta
+            initialBonusPercent = data.bonus_percent / 10000; // Ajuste para divisão correta
             initialBonus = initialMiners * initialBonusPercent;
 
             totalPower = initialMiners * (1 + initialBonusPercent);
