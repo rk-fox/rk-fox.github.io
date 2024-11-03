@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('welcomeMessage').innerText = `Olá, ${userName}!`;
 
             // Buscar dados de user-power-data usando avatarId
-            const powerDataResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+            const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
             const powerData = await powerDataResponse.json();
             const miners = powerData.data.miners; // Acessando diretamente powerData.data
             let bonusPercent = powerData.data.bonus_percent;
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const total_orig = miners * (1 + (bonusPercent / 100));
 
             // Buscar dados de room-config usando avatarId
-            const roomConfigResponse = await fetch(`https://rollercoin.free.mockoapp.net/get?url=https://rollercoin.com/api/game/room-config/${avatarId}`);
+            const roomConfigResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`);
             const roomConfigData = await roomConfigResponse.json();
             const minerData = roomConfigData.data.miners; // Acessando diretamente roomConfigData.data
 
