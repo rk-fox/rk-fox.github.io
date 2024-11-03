@@ -23,7 +23,7 @@ async function fetchUserData(userId) {
     const encodedUrl = encodeURIComponent(url);
 
     try {
-        const response = await fetch(`https://rollercoin.free.mockoapp.net/get?url=${encodedUrl}`);
+        const response = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?${encodedUrl}`);
 
         if (!response.ok) {
             throw new Error('Erro na requisição: ' + response.statusText);
