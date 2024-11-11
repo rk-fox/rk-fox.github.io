@@ -8,7 +8,12 @@ function base64DecodeLarge(str) {
         decoded += atob(chunk);
     }
 
-    return decodeURIComponent(escape(decoded));
+    try {
+        return decodeURIComponent(escape(decoded));  // Isso pode ser desnecessário dependendo do tipo de dado
+    } catch (e) {
+        console.error("Erro ao decodificar a string: ", e);
+        return decoded;
+    }
 }
 
 // Substitua esta string pelo seu código BASE64
