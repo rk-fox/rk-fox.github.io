@@ -49,7 +49,7 @@ function processarDados() {
 
             // Coluna com Level e Nome
             const infoCell = document.createElement('td');
-            infoCell.innerHTML = `${miner.level} ${miner.name}`;
+            infoCell.innerHTML = `${levelTranslated}<br><strong>Nome:</strong> ${miner.name}`;
             row.appendChild(infoCell);
 
             // Coluna de Poder
@@ -74,4 +74,16 @@ function processarDados() {
     } catch (error) {
         alert('Erro ao processar os dados JSON: ' + error.message);
     }
+}
+// Função para traduzir o nível
+function traduzirLevel(level) {
+    const levels = {
+        0: 'Common',
+        1: 'Uncommon',
+        2: 'Rare',
+        3: 'Epic',
+        4: 'Legendary',
+        5: 'Unreal'
+    };
+    return levels[level] || 'Desconhecido'; // Retorna 'Desconhecido' se o nível não for encontrado
 }
