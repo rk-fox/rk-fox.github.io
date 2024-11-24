@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Miners</title>
+    <style>
+        /* Estilos básicos para a tabela */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            width: 50px; /* Ajuste o tamanho da imagem conforme necessário */
+        }
+    </style>
+</head>
+<body>
+    <h1>Gerar Tabela de Miners</h1>
+    <textarea id="inputData" rows="10" cols="50" placeholder="Cole os dados JSON aqui..."></textarea>
+    <br>
+    <button onclick="processarDados()">Gerar Tabela</button>
+
+    <!-- Área onde a tabela será inserida -->
+    <div id="tabelaContainer"></div>
+
+    <!-- Link para o arquivo JS -->
+    <script src="sala.js"></script>
+</body>
+</html>
