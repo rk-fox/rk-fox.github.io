@@ -12,9 +12,52 @@ function processarDados() {
             return;
         }
 
-        // Ordena os dados pela coluna de Power (decrescente)
+        // Ordena os dados pela coluna de Power (decrescente) para tentarmos otimizar
         jsonData.sort((a, b) => b.power - a.power);
 
+        // Capacidade máxima da mochila (512 Cells)
+        const capacidadeMaxima = 512;
+
+        // Cria o array de "itens" para a mochila com as informações de peso (células) e valor (power ajustado com bonus)
+        const itens = jsonData.map(miner => {
+            const bonusPowerAdjusted = miner.bonus_power / 100; // Ajuste do bônus
+            const valor = miner.power * (1 + bonusPowerAdjusted); // Valor do item
+            return { 
+                nome: miner.name.en,
+                level: miner.level,
+                filename: miner.filename,
+                power: miner.power,
+                bonus_power: miner.bonus_power,
+                valor: valor,
+                peso: miner.cells || 1 // Peso é 1 ou 2, conforme definido no JSON
+            };
+        });
+
+        // Algoritmo de Programação Dinâmica para resolver o Problema da Mochila
+        const dp = new Array(capacidadeMaxima + 1).fill(0);
+        const escolha = new Array(capacidadeMaxima + 1).fill(null);
+
+        for (let i = 0; i < itens.length; i++) {
+            for (let j = capacidadeMaxima; j >= itens[i].peso; j--) {
+                const novoValor = dp[j - itens[i].peso] + itens[i].valor;
+                if (novoValor > dp[j]) {
+                    dp[j] = novoValor;
+                    escolha[j] = i;
+                }
+            }
+        }
+
+        // Reconstroi a solução
+        const selecionados = [];
+        let capacidadeRestante = capacidadeMaxima;
+
+        while (capacidadeRestante > 0 && escolha[capacidadeRestante] !== null) {
+            const minerSelecionado = itens[escolha[capacidadeRestante]];
+            selecionados.push(minerSelecionado);
+            capacidadeRestante -= minerSelecionado.peso;
+        }
+
+        // Selecionados agora contém os miners escolhidos pela mochila
         // Seleciona o container onde a tabela será inserida
         const tabelaContainer = document.getElementById('tabelaContainer');
         tabelaContainer.innerHTML = ''; // Limpa qualquer tabela existente
@@ -39,18 +82,17 @@ function processarDados() {
         // Cria o corpo da tabela
         const tbody = document.createElement('tbody');
 
-        // Variáveis para somar Power e Bonus Power
         let totalPower = 0;
         let totalBonusPower = 0;
 
-        jsonData.forEach(miner => {
+        selecionados.forEach(miner => {
             const row = document.createElement('tr');
 
             // Coluna da imagem
             const imgCell = document.createElement('td');
             const img = document.createElement('img');
             img.src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif`;
-            img.alt = miner.name.en;
+            img.alt = miner.nome;
             imgCell.appendChild(img);
             row.appendChild(imgCell);
 
@@ -58,20 +100,20 @@ function processarDados() {
             const infoCell = document.createElement('td');
             const levelTranslated = traduzirLevel(miner.level);
             const color = obterCorPorLevel(miner.level);
-            infoCell.innerHTML = `<span style="color: ${color};">${levelTranslated}</span> ${miner.name.en}`;
+            infoCell.innerHTML = `<span style="color: ${color};">${levelTranslated}</span> ${miner.nome}`;
             row.appendChild(infoCell);
 
             // Coluna de Poder
             const powerCell = document.createElement('td');
             powerCell.textContent = miner.power;
-            totalPower += miner.power; // Acumula o total de poder
+            totalPower += miner.power;
             row.appendChild(powerCell);
 
             // Coluna de Bônus de Poder (ajustada para exibir com %)
             const bonusPowerCell = document.createElement('td');
             const bonusPercentage = (miner.bonus_power / 100).toFixed(2) + '%';
             bonusPowerCell.textContent = bonusPercentage;
-            totalBonusPower += miner.bonus_power; // Acumula o total de bônus
+            totalBonusPower += miner.bonus_power;
             row.appendChild(bonusPowerCell);
 
             // Adiciona a linha ao corpo da tabela
