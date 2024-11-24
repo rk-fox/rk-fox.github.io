@@ -13,7 +13,7 @@ function processarDados() {
         }
 
         // Ordena os dados pela coluna de Power (decrescente) para tentarmos otimizar
-        jsonData.sort((b, a) => b.power - a.power);
+        jsonData.sort((a, b) => a.power - b.power);
 
         // Capacidade máxima da mochila (512 Cells)
         const capacidadeMaxima = 512;
