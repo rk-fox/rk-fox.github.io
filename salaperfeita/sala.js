@@ -50,7 +50,10 @@ function processarDados() {
             // Coluna com Level traduzido e Nome
             const infoCell = document.createElement('td');
             const levelTranslated = traduzirLevel(miner.level);
-            infoCell.innerHTML = `<strong>Level:</strong> ${levelTranslated}<br><strong>Nome:</strong> ${miner.name}`;
+            
+            // Corrigir o nome, caso seja um objeto ou undefined
+            const minerName = typeof miner.name === 'string' ? miner.name : (miner.name && miner.name.display ? miner.name.display : 'Nome Desconhecido');
+            infoCell.innerHTML = `<strong>Level:</strong> ${levelTranslated}<br><strong>Nome:</strong> ${minerName}`;
             row.appendChild(infoCell);
 
             // Coluna de Poder
