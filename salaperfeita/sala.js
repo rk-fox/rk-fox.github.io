@@ -47,9 +47,10 @@ function processarDados() {
             imgCell.appendChild(img);
             row.appendChild(imgCell);
 
-            // Coluna com Level e Nome
+            // Coluna com Level traduzido e Nome
             const infoCell = document.createElement('td');
-            infoCell.innerHTML = `${levelTranslated}<br><strong>Nome:</strong> ${miner.name}`;
+            const levelTranslated = traduzirLevel(miner.level);
+            infoCell.innerHTML = `<strong>Level:</strong> ${levelTranslated}<br><strong>Nome:</strong> ${miner.name}`;
             row.appendChild(infoCell);
 
             // Coluna de Poder
