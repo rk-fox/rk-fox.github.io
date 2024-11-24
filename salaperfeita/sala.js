@@ -12,6 +12,9 @@ function processarDados() {
             return;
         }
 
+        // Ordena os dados pela coluna de Power (decrescente)
+        jsonData.sort((a, b) => b.power - a.power);
+
         // Seleciona o container onde a tabela será inserida
         const tabelaContainer = document.getElementById('tabelaContainer');
         tabelaContainer.innerHTML = ''; // Limpa qualquer tabela existente
@@ -36,6 +39,10 @@ function processarDados() {
         // Cria o corpo da tabela
         const tbody = document.createElement('tbody');
 
+        // Variáveis para somar Power e Bonus Power
+        let totalPower = 0;
+        let totalBonusPower = 0;
+
         jsonData.forEach(miner => {
             const row = document.createElement('tr');
 
@@ -43,24 +50,28 @@ function processarDados() {
             const imgCell = document.createElement('td');
             const img = document.createElement('img');
             img.src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif`;
-            img.alt = miner.name;
+            img.alt = miner.name.en;
             imgCell.appendChild(img);
             row.appendChild(imgCell);
 
             // Coluna com Level traduzido e Nome
             const infoCell = document.createElement('td');
             const levelTranslated = traduzirLevel(miner.level);
-            infoCell.innerHTML = `<strong>Level:</strong> ${levelTranslated}<br><strong>Nome:</strong> ${miner.name.en}`;
+            const color = obterCorPorLevel(miner.level);
+            infoCell.innerHTML = `<span style="color: ${color};">${levelTranslated}</span> ${miner.name.en}`;
             row.appendChild(infoCell);
 
             // Coluna de Poder
             const powerCell = document.createElement('td');
             powerCell.textContent = miner.power;
+            totalPower += miner.power; // Acumula o total de poder
             row.appendChild(powerCell);
 
-            // Coluna de Bônus de Poder
+            // Coluna de Bônus de Poder (ajustada para exibir com %)
             const bonusPowerCell = document.createElement('td');
-            bonusPowerCell.textContent = miner.bonus_power;
+            const bonusPercentage = (miner.bonus_power / 100).toFixed(2) + '%';
+            bonusPowerCell.textContent = bonusPercentage;
+            totalBonusPower += miner.bonus_power; // Acumula o total de bônus
             row.appendChild(bonusPowerCell);
 
             // Adiciona a linha ao corpo da tabela
@@ -70,12 +81,40 @@ function processarDados() {
         // Adiciona o corpo da tabela à tabela principal
         tabela.appendChild(tbody);
 
+        // Cria o rodapé da tabela para o somatório
+        const tfoot = document.createElement('tfoot');
+        const footerRow = document.createElement('tr');
+
+        // Célula vazia para a coluna de imagem
+        footerRow.appendChild(document.createElement('td'));
+
+        // Célula de título para o somatório
+        const totalLabelCell = document.createElement('td');
+        totalLabelCell.innerHTML = '<strong>Total</strong>';
+        footerRow.appendChild(totalLabelCell);
+
+        // Célula com o somatório de Power
+        const totalPowerCell = document.createElement('td');
+        totalPowerCell.textContent = totalPower;
+        footerRow.appendChild(totalPowerCell);
+
+        // Célula com o somatório de Bônus de Poder
+        const totalBonusPowerCell = document.createElement('td');
+        const totalBonusPercentage = (totalBonusPower / 100).toFixed(2) + '%';
+        totalBonusPowerCell.textContent = totalBonusPercentage;
+        footerRow.appendChild(totalBonusPowerCell);
+
+        // Adiciona a linha de rodapé ao rodapé da tabela
+        tfoot.appendChild(footerRow);
+        tabela.appendChild(tfoot);
+
         // Insere a tabela no container
         tabelaContainer.appendChild(tabela);
     } catch (error) {
         alert('Erro ao processar os dados JSON: ' + error.message);
     }
 }
+
 // Função para traduzir o nível
 function traduzirLevel(level) {
     const levels = {
@@ -87,4 +126,16 @@ function traduzirLevel(level) {
         5: 'Unreal'
     };
     return levels[level] || 'Desconhecido'; // Retorna 'Desconhecido' se o nível não for encontrado
+}
+
+// Função para obter a cor por nível
+function obterCorPorLevel(level) {
+    const colors = {
+        0: '#5d615c', // Common
+        1: '#2bff00', // Uncommon
+        2: '#0084ff', // Rare
+        3: '#fb00ff', // Epic
+        4: '#ff0000', // Unreal
+    };
+    return colors[level] || '#000000'; // Preto como cor padrão para casos desconhecidos
 }
