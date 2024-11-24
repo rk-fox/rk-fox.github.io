@@ -84,6 +84,7 @@ function processarDados() {
 
         let totalPower = 0;
         let totalBonusPower = 0;
+        let totalPowerComBonus = 0;
 
         selecionados.forEach(miner => {
             const row = document.createElement('tr');
@@ -118,6 +119,9 @@ function processarDados() {
 
             // Adiciona a linha ao corpo da tabela
             tbody.appendChild(row);
+
+            // Calcula o poder ajustado com o bônus para o total
+            totalPowerComBonus += miner.power * (1 + (miner.bonus_power / 100));
         });
 
         // Adiciona o corpo da tabela à tabela principal
@@ -145,6 +149,11 @@ function processarDados() {
         const totalBonusPercentage = (totalBonusPower / 100).toFixed(2) + '%';
         totalBonusPowerCell.textContent = totalBonusPercentage;
         footerRow.appendChild(totalBonusPowerCell);
+
+        // Adiciona o somatório de Power com Bônus
+        const totalPowerComBonusCell = document.createElement('td');
+        totalPowerComBonusCell.textContent = totalPowerComBonus.toFixed(2);
+        footerRow.appendChild(totalPowerComBonusCell);
 
         // Adiciona a linha de rodapé ao rodapé da tabela
         tfoot.appendChild(footerRow);
