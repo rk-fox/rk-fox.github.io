@@ -1,93 +1,77 @@
-import org.json.JSONArray;
-import org.json.JSONObject;
-import java.util.ArrayList;
-import java.util.List;
+function processarDados() {
+    // Obtém os dados do campo de input
+    const inputData = document.getElementById('inputData').value;
 
-public class KnapsackOptimizer {
+    try {
+        // Parseia os dados do JSON colado pelo usuário
+        const jsonData = JSON.parse(inputData);
 
-    // Classe para representar uma mineradora
-    static class Mineradora {
-        String id;
-        String name;
-        int powerTotal;  // Power + Bonus Power calculado
-        int cells;       // Quantidade de células que ocupa
-
-        public Mineradora(String id, String name, int powerTotal, int cells) {
-            this.id = id;
-            this.name = name;
-            this.powerTotal = powerTotal;
-            this.cells = cells;
-        }
-    }
-
-    // Método para calcular o Problema da Mochila
-    public static List<Mineradora> calcularMelhorCombinacao(List<Mineradora> mineradoras, int capacidadeMaxima) {
-        int n = mineradoras.size();
-        int[][] dp = new int[n + 1][capacidadeMaxima + 1];
-
-        // Preenchendo a tabela de Programação Dinâmica
-        for (int i = 1; i <= n; i++) {
-            Mineradora mineradora = mineradoras.get(i - 1);
-            int power = mineradora.powerTotal;
-            int cells = mineradora.cells;
-
-            for (int j = 1; j <= capacidadeMaxima; j++) {
-                if (cells <= j) {
-                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - cells] + power);
-                } else {
-                    dp[i][j] = dp[i - 1][j];
-                }
-            }
+        // Verifica se há dados válidos para processar
+        if (!jsonData || !Array.isArray(jsonData)) {
+            alert('Os dados JSON fornecidos são inválidos.');
+            return;
         }
 
-        // Determinando a combinação ótima de mineradoras
-        List<Mineradora> resultado = new ArrayList<>();
-        int j = capacidadeMaxima;
-        for (int i = n; i > 0 && j > 0; i--) {
-            if (dp[i][j] != dp[i - 1][j]) {
-                Mineradora mineradora = mineradoras.get(i - 1);
-                resultado.add(mineradora);
-                j -= mineradora.cells;
-            }
-        }
+        // Seleciona o container onde a tabela será inserida
+        const tabelaContainer = document.getElementById('tabelaContainer');
+        tabelaContainer.innerHTML = ''; // Limpa qualquer tabela existente
 
-        return resultado;
-    }
+        // Cria a tabela
+        const tabela = document.createElement('table');
 
-    // Função principal para ler o JSON e calcular a solução
-    public static void main(String[] args) {
-        // Exemplo de JSON de entrada (usuário colaria isso no site)
-        String jsonInput = "[{...}]"  // JSON do usuário será colado aqui
+        // Cria o cabeçalho da tabela
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const headers = ['Imagem', 'Informações', 'Poder', 'Bônus de Poder'];
 
-        // Parse JSON
-        JSONArray jsonArray = new JSONArray(jsonInput);
-        List<Mineradora> mineradoras = new ArrayList<>();
+        headers.forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            headerRow.appendChild(th);
+        });
 
-        // Extração dos dados relevantes
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject mineradoraJson = jsonArray.getJSONObject(i);
-            String id = mineradoraJson.getString("id");
-            String name = mineradoraJson.getJSONObject("name").getString("en");
-            int power = mineradoraJson.getInt("power");
-            int bonusPower = mineradoraJson.getInt("bonus_power");
-            int cells = mineradoraJson.getInt("width");
+        thead.appendChild(headerRow);
+        tabela.appendChild(thead);
 
-            // Calcula o Power Total considerando o bônus
-            int powerTotal = power + (power * bonusPower / 100);
+        // Cria o corpo da tabela
+        const tbody = document.createElement('tbody');
 
-            mineradoras.add(new Mineradora(id, name, powerTotal, cells));
-        }
+        jsonData.forEach(miner => {
+            const row = document.createElement('tr');
 
-        // Capacidade máxima de células
-        int capacidadeMaxima = 512;
+            // Coluna da imagem
+            const imgCell = document.createElement('td');
+            const img = document.createElement('img');
+            img.src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif`;
+            img.alt = miner.name;
+            imgCell.appendChild(img);
+            row.appendChild(imgCell);
 
-        // Calcula a melhor combinação de mineradoras
-        List<Mineradora> melhorCombinacao = calcularMelhorCombinacao(mineradoras, capacidadeMaxima);
+            // Coluna com Level e Nome
+            const infoCell = document.createElement('td');
+            infoCell.innerHTML = `${miner.level} ${miner.name}`;
+            row.appendChild(infoCell);
 
-        // Exibe o resultado
-        System.out.println("Melhor combinação de mineradoras para preencher 512 células:");
-        for (Mineradora mineradora : melhorCombinacao) {
-            System.out.println("ID: " + mineradora.id + ", Nome: " + mineradora.name + ", Power Total: " + mineradora.powerTotal + ", Células: " + mineradora.cells);
-        }
+            // Coluna de Poder
+            const powerCell = document.createElement('td');
+            powerCell.textContent = miner.power;
+            row.appendChild(powerCell);
+
+            // Coluna de Bônus de Poder
+            const bonusPowerCell = document.createElement('td');
+            bonusPowerCell.textContent = miner.bonus_power;
+            row.appendChild(bonusPowerCell);
+
+            // Adiciona a linha ao corpo da tabela
+            tbody.appendChild(row);
+        });
+
+        // Adiciona o corpo da tabela à tabela principal
+        tabela.appendChild(tbody);
+
+        // Insere a tabela no container
+        tabelaContainer.appendChild(tabela);
+    } catch (error) {
+        alert('Erro ao processar os dados JSON: ' + error.message);
     }
 }
