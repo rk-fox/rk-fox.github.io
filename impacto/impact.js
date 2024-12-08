@@ -109,15 +109,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const negativeResults = results.filter(result => result.newpower < 0);
             negativeResults.sort((a, b) => Math.abs(a.newpower) - Math.abs(b.newpower));
-            const top3NegativeResults = negativeResults.slice(0, 3);
+            const top10NegativeResults = negativeResults.slice(0, 9);
 
-            // Logar 15 resultados negativos no console
-            const top15NegativeResults = negativeResults.slice(0, 15);
-            console.log(top15NegativeResults.map(miner => ({
+            // Logar 30 resultados negativos no console
+            const top30NegativeResults = negativeResults.slice(0, 30);
+            console.log(top30NegativeResults.map(miner => ({
                 name: miner.name,
                 power: convertPower(miner.power),
-                newpower: convertPower(miner.newpower),
-                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`
+                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`,
+                newpower: convertPower(miner.newpower)
             })));
 
             // Atualizar os elementos da página com informações dos mineradores negativos
@@ -141,6 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
             updateElement(1, top3NegativeResults[0]);
             updateElement(2, top3NegativeResults[1]);
             updateElement(3, top3NegativeResults[2]);
+            updateElement(4, top3NegativeResults[3]);
+            updateElement(5, top3NegativeResults[4]);
+            updateElement(6, top3NegativeResults[5]);
+            updateElement(7, top3NegativeResults[6]);
+            updateElement(8, top3NegativeResults[7]);
+            updateElement(9, top3NegativeResults[8]);
+            updateElement(10, top3NegativeResults[9]);
 
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
