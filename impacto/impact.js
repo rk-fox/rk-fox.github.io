@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const negativeResults = results.filter(result => result.newpower < 0);
             negativeResults.sort((a, b) => Math.abs(a.newpower) - Math.abs(b.newpower));
-            const top10NegativeResults = negativeResults.slice(0, 9);
+            const top10NegativeResults = negativeResults.slice(0, 10);
 
             // Logar 30 resultados negativos no console
             const top30NegativeResults = negativeResults.slice(0, 30);
