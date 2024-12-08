@@ -138,16 +138,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
 
-            updateElement(1, top3NegativeResults[0]);
-            updateElement(2, top3NegativeResults[1]);
-            updateElement(3, top3NegativeResults[2]);
-            updateElement(4, top3NegativeResults[3]);
-            updateElement(5, top3NegativeResults[4]);
-            updateElement(6, top3NegativeResults[5]);
-            updateElement(7, top3NegativeResults[6]);
-            updateElement(8, top3NegativeResults[7]);
-            updateElement(9, top3NegativeResults[8]);
-            updateElement(10, top3NegativeResults[9]);
+            updateElement(1, top10NegativeResults[0]);
+            updateElement(2, top10NegativeResults[1]);
+            updateElement(3, top10NegativeResults[2]);
+            updateElement(4, top10NegativeResults[3]);
+            updateElement(5, top10NegativeResults[4]);
+            updateElement(6, top10NegativeResults[5]);
+            updateElement(7, top10NegativeResults[6]);
+            updateElement(8, top10NegativeResults[7]);
+            updateElement(9, top10NegativeResults[8]);
+            updateElement(10, top10NegativeResults[9]);
 
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
