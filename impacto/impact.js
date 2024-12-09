@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (miner.placement.rack_info) {
                         const rack = miner.placement.rack_info;
-                        document.getElementById(`rack${index}`).innerText = `Sala: ${rack.room_level + 1}, Linha: ${rack.placement.x + 1}, Rack: ${rack.placement.y + 1}`;
+                        document.getElementById(`rack${index}`).innerText = `Sala: ${rack.placement.room_level + 1}, Linha: ${rack.placement.x + 1}, Rack: ${rack.placement.y + 1}`;
                     }
                 } else {
                     document.getElementById(`nome${index}`).innerText = '';
