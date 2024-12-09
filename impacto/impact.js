@@ -117,6 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
             negativeResults.sort((a, b) => Math.abs(a.newpower) - Math.abs(b.newpower));
             const top10NegativeResults = negativeResults.slice(0, 10);
 
+            // Logar 30 resultados negativos no console
+            const top30NegativeResults = negativeResults.slice(0, 30);
+            console.log(top30NegativeResults.map(miner => ({
+                name: miner.name,
+                power: convertPower(miner.power),
+                bonus: ${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%,
+                newpower: convertPower(miner.newpower)
+            })));
+
             // Atualizar os elementos da página com informações dos mineradores negativos
             const updateElement = (index, miner) => {
                 if (miner) {
