@@ -122,8 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(top30NegativeResults.map(miner => ({
                 name: miner.name,
                 power: convertPower(miner.power),
-                bonus: ${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%,
-                newpower: convertPower(miner.newpower)
+                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`,
+                newpower: convertPower(miner.newpower)                
             })));
 
             // Atualizar os elementos da página com informações dos mineradores negativos
