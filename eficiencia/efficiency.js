@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             conclusao.style.color = 'red';
         } else { 
             conclusao.innerHTML = 'OK';
+            conclusao.style.color = 'yellow';
         }
     });
 });
