@@ -115,12 +115,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let conclusao = document.getElementById('conclusao');
         
         // Defina a cor com base na eficiência TOTAL
-        if (efiPower <= 35) { 
+        if (efiPower <= 1) { 
             conclusao.innerHTML = 'EXCELENTE';
             conclusao.style.color = 'green';
-        } else { 
+        } else if (efiPower > 2) { 
             conclusao.innerHTML = 'X';
             conclusao.style.color = 'red';
-        }
+        } else { 
+            conclusao.innerHTML = 'OK';
     });
 });
