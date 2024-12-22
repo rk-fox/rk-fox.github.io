@@ -12,16 +12,74 @@ document.addEventListener('DOMContentLoaded', () => {
         return (value) + ' GHs';
     }
 
-    function getLevelDescription(level) {
-        switch (level) {
-            case 0: return { text: 'Common', color: '' };
-            case 1: return { text: 'Uncommon', color: '#2bff00' };
-            case 2: return { text: 'Rare', color: '#00eaff' };
-            case 3: return { text: 'Epic', color: '#ff00bb' };
-            case 4: return { text: 'Legendary', color: '#fffb00' };
-            case 5: return { text: 'Unreal', color: '#ff0000' };
-            default: return { text: 'Unknown', color: '' };
-        }
+    // Função para atribuir setpt
+    function calculateSetPt(minerIds) {
+        let setpt = 0;
+        
+        // Set 1
+        const set1Ids = [
+            '67338357d9b2852bde4b077d',
+            '67338298d9b2852bde4afb0d',
+            '67338415d9b2852bde4b0dc6'
+        ];
+        const set1Count = minerIds.filter(id => set1Ids.includes(id)).length;
+        if (set1Count === 2) setpt = 7500000;
+        else if (set1Count === 3) setpt = 15000000;
+
+        // Set 2
+        const set2Ids = [
+            '66c31b17b82bcb27662d302b',
+            '66c31aecb82bcb27662d2f53',
+            '66c31b3eb82bcb27662d30d8'
+        ];
+        const set2Count = minerIds.filter(id => set2Ids.includes(id)).length;
+        if (set2Count === 2) setpt = 5000000;
+        else if (set2Count === 3) setpt = 10000000;
+
+        // Set 3
+        const set3Ids = [
+            '6687cea87643815232d65882',
+            '6687cefd7643815232d65d11',
+            '6687ce4e7643815232d65297',
+            '6687ced67643815232d65cc8'
+        ];
+        const set3Count = minerIds.filter(id => set3Ids.includes(id)).length;
+        if (set3Count >= 2 && set3Count <= 3) setpt = 2000000;
+        else if (set3Count === 4) setpt = 3000000;
+
+        // Set 4
+        const set4Ids = [
+            '6687cd307643815232d64077',
+            '6687cdc47643815232d64726',
+            '6687ccfc7643815232d6402d',
+            '6687cd837643815232d640c1'
+        ];
+        const set4Count = minerIds.filter(id => set4Ids.includes(id)).length;
+        if (set4Count >= 2 && set4Count <= 3) setpt = 1500000;
+        else if (set4Count === 4) setpt = 2500000;
+
+        // Set 5
+        const set5Ids = [
+            '674df56acbe1e47b27075ab6',
+            '674df5c5cbe1e47b27075b51',
+            '674df539cbe1e47b27075a68',
+            '674df599cbe1e47b27075b04'
+        ];
+        const set5Count = minerIds.filter(id => set5Ids.includes(id)).length;
+        if (set5Count >= 2 && set5Count <= 3) setpt = 10000000;
+        else if (set5Count === 4) setpt = 25000000;
+
+        // Set 6
+        const set6Ids = [
+            '66ead1cde0dd3530da969ea9',
+            '66ead191e0dd3530da969e5f',
+            '66ead191e0dd3530da969e5f'
+        ];
+        const set6Count = minerIds.filter(id => set6Ids.includes(id)).length;
+        if (set6Count === 2) setpt = 5000000;
+        else if (set6Count === 3) setpt = 8000000;
+
+        return setpt;
     }
 
     document.getElementById('searchButton').addEventListener('click', async () => {
@@ -88,9 +146,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const minerIds = filteredMiners.map(miner => miner.miner_id);
             const counts = countRepetitions(minerIds);
 
+            const setpt = calculateSetPt(minerIds); // Atribuindo o valor de setpt
+
             const results = filteredMiners.map(miner => {
                 const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - (miner.bonus_percent / 100));
-                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
+                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - (total_orig + setpt)); // Aplicando o setpt na fórmula
                 
                 return {
                     ...miner,
@@ -107,37 +167,15 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(top30NegativeResults.map(miner => ({
                 name: miner.name,
                 power: convertPower(miner.power),
-                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`,
-                newpower: convertPower(miner.newpower)                
+                bonus: `${(miner.bonus_percent * 100).toFixed(2)} %`,
+                newpower: convertPower(miner.newpower),
+                setpt: convertPower(miner.setpt)
             })));
 
-            const updateElement = (index, miner) => {
-                if (miner) {
-                    const levelInfo = getLevelDescription(miner.level);
-                    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-                    document.getElementById(`nome${index}`).innerHTML = levelSpan;
-                    document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
-                    document.getElementById(`img${index}`).style.display = 'block';
-                    document.getElementById(`poder${index}`).innerText = convertPower2(miner.power);
-                    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`;
-                    document.getElementById(`impact${index}`).innerText = convertPower(miner.newpower);
-                    document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
-                    document.getElementById(`merge${index}`).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
-
-                    if (miner.placement.rack_info) {
-                        const rack = miner.placement.rack_info;
-                        document.getElementById(`rack${index}`).innerText = `Sala: ${rack.placement.room_level + 1}, Linha: ${rack.placement.y + 1}, Rack: ${rack.placement.x + 1}`;
-                    }
-                } else {
-                    document.getElementById(`nome${index}`).innerText = '';
-                }
-            };
-
-            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+            updateResultsTable(top10NegativeResults);
 
         } catch (error) {
-            console.error('Erro ao buscar dados:', error);
-            alert('Ocorreu um erro ao buscar os dados.');
+            console.error(error);
         }
     });
 });
