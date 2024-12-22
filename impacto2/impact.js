@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(top30NegativeResults.map(miner => ({
                 name: miner.name,
                 power: convertPower(miner.power),
-                bonus: ${((miner.bonus_percent + setb) / 100).toFixed(2).replace('.', ',')}%,
+                bonus: ${((miner.bonus_percent) / 100).toFixed(2).replace('.', ',')}%,
                 newpower: convertPower(miner.newpower)                
             })));
 
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById(img${index}).src = https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1;
                     document.getElementById(img${index}).style.display = 'block';
                     document.getElementById(poder${index}).innerText = convertPower2(miner.power);
-                    document.getElementById(bonus${index}).innerText = ${((miner.bonus_percent + setb) / 100).toFixed(2).replace('.', ',')}%;
+                    document.getElementById(bonus${index}).innerText = ${((miner.bonus_percent) / 100).toFixed(2).replace('.', ',')}%;
                     document.getElementById(impact${index}).innerText = convertPower(miner.newpower);
                     document.getElementById(set${index}).innerText = miner.is_in_set ? 'Sim' : 'Não';
                     document.getElementById(merge${index}).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
