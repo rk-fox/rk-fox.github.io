@@ -24,6 +24,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function calculateSetBonus(counts) {
+        let setpt = 0;
+        let setb = 0;
+
+        const sets = [
+            { ids: ["67338357d9b2852bde4b077d", "67338298d9b2852bde4afb0d", "67338415d9b2852bde4b0dc6"], thresholds: [2, 3], ptValues: [7500000, 15000000] },
+            { ids: ["66c31b17b82bcb27662d302b", "66c31aecb82bcb27662d2f53", "66c31b3eb82bcb27662d30d8"], thresholds: [2, 3], ptValues: [5000000, 10000000] },
+            { ids: ["6687cea87643815232d65882", "6687cefd7643815232d65d11", "6687ce4e7643815232d65297", "6687ced67643815232d65cc8"], thresholds: [2, 4], ptValues: [2000000, 3000000] },
+            { ids: ["6687cd307643815232d64077", "6687cdc47643815232d64726", "6687ccfc7643815232d6402d", "6687cd837643815232d640c1"], thresholds: [2, 4], ptValues: [1500000, 2500000] },
+            { ids: ["674df56acbe1e47b27075ab6", "674df5c5cbe1e47b27075b51", "674df539cbe1e47b27075a68", "674df599cbe1e47b27075b04"], thresholds: [2, 4], ptValues: [10000000, 25000000] },
+            { ids: ["66ead1cde0dd3530da969ea9", "66ead191e0dd3530da969e5f", "66ead191e0dd3530da969e5f"], thresholds: [2, 3], ptValues: [5000000, 8000000] },
+            { ids: ["66f1c200e0dd3530daa2eadf", "66f1c1b9e0dd3530daa2e9df", "66f1c18fe0dd3530daa2e8dd", "66f1c1dee0dd3530daa2ea96"], thresholds: [2, 4], bValues: [500, 1000] },
+            { ids: ["6687cf817643815232d65da6", "6687cfd57643815232d65e39", "6687cf557643815232d65d5c", "6687cfae7643815232d65def"], thresholds: [2, 4], bValues: [200, 700] }
+        ];
+
+        sets.forEach(set => {
+            const count = set.ids.reduce((acc, id) => acc + (counts[id] || 0), 0);
+            if (count >= set.thresholds[0]) {
+                if (set.ptValues) {
+                    setpt += set.ptValues[count === set.thresholds[1] ? 1 : 0];
+                }
+                if (set.bValues) {
+                    setb += set.bValues[count === set.thresholds[1] ? 1 : 0];
+                }
+            }
+        });
+
+        return { setpt, setb };
+    }
+
     document.getElementById('searchButton').addEventListener('click', async () => {
         const userLink = document.getElementById('linkInput').value;
 
@@ -33,9 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`); 
+            const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
             const profileData = await profileResponse.json();
-            const userName = profileData.data.name; 
+            const userName = profileData.data.name;
             const avatarId = profileData.data.avatar_id;
 
             if (!avatarId || !userName) {
@@ -69,71 +99,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            const selectedOption = document.querySelector('input[name="option"]:checked').value;
-            let filteredMiners = minerData;
-            if (selectedOption === 'op1') {
-                filteredMiners = minerData.filter(miner => miner.width === 1);
-            } else if (selectedOption === 'op2') {
-                filteredMiners = minerData.filter(miner => miner.width === 2);
-            }
+            const minerIds = minerData.map(miner => miner.miner_id);
+            const counts = minerIds.reduce((acc, id) => {
+                acc[id] = (acc[id] || 0) + 1;
+                return acc;
+            }, {});
 
-            function countRepetitions(minerIds) {
-                const counts = minerIds.reduce((acc, id) => {
-                    acc[id] = (acc[id] || 0) + 1;
-                    return acc;
-                }, {});
-                return counts;
-            }
+            const { setpt, setb } = calculateSetBonus(counts);
 
-            const minerIds = filteredMiners.map(miner => miner.miner_id);
-            const counts = countRepetitions(minerIds);
+            const results = minerData.map(miner => {
+                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - ((miner.bonus_percent + setb) / 100));
+                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig - setpt);
 
-            const results = filteredMiners.map(miner => {
-                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - (miner.bonus_percent / 100));
-                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
-                
                 return {
                     ...miner,
                     newpower: newpower
                 };
             });
 
-            const negativeResults = results.filter(result => result.newpower < 0);
-            negativeResults.sort((a, b) => Math.abs(a.newpower) - Math.abs(b.newpower));
-            const top10NegativeResults = negativeResults.slice(0, 10);
-
-            // Logar 30 resultados negativos no console
-            const top30NegativeResults = negativeResults.slice(0, 30);
-            console.log(top30NegativeResults.map(miner => ({
-                name: miner.name,
-                power: convertPower(miner.power),
-                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`,
-                newpower: convertPower(miner.newpower)                
-            })));
-
-            const updateElement = (index, miner) => {
-                if (miner) {
-                    const levelInfo = getLevelDescription(miner.level);
-                    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-                    document.getElementById(`nome${index}`).innerHTML = levelSpan;
-                    document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
-                    document.getElementById(`img${index}`).style.display = 'block';
-                    document.getElementById(`poder${index}`).innerText = convertPower2(miner.power);
-                    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`;
-                    document.getElementById(`impact${index}`).innerText = convertPower(miner.newpower);
-                    document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
-                    document.getElementById(`merge${index}`).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
-
-                    if (miner.placement.rack_info) {
-                        const rack = miner.placement.rack_info;
-                        document.getElementById(`rack${index}`).innerText = `Sala: ${rack.placement.room_level + 1}, Linha: ${rack.placement.y + 1}, Rack: ${rack.placement.x + 1}`;
-                    }
-                } else {
-                    document.getElementById(`nome${index}`).innerText = '';
-                }
-            };
-
-            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+            console.log(results);
 
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
