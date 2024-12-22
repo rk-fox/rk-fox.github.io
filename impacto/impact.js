@@ -33,6 +33,7 @@ function adjustResultsForSets(miners, counts) {
             ids: ['6687cf817643815232d65da6', '6687cfd57643815232d65e39', '6687cf557643815232d65d5c', '6687cfae7643815232d65def'],
             bonusAdjustments: [200, 700]
         }
+        console.log(`Miner ${miner.miner_id}: Power adjusted to ${miner.power}, Bonus adjusted to ${miner.bonus_percent}`);
     };
 
     miners.forEach(miner => {
