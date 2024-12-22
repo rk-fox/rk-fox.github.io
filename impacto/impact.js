@@ -88,9 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const minerIds = filteredMiners.map(miner => miner.miner_id);
             const counts = countRepetitions(minerIds);
 
+            const specialSetIds = [
+                "67338357d9b2852bde4b077d",
+                "67338298d9b2852bde4afb0d",
+                "67338415d9b2852bde4b0dc6"
+            ];
+
+            let setpt = 0;
+            const specialSetCount = minerIds.filter(id => specialSetIds.includes(id)).length;
+
+            if (specialSetCount === 2) {
+                setpt = 7500000;
+            } else if (specialSetCount === 3) {
+                setpt = 15000000;
+            }
+
             const results = filteredMiners.map(miner => {
-                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - (miner.bonus_percent / 100));
-                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
+                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - ((miner.bonus_percent) / 100));
+                const newpower = specialSetIds.includes(miner.miner_id)
+                    ? (((miners - miner.power) * (1 + (newBonusPercent / 100))) - (total_orig + setpt))
+                    : (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
                 
                 return {
                     ...miner,
@@ -107,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(top30NegativeResults.map(miner => ({
                 name: miner.name,
                 power: convertPower(miner.power),
-                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`,
+                bonus: `${((miner.bonus_percent) / 100).toFixed(2).replace('.', ',')}%`,
                 newpower: convertPower(miner.newpower)                
             })));
 
@@ -119,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
                     document.getElementById(`img${index}`).style.display = 'block';
                     document.getElementById(`poder${index}`).innerText = convertPower2(miner.power);
-                    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`;
+                    document.getElementById(`bonus${index}`).innerText = `${((miner.bonus_percent) / 100).toFixed(2).replace('.', ',')}%`;
                     document.getElementById(`impact${index}`).innerText = convertPower(miner.newpower);
                     document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
                     document.getElementById(`merge${index}`).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
