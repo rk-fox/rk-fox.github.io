@@ -88,27 +88,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const minerIds = filteredMiners.map(miner => miner.miner_id);
             const counts = countRepetitions(minerIds);
 
-            const specialSetIds = [
-                "67338357d9b2852bde4b077d",
-                "67338298d9b2852bde4afb0d",
-                "67338415d9b2852bde4b0dc6"
+            // Definir valores do Set 1 e Set 2
+            let setpt = 0;
+            const set1 = [
+                '67338357d9b2852bde4b077d',
+                '67338298d9b2852bde4afb0d',
+                '67338415d9b2852bde4b0dc6'
             ];
 
-            let setpt = 0;
-            const specialSetCount = minerIds.filter(id => specialSetIds.includes(id)).length;
+            let setb = 0;
+            const set2 = [
+                '6687cf817643815232d65da6',
+                '6687cfd57643815232d65e39',
+                '6687cf557643815232d65d5c',
+                '6687cfae7643815232d65def'
+            ];
 
-            if (specialSetCount === 2) {
-                setpt = 7500000;
-            } else if (specialSetCount === 3) {
-                setpt = 15000000;
-            }
+            // Lógica para Set 1
+            set1.forEach(miner_id => {
+                if (counts[miner_id] === 2) setpt = 7500000;
+                if (counts[miner_id] === 3) setpt = 15000000;
+            });
+
+            // Lógica para Set 2
+            set2.forEach(miner_id => {
+                if (counts[miner_id] === 2 || counts[miner_id] === 3) setb = 200;
+                if (counts[miner_id] === 4) setb = 700;
+            });
 
             const results = filteredMiners.map(miner => {
-                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - ((miner.bonus_percent) / 100));
-                const newpower = specialSetIds.includes(miner.miner_id)
-                    ? (((miners - miner.power) * (1 + (newBonusPercent / 100))) - (total_orig + setpt))
-                    : (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
-                
+                // Calcular novo bônus com base no Set 2
+                const newBonusPercent = counts[miner.miner_id] > 1 
+                    ? bonusPercent 
+                    : (bonusPercent - ((miner.bonus_percent + setb) / 100));
+
+                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - (total_orig + setpt));
+
                 return {
                     ...miner,
                     newpower: newpower
