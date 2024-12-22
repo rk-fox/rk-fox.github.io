@@ -118,9 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const results = filteredMiners.map(miner => {
                 // Calcular novo bônus com base no Set 2
-                const newBonusPercent = counts[miner.miner_id] > 1 
-                    ? bonusPercent 
-                    : (bonusPercent - ((miner.bonus_percent + setb) / 100));
+                let newBonusPercent = bonusPercent;
+                if (counts[miner.miner_id] <= 1) {
+                    newBonusPercent = bonusPercent - ((miner.bonus_percent + setb) / 100);
+                }
 
                 const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - (total_orig + setpt));
 
