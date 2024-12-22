@@ -114,16 +114,22 @@ document.addEventListener('DOMContentLoaded', () => {
             set2.forEach(miner_id => {
                 if (counts[miner_id] === 2 || counts[miner_id] === 3) setb = 200;
                 if (counts[miner_id] === 4) setb = 700;
+
+                // Log para debug - Verificar se o miner_id está na lista e seu novo bônus
+                const miner = filteredMiners.find(m => m.miner_id === miner_id);
+                if (miner) {
+                    console.log(`Miner ID: ${miner.miner_id}, Novo Bônus: ${miner.bonus_percent + setb}`);
+                }
             });
 
             const results = filteredMiners.map(miner => {
-                // Calcular novo bônus com base no Set 2
-                let newBonusPercent = bonusPercent;
-                if (counts[miner.miner_id] <= 1) {
-                    newBonusPercent = bonusPercent - ((miner.bonus_percent + setb) / 100);
+                // Aplicando diretamente setb no bônus
+                if (set2.includes(miner.miner_id)) {
+                    miner.bonus_percent += setb; // Atualizando diretamente o bônus
                 }
 
-                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - (total_orig + setpt));
+                // Calcular o novo poder
+                const newpower = (((miners - miner.power) * (1 + (miner.bonus_percent / 100))) - (total_orig + setpt));
 
                 return {
                     ...miner,
