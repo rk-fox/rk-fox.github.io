@@ -88,49 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const minerIds = filteredMiners.map(miner => miner.miner_id);
             const counts = countRepetitions(minerIds);
 
-            // Definir valores do Set 1 e Set 2
-            let setpt = 0;
-            const set1 = [
-                '67338357d9b2852bde4b077d',
-                '67338298d9b2852bde4afb0d',
-                '67338415d9b2852bde4b0dc6'
-            ];
-
-            let setb = 0;
-            const set2 = [
-                '6687cf817643815232d65da6',
-                '6687cfd57643815232d65e39',
-                '6687cf557643815232d65d5c',
-                '6687cfae7643815232d65def'
-            ];
-
-            // Lógica para Set 1
-            set1.forEach(miner_id => {
-                if (counts[miner_id] === 2) setpt = 7500000;
-                if (counts[miner_id] === 3) setpt = 15000000;
-            });
-
-            // Lógica para Set 2
-            set2.forEach(miner_id => {
-                if (counts[miner_id] === 2 || counts[miner_id] === 3) setb = 200;
-                if (counts[miner_id] === 4) setb = 700;
-
-                // Log para debug - Verificar se o miner_id está na lista e seu novo bônus
-                const miner = filteredMiners.find(m => m.miner_id === miner_id);
-                if (miner) {
-                    console.log(`Miner ID: ${miner.miner_id}, Novo Bônus: ${miner.bonus_percent + setb}`);
-                }
-            });
-
             const results = filteredMiners.map(miner => {
-                // Aplicando diretamente setb no bônus
-                if (set2.includes(miner.miner_id)) {
-                    miner.bonus_percent += setb; // Atualizando diretamente o bônus
-                }
-
-                // Calcular o novo poder
-                const newpower = (((miners - miner.power) * (1 + (miner.bonus_percent / 100))) - (total_orig + setpt));
-
+                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - (miner.bonus_percent / 100));
+                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
+                
                 return {
                     ...miner,
                     newpower: newpower
@@ -146,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(top30NegativeResults.map(miner => ({
                 name: miner.name,
                 power: convertPower(miner.power),
-                bonus: `${((miner.bonus_percent) / 100).toFixed(2).replace('.', ',')}%`,
+                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`,
                 newpower: convertPower(miner.newpower)                
             })));
 
@@ -158,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
                     document.getElementById(`img${index}`).style.display = 'block';
                     document.getElementById(`poder${index}`).innerText = convertPower2(miner.power);
-                    document.getElementById(`bonus${index}`).innerText = `${((miner.bonus_percent) / 100).toFixed(2).replace('.', ',')}%`;
+                    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`;
                     document.getElementById(`impact${index}`).innerText = convertPower(miner.newpower);
                     document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
                     document.getElementById(`merge${index}`).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
