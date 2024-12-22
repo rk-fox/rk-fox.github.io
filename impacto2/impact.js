@@ -169,35 +169,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 power: convertPower(miner.power),
                 bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`,
                 newpower: convertPower(miner.newpower)                
-            })));
+            }))); 
 
             const updateElement = (index, miner) => {
                 if (miner) {
                     const levelInfo = getLevelDescription(miner.level);
-                    const levelSpan = <span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name};
-                    document.getElementById(nome${index}).innerHTML = levelSpan;
-                    document.getElementById(img${index}).src = https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1;
-                    document.getElementById(img${index}).style.display = 'block';
-                    document.getElementById(poder${index}).innerText = convertPower2(miner.power);
-                    document.getElementById(bonus${index}).innerText = ${((miner.bonus_percent) / 100).toFixed(2).replace('.', ',')}%;
-                    document.getElementById(impact${index}).innerText = convertPower(miner.newpower);
-                    document.getElementById(set${index}).innerText = miner.is_in_set ? 'Sim' : 'Não';
-                    document.getElementById(merge${index}).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
+                    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
+                    document.getElementById(`nome${index}`).innerHTML = levelSpan;
+                    document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
+                    document.getElementById(`img${index}`).style.display = 'block';
+                    document.getElementById(`poder${index}`).innerText = convertPower2(miner.power);
+                    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`;
+                    document.getElementById(`impact${index}`).innerText = convertPower(miner.newpower);
+                    document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
+                    document.getElementById(`merge${index}`).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
 
                     if (miner.placement.rack_info) {
                         const rack = miner.placement.rack_info;
-                        document.getElementById(rack${index}).innerText = Sala: ${rack.placement.room_level + 1}, Linha: ${rack.placement.y + 1}, Rack: ${rack.placement.x + 1};
+                        document.getElementById(`rack${index}`).innerText = `Sala: ${rack.placement.room_level + 1}, Linha: ${rack.placement.y + 1}, Rack: ${rack.placement.x + 1}`;
                     }
-                } else {
-                    document.getElementById(nome${index}).innerText = '';
                 }
             };
 
-            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+            results.forEach((miner, index) => updateElement(index, miner));
 
         } catch (error) {
-            console.error('Erro ao buscar dados:', error);
-            alert('Ocorreu um erro ao buscar os dados.');
+            console.error('Erro ao obter dados do usuário:', error);
+            alert('Erro ao obter dados do usuário. Tente novamente mais tarde.');
         }
     });
 });
