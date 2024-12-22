@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(top30NegativeResults.map(miner => ({
                 name: miner.name,
                 power: convertPower(miner.power),
-                bonus: ${((miner.bonus_percent) / 100).toFixed(2).replace('.', ',')}%,
+                bonus: `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`,
                 newpower: convertPower(miner.newpower)                
             })));
 
