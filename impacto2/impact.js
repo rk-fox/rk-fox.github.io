@@ -89,12 +89,78 @@ document.addEventListener('DOMContentLoaded', () => {
             const counts = countRepetitions(minerIds);
 
             const results = filteredMiners.map(miner => {
-                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - (miner.bonus_percent / 100));
-                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
-                
+                let setpt = 0;
+                let setb = 0;
+
+                // Verificar e atribuir os valores dos sets
+                switch (miner.miner_id) {
+                    case '67338357d9b2852bde4b077d':
+                    case '67338298d9b2852bde4afb0d':
+                    case '67338415d9b2852bde4b0dc6':
+                        const set1Count = counts[miner.miner_id] || 0;
+                        setpt = set1Count === 2 ? 7500000 : (set1Count === 3 ? 15000000 : 0);
+                        break;
+                    case '66c31b17b82bcb27662d302b':
+                    case '66c31aecb82bcb27662d2f53':
+                    case '66c31b3eb82bcb27662d30d8':
+                        const set2Count = counts[miner.miner_id] || 0;
+                        setpt = set2Count === 2 ? 5000000 : (set2Count === 3 ? 10000000 : 0);
+                        break;
+                    case '6687cea87643815232d65882':
+                    case '6687cefd7643815232d65d11':
+                    case '6687ce4e7643815232d65297':
+                    case '6687ced67643815232d65cc8':
+                        const set3Count = counts[miner.miner_id] || 0;
+                        setpt = set3Count === 2 || set3Count === 3 ? 2000000 : (set3Count === 4 ? 3000000 : 0);
+                        break;
+                    case '6687cd307643815232d64077':
+                    case '6687cdc47643815232d64726':
+                    case '6687ccfc7643815232d6402d':
+                    case '6687cd837643815232d640c1':
+                        const set4Count = counts[miner.miner_id] || 0;
+                        setpt = set4Count === 2 || set4Count === 3 ? 1500000 : (set4Count === 4 ? 2500000 : 0);
+                        break;
+                    case '674df56acbe1e47b27075ab6':
+                    case '674df5c5cbe1e47b27075b51':
+                    case '674df539cbe1e47b27075a68':
+                    case '674df599cbe1e47b27075b04':
+                        const set5Count = counts[miner.miner_id] || 0;
+                        setpt = set5Count === 2 || set5Count === 3 ? 10000000 : (set5Count === 4 ? 25000000 : 0);
+                        break;
+                    case '66ead1cde0dd3530da969ea9':
+                    case '66ead191e0dd3530da969e5f':
+                        const set6Count = counts[miner.miner_id] || 0;
+                        setpt = set6Count === 2 ? 5000000 : (set6Count === 3 ? 8000000 : 0);
+                        break;
+                    case '66f1c200e0dd3530daa2eadf':
+                    case '66f1c1b9e0dd3530daa2e9df':
+                    case '66f1c18fe0dd3530daa2e8dd':
+                    case '66f1c1dee0dd3530daa2ea96':
+                        const set7Count = counts[miner.miner_id] || 0;
+                        setb = set7Count === 2 || set7Count === 3 ? 500 : (set7Count === 4 ? 1000 : 0);
+                        break;
+                    case '6687cf817643815232d65da6':
+                    case '6687cfd57643815232d65e39':
+                    case '6687cf557643815232d65d5c':
+                    case '6687cfae7643815232d65def':
+                        const set8Count = counts[miner.miner_id] || 0;
+                        setb = set8Count === 2 || set8Count === 3 ? 200 : (set8Count === 4 ? 700 : 0);
+                        break;
+                }
+
+                // Ajustar fórmula de newBonusPercent para Set 7 e Set 8
+                let newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - (miner.bonus_percent / 100));
+                if (setb) {
+                    newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - ((miner.bonus_percent + setb) / 100));
+                }
+
+                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - (total_orig + setpt));
+
                 return {
                     ...miner,
-                    newpower: newpower
+                    newpower: newpower,
+                    setpt: setpt,
+                    setb: setb
                 };
             });
 
@@ -114,30 +180,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const updateElement = (index, miner) => {
                 if (miner) {
                     const levelInfo = getLevelDescription(miner.level);
-                    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-                    document.getElementById(`nome${index}`).innerHTML = levelSpan;
-                    document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
-                    document.getElementById(`img${index}`).style.display = 'block';
-                    document.getElementById(`poder${index}`).innerText = convertPower2(miner.power);
-                    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`;
-                    document.getElementById(`impact${index}`).innerText = convertPower(miner.newpower);
-                    document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
-                    document.getElementById(`merge${index}`).innerText = counts[miner.miner_id] > 1 ? 'Sim' : 'Não';
+                    const levelSpan = `<span style="color: ${levelInfo.color}">${levelInfo.text}</span>`;
 
-                    if (miner.placement.rack_info) {
-                        const rack = miner.placement.rack_info;
-                        document.getElementById(`rack${index}`).innerText = `Sala: ${rack.placement.room_level + 1}, Linha: ${rack.placement.y + 1}, Rack: ${rack.placement.x + 1}`;
-                    }
-                } else {
-                    document.getElementById(`nome${index}`).innerText = '';
+                    document.getElementById(`miner${index}name`).textContent = `${miner.name} (${levelSpan})`;
+                    document.getElementById(`miner${index}power`).textContent = convertPower(miner.power);
+                    document.getElementById(`miner${index}newpower`).textContent = convertPower(miner.newpower);
+                    document.getElementById(`miner${index}bonus`).textContent = `${(miner.bonus_percent / 100).toFixed(2).replace('.', ',')}%`;
                 }
             };
 
-            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
-
+            top10NegativeResults.forEach((miner, index) => {
+                updateElement(index + 1, miner);
+            });
         } catch (error) {
-            console.error('Erro ao buscar dados:', error);
-            alert('Ocorreu um erro ao buscar os dados.');
+            console.error('Erro ao buscar dados do usuário:', error);
         }
     });
 });
