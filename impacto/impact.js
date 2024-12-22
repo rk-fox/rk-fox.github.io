@@ -1,60 +1,3 @@
-// Função para ajustar os resultados com base nos sets
-function adjustResultsForSets(miners, counts) {
-    const sets = {
-        set1: {
-            ids: ['67338357d9b2852bde4b077d', '67338298d9b2852bde4afb0d', '67338415d9b2852bde4b0dc6'],
-            adjustments: [7500000, 15000000]
-        },
-        set2: {
-            ids: ['66c31b17b82bcb27662d302b', '66c31aecb82bcb27662d2f53', '66c31b3eb82bcb27662d30d8'],
-            adjustments: [5000000, 10000000]
-        },
-        set3: {
-            ids: ['6687cea87643815232d65882', '6687cefd7643815232d65d11', '6687ce4e7643815232d65297', '6687ced67643815232d65cc8'],
-            adjustments: [2000000, 3000000]
-        },
-        set4: {
-            ids: ['6687cd307643815232d64077', '6687cdc47643815232d64726', '6687ccfc7643815232d6402d', '6687cd837643815232d640c1'],
-            adjustments: [1500000, 2500000]
-        },
-        set5: {
-            ids: ['674df56acbe1e47b27075ab6', '674df5c5cbe1e47b27075b51', '674df539cbe1e47b27075a68', '674df599cbe1e47b27075b04'],
-            adjustments: [10000000, 25000000]
-        },
-        set6: {
-            ids: ['66ead1cde0dd3530da969ea9', '66ead191e0dd3530da969e5f', '66ead191e0dd3530da969e5f'],
-            adjustments: [5000000, 8000000]
-        },
-        set7: {
-            ids: ['66f1c200e0dd3530daa2eadf', '66f1c1b9e0dd3530daa2e9df', '66f1c18fe0dd3530daa2e8dd', '66f1c1dee0dd3530daa2ea96'],
-            bonusAdjustments: [500, 1000]
-        },
-        set8: {
-            ids: ['6687cf817643815232d65da6', '6687cfd57643815232d65e39', '6687cf557643815232d65d5c', '6687cfae7643815232d65def'],
-            bonusAdjustments: [200, 700]
-        }
-        console.log(`Miner ${miner.miner_id}: Power adjusted to ${miner.power}, Bonus adjusted to ${miner.bonus_percent}`);
-    };
-
-    miners.forEach(miner => {
-        Object.keys(sets).forEach(setKey => {
-            const set = sets[setKey];
-            if (set.ids.includes(miner.miner_id)) {
-                const count = counts[miner.miner_id] || 0;
-                if (set.adjustments && count >= 2) {
-                    const adjustment = set.adjustments[Math.min(count - 2, set.adjustments.length - 1)];
-                    miner.power += adjustment;
-                }
-                if (set.bonusAdjustments && count >= 2) {
-                    const adjustment = set.bonusAdjustments[Math.min(count - 2, set.bonusAdjustments.length - 1)];
-                    miner.bonus_percent += adjustment * 100; // bonus_percent is scaled
-                }
-                miner.is_in_set = true; // Indicar que pertence a um set
-            }
-        });
-    });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
 
     // Função para converter poder
@@ -80,6 +23,36 @@ document.addEventListener('DOMContentLoaded', () => {
             case 5: return { text: 'Unreal', color: '#ff0000' };
             default: return { text: 'Unknown', color: '' };
         }
+    }
+
+    function calculateSetBonuses(counts) {
+        let setpt = 0;
+        let setb = 0;
+
+        const sets = [
+            { ids: ["67338357d9b2852bde4b077d", "67338298d9b2852bde4afb0d", "67338415d9b2852bde4b0dc6"], pt: [7500000, 15000000] },
+            { ids: ["66c31b17b82bcb27662d302b", "66c31aecb82bcb27662d2f53", "66c31b3eb82bcb27662d30d8"], pt: [5000000, 10000000] },
+            { ids: ["6687cea87643815232d65882", "6687cefd7643815232d65d11", "6687ce4e7643815232d65297", "6687ced67643815232d65cc8"], pt: [2000000, 3000000] },
+            { ids: ["6687cd307643815232d64077", "6687cdc47643815232d64726", "6687ccfc7643815232d6402d", "6687cd837643815232d640c1"], pt: [1500000, 2500000] },
+            { ids: ["674df56acbe1e47b27075ab6", "674df5c5cbe1e47b27075b51", "674df539cbe1e47b27075a68", "674df599cbe1e47b27075b04"], pt: [10000000, 25000000] },
+            { ids: ["66ead1cde0dd3530da969ea9", "66ead191e0dd3530da969e5f", "66ead191e0dd3530da969e5f"], pt: [5000000, 8000000] },
+            { ids: ["66f1c200e0dd3530daa2eadf", "66f1c1b9e0dd3530daa2e9df", "66f1c18fe0dd3530daa2e8dd", "66f1c1dee0dd3530daa2ea96"], b: [500, 1000] },
+            { ids: ["6687cf817643815232d65da6", "6687cfd57643815232d65e39", "6687cf557643815232d65d5c", "6687cfae7643815232d65def"], b: [200, 700] }
+        ];
+
+        sets.forEach((set, index) => {
+            const count = set.ids.reduce((sum, id) => sum + (counts[id] || 0), 0);
+
+            if (index <= 5) { // Sets 1-6 (setpt only)
+                if (count === 2) setpt += set.pt[0];
+                else if (count === 3 || count === 4) setpt += set.pt[Math.min(1, set.pt.length - 1)];
+            } else { // Sets 7-8 (setb only)
+                if (count === 2 || count === 3) setb += set.b[0];
+                else if (count === 4) setb += set.b[1];
+            }
+        });
+
+        return { setpt, setb };
     }
 
     document.getElementById('searchButton').addEventListener('click', async () => {
@@ -146,13 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const minerIds = filteredMiners.map(miner => miner.miner_id);
             const counts = countRepetitions(minerIds);
 
-            // Chame a função aqui:
-            adjustResultsForSets(minerData, counts);
+            // Calcula os valores de setpt e setb
+            const { setpt, setb } = calculateSetBonuses(counts);
 
             const results = filteredMiners.map(miner => {
-                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - (miner.bonus_percent / 100));
-                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig);
-                
+                const newBonusPercent = counts[miner.miner_id] > 1 ? bonusPercent : (bonusPercent - ((miner.bonus_percent + setb) / 100));
+                const newpower = (((miners - miner.power) * (1 + (newBonusPercent / 100))) - total_orig - setpt);
+
                 return {
                     ...miner,
                     newpower: newpower
