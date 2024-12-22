@@ -38,7 +38,7 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
     console.log("Racks Data:", racks);
     console.log("Total Power:", totalPower);
     console.log("Total Bonus Percent:", totalBonusPercent);
-    console.log("Adjusted Power (Power * ((100 + Bonus Percent) / 100)):", adjustedPower);
+    console.log("Adjusted Power (Power * ((100000 + Bonus Percent) / 100)):", adjustedPower);
   })
   .catch(error => {
     console.error("Erro ao obter dados da API:", error);
