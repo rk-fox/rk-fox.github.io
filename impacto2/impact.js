@@ -16,7 +16,7 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       level: miner.level,
       power: miner.power,
       filename: miner.filename,
-      bonus_percent: (miner.bonus_percent)/100,
+      bonus_percent: miner.bonus_percent,
       is_in_set: miner.is_in_set
     }));
 
@@ -31,7 +31,7 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
     // Somando power e bonus_percent
     const totalPower = miners.reduce((sum, miner) => sum + miner.power, 0);
     const totalBonusPercent = miners.reduce((sum, miner) => sum + miner.bonus_percent, 0);
-    const adjustedPower = totalPower * ((100 + totalBonusPercent)/100);
+    const adjustedPower = totalPower * ((100 + totalBonusPercent) / 100);
 
     // Simulando a remoção de miners e calculando o impacto no total
     const minerImpacts = miners.map(miner => {
@@ -43,7 +43,7 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
     });
 
     // Ordenando os miners pelo impacto (negativo mais próximo de zero até o mais distante)
-    minerImpacts.sort((a, b) => a.impact - b.impact);
+    minerImpacts.sort((a, b) => b.impact - a.impact);
 
     // Exibindo os dados no console
     console.log("Miners Data:", miners);
