@@ -12,6 +12,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return (value) + ' GHs';
     }
 
+    function getLevelDescription(level) {
+        switch (level) {
+            case 0: return { text: 'Common', color: '' };
+            case 1: return { text: 'Uncommon', color: '#2bff00' };
+            case 2: return { text: 'Rare', color: '#00eaff' };
+            case 3: return { text: 'Epic', color: '#ff00bb' };
+            case 4: return { text: 'Legendary', color: '#fffb00' };
+            case 5: return { text: 'Unreal', color: '#ff0000' };
+            default: return { text: 'Unknown', color: '' };
+        }
+    }
+    
     // Função para atribuir setpt
     function calculateSetPt(minerIds) {
         let setpt = 0;
