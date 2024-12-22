@@ -169,7 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 power: convertPower(miner.power),
                 bonus: `${(miner.bonus_percent * 100).toFixed(2)} %`,
                 newpower: convertPower(miner.newpower),
-                setpt: convertPower(miner.setpt)
             })));
 
             updateResultsTable(top10NegativeResults);
