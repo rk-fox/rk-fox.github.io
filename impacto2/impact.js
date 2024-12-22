@@ -57,7 +57,7 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
     });
 
     // Ordenando os miners pelo impacto (negativo mais próximo de zero até o mais distante)
-    minerImpacts.sort((a, b) => a.impact - b.impact); // Ajuste na ordenação
+    minerImpacts.sort((a, b) => b.impact - a.impact); // Ajuste na ordenação
 
     // Exibindo os dados no console
     console.log("Miners Data:", miners);
