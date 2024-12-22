@@ -16,7 +16,7 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       level: miner.level,
       power: miner.power,
       filename: miner.filename,
-      bonus_percent: miner.bonus_percent,
+      bonus_percent: (miner.bonus_percent)/100,
       is_in_set: miner.is_in_set
     }));
 
@@ -31,14 +31,27 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
     // Somando power e bonus_percent
     const totalPower = miners.reduce((sum, miner) => sum + miner.power, 0);
     const totalBonusPercent = miners.reduce((sum, miner) => sum + miner.bonus_percent, 0);
-    const adjustedPower = totalPower * ((100 + totalBonusPercent) / 100);
+    const adjustedPower = totalPower * ((100 + totalBonusPercent)/100);
+
+    // Simulando a remoção de miners e calculando o impacto no total
+    const minerImpacts = miners.map(miner => {
+      const remainingPower = totalPower - miner.power;
+      const remainingBonusPercent = totalBonusPercent - miner.bonus_percent;
+      const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent) / 100);
+      const impact = newAdjustedPower - adjustedPower;
+      return { ...miner, impact };
+    });
+
+    // Ordenando os miners pelo impacto (negativo mais próximo de zero até o mais distante)
+    minerImpacts.sort((a, b) => a.impact - b.impact);
 
     // Exibindo os dados no console
     console.log("Miners Data:", miners);
     console.log("Racks Data:", racks);
     console.log("Total Power:", totalPower);
     console.log("Total Bonus Percent:", totalBonusPercent);
-    console.log("Adjusted Power (Power * ((100000 + Bonus Percent) / 100)):", adjustedPower);
+    console.log("Adjusted Power (Power * ((100 + Bonus Percent) / 100)):", adjustedPower);
+    console.log("Miner Impacts (sorted):", minerImpacts);
   })
   .catch(error => {
     console.error("Erro ao obter dados da API:", error);
