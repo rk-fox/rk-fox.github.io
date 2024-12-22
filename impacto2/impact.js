@@ -28,9 +28,17 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       y: rack.placement.y
     }));
 
+    // Somando power e bonus_percent
+    const totalPower = miners.reduce((sum, miner) => sum + miner.power, 0);
+    const totalBonusPercent = miners.reduce((sum, miner) => sum + miner.bonus_percent, 0);
+    const adjustedPower = totalPower * ((100 + totalBonusPercent) / 100);
+
     // Exibindo os dados no console
     console.log("Miners Data:", miners);
     console.log("Racks Data:", racks);
+    console.log("Total Power:", totalPower);
+    console.log("Total Bonus Percent:", totalBonusPercent);
+    console.log("Adjusted Power (Power * ((100 + Bonus Percent) / 100)):", adjustedPower);
   })
   .catch(error => {
     console.error("Erro ao obter dados da API:", error);
