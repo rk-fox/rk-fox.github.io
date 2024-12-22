@@ -26,7 +26,7 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
         level: miner.level,
         power: miner.power,
         filename: miner.filename,
-        bonus_percent: minerCount[key].isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus
+        bonus_percent: minerCount[key].isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus dividido por 100
         is_in_set: miner.is_in_set,
         repetitions: minerCount[key].isFirst ? "NÃO" : minerCount[key].count, // Indica se é repetido
       });
@@ -52,12 +52,12 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       const remainingPower = totalPower - miner.power;
       const remainingBonusPercent = totalBonusPercent - miner.bonus_percent;
       const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent) / 100);
-      const impact = newAdjustedPower - adjustedPower;
+      const impact = adjustedPower - newAdjustedPower; // Alteração na fórmula do impacto
       return { ...miner, impact };
     });
 
     // Ordenando os miners pelo impacto (negativo mais próximo de zero até o mais distante)
-    minerImpacts.sort((a, b) => a.impact - b.impact);
+    minerImpacts.sort((a, b) => b.impact - a.impact); // Ajuste na ordenação
 
     // Exibindo os dados no console
     console.log("Miners Data:", miners);
