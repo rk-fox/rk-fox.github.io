@@ -29,7 +29,7 @@ function convertPower(value) {
 }
 
 // Fazendo uma requisição à API para obter dados dinâmicos
-fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/61e852b4dc27dc001969efa3")
+fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/61849ec5bee39a0026d534e7")
   .then(response => {
     if (!response.ok) {
       throw new Error(`Erro na requisição: ${response.status}`);
