@@ -24,6 +24,8 @@ function convertPower(value) {
     return value.toFixed(3).replace('.', ',') + ' Ghs';
 }
 
+let avatarId; // Definido globalmente
+
 document.getElementById('searchButton').addEventListener('click', async () => {
     const userLink = document.getElementById('linkInput').value;
 
@@ -35,11 +37,10 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     try {
         const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
         const profileData = await profileResponse.json();
-        const userName = profileData.data.name;
-        const avatarId = profileData.data.avatar_id;
-
-        if (!avatarId || !userName) {
-            alert('Erro ao obter o avatar_id ou nome.');
+        avatarId = profileData.data.avatar_id; // Atualiza o valor global
+        
+        if (!avatarId) {
+            alert('Erro ao obter avatarId.');
             return;
         }
 
@@ -64,6 +65,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             bonusPercent,
             total_orig: convertPower(total_orig)
         });
+
     } catch (error) {
         console.error('Erro ao obter os dados:', error);
         alert('Erro ao obter os dados. Verifique o console para mais informações.');
@@ -71,16 +73,12 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 });
 
 // Fazendo uma requisição à API para obter dados dinâmicos
-fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(jsonData => {
-        const miners = [];
-        const minerCount = {};
+if (avatarId) {
+    fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`)
+        .then(response => response.json())
+        .then(data => console.log('Room Config:', data))
+        .catch(error => console.error('Erro ao obter dados da API room-config:', error));
+}
 
         jsonData.data.miners.forEach(miner => {
             const key = `${miner.miner_id}_${miner.level}`;
