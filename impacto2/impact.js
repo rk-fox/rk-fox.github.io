@@ -180,7 +180,6 @@ if (avatarId) {
       rack_x: impact.rack_x,         // Novo dado de rack
       rack_y: impact.rack_y          // Novo dado de rack
     })));
-  })
   .catch(error => {
     console.error("Erro ao obter dados da API:", error);
   });
