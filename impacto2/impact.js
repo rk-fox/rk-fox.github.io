@@ -71,7 +71,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 });
 
 // Fazendo uma requisição à API para obter dados dinâmicos
-fetch(`"https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}"`)
+fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`)
     .then(response => {
         if (!response.ok) {
             throw new Error(`Erro na requisição: ${response.status}`);
