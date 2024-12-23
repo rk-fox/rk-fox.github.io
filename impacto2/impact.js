@@ -117,6 +117,8 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
     console.log("Adjusted Power (formatted):", formattedAdjustedPower);
     console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
       name: impact.name,
+      power: impact.formattedPower, // Exibe o valor formatado
+      bonus_percent: impact.bonus_percent,
       formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
     })));
   })
