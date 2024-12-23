@@ -17,6 +17,17 @@ function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) 
   });
 }
 
+// Função para converter valores de poder
+function convertPower(value) {
+  if (value >= 1e6) {
+    return (value / 1e6).toFixed(3).replace('.', ',') + ' Phs';
+  }
+  if (value >= 1e3) {
+    return (value / 1e3).toFixed(3).replace('.', ',') + ' Ths';
+  }
+  return value.toFixed(3).replace('.', ',') + ' Ghs';
+}
+
 // Fazendo uma requisição à API para obter dados dinâmicos
 fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/61e852b4dc27dc001969efa3")
   .then(response => {
