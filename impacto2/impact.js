@@ -153,13 +153,34 @@ if (avatarId) {
 
         minerImpacts.sort((a, b) => b.impact - a.impact);
 
-        console.log("Miners Data (formatted):", miners);
-        console.log("Racks Data:", racks);
-        console.log("Total Power:", formattedTotalPower);
-        console.log("Total Bonus Percent:", totalBonusPercent);
-        console.log("Adjusted Power (formatted):", formattedAdjustedPower);
-        console.log("Miner Impacts (sorted):", minerImpacts);
-    })
-    .catch(error => {
-        console.error("Erro ao obter dados da API:", error);
-    });
+        // Exibindo os dados no console
+    console.log("Miners Data (formatted):", miners.map(miner => ({
+      miner_id: miner.miner_id,
+      name: miner.name,
+      level: miner.level,
+      power: miner.formattedPower, // Exibe o valor formatado
+      bonus_percent: miner.bonus_percent,
+      width: miner.width,
+      repetitions: miner.repetitions,
+      rack: miner.user_rack_id,
+      room_level: miner.room_level, // Novo dado de rack
+      rack_x: miner.rack_x,         // Novo dado de rack
+      rack_y: miner.rack_y          // Novo dado de rack
+    })));
+    console.log("Racks Data:", racks);
+    console.log("Total Power:", formattedTotalPower);
+    console.log("Total Bonus Percent:", totalBonusPercent);
+    console.log("Adjusted Power (formatted):", formattedAdjustedPower);
+    console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
+      name: impact.name,
+      power: impact.formattedPower, // Exibe o valor formatado
+      bonus_percent: impact.bonus_percent,
+      formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
+      room_level: impact.room_level, // Novo dado de rack
+      rack_x: impact.rack_x,         // Novo dado de rack
+      rack_y: impact.rack_y          // Novo dado de rack
+    })));
+  })
+  .catch(error => {
+    console.error("Erro ao obter dados da API:", error);
+  });
