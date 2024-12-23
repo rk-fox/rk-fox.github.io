@@ -85,6 +85,16 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       y: rack.placement.y
     }));
 
+    // Associando miner.placement.user_rack_id com rack._id
+    miners.forEach(miner => {
+      const rack = racks.find(r => r._id === miner.user_rack_id);
+      if (rack) {
+        miner.room_level = rack.room_level;
+        miner.rack_x = rack.x;
+        miner.rack_y = rack.y;
+      }
+    });
+
     // Somando power e bonus_percent
     const totalPower = miners.reduce((sum, miner) => sum + miner.power, 0);
     const totalBonusPercent = miners.reduce((sum, miner) => sum + miner.bonus_percent, 0);
@@ -121,6 +131,9 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       width: miner.width,
       repetitions: miner.repetitions,
       rack: miner.user_rack_id,
+      room_level: miner.room_level, // Novo dado de rack
+      rack_x: miner.rack_x,         // Novo dado de rack
+      rack_y: miner.rack_y          // Novo dado de rack
     })));
     console.log("Racks Data:", racks);
     console.log("Total Power:", formattedTotalPower);
@@ -131,6 +144,9 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       power: impact.formattedPower, // Exibe o valor formatado
       bonus_percent: impact.bonus_percent,
       formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
+      room_level: impact.room_level, // Novo dado de rack
+      rack_x: impact.rack_x,         // Novo dado de rack
+      rack_y: impact.rack_y          // Novo dado de rack
     })));
   })
   .catch(error => {
