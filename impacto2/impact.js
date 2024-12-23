@@ -59,8 +59,9 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
     const totalBonusPercent = miners.reduce((sum, miner) => sum + miner.bonus_percent, 0);
     const adjustedPower = totalPower * ((100 + totalBonusPercent) / 100);
 
-    // Convertendo totalPower para exibição
+    // Convertendo valores para exibição
     const formattedTotalPower = convertPower(totalPower);
+    const formattedAdjustedPower = convertPower(adjustedPower);
 
     // Simulando a remoção de miners e calculando o impacto no total
     const minerImpacts = miners.map(miner => {
@@ -69,8 +70,11 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent) / 100);
       const impact = newAdjustedPower - adjustedPower; // Alteração na fórmula do impacto
 
-      // Adicionando impacto formatado
-      return { ...miner, impact, formattedImpact: convertPower(impact) };
+      return { 
+        ...miner, 
+        impact, 
+        formattedImpact: convertPower(Math.abs(impact)) // Formata o impacto
+      };
     });
 
     // Ordenando os miners pelo impacto (negativo mais próximo de zero até o mais distante)
@@ -88,9 +92,11 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
     console.log("Racks Data:", racks);
     console.log("Total Power:", formattedTotalPower);
     console.log("Total Bonus Percent:", totalBonusPercent);
-    console.log("Adjusted Power (Power * ((100 + Bonus Percent) / 100)):", adjustedPower);
+    console.log("Adjusted Power (formatted):", formattedAdjustedPower);
     console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
       name: impact.name,
+      power: impact.formattedPower, // Exibe o valor formatado
+      bonus_percent: impact.bonus_percent,
       formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
     })));
   })
