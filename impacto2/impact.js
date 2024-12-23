@@ -118,7 +118,9 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       level: miner.level,
       power: miner.formattedPower, // Exibe o valor formatado
       bonus_percent: miner.bonus_percent,
+      width: miner.width,
       repetitions: miner.repetitions,
+      rack: miner.user_rack_id,
     })));
     console.log("Racks Data:", racks);
     console.log("Total Power:", formattedTotalPower);
