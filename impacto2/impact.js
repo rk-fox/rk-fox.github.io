@@ -77,6 +77,14 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       2   // 2% para 2 ou 3
     );
 
+    // Extraindo dados de data.racks
+    const racks = jsonData.data.racks.map(rack => ({
+      _id: rack._id,
+      room_level: rack.placement.room_level,
+      x: rack.placement.x,
+      y: rack.placement.y
+    }));
+
     // Somando power e bonus_percent
     const totalPower = miners.reduce((sum, miner) => sum + miner.power, 0);
     const totalBonusPercent = miners.reduce((sum, miner) => sum + miner.bonus_percent, 0);
@@ -112,6 +120,7 @@ fetch("https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com
       bonus_percent: miner.bonus_percent,
       repetitions: miner.repetitions,
     })));
+    console.log("Racks Data:", racks);
     console.log("Total Power:", formattedTotalPower);
     console.log("Total Bonus Percent:", totalBonusPercent);
     console.log("Adjusted Power (formatted):", formattedAdjustedPower);
