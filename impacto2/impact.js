@@ -109,7 +109,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
         filename: miner.filename,
         bonus_percent: minerCount[key].isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus dividido por 100
         is_in_set: miner.is_in_set,
-        repetitions: minerCount[key].isFirst ? "NÃO" : minerCount[key].count, // Indica se é repetido
+        repetitions: minerCount[key].isFirst ? "Não" : minerCount[key].count, // Indica se é repetido
       });
 
 
