@@ -50,7 +50,7 @@ function applyImpact4Adjustment(miners, targetIds, fullSetImpact, partialSetImpa
 }
 
 // Função para converter valores de poder
-function convertPower(value) {
+function convertPower(Math.abs(value)) {
   if (value >= 1e6) {
     return (value / 1e6).toFixed(3).replace('.', ',') + ' Phs';
   }
