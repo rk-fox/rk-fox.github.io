@@ -53,12 +53,18 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
         const powerData = await powerDataResponse.json();
-        const miners = powerData.data.miners;
+
+        if (!powerData.data || !powerData.data.miners || !powerData.data.racks) {
+            console.error("Dados inesperados recebidos da API:", powerData);
+            return;
+        }
+
+        const miners = [];
         let bonusPercent = powerData.data.bonus_percent;
 
         bonusPercent = parseFloat((bonusPercent / 100).toFixed(2));
 
-        const total_orig = miners * (1 + (bonusPercent / 100));
+        const total_orig = powerData.data.miners.reduce((sum, miner) => sum + miner.power, 0) * (1 + (bonusPercent / 100));
 
         console.log('Dados do usuário:', {
             userName,
@@ -76,7 +82,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
                 .catch(error => console.error('Erro ao obter dados da API room-config:', error));
         }
 
-        jsonData.data.miners.forEach(miner => {
+        const minerCount = {};
+        powerData.data.miners.forEach(miner => {
             const key = `${miner.miner_id}_${miner.level}`;
             if (!minerCount[key]) {
                 minerCount[key] = { count: 0, isFirst: true };
@@ -111,7 +118,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             2
         );
 
-        const racks = jsonData.data.racks.map(rack => ({
+        const racks = powerData.data.racks.map(rack => ({
             _id: rack._id,
             room_level: rack.placement.room_level,
             x: rack.placement.x,
