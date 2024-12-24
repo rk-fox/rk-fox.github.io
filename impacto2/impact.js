@@ -218,8 +218,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             };
 
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
-
-        }
   
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
