@@ -71,9 +71,9 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
 
-        let total_orig = miners * (1 + (bonusPercent / 100));
+        let total_orig = minersPower * (1 + (totalbonusPercent / 100));
 
-        console.log("Miners Power:", miners);
+        console.log("Miners Power:", minersPower);
         console.log("Miners Bonus:", totalbonusPercent);
         console.log("Total Power:", total_orig);
 
@@ -150,10 +150,10 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
     // Simulando a remoção de miners e calculando o impacto no total
     const minerImpacts = miners.map(miner => {
-      const remainingPower = total_orig - miner.power;
+      const remainingPower = minersPower - miner.power;
       const remainingBonusPercent = totalBonusPercent - miner.bonus_percent;
       const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent) / 100);
-      const impact = newAdjustedPower - adjustedPower; // Alteração na fórmula do impacto
+      const impact = newAdjustedPower - total_orig; // Alteração na fórmula do impacto
 
       return { 
         ...miner, 
