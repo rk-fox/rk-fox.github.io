@@ -73,9 +73,9 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         let total_orig = minersPower * (1 + (totalbonusPercent / 100));
 
-        console.log("Miners Power:", minersPower);
+        console.log("Miners Power:", convertPower(minersPower));
         console.log("Miners Bonus:", totalbonusPercent);
-        console.log("Total Power:", total_orig);
+        console.log("Total Power:", convertPower(total_orig));
 
         // Fazendo uma requisição à API para obter dados dinâmicos
         fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`)
@@ -152,10 +152,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       }
     });
 
-    // Convertendo valores para exibição
-    const formattedTotalPower = convertPower((minersPower));
-    const formattedAdjustedPower = convertPower((total_orig));
-
     // Simulando a remoção de miners e calculando o impacto no total
     const minerImpacts = miners.map(miner => {
       const remainingPower = minersPower - miner.power;
@@ -189,9 +185,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       rack_y: miner.rack_y          // Novo dado de rack
     })));
     console.log("Racks Data:", racks);
-    console.log("Total Power:", formattedTotalPower);
-    console.log("Total Bonus Percent:", totalbonusPercent);
-    console.log("Adjusted Power (formatted):", formattedAdjustedPower);
     console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
       name: impact.name,
       power: impact.formattedPower, // Exibe o valor formatado
