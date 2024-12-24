@@ -30,9 +30,11 @@ function applyImpact3Adjustment(miners, targetIds, fullSetImpact, partialSetImpa
       ? partialSetImpact
       : 0;
 
-  // Aplica o ajuste no bônus de cada miner correspondente
+  // Aplica o ajuste no impacto de cada miner correspondente
   matchingMiners.forEach(impact => {
-    impact.formattedImpact += impact3Adjustment;
+    // Modifica a fórmula de impacto com o ajuste aplicado diretamente antes do cálculo do impacto final
+    const newAdjustedImpact = impact.formattedImpact - impact3Adjustment;
+    impact.formattedImpact = newAdjustedImpact;
   });
 }
 
@@ -49,11 +51,14 @@ function applyImpact4Adjustment(miners, targetIds, fullSetImpact, partialSetImpa
       ? partialSetImpact
       : 0;
 
-  // Aplica o ajuste no bônus de cada miner correspondente
+  // Aplica o ajuste no impacto de cada miner correspondente
   matchingMiners.forEach(impact => {
-    impact.formattedImpact += impact4Adjustment;
+    // Modifica a fórmula de impacto com o ajuste aplicado diretamente antes do cálculo do impacto final
+    const newAdjustedImpact = impact.formattedImpact - impact4Adjustment;
+    impact.formattedImpact = newAdjustedImpact;
   });
 }
+
 
 // Função para converter valores de poder
 function convertPower(value) {
