@@ -111,11 +111,13 @@ document.getElementById('searchButton').addEventListener('click', async () => {
         repetitions: minerCount[key].isFirst ? "NÃO" : minerCount[key].count, // Indica se é repetido
       });
 
-      if (selectedOption === 'op1') {
-      miners = miners.filter(miner => miner.width === 1);
-    } else if (selectedOption === 'op2') {
-      miners = miners.filter(miner => miner.width === 2);
-    }
+
+      const selectedOption = document.querySelector('input[name="option"]:checked').value;
+            if (selectedOption === 'op1') {
+                miners = miners.filter(miner => miner.width === 1);
+            } else if (selectedOption === 'op2') {
+                miners = miners.filter(miner => miner.width === 2);
+            }
 
       minerCount[key].isFirst = false; // Marca as subsequentes como não sendo as primeiras
     });
