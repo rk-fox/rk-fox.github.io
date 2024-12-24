@@ -151,7 +151,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     // Simulando a remoção de miners e calculando o impacto no total
     const minerImpacts = miners.map(miner => {
       const remainingPower = minersPower - miner.power;
-      const remainingBonusPercent = totalBonusPercent - miner.bonus_percent;
+      const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
       const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent) / 100);
       const impact = newAdjustedPower - total_orig; // Alteração na fórmula do impacto
 
