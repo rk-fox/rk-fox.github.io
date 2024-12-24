@@ -30,7 +30,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             bonusPercent = parseFloat((bonusPercent / 100).toFixed(2));
 
             const total_orig = miners * (1 + (bonusPercent / 100));
-        }
 
         console.log("Miners Data:", miners);
         console.log("Bonus Data:", bonusPercent);
