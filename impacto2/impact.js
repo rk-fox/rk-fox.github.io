@@ -17,60 +17,6 @@ function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) 
   });
 }
 
-function applyImpact3Adjustment(miners, targetIds, fullSetImpact, partialSetImpact) {
-  // Filtra as miners do grupo específico
-  const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
-
-  // Calcula o impacto dependendo da quantidade de miners encontrados
-  let impactAdjustment = 0;
-  if (matchingMiners.length === 3) {
-    impactAdjustment = fullSetImpact;
-  } else if (matchingMiners.length >= 2) {
-    impactAdjustment = partialSetImpact;
-  }
-
-  // Aplica o impacto no cálculo do impacto de cada miner
-  matchingMiners.forEach(miner => {
-    const newAdjustedPower = miner.power * (1 + miner.bonus_percent / 100);
-    const originalPower = miner.power; // Poder original
-
-    // Calcula o impacto
-    let impact = newAdjustedPower - originalPower;
-    impact -= impactAdjustment; // Ajusta o impacto
-
-    miner.impact = impact; // Salva o impacto no miner
-    miner.formattedImpact = convertPower(Math.abs(impact)); // Formata o impacto
-  });
-}
-
-
-function applyImpact4Adjustment(miners, targetIds, fullSetImpact, partialSetImpact) {
-  // Filtra as miners do grupo específico
-  const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
-
-  // Calcula o impacto dependendo da quantidade de miners encontrados
-  let impactAdjustment = 0;
-  if (matchingMiners.length === 4) {
-    impactAdjustment = fullSetImpact;
-  } else if (matchingMiners.length >= 2) {
-    impactAdjustment = partialSetImpact;
-  }
-
-  // Aplica o impacto no cálculo do impacto de cada miner
-  matchingMiners.forEach(miner => {
-    const newAdjustedPower = miner.power * (1 + miner.bonus_percent / 100);
-    const originalPower = miner.power; // Poder original
-
-    // Calcula o impacto
-    let impact = newAdjustedPower - originalPower;
-    impact -= impactAdjustment; // Ajusta o impacto
-
-    miner.impact = impact; // Salva o impacto no miner
-    miner.formattedImpact = convertPower(Math.abs(impact)); // Formata o impacto
-  });
-}
-
-
 // Função para converter valores de poder
 function convertPower(value) {
   if (value >= 1e6) {
@@ -207,8 +153,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     });
 
     // Convertendo valores para exibição
-    const formattedTotalPower = convertPower(Math.abs(minersPower));
-    const formattedAdjustedPower = convertPower(Math.abs(total_orig));
+    const formattedTotalPower = convertPower((minersPower));
+    const formattedAdjustedPower = convertPower((total_orig));
 
     // Simulando a remoção de miners e calculando o impacto no total
     const minerImpacts = miners.map(miner => {
@@ -216,43 +162,11 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
       const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent) / 100);
       let impact = newAdjustedPower - total_orig; // Alteração na fórmula do impacto
-
-      // Aplicando ajustes no impacto para os seis grupos de IDs específicos
-    applyImpact3Adjustment(miners, 
-      ["67338357d9b2852bde4b077d", "67338298d9b2852bde4afb0d", "67338415d9b2852bde4b0dc6"], 
-      15000000, // 10% para todas as 3
-      7500000   // 5% para 2
-    );
-    applyImpact3Adjustment(miners, 
-      ["66c31b17b82bcb27662d302b", "66c31aecb82bcb27662d2f53", "66c31b3eb82bcb27662d30d8"], 
-      10000000,  // 7% para todas as 3
-      5000000   // 2% para 2
-    );
-    applyImpact3Adjustment(miners, 
-      ["66ead1cde0dd3530da969ea9", "66ead191e0dd3530da969e5f", "66ead1fbe0dd3530da969ef3"], 
-      8000000,  // 7% para todas as 3
-      5000000   // 2% para 2
-    );
-    applyImpact4Adjustment(miners, 
-      ["6687cea87643815232d65882", "6687cefd7643815232d65d11", "6687ce4e7643815232d65297", "6687ced67643815232d65cc8"], 
-      3000000,  // 7% para todas as 4
-      2000000   // 2% para 2 ou 3
-    );
-    applyImpact4Adjustment(miners, 
-      ["6687cd307643815232d64077", "6687cdc47643815232d64726", "6687ccfc7643815232d6402d", "6687cd837643815232d640c1"], 
-      2500000,  // 7% para todas as 4
-      1500000   // 2% para 2 ou 3
-    );
-    applyImpact4Adjustment(miners, 
-      ["674df56acbe1e47b27075ab6", "674df5c5cbe1e47b27075b51", "674df539cbe1e47b27075a68", "674df599cbe1e47b27075b04"], 
-      25000000,  // 7% para todas as 4
-      10000000   // 2% para 2 ou 3
-    );
       
       return { 
         ...miner, 
         impact, 
-        formattedImpact: convertPower(Math.abs(impact)) // Formata o impacto
+        formattedImpact: convertPower((impact)) // Formata o impacto
       };
     });
 
