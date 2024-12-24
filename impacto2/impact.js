@@ -31,4 +31,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
             const total_orig = miners * (1 + (bonusPercent / 100));
         }
-});
+        catch (error) {
+            console.error('Erro ao buscar dados:', error);
+            alert('Ocorreu um erro ao buscar os dados.');
+        }
+    });
