@@ -241,7 +241,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       return { 
         ...miner, 
         impact, 
-        formattedImpact: convertPower(Math.abs(impact)) // Formata o impacto
+        formattedImpact: convertPower(impact) // Formata o impacto
       };
     });
 
