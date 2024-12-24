@@ -29,18 +29,5 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             console.error("Dados inesperados recebidos da API:", powerData);
             return;
         }
-
-        const miners = [];
-        let bonusPercent = powerData.data.bonus_percent;
-
-        bonusPercent = parseFloat((bonusPercent / 100).toFixed(2));
-
-        const total_orig = powerData.data.miners.reduce((sum, miner) => sum + miner.power, 0) * (1 + (bonusPercent / 100));
-
-        console.log('Dados do usuário:', {
-            userName,
-            avatarId,
-            miners,
-            bonusPercent,
-            total_orig: convertPower(total_orig)
-        });
+}
+});
