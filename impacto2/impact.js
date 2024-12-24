@@ -20,7 +20,7 @@ function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) 
 // Função para calcular o impacto extra com base nos IDs específicos SET DE 3
 function applyImpact3Adjustment(miners, targetIds, fullSetImpact, partialSetImpact) {
   // Filtra as miners do grupo específico
-  const matchingMiners = miners.filter(miner => targetIds.includes(impact.miner_id));
+  const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
 
   // Define o bônus adicional com base na quantidade de IDs encontrados
   const impact3Adjustment =
@@ -39,7 +39,7 @@ function applyImpact3Adjustment(miners, targetIds, fullSetImpact, partialSetImpa
 // Função para calcular o impacto extra com base nos IDs específicos SET DE 4
 function applyImpact4Adjustment(miners, targetIds, fullSetImpact, partialSetImpact) {
   // Filtra as miners do grupo específico
-  const matchingMiners = miners.filter(miner => targetIds.includes(impact.miner_id));
+  const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
 
   // Define o bônus adicional com base na quantidade de IDs encontrados
   const impact4Adjustment =
