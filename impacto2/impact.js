@@ -45,7 +45,7 @@ function applyImpact4Adjustment(miners, targetIds, fullSetImpact, partialSetImpa
 
   matchingMiners.forEach(miner => {
     // Calcula o impacto sem converter o valor
-    impact.impact = impact.impact - impact4Adjustment;
+    miner.impact = miner.impact - impact4Adjustment;
   });
 }
 
