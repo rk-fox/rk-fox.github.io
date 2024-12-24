@@ -50,7 +50,7 @@ function applyImpact4Adjustment(miners, targetIds, fullSetImpact, partialSetImpa
 }
 
 // Função para converter valores de poder
-function convertPower(Math.abs(value)) {
+function convertPower(value) {
   if (value >= 1e6) {
     return (value / 1e6).toFixed(3).replace('.', ',') + ' Phs';
   }
@@ -185,8 +185,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     });
 
     // Convertendo valores para exibição
-    const formattedTotalPower = convertPower(minersPower);
-    const formattedAdjustedPower = convertPower(total_orig);
+    const formattedTotalPower = convertPower(Math.abs(minersPower));
+    const formattedAdjustedPower = convertPower(Math.abs(total_orig));
 
     // Simulando a remoção de miners e calculando o impacto no total
     const minerImpacts = miners.map(miner => {
@@ -230,7 +230,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       return { 
         ...miner, 
         impact, 
-        formattedImpact: convertPower(impact) // Formata o impacto
+        formattedImpact: convertPower(Math.abs(impact)) // Formata o impacto
       };
     });
 
