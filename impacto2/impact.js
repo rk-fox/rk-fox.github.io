@@ -197,7 +197,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     })));
   })
 
-      const top10NegativeResults = minerImpacts.slice(0, 10);
+     for (let i = 0; i <= 10; i++) {
 
       const updateElement = (index, miner) => {
                 if (miner) {
@@ -216,8 +216,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
                     document.getElementById(`nome${index}`).innerText = '';
                 }
             };
-
-            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+       }
   
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
