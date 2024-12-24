@@ -17,37 +17,59 @@ function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) 
   });
 }
 
-// Função para calcular o impacto extra com base nos IDs específicos SET DE 3
 function applyImpact3Adjustment(miners, targetIds, fullSetImpact, partialSetImpact) {
+  // Filtra as miners do grupo específico
   const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
-  const impact3Adjustment =
-    matchingMiners.length === 3
-      ? fullSetImpact
-      : matchingMiners.length === 2
-      ? partialSetImpact
-      : 0;
 
+  // Calcula o impacto dependendo da quantidade de miners encontrados
+  let impactAdjustment = 0;
+  if (matchingMiners.length === 3) {
+    impactAdjustment = fullSetImpact;
+  } else if (matchingMiners.length >= 2) {
+    impactAdjustment = partialSetImpact;
+  }
+
+  // Aplica o impacto no cálculo do impacto de cada miner
   matchingMiners.forEach(miner => {
-    // Calcula o impacto sem converter o valor
-    miner.impact = miner.impact - impact3Adjustment;
+    const newAdjustedPower = miner.power * (1 + miner.bonus_percent / 100);
+    const originalPower = miner.power; // Poder original
+
+    // Calcula o impacto
+    let impact = newAdjustedPower - originalPower;
+    impact -= impactAdjustment; // Ajusta o impacto
+
+    miner.impact = impact; // Salva o impacto no miner
+    miner.formattedImpact = convertPower(Math.abs(impact)); // Formata o impacto
   });
 }
 
-// Função para calcular o impacto extra com base nos IDs específicos SET DE 4
+
 function applyImpact4Adjustment(miners, targetIds, fullSetImpact, partialSetImpact) {
+  // Filtra as miners do grupo específico
   const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
-  const impact4Adjustment =
-    matchingMiners.length === 4
-      ? fullSetImpact
-      : matchingMiners.length >= 2
-      ? partialSetImpact
-      : 0;
 
+  // Calcula o impacto dependendo da quantidade de miners encontrados
+  let impactAdjustment = 0;
+  if (matchingMiners.length === 4) {
+    impactAdjustment = fullSetImpact;
+  } else if (matchingMiners.length >= 2) {
+    impactAdjustment = partialSetImpact;
+  }
+
+  // Aplica o impacto no cálculo do impacto de cada miner
   matchingMiners.forEach(miner => {
-    // Calcula o impacto sem converter o valor
-    miner.impact = miner.impact - impact4Adjustment;
+    const newAdjustedPower = miner.power * (1 + miner.bonus_percent / 100);
+    const originalPower = miner.power; // Poder original
+
+    // Calcula o impacto
+    let impact = newAdjustedPower - originalPower;
+    impact -= impactAdjustment; // Ajusta o impacto
+
+    miner.impact = impact; // Salva o impacto no miner
+    miner.formattedImpact = convertPower(Math.abs(impact)); // Formata o impacto
   });
 }
+
 
 // Função para converter valores de poder
 function convertPower(value) {
