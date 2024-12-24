@@ -87,7 +87,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
           })
           .then(jsonData => {
     // Extraindo dados de data.miners
-            const miners = [];
+            let miners = [];
             const minerCount = {}; // Para contar repetições
 
     jsonData.data.miners.forEach(miner => {
