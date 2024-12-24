@@ -212,7 +212,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
                     document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
                     document.getElementById(`merge${index}`).innerText = miner.repetitions;
                     document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
-                    }
                 } else {
                     document.getElementById(`nome${index}`).innerText = '';
                 }
