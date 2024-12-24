@@ -25,6 +25,7 @@ function convertPower(value) {
 }
 
 let avatarId; // Definido globalmente
+let userName; // Definido globalmente
 
 document.getElementById('searchButton').addEventListener('click', async () => {
     const userLink = document.getElementById('linkInput').value;
@@ -37,6 +38,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     try {
         const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`);
         const profileData = await profileResponse.json();
+        userName = profileData.data.name; // Atualiza o valor global
         avatarId = profileData.data.avatar_id; // Atualiza o valor global
         
         if (!avatarId) {
