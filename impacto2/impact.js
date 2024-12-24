@@ -31,8 +31,9 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         const total_orig = miners * (1 + (bonusPercent / 100));
 
-        console.log("Miners Data:", miners);
-        console.log("Bonus Data:", bonusPercent);
+        console.log("Miners Power:", miners);
+        console.log("Miners Bonus:", bonusPercent);
+        console.log("Total Power:", total_orig);
     } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
