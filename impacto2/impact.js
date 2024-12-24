@@ -19,10 +19,11 @@ function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) 
 
 // Função para converter valores de poder
 function convertPower(value) {
-  if (value >= 1e6) {
+  const absValue = Math.abs(value); // Obter o valor absoluto
+  if (absValue >= 1e6) {
     return (value / 1e6).toFixed(3).replace('.', ',') + ' Phs';
   }
-  if (value >= 1e3) {
+  if (absValue >= 1e3) {
     return (value / 1e3).toFixed(3).replace('.', ',') + ' Ths';
   }
   return value.toFixed(3).replace('.', ',') + ' Ghs';
