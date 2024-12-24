@@ -74,7 +74,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
         let total_orig = minersPower * (1 + (totalbonusPercent / 100));
 
         console.log("Miners Power:", convertPower(minersPower));
-        console.log("Miners Bonus:", totalbonusPercent);
+        console.log("Miners Bonus:", totalbonusPercent + '%');
         console.log("Total Power:", convertPower(total_orig));
 
         // Fazendo uma requisição à API para obter dados dinâmicos
