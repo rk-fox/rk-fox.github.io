@@ -34,8 +34,4 @@ document.getElementById('searchButton').addEventListener('click', async () => {
         console.log("Miners Data:", miners);
         console.log("Bonus Data:", bonusPercent);
                 
-        catch (error) {
-            console.error('Erro ao buscar dados:', error);
-            alert('Ocorreu um erro ao buscar os dados.');
-        }
     });
