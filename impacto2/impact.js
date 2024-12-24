@@ -66,19 +66,13 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             total_orig: convertPower(total_orig)
         });
 
-    } catch (error) {
-        console.error('Erro ao obter os dados:', error);
-        alert('Erro ao obter os dados. Verifique o console para mais informações.');
-    }
-});
-
-// Fazendo uma requisição à API para obter dados dinâmicos
-if (avatarId) {
-    fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`)
-        .then(response => response.json())
-        .then(data => console.log('Room Config:', data))
-        .catch(error => console.error('Erro ao obter dados da API room-config:', error));
-}
+        // Fazendo uma requisição à API para obter dados dinâmicos
+        if (avatarId) {
+            fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`)
+                .then(response => response.json())
+                .then(data => console.log('Room Config:', data))
+                .catch(error => console.error('Erro ao obter dados da API room-config:', error));
+        }
 
         jsonData.data.miners.forEach(miner => {
             const key = `${miner.miner_id}_${miner.level}`;
@@ -154,32 +148,33 @@ if (avatarId) {
         minerImpacts.sort((a, b) => b.impact - a.impact);
 
         // Exibindo os dados no console
-    console.log("Miners Data (formatted):", miners.map(miner => ({
-      miner_id: miner.miner_id,
-      name: miner.name,
-      level: miner.level,
-      power: miner.formattedPower, // Exibe o valor formatado
-      bonus_percent: miner.bonus_percent,
-      width: miner.width,
-      repetitions: miner.repetitions,
-      rack: miner.user_rack_id,
-      room_level: miner.room_level, // Novo dado de rack
-      rack_x: miner.rack_x,         // Novo dado de rack
-      rack_y: miner.rack_y          // Novo dado de rack
-    })));
-    console.log("Racks Data:", racks);
-    console.log("Total Power:", formattedTotalPower);
-    console.log("Total Bonus Percent:", totalBonusPercent);
-    console.log("Adjusted Power (formatted):", formattedAdjustedPower);
-    console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
-      name: impact.name,
-      power: impact.formattedPower, // Exibe o valor formatado
-      bonus_percent: impact.bonus_percent,
-      formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
-      room_level: impact.room_level, // Novo dado de rack
-      rack_x: impact.rack_x,         // Novo dado de rack
-      rack_y: impact.rack_y          // Novo dado de rack
-    })));
-  .catch(error => {
-    console.error("Erro ao obter dados da API:", error);
-  });
+        console.log("Miners Data (formatted):", miners.map(miner => ({
+            miner_id: miner.miner_id,
+            name: miner.name,
+            level: miner.level,
+            power: miner.formattedPower,
+            bonus_percent: miner.bonus_percent,
+            width: miner.width,
+            repetitions: miner.repetitions,
+            rack: miner.user_rack_id,
+            room_level: miner.room_level,
+            rack_x: miner.rack_x,
+            rack_y: miner.rack_y
+        })));
+        console.log("Racks Data:", racks);
+        console.log("Total Power:", formattedTotalPower);
+        console.log("Total Bonus Percent:", totalBonusPercent);
+        console.log("Adjusted Power (formatted):", formattedAdjustedPower);
+        console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
+            name: impact.name,
+            power: impact.formattedPower,
+            bonus_percent: impact.bonus_percent,
+            formattedImpact: impact.formattedImpact,
+            room_level: impact.room_level,
+            rack_x: impact.rack_x,
+            rack_y: impact.rack_y
+        })));
+    } catch (error) {
+        console.error("Erro ao obter dados da API:", error);
+    }
+});
