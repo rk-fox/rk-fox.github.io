@@ -181,7 +181,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     })));
     console.log("Racks Data:", racks);
     console.log("Total Power:", formattedTotalPower);
-    console.log("Total Bonus Percent:", totalBonusPercent);
+    console.log("Total Bonus Percent:", totalbonusPercent);
     console.log("Adjusted Power (formatted):", formattedAdjustedPower);
     console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
       name: impact.name,
