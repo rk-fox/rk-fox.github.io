@@ -13,7 +13,45 @@ function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) 
 
   // Aplica o ajuste no bônus de cada miner correspondente
   matchingMiners.forEach(miner => {
-    miner.bonus_percent += bonusAdjustment;
+    miner.setBonus += bonusAdjustment;
+  });
+}
+
+// Função para calcular o bônus extra com base nos IDs específicos
+function applyImpact4Adjustment(miners, targetIds, fullSet4Impact, partialSet4Impact) {
+  // Filtra as miners do grupo específico
+  const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
+
+  // Define o impacto adicional com base na quantidade de IDs encontrados
+  const impact4Adjustment =
+    matchingMiners.length === 4
+      ? fullSet4Impact
+      : matchingMiners.length >= 2
+      ? partialSet4Impact
+      : 0;
+
+  // Aplica o ajuste no bônus de cada miner correspondente
+  matchingMiners.forEach(miner => {
+    miner.setImpact += impact4Adjustment;
+  });
+}
+
+// Função para calcular o bônus extra com base nos IDs específicos
+function applyImpact3Adjustment(miners, targetIds, fullSet3Impact, partialSet3Impact) {
+  // Filtra as miners do grupo específico
+  const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
+
+  // Define o impacto adicional com base na quantidade de IDs encontrados
+  const impact3Adjustment =
+    matchingMiners.length === 3
+      ? fullSet3Impact
+      : matchingMiners.length === 2
+      ? partialSet3Impact
+      : 0;
+
+  // Aplica o ajuste no bônus de cada miner correspondente
+  matchingMiners.forEach(miner => {
+    miner.setImpact += impact3Adjustment;
   });
 }
 
@@ -110,6 +148,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
         bonus_percent: minerCount[key].isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus dividido por 100
         is_in_set: miner.is_in_set,
         repetitions: minerCount[key].isFirst ? "Não" : minerCount[key].count, // Indica se é repetido
+        setImpact: 0, // Adiciona o atributo com valor inicial 0
+        setBonus: 0, // Adiciona o atributo com valor inicial 0
       });
 
 
@@ -134,7 +174,38 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       7,  // 7% para todas as 4
       2   // 2% para 2 ou 3
     );
-
+    // Aplicando ajustes no impacto para os seis grupos de IDs específicos
+    applyImpact3Adjustment(miners, 
+      ["67338357d9b2852bde4b077d", "67338298d9b2852bde4afb0d", "67338415d9b2852bde4b0dc6"], 
+      15000000, // 10% para todas as 3
+      7500000   // 5% para 2
+    );
+    applyImpact3Adjustment(miners, 
+      ["66c31b17b82bcb27662d302b", "66c31aecb82bcb27662d2f53", "66c31b3eb82bcb27662d30d8"], 
+      10000000,  // 7% para todas as 3
+      5000000   // 2% para 2
+    );
+    applyImpact3Adjustment(miners, 
+      ["66ead1cde0dd3530da969ea9", "66ead191e0dd3530da969e5f", "66ead1fbe0dd3530da969ef3"], 
+      8000000,  // 7% para todas as 3
+      5000000   // 2% para 2
+    );
+    applyImpact4Adjustment(miners, 
+      ["6687cea87643815232d65882", "6687cefd7643815232d65d11", "6687ce4e7643815232d65297", "6687ced67643815232d65cc8"], 
+      3000000,  // 7% para todas as 4
+      2000000   // 2% para 2 ou 3
+    );
+    applyImpact4Adjustment(miners, 
+      ["6687cd307643815232d64077", "6687cdc47643815232d64726", "6687ccfc7643815232d6402d", "6687cd837643815232d640c1"], 
+      2500000,  // 7% para todas as 4
+      1500000   // 2% para 2 ou 3
+    );
+    applyImpact4Adjustment(miners, 
+      ["674df56acbe1e47b27075ab6", "674df5c5cbe1e47b27075b51", "674df539cbe1e47b27075a68", "674df599cbe1e47b27075b04"], 
+      25000000,  // 7% para todas as 4
+      10000000   // 2% para 2 ou 3
+    );
+    
     // Extraindo dados de data.racks
     const racks = jsonData.data.racks.map(rack => ({
       _id: rack._id,
@@ -157,8 +228,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     let minerImpacts = miners.map(miner => {
       const remainingPower = minersPower - miner.power;
       const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
-      const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent) / 100);
-      let impact = newAdjustedPower - total_orig; // Alteração na fórmula do impacto
+      const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent + miner.setBonus) / 100);
+      let impact = (newAdjustedPower - total_orig) - miner.setImpact; // Alteração na fórmula do impacto
       
       return { 
         ...miner, 
@@ -208,7 +279,13 @@ document.getElementById('searchButton').addEventListener('click', async () => {
                     document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
                     document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
                     document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
+                    if (miner.setBonus <> 0) {                      
+                      document.getElementById(`set${index}`).innerText = miner.setBonus +"%";
+                    } else if (miner.setImpact <> 0) {
+                      document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact +"%");
+                    } else {
                     document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
+                    }
                     document.getElementById(`merge${index}`).innerText = miner.repetitions;
                     document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
                 } else {
