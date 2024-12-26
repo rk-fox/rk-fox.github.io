@@ -130,38 +130,35 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             const minerCount = {}; // Para contar repetições
 
     jsonData.data.miners.forEach(miner => {
-      const key = `${miner.miner_id}_${miner.level}`;
-      if (!minerCount[key]) {
-        minerCount[key] = { count: 0, isFirst: true };
-      }
-      minerCount[key].count++;
+  const key = `${miner.miner_id}_${miner.level}`;
+  
+  // Inicializa o minerCount[key] se não existir
+  if (!minerCount[key]) {
+    minerCount[key] = { total: 0, isFirst: true };
+  }
+  
+  // Incrementa a contagem total
+  minerCount[key].total++;
 
-      miners.push({
-        miner_id: miner.miner_id,
-        user_rack_id: miner.placement.user_rack_id,
-        name: miner.name,
-        width: miner.width,
-        level: miner.level,
-        power: miner.power,
-        formattedPower: convertPower(miner.power), // Formata o valor de power para exibição
-        filename: miner.filename,
-        bonus_percent: minerCount[key].isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus dividido por 100
-        is_in_set: miner.is_in_set,
-        repetitions: minerCount[key].isFirst ? "Não" : minerCount[key].count, // Indica se é repetido
-        setImpact: 0, // Adiciona o atributo com valor inicial 0
-        setBonus: 0, // Adiciona o atributo com valor inicial 0
-      });
+  miners.push({
+    miner_id: miner.miner_id,
+    user_rack_id: miner.placement.user_rack_id,
+    name: miner.name,
+    width: miner.width,
+    level: miner.level,
+    power: miner.power,
+    formattedPower: convertPower(miner.power), // Formata o valor de power para exibição
+    filename: miner.filename,
+    bonus_percent: minerCount[key].isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus dividido por 100
+    is_in_set: miner.is_in_set,
+    repetitions: minerCount[key].isFirst ? "Não" : minerCount[key].total, // Agora usa o total após a primeira ocorrência
+    setImpact: 0, // Adiciona o atributo com valor inicial 0
+    setBonus: 0, // Adiciona o atributo com valor inicial 0
+  });
 
-
-      const selectedOption = document.querySelector('input[name="option"]:checked').value;
-            if (selectedOption === 'op1') {
-                miners = miners.filter(miner => miner.width === 1);
-            } else if (selectedOption === 'op2') {
-                miners = miners.filter(miner => miner.width === 2);
-            }
-
-      minerCount[key].isFirst = false; // Marca as subsequentes como não sendo as primeiras
-    });
+  // Marca que não é mais a primeira ocorrência
+  minerCount[key].isFirst = false;
+});
 
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
     applyBonusAdjustment(miners, 
