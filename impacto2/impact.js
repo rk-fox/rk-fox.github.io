@@ -279,9 +279,9 @@ document.getElementById('searchButton').addEventListener('click', async () => {
                     document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
                     document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
                     document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
-                    if (miner.setBonus <> 0) {                      
+                    if (miner.setBonus > 0) {                      
                       document.getElementById(`set${index}`).innerText = miner.setBonus +"%";
-                    } else if (miner.setImpact <> 0) {
+                    } else if (miner.setImpact > 0) {
                       document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact +"%");
                     } else {
                     document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
