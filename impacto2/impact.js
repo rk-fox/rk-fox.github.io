@@ -228,8 +228,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     let minerImpacts = miners.map(miner => {
       const remainingPower = minersPower - miner.power;
       const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
-      const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent + miner.setBonus) / 100);
-      let impact = (newAdjustedPower - total_orig) - miner.setImpact; // Alteração na fórmula do impacto
+      const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent - miner.setBonus) / 100);
+      const impact = (newAdjustedPower - total_orig) - miner.setImpact; // Alteração na fórmula do impacto
       
       return { 
         ...miner, 
