@@ -249,6 +249,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       level: miner.level,
       power: miner.formattedPower, // Exibe o valor formatado
       bonus_percent: miner.bonus_percent,
+      setBonus: miner.setBonus,
+      setImpact: miner.setImpact,
       width: miner.width,
       repetitions: miner.repetitions,
       rack: miner.user_rack_id,
@@ -261,6 +263,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
       name: impact.name,
       power: impact.formattedPower, // Exibe o valor formatado
       bonus_percent: impact.bonus_percent,
+      setBonus: impact.setBonus,
+      setImpact: impact.setImpact,
       formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
       room_level: impact.room_level, // Novo dado de rack
       rack_x: impact.rack_x,         // Novo dado de rack
