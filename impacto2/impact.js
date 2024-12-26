@@ -129,11 +129,14 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             let miners = [];
             const minerCount = {}; // Para contar repetições
 
+
+
+            
     // Primeiro, conta todas as repetições gerais
 jsonData.data.miners.forEach(miner => {
   const key = `${miner.miner_id}_${miner.level}`;
   if (!minerCount[key]) {
-    minerCount[key] = { count: 0 };
+    minerCount[key] = { count: 0, firstAssigned: false }; // Adiciona flag para controlar a primeira ocorrência
   }
   minerCount[key].count++; // Incrementa o contador total para essa combinação
 });
@@ -142,6 +145,7 @@ jsonData.data.miners.forEach(miner => {
 jsonData.data.miners.forEach(miner => {
   const key = `${miner.miner_id}_${miner.level}`;
   const totalRepetitions = minerCount[key].count; // Total de repetições geral
+  const isFirst = !minerCount[key].firstAssigned; // Verifica se é a primeira ocorrência
 
   miners.push({
     miner_id: miner.miner_id,
@@ -152,12 +156,14 @@ jsonData.data.miners.forEach(miner => {
     power: miner.power,
     formattedPower: convertPower(miner.power), // Formata o valor de power para exibição
     filename: miner.filename,
-    bonus_percent: totalRepetitions === 1 ? miner.bonus_percent / 100 : 0, // Apenas o primeiro mantém o bônus
+    bonus_percent: isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus dividido por 100
     is_in_set: miner.is_in_set,
-    repetitions: totalRepetitions > 1 ? totalRepetitions : "Não", // Mostra o total de repetições geral após a primeira
+    repetitions: isFirst ? "Não" : totalRepetitions, // "Não" para a primeira, total para as subsequentes
     setImpact: 0, // Adiciona o atributo com valor inicial 0
     setBonus: 0, // Adiciona o atributo com valor inicial 0
   });
+
+  minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
 });
 
 // Filtro adicional baseado na opção selecionada
@@ -170,6 +176,7 @@ if (selectedOption === 'op1') {
 
 
 
+            
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
     applyBonusAdjustment(miners, 
       ["66f1c200e0dd3530daa2eadf", "66f1c1b9e0dd3530daa2e9df", "66f1c18fe0dd3530daa2e8dd", "66f1c1dee0dd3530daa2ea96"], 
