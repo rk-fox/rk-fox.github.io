@@ -286,7 +286,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
                     if (miner.setBonus > 0) {                      
                       document.getElementById(`set${index}`).innerText = miner.setBonus +"%";
                     } else if (miner.setImpact > 0) {
-                      document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact +"%");
+                      document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
                     } else {
                     document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
                     }
