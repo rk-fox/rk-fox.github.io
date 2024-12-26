@@ -166,13 +166,13 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
     applyBonusAdjustment(miners, 
       ["66f1c200e0dd3530daa2eadf", "66f1c1b9e0dd3530daa2e9df", "66f1c18fe0dd3530daa2e8dd", "66f1c1dee0dd3530daa2ea96"], 
-      1000, // 10% para todas as 4
-      500   // 5% para 2 ou 3
+      10, // 10% para todas as 4
+      5   // 5% para 2 ou 3
     );
     applyBonusAdjustment(miners, 
       ["6687cf817643815232d65da6", "6687cfd57643815232d65e39", "6687cf557643815232d65d5c", "6687cfae7643815232d65def"], 
-      700,  // 7% para todas as 4
-      200   // 2% para 2 ou 3
+      7,  // 7% para todas as 4
+      2   // 2% para 2 ou 3
     );
     // Aplicando ajustes no impacto para os seis grupos de IDs específicos
     applyImpact3Adjustment(miners, 
