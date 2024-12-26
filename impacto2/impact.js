@@ -129,13 +129,19 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             let miners = [];
             const minerCount = {}; // Para contar repetições
 
-    jsonData.data.miners.forEach(miner => {
+    // Primeiro, conta todas as repetições gerais
+jsonData.data.miners.forEach(miner => {
   const key = `${miner.miner_id}_${miner.level}`;
-  
   if (!minerCount[key]) {
     minerCount[key] = { count: 0 };
   }
   minerCount[key].count++; // Incrementa o contador total para essa combinação
+});
+
+// Em seguida, monta a lista final com as informações desejadas
+jsonData.data.miners.forEach(miner => {
+  const key = `${miner.miner_id}_${miner.level}`;
+  const totalRepetitions = minerCount[key].count; // Total de repetições geral
 
   miners.push({
     miner_id: miner.miner_id,
@@ -146,9 +152,9 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     power: miner.power,
     formattedPower: convertPower(miner.power), // Formata o valor de power para exibição
     filename: miner.filename,
-    bonus_percent: minerCount[key].count === 1 ? miner.bonus_percent / 100 : 0, // Apenas o primeiro mantém o bônus
+    bonus_percent: totalRepetitions === 1 ? miner.bonus_percent / 100 : 0, // Apenas o primeiro mantém o bônus
     is_in_set: miner.is_in_set,
-    repetitions: minerCount[key].count > 1 ? minerCount[key].count : "Não", // Mostra o total de repetições após a primeira
+    repetitions: totalRepetitions > 1 ? totalRepetitions : "Não", // Mostra o total de repetições geral após a primeira
     setImpact: 0, // Adiciona o atributo com valor inicial 0
     setBonus: 0, // Adiciona o atributo com valor inicial 0
   });
@@ -161,6 +167,7 @@ if (selectedOption === 'op1') {
 } else if (selectedOption === 'op2') {
   miners = miners.filter(miner => miner.width === 2);
 }
+
 
 
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
