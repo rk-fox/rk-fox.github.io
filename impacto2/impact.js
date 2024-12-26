@@ -284,7 +284,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
                     document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
                     document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
                     if (miner.setBonus > 0) {                      
-                      document.getElementById(`set${index}`).innerText = miner.setBonus +"%";
+                      document.getElementById(`set${index}`).innerText = `${(miner.setBonus).toFixed(2).replace('.', ',')}%`;
                     } else if (miner.setImpact > 0) {
                       document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
                     } else {
