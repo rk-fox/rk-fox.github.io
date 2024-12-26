@@ -132,13 +132,10 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     jsonData.data.miners.forEach(miner => {
   const key = `${miner.miner_id}_${miner.level}`;
   
-  // Inicializa o minerCount[key] se não existir
   if (!minerCount[key]) {
-    minerCount[key] = { total: 0, isFirst: true };
+    minerCount[key] = { count: 0 };
   }
-  
-  // Incrementa a contagem total
-  minerCount[key].total++;
+  minerCount[key].count++; // Incrementa o contador total para essa combinação
 
   miners.push({
     miner_id: miner.miner_id,
@@ -149,16 +146,22 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     power: miner.power,
     formattedPower: convertPower(miner.power), // Formata o valor de power para exibição
     filename: miner.filename,
-    bonus_percent: minerCount[key].isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus dividido por 100
+    bonus_percent: minerCount[key].count === 1 ? miner.bonus_percent / 100 : 0, // Apenas o primeiro mantém o bônus
     is_in_set: miner.is_in_set,
-    repetitions: minerCount[key].isFirst ? "Não" : minerCount[key].total, // Agora usa o total após a primeira ocorrência
+    repetitions: minerCount[key].count > 1 ? minerCount[key].count : "Não", // Mostra o total de repetições após a primeira
     setImpact: 0, // Adiciona o atributo com valor inicial 0
     setBonus: 0, // Adiciona o atributo com valor inicial 0
   });
-
-  // Marca que não é mais a primeira ocorrência
-  minerCount[key].isFirst = false;
 });
+
+// Filtro adicional baseado na opção selecionada
+const selectedOption = document.querySelector('input[name="option"]:checked').value;
+if (selectedOption === 'op1') {
+  miners = miners.filter(miner => miner.width === 1);
+} else if (selectedOption === 'op2') {
+  miners = miners.filter(miner => miner.width === 2);
+}
+
 
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
     applyBonusAdjustment(miners, 
