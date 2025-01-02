@@ -1,39 +1,78 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabela de Miners</title>
-    <style>
-        /* Estilos básicos para a tabela */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        img {
-            width: 50px; /* Ajuste o tamanho da imagem conforme necessário */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sala Perfeita</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .field {
+      margin-bottom: 15px;
+    }
+    .field label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .field input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .button-container {
+      text-align: center;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-    <h1>Gerar Tabela de Miners</h1>
-    <textarea id="inputData" rows="10" cols="50" placeholder="Cole os dados JSON aqui..."></textarea>
-    <br>
-    <button onclick="processarDados()">Gerar Tabela</button>
 
-    <!-- Área onde a tabela será inserida -->
-    <div id="tabelaContainer"></div>
+  <div class="container">
+    <div class="field">
+      <label for="field1">Campo 1</label>
+      <input type="text" id="field1" placeholder="Digite o valor do Campo 1">
+    </div>
+    <div class="field">
+      <label for="field2">Campo 2</label>
+      <input type="text" id="field2" placeholder="Digite o valor do Campo 2">
+    </div>
+    <div class="field">
+      <label for="field3">Campo 3</label>
+      <input type="text" id="field3" placeholder="Digite o valor do Campo 3">
+    </div>
+    <div class="button-container">
+      <button onclick="organizar()">ORGANIZAR</button>
+    </div>
+  </div>
 
-    <!-- Link para o arquivo JS -->
-    <script src="sala.js"></script>
+  <script src="salaperfeita.js"></script>
+
 </body>
 </html>
