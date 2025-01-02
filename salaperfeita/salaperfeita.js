@@ -24,7 +24,7 @@ async function organizar() {
     }
 
     // URL para acessar os dados do miner
-    const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`;
+    const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`;
     const minerResponse = await fetch(minerUrl);
 
     if (!minerResponse.ok) {
