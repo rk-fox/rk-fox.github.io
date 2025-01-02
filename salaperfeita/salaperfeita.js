@@ -1,5 +1,4 @@
 async function organizar() {
-  // Captura o valor do primeiro campo
   const userLink = document.getElementById("field1").value.trim();
 
   if (!userLink) {
@@ -8,10 +7,8 @@ async function organizar() {
   }
 
   try {
-    // URL para buscar o avatar_id
     const profileUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`;
 
-    // Requisição para obter o JSON com avatar_id
     const profileResponse = await fetch(profileUrl);
     const profileData = await profileResponse.json();
 
@@ -22,21 +19,23 @@ async function organizar() {
 
     const avatarId = profileData.data.avatar_id;
 
-    // URL para buscar os dados do miner
     const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`;
 
-    // Requisição para obter os dados do miner
     const minerResponse = await fetch(minerUrl);
     const minerData = await minerResponse.json();
 
-    if (!minerData?.data?.miners || minerData.data.miners.length === 0) {
-      alert("Erro: Dados de mineradores não encontrados.");
+    if (!minerData?.data?.miners) {
+      alert("Erro: Dados de mineradores não encontrados ou inválidos.");
       return;
     }
 
-    const miners = minerData.data.miners;
+    const miners = Array.isArray(minerData.data.miners) ? minerData.data.miners : [];
 
-    // Processar os dados e contar repetições por miner.name e miner.level
+    if (miners.length === 0) {
+      alert("Nenhum minerador encontrado.");
+      return;
+    }
+
     const minerCount = {};
 
     miners.forEach((miner) => {
@@ -47,11 +46,9 @@ async function organizar() {
       minerCount[key]++;
     });
 
-    // Exibir os dados no console ou manipular como desejar
     console.log("Detalhes dos mineradores:", miners);
     console.log("Contagem por nome e nível:", minerCount);
 
-    // Exemplo: Gerar uma saída em formato simples
     let output = "Detalhes dos Mineradores:\n\n";
     miners.forEach((miner) => {
       output += `Nome: ${miner.name}, Largura: ${miner.width}, Nível: ${miner.level}, Poder: ${miner.power}, Bônus (%): ${miner.bonus_percent}, Está no conjunto: ${miner.is_in_set}\n`;
