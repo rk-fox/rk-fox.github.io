@@ -103,32 +103,45 @@ async function organizar() {
     // Exibir o array unificado de mineradores no console
     console.log("Array Unificado de Mineradores:", minerArray);
 
-    // Seleção dos 70 mineradores mais fortes
-    minerArray.sort((a, b) => calculatePowerTotal(b) - calculatePowerTotal(a)); // Ordenar por PowerTotal
-    const top70miners = minerArray.slice(0, 70); // Pegar os 70 mais fortes
-
-    // Seleção dos 50 mineradores com os maiores bônus
-    minerArray.sort((a, b) => b.Bonus - a.Bonus); // Ordenar por Bonus
-    const top50miners = minerArray.slice(0, 50); // Pegar os 50 maiores bônus
-
-    // Combinação dos 70 mais fortes e 50 com maior bônus (sem duplicar)
-    const filteredMiners = [...new Set([...top70miners, ...top50miners])];
-
-    console.log("Mineradores Filtrados:", filteredMiners);
-
     // Função para calcular o PowerTotal
     function calculatePowerTotal(miner) {
       return miner.Power * (1 + miner.Bonus);
     }
 
-    // Função de otimização de mochila (Knapsack)
+    // Função para otimizar a mochila
     function knapsack(miners, sizeLimit) {
-      const dp = new Array(sizeLimit + 1).fill(0); // Array para armazenar o melhor PowerTotal para cada tamanho
-      const selectedMiners = new Array(sizeLimit + 1).fill(null); // Para armazenar a combinação de mineradores escolhidos
+      // Selecionar os 70 mineradores mais fortes
+      miners.sort((a, b) => b.Power - a.Power);
+      const top70 = miners.slice(0, 70);
 
-      miners.forEach(miner => {
+      // Selecionar os 50 mineradores com maior bônus
+      miners.sort((a, b) => b.Bonus - a.Bonus);
+      const top50 = miners.slice(0, 50);
+
+      // Combinando os 70 e 50 melhores em um conjunto fixo
+      const fixedMiners = [...top70, ...top50];
+      
+      // Resto dos mineradores
+      const remainingMiners = miners.filter(miner => !fixedMiners.includes(miner));
+
+      // Iniciar a mochila com os mineradores fixos
+      let dp = new Array(sizeLimit + 1).fill(0);
+      let selectedMiners = new Array(sizeLimit + 1).fill(null);
+
+      fixedMiners.forEach(miner => {
         const minerPowerTotal = calculatePowerTotal(miner);
-        // Atualizar os valores de dp do final para o começo para evitar sobrescrever os resultados durante o cálculo
+        for (let size = sizeLimit; size >= miner.Size; size--) {
+          const newPower = dp[size - miner.Size] + minerPowerTotal;
+          if (newPower > dp[size]) {
+            dp[size] = newPower;
+            selectedMiners[size] = miner;
+          }
+        }
+      });
+
+      // Processar os mineradores restantes
+      remainingMiners.forEach(miner => {
+        const minerPowerTotal = calculatePowerTotal(miner);
         for (let size = sizeLimit; size >= miner.Size; size--) {
           const newPower = dp[size - miner.Size] + minerPowerTotal;
           if (newPower > dp[size]) {
@@ -142,7 +155,7 @@ async function organizar() {
     }
 
     // Executar a otimização de mochila para encontrar a melhor combinação
-    const result = knapsack(filteredMiners, 528);
+    const result = knapsack(minerArray, 528);
 
     // Exibir o resultado no console
     console.log("Melhor Combinação de Mineradores:", result.selectedMiners);
