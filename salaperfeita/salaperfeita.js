@@ -60,7 +60,8 @@ async function organizar() {
     const fieldArray = [];
 
     if (field2) {
-      const minerRegex = /^(?:(\d+)|([A-Za-z]+))\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/g;
+      // Regex atualizado para excluir as palavras indesejadas
+      const minerRegex = /^(?:(\d+)|([A-Za-z]+))\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)(?!.*(?:can\s+be\s+sold|can't\s+be\s+sold|Miner\s+details|open))/g;
       let match;
 
       while ((match = minerRegex.exec(field2)) !== null) {
