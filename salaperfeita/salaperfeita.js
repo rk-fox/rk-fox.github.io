@@ -100,10 +100,30 @@ async function organizar() {
       }
     }
 
-    // Exibir o array unificado de mineradores no console
-    console.log("Array Unificado de Mineradores:", minerArray);
+    // Função de otimização de mochila (Knapsack)
+    function knapsack(Items, maxWeight) {
+      const dp = Array(maxWeight + 1).fill(0); // dp[i] será o maior PowerTotal com peso i
 
-    alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
+      for (const item of Items) {
+        const value = item.Power * (1 + item.Bonus); // PowerTotal do miner
+        const weight = item.Size * item.Quantity; // Peso total (Size * Quantity)
+
+        for (let w = maxWeight; w >= weight; w--) {
+          dp[w] = Math.max(dp[w], dp[w - weight] + value);
+        }
+      }
+
+      return dp[maxWeight]; // Retorna o maior PowerTotal que pode ser obtido
+    }
+
+    // Chamar a função Knapsack
+    const maxSize = 528;
+    const maxPower = knapsack(minerArray, maxSize);
+
+    // Exibir o resultado
+    console.log("Melhor PowerTotal possível:", maxPower);
+    alert(`Melhor PowerTotal possível: ${maxPower}`);
+
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
     alert("Ocorreu um erro ao processar os dados. Verifique o console para mais informações.");
