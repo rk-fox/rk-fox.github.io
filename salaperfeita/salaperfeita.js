@@ -66,7 +66,9 @@ const fieldArray = [];
 
 if (field2) {
     // Passo 1: Remover ocorrências indesejadas
-    let cleanedField2 = field2.replace(/\b(Can't be sold|Miner details|open|can be sold)\b/gi, '').trim();
+    let cleanedField2 = field2.replace(/\b(Can't be sold|Miner details|open|Can be sold)\b/gi, '').trim();
+
+  console.log(cleanedField2);
 
     // Passo 2: Adicionar "0 " antes de mineradores sem número no início
     cleanedField2 = cleanedField2.replace(/^(?=[A-Za-z])/gm, '0 ');
