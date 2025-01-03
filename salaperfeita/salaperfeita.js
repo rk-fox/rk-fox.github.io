@@ -41,7 +41,7 @@ async function organizar() {
     miners.forEach(miner => {
       // Remover termos específicos do nome da miner
       const cleanName = miner.name
-        .replace(/\b(can be sold|can't be sold|Miner details|open)\b/g, '')
+        .replace(/\b(can be sold|can't be sold|Miner details)\b/g, '')
         .trim();
 
       const existingMiner = minerArray.find(m => m.Nome === cleanName && m.Bonus === miner.bonus_percent / 100);
