@@ -65,7 +65,7 @@ async function organizar() {
     }
 
     // Expressão regular para extrair os dados necessários
-    const minerRegex = /([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,]+)\s+Th\/s\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
+    const minerRegex = /([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+Th\/s\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
     
     const minerArray = [];
     let match;
