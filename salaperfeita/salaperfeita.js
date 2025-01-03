@@ -76,7 +76,8 @@ async function organizar() {
 
 // Função para processar os dados do campo 2
 function processMinerDetails(data) {
-  const minerPattern = /([A-Za-z\s\+\-]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([0-9.,]+)\s+Th\/s\s+Bonus\s+([0-9.]+)%\s+Quantity:\s+(\d+)\s+/g;
+  // Corrigir a expressão regular para capturar melhor os dados
+  const minerPattern = /([A-Za-z\s\+\-]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([0-9.,]+)\s+Th\/s\s+Bonus\s+([0-9.]+)%\s+Quantity:\s+(\d+)/g;
   let matches;
   const minerDetails = [];
 
