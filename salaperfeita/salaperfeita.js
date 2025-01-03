@@ -130,9 +130,9 @@ async function organizar() {
     console.log("Resultado Final (Power * (1 + Bonus)):", finalPower);
 
     alert(`Processamento concluído! 
-      - Somatório do Power: ${totalPower.toFixed(2)} 
+      - Somatório do Power: ${totalPower} 
       - Somatório do Bônus: ${(totalBonus).toFixed(2)}% 
-      - Resultado Final: ${finalPower.toFixed(2)}`);
+      - Resultado Final: ${finalPower}`);
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
     alert("Ocorreu um erro ao processar os dados. Verifique o console para mais informações.");
