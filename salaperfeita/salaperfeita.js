@@ -81,7 +81,7 @@ async function organizar() {
           Nome: match[1].trim(),
           Size: parseInt(match[2], 10),
           Power: power,
-          Bonus: parseFloat(match[5]) / 100,
+          Bonus: parseFloat(match[5]),
           Quantity: parseInt(match[6], 10),
         };
 
