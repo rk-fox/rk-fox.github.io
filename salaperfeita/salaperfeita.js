@@ -32,7 +32,7 @@ async function organizar() {
     }
 
     const minerData = await minerResponse.json();
-    const miners = minerData?.data?.miner;
+    const miners = minerData?.data?.miners;
 
     if (!miners || !Array.isArray(miners)) {
       alert("Dados dos mineradores não encontrados ou estão em formato inesperado.");
