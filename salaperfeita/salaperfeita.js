@@ -39,18 +39,17 @@ async function organizar() {
       return;
     }
 
-    // Processar os dados e contar repetições
+    // Unificar os dois arrays
     const minerArray = [];
+
+    // Processar os dados da primeira fonte (API do Rollercoin)
     miners.forEach(miner => {
       const key = `${miner.name}_${miner.bonus_percent}`;
-
-      // Verifica se o miner já existe no array e adiciona a quantidade
       const existingMiner = minerArray.find(m => m.Nome === miner.name && m.bonus_percent === miner.bonus_percent);
       
       if (existingMiner) {
-        existingMiner.Quantity += 1; // Incrementa a quantidade
+        existingMiner.Quantity += 1;
       } else {
-        // Se o miner não existe no array, adiciona-o com a quantidade inicial
         minerArray.push({
           Nome: miner.name,
           Power: miner.power,
@@ -61,9 +60,6 @@ async function organizar() {
       }
     });
 
-    // Exibir contagem de Miners com a quantidade
-    console.log("Array de Mineradores com Quantidade:", minerArray);
-
     // Pegar o valor do Campo 2
     const field2 = document.getElementById("field2").value.trim();
     if (!field2) {
@@ -71,24 +67,20 @@ async function organizar() {
       return;
     }
 
-    // Expressão regular para extrair os dados necessários
+    // Expressão regular para extrair os dados do Campo 2
     const minerRegex = /open\s+([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
-
-    const minerArray2 = [];
     let match;
 
     // Encontrar todas as ocorrências
     while ((match = minerRegex.exec(field2)) !== null) {
-      // Ajustando o valor de Power conforme a unidade
       let power = parseFloat(match[3].replace(',', '.'));
       const unit = match[4];
 
       if (unit === 'Th/s') {
-        power *= 1000; // Multiplicar por 1000
+        power *= 1000;
       } else if (unit === 'Ph/s') {
-        power *= 1000000; // Multiplicar por 1000000
+        power *= 1000000;
       }
-      // Se for 'Gh/s', mantemos o valor de power original
 
       const miner = {
         Nome: match[1].trim(),
@@ -98,11 +90,18 @@ async function organizar() {
         Quantity: parseInt(match[6], 10),
       };
 
-      minerArray2.push(miner);
+      // Verifica se o miner já existe no minerArray e soma a quantidade se necessário
+      const existingMiner = minerArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
+
+      if (existingMiner) {
+        existingMiner.Quantity += miner.Quantity; // Incrementa a quantidade
+      } else {
+        minerArray.push(miner); // Adiciona o miner ao array se não existir
+      }
     }
 
-    // Exibir o array de mineradores no console
-    console.log("Array de Mineradores Processado:", minerArray2);
+    // Exibir o array unificado de mineradores no console
+    console.log("Array Unificado de Mineradores:", minerArray);
 
     alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
   } catch (error) {
