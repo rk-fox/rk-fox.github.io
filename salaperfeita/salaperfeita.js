@@ -39,24 +39,37 @@ async function organizar() {
       return;
     }
 
-    // Processar os dados de mineradores
-    const minerCount = {};
-
+    // Processar os dados e contar repetições
+    const minerArray = [];
     miners.forEach(miner => {
-      // Criar chave única usando Nome e Power
-      const key = `${miner.name}_${miner.power}`;
-      minerCount[key] = (minerCount[key] || 0) + miner.quantity;
+      const key = `${miner.name}_${miner.level}`;
+
+      // Verifica se o miner já existe no array e adiciona a quantidade
+      const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Level === miner.level);
+      
+      if (existingMiner) {
+        existingMiner.Quantity += 1; // Incrementa a quantidade
+      } else {
+        // Se o miner não existe no array, adiciona-o com a quantidade inicial
+        minerArray.push({
+          Nome: miner.name,
+          Level: miner.level,
+          Power: miner.power,
+          Bonus: miner.bonus_percent / 100,
+          Quantity: 1
+        });
+      }
 
       console.log("Minerador Detalhes:", {
         Nome: miner.name,
-        Power: miner.power,
+        Largura: miner.width,
+        Poder: miner.power,
         BônusPercentual: miner.bonus_percent / 100,
-        Quantidade: miner.quantity,
       });
     });
 
-    // Exibir contagem de mineradores por Nome e Power
-    console.log("Contagem de Miners por Nome e Power:", minerCount);
+    // Exibir contagem de Miners com a quantidade
+    console.log("Array de Mineradores com Quantidade:", minerArray);
 
     // Pegar o valor do Campo 2
     const field2 = document.getElementById("field2").value.trim();
@@ -68,7 +81,7 @@ async function organizar() {
     // Expressão regular para extrair os dados necessários
     const minerRegex = /open\s+([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
 
-    const minerArray = [];
+    const minerArray2 = [];
     let match;
 
     // Encontrar todas as ocorrências
@@ -81,8 +94,6 @@ async function organizar() {
         power *= 1000; // Multiplicar por 1000
       } else if (unit === 'Ph/s') {
         power *= 1000000; // Multiplicar por 1000000
-      } else if (unit === 'Eh/s') {
-        power *= 1000000000; // Multiplicar por 1000000000
       }
       // Se for 'Gh/s', mantemos o valor de power original
 
@@ -94,11 +105,11 @@ async function organizar() {
         Quantity: parseInt(match[6], 10),
       };
 
-      minerArray.push(miner);
+      minerArray2.push(miner);
     }
 
     // Exibir o array de mineradores no console
-    console.log("Array de Mineradores:", minerArray);
+    console.log("Array de Mineradores Processado:", minerArray2);
 
     alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
   } catch (error) {
