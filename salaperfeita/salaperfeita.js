@@ -94,72 +94,14 @@ async function organizar() {
       const existingMiner = minerArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
 
       if (existingMiner) {
-        existingMiner.Quantity += miner.Quantity;
+        existingMiner.Quantity += miner.Quantity; // Incrementa a quantidade
       } else {
-        minerArray.push(miner);
+        minerArray.push(miner); // Adiciona o miner ao array se não existir
       }
     }
 
     // Exibir o array unificado de mineradores no console
     console.log("Array Unificado de Mineradores:", minerArray);
-
-    // Função para calcular o PowerTotal
-    function calculatePowerTotal(miner) {
-      return miner.Power * (1 + miner.Bonus);
-    }
-
-    // Função para otimizar a mochila
-    function knapsack(miners, sizeLimit) {
-      // Selecionar os 70 mineradores mais fortes
-      miners.sort((a, b) => b.Power - a.Power);
-      const top70 = miners.slice(0, 70);
-
-      // Selecionar os 50 mineradores com maior bônus
-      miners.sort((a, b) => b.Bonus - a.Bonus);
-      const top50 = miners.slice(0, 50);
-
-      // Combinando os 70 e 50 melhores em um conjunto fixo
-      const fixedMiners = [...top70, ...top50];
-      
-      // Resto dos mineradores
-      const remainingMiners = miners.filter(miner => !fixedMiners.includes(miner));
-
-      // Iniciar a mochila com os mineradores fixos
-      let dp = new Array(sizeLimit + 1).fill(0);
-      let selectedMiners = new Array(sizeLimit + 1).fill(null);
-
-      fixedMiners.forEach(miner => {
-        const minerPowerTotal = calculatePowerTotal(miner);
-        for (let size = sizeLimit; size >= miner.Size; size--) {
-          const newPower = dp[size - miner.Size] + minerPowerTotal;
-          if (newPower > dp[size]) {
-            dp[size] = newPower;
-            selectedMiners[size] = miner;
-          }
-        }
-      });
-
-      // Processar os mineradores restantes
-      remainingMiners.forEach(miner => {
-        const minerPowerTotal = calculatePowerTotal(miner);
-        for (let size = sizeLimit; size >= miner.Size; size--) {
-          const newPower = dp[size - miner.Size] + minerPowerTotal;
-          if (newPower > dp[size]) {
-            dp[size] = newPower;
-            selectedMiners[size] = miner;
-          }
-        }
-      });
-
-      return { totalPower: dp[sizeLimit], selectedMiners: selectedMiners[sizeLimit] };
-    }
-
-    // Executar a otimização de mochila para encontrar a melhor combinação
-    const result = knapsack(minerArray, 528);
-
-    // Exibir o resultado no console
-    console.log("Melhor Combinação de Mineradores:", result.selectedMiners);
-    console.log("Power Total:", result.totalPower);
 
     alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
   } catch (error) {
