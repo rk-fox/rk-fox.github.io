@@ -55,17 +55,10 @@ async function organizar() {
           Nome: miner.name,
           Power: miner.power,
           Bonus: miner.bonus_percent / 100,
-          Largura: miner.width,
+          Size: miner.width,
           Quantity: 1
         });
       }
-
-      console.log("Minerador Detalhes:", {
-        Nome: miner.name,
-        Largura: miner.width,
-        Poder: miner.power,
-        BônusPercentual: miner.bonus_percent / 100,
-      });
     });
 
     // Exibir contagem de Miners com a quantidade
