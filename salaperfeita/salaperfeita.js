@@ -65,37 +65,38 @@ async function organizar() {
     const fieldArray = [];
 
     if (field2) {
-      const minerRegex = /^(?:(\d+)|([A-Za-z]+))\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/g;
-      let match;
+      const minerRegex = /\d*\s*([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/g;
+let match;
 
-      while ((match = minerRegex.exec(field2)) !== null) {
-        const level = match[1] ? parseInt(match[1], 10) : 0;
-        let power = parseFloat(match[5].replace(',', '.'));
-        const unit = match[6];
+while ((match = minerRegex.exec(field2)) !== null) {
+    let power = parseFloat(match[3].replace(',', '.'));
+    const unit = match[4];
 
-        if (unit === 'Th/s') {
-          power *= 1000;
-        } else if (unit === 'Ph/s') {
-          power *= 1000000;
-        } else if (unit === 'Eh/s') {
-          power *= 1000000000;
-        }
+    // Ajusta a unidade de medida para cálculo correto do poder
+    if (unit === 'Th/s') {
+        power *= 1000;
+    } else if (unit === 'Ph/s') {
+        power *= 1000000;
+    } else if (unit === 'Eh/s') {
+        power *= 1000000000;
+    }
 
-        const cleanName = match[3]
-          .replace(/\b(can be sold|can't be sold|Miner details|open)\b/g, '')
-          .trim();
+    // Remove as palavras indesejadas do nome do minerador
+    const cleanName = match[1]
+        .replace(/\b(Can't be sold|Miner details|open|can be sold)\b/gi, '')
+        .trim();
 
-        const miner = {
-          Level: level,
-          Nome: cleanName,
-          Size: parseInt(match[4], 10),
-          Power: power,
-          Bonus: parseFloat(match[7]),
-          Quantity: parseInt(match[8], 10),
-        };
+    const miner = {
+        Nome: cleanName,
+        Size: parseInt(match[2], 10),
+        Power: power,
+        Bonus: parseFloat(match[5]),
+        Quantity: parseInt(match[6], 10),
+    };
 
-        fieldArray.push(miner);
-      }
+    fieldArray.push(miner);
+}
+
     }
 
     console.log("Dados do Campo 2:", fieldArray);
