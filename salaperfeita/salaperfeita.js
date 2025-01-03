@@ -108,7 +108,7 @@ async function organizar() {
 
     for (const item of items) {
       for (let size = maxCapacity; size >= item.Size; size--) {
-        const value = item.Power * (1 + item.Bonus);
+        const value = item.Power * (1 + (item.Bonus/100);
         if (dp[size - item.Size] + value > dp[size]) {
           dp[size] = dp[size - item.Size] + value;
           selected[size] = [...selected[size - item.Size], item];
@@ -122,12 +122,12 @@ async function organizar() {
     // Calcular somatórios e exibir resultados
     const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
     const totalBonus = bestSet.reduce((sum, miner) => sum + miner.Bonus, 0);
-    const finalPower = totalPower * (1 + totalBonus);
+    const finalPower = totalPower * (1 + (totalBonus/100);
 
     console.log("Melhor conjunto selecionado:", bestSet);
     console.log("Somatório do Power:", totalPower);
     console.log("Somatório do Bonus:", totalBonus);
-    console.log("Resultado Final (Power * (1 + Bonus)):", finalPower);
+    console.log("Resultado Final (Power * (1 + (Bonus/100)):", finalPower);
 
     alert(`Processamento concluído! 
       - Somatório do Power: ${totalPower} 
