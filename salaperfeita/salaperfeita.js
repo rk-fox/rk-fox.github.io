@@ -39,13 +39,18 @@ async function organizar() {
     const minerArray = [];
 
     miners.forEach(miner => {
-      const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Bonus === miner.bonus_percent / 100);
+      // Remover termos específicos do nome da miner
+      const cleanName = miner.name
+        .replace(/\b(can be sold|can't be sold|Miner details|open)\b/g, '')
+        .trim();
+
+      const existingMiner = minerArray.find(m => m.Nome === cleanName && m.Bonus === miner.bonus_percent / 100);
 
       if (existingMiner) {
         existingMiner.Quantity += 1;
       } else {
         minerArray.push({
-          Nome: miner.name,
+          Nome: cleanName,
           Power: miner.power,
           Bonus: miner.bonus_percent / 100,
           Size: miner.width,
@@ -60,8 +65,7 @@ async function organizar() {
     const fieldArray = [];
 
     if (field2) {
-      // Regex atualizado para excluir as palavras indesejadas
-      const minerRegex = /^(?:(\d+)|([A-Za-z]+))\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)(?!.*(?:can\s+be\s+sold|can't\s+be\s+sold|Miner\s+details|open))/g;
+      const minerRegex = /^(?:(\d+)|([A-Za-z]+))\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/g;
       let match;
 
       while ((match = minerRegex.exec(field2)) !== null) {
@@ -77,9 +81,13 @@ async function organizar() {
           power *= 1000000000;
         }
 
+        const cleanName = match[3]
+          .replace(/\b(can be sold|can't be sold|Miner details|open)\b/g, '')
+          .trim();
+
         const miner = {
           Level: level,
-          Nome: match[3].trim(),
+          Nome: cleanName,
           Size: parseInt(match[4], 10),
           Power: power,
           Bonus: parseFloat(match[7]),
