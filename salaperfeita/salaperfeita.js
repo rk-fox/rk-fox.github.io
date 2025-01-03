@@ -65,29 +65,26 @@ async function organizar() {
     }
 
     // Expressão regular para extrair os dados necessários
-    const minerRegex = /open\s+([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th|Gh|Ph)\/s\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+(can be sold|can't be sold|Miner details|open)/g;
-    
+    const minerRegex = /open\s+([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
+
     const minerArray = [];
     let match;
 
     // Encontrar todas as ocorrências
     while ((match = minerRegex.exec(field2)) !== null) {
-      // Processar o nome
-      const nome = match[1].trim();
-
-      // Processar o poder
+      // Ajustando o valor de Power conforme a unidade
       let power = parseFloat(match[3].replace(',', '.'));
       const unit = match[4];
 
-      if (unit === 'Th') {
-        power *= 1000; // Multiplicar por 1000 para Th/s
-      } else if (unit === 'Ph') {
-        power *= 1000000; // Multiplicar por 1000000 para Ph/s
+      if (unit === 'Th/s') {
+        power *= 1000; // Multiplicar por 1000
+      } else if (unit === 'Ph/s') {
+        power *= 1000000; // Multiplicar por 1000000
       }
+      // Se for 'Gh/s', mantemos o valor de power original
 
-      // Adicionar o minerador ao array
       const miner = {
-        Nome: nome,
+        Nome: match[1].trim(),
         Size: parseInt(match[2], 10),
         Power: power,
         Bonus: parseFloat(match[5]),
