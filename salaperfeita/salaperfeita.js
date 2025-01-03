@@ -1,6 +1,6 @@
 async function organizar() {
   try {
-    // Captura o valor do primeiro campo
+    // Captura o valor do primeiro campo (ID de usuário)
     const userLink = document.getElementById("field1").value.trim();
     if (!userLink) {
       alert("Por favor, insira um valor no Campo 1.");
@@ -39,18 +39,7 @@ async function organizar() {
       return;
     }
 
-    // Organizar os dados do campo 2
-    const field2Data = document.getElementById("field2").value.trim();
-    const minerDetails = processMinerDetails(field2Data);
-
-    // Exibir os mineradores organizados
-    if (minerDetails.length > 0) {
-      console.log("Mineradores Organizados:", minerDetails);
-    } else {
-      console.log("Nenhum minerador encontrado no campo 2.");
-    }
-
-    // Processar os dados do minerador e contar repetições
+    // Processar os dados e contar repetições
     const minerCount = {};
     miners.forEach(miner => {
       const key = `${miner.name}_${miner.level}`;
@@ -67,31 +56,39 @@ async function organizar() {
 
     // Exibir contagem de repetições
     console.log("Contagem de Miners por Nome e Nível:", minerCount);
+
+    // Pegar o valor do Campo 2
+    const field2 = document.getElementById("field2").value.trim();
+    if (!field2) {
+      alert("Por favor, insira um valor no Campo 2.");
+      return;
+    }
+
+    // Expressão regular para extrair os dados necessários
+    const minerRegex = /([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,]+)\s+Th\/s\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
+    
+    const minerArray = [];
+    let match;
+
+    // Encontrar todas as ocorrências
+    while ((match = minerRegex.exec(field2)) !== null) {
+      const miner = {
+        Nome: match[1].trim(),
+        Size: parseInt(match[2], 10),
+        Power: parseFloat(match[3].replace(',', '.')),
+        Bonus: parseFloat(match[4]),
+        Quantity: parseInt(match[5], 10),
+      };
+
+      minerArray.push(miner);
+    }
+
+    // Exibir o array de mineradores no console
+    console.log("Array de Mineradores:", minerArray);
+
     alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
     alert("Ocorreu um erro ao processar os dados. Verifique o console para mais informações.");
   }
-}
-
-// Função para processar os dados do campo 2
-function processMinerDetails(data) {
-  // Corrigir a expressão regular para capturar melhor os dados
-  const minerPattern = /([A-Za-z\s\+\-]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([0-9.,]+)\s+Th\/s\s+Bonus\s+([0-9.]+)%\s+Quantity:\s+(\d+)/g;
-  let matches;
-  const minerDetails = [];
-
-  // Expressão regular para encontrar e extrair os dados
-  while ((matches = minerPattern.exec(data)) !== null) {
-    const [_, name, size, power, bonus, quantity] = matches;
-    minerDetails.push({
-      Nome: name.trim(),
-      Size: parseInt(size, 10),
-      Power: parseFloat(power.replace(',', '.')),
-      Bonus: parseFloat(bonus),
-      Quantity: parseInt(quantity, 10),
-    });
-  }
-
-  return minerDetails;
 }
