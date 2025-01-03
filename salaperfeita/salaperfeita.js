@@ -80,6 +80,8 @@ async function organizar() {
         power *= 1000;
       } else if (unit === 'Ph/s') {
         power *= 1000000;
+      } else if (unit === 'Eh/s') {
+        power *= 1000000000;
       }
 
       const miner = {
@@ -100,40 +102,10 @@ async function organizar() {
       }
     }
 
-    // Função de otimização de mochila (Knapsack) com retorno da melhor combinação
-    function knapsack(Items, maxWeight) {
-      const dp = Array(maxWeight + 1).fill(0); // dp[i] será o maior PowerTotal com peso i
-      const solution = Array(maxWeight + 1).fill(null); // Para armazenar a solução
+    // Exibir o array unificado de mineradores no console
+    console.log("Array Unificado de Mineradores:", minerArray);
 
-      for (let i = 0; i < Items.length; i++) {
-        const item = Items[i];
-        const value = item.Power * (1 + item.Bonus); // PowerTotal do miner
-        const weight = item.Size * item.Quantity; // Peso total (Size * Quantity)
-
-        // Iterar de trás para frente para garantir que cada item só seja considerado uma vez
-        for (let w = maxWeight; w >= weight; w--) {
-          if (dp[w] < dp[w - weight] + value) {
-            dp[w] = dp[w - weight] + value;
-            solution[w] = solution[w - weight] ? [...solution[w - weight], item] : [item]; // Armazena a combinação de mineradores
-          }
-        }
-      }
-
-      return solution[maxWeight]; // Retorna a combinação de mineradores
-    }
-
-    // Chamar a função Knapsack
-    const maxSize = 528;
-    const bestCombination = knapsack(minerArray, maxSize);
-
-    if (bestCombination) {
-      console.log("Melhor combinação de mineradores:", bestCombination);
-      alert(`A melhor combinação de mineradores foi:\n${bestCombination.map(m => `${m.Nome} (PowerTotal: ${(m.Power * (1 + m.Bonus)).toFixed(2)})`).join("\n")}`);
-    } else {
-      console.log("Nenhuma combinação possível.");
-      alert("Nenhuma combinação possível encontrada.");
-    }
-
+    alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
     alert("Ocorreu um erro ao processar os dados. Verifique o console para mais informações.");
