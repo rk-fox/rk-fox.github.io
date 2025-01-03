@@ -48,9 +48,8 @@ async function organizar() {
       console.log("Minerador Detalhes:", {
         Nome: miner.name,
         Largura: miner.width,
-        Nível: miner.level,
         Poder: miner.power,
-        BônusPercentual: miner.bonus_percent,
+        BônusPercentual: miner.bonus_percent/100,
       });
     });
 
