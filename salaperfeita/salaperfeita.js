@@ -108,6 +108,22 @@ async function organizar() {
       return miner.Power * (1 + miner.Bonus);
     }
 
+    // Filtrar os 50 mineradores mais fortes (baseados no PowerTotal)
+    const strongestMiners = [...minerArray]
+      .sort((a, b) => calculatePowerTotal(b) - calculatePowerTotal(a))
+      .slice(0, 50);
+
+    // Filtrar os 30 mineradores com os maiores bônus
+    const highestBonusMiners = [...minerArray]
+      .sort((a, b) => b.Bonus - a.Bonus)
+      .slice(0, 30);
+
+    // Combinar os mineradores mais fortes com os com maiores bônus
+    const filteredMiners = [...new Set([...strongestMiners, ...highestBonusMiners])];
+
+    // Exibir os mineradores filtrados no console
+    console.log("Mineradores Filtrados:", filteredMiners);
+
     // Função de otimização de mochila (Knapsack)
     function knapsack(miners, sizeLimit) {
       const dp = new Array(sizeLimit + 1).fill(0); // Array para armazenar o melhor PowerTotal para cada tamanho
@@ -129,7 +145,7 @@ async function organizar() {
     }
 
     // Executar a otimização de mochila para encontrar a melhor combinação
-    const result = knapsack(minerArray, 528);
+    const result = knapsack(filteredMiners, 528);
 
     // Exibir o resultado no console
     console.log("Melhor Combinação de Mineradores:", result.selectedMiners);
