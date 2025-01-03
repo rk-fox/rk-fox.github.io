@@ -39,14 +39,13 @@ async function organizar() {
       return;
     }
 
-    // Unificar os dois arrays
+    // Unificar os dados em um único array
     const minerArray = [];
 
     // Processar os dados da primeira fonte (API do Rollercoin)
     miners.forEach(miner => {
-      const key = `${miner.name}_${miner.bonus_percent}`;
-      const existingMiner = minerArray.find(m => m.Nome === miner.name && m.bonus_percent === miner.bonus_percent);
-      
+      const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Bonus === miner.bonus_percent / 100);
+
       if (existingMiner) {
         existingMiner.Quantity += 1;
       } else {
@@ -60,52 +59,68 @@ async function organizar() {
       }
     });
 
-    // Pegar o valor do Campo 2
+    // Processar os dados da segunda fonte (Campo 2)
     const field2 = document.getElementById("field2").value.trim();
-    if (!field2) {
-      alert("Por favor, insira um valor no Campo 2.");
-      return;
-    }
+    if (field2) {
+      const minerRegex = /open\s+([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
+      let match;
 
-    // Expressão regular para extrair os dados do Campo 2
-    const minerRegex = /open\s+([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
-    let match;
+      while ((match = minerRegex.exec(field2)) !== null) {
+        let power = parseFloat(match[3].replace(',', '.'));
+        const unit = match[4];
 
-    // Encontrar todas as ocorrências
-    while ((match = minerRegex.exec(field2)) !== null) {
-      let power = parseFloat(match[3].replace(',', '.'));
-      const unit = match[4];
+        if (unit === 'Th/s') {
+          power *= 1000;
+        } else if (unit === 'Ph/s') {
+          power *= 1000000;
+        }
 
-      if (unit === 'Th/s') {
-        power *= 1000;
-      } else if (unit === 'Ph/s') {
-        power *= 1000000;
-      } else if (unit === 'Eh/s') {
-        power *= 1000000000;
-      }
+        const miner = {
+          Nome: match[1].trim(),
+          Size: parseInt(match[2], 10),
+          Power: power,
+          Bonus: parseFloat(match[5]) / 100,
+          Quantity: parseInt(match[6], 10),
+        };
 
-      const miner = {
-        Nome: match[1].trim(),
-        Size: parseInt(match[2], 10),
-        Power: power,
-        Bonus: parseFloat(match[5]),
-        Quantity: parseInt(match[6], 10),
-      };
-
-      // Verifica se o miner já existe no minerArray e soma a quantidade se necessário
-      const existingMiner = minerArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
-
-      if (existingMiner) {
-        existingMiner.Quantity += miner.Quantity; // Incrementa a quantidade
-      } else {
-        minerArray.push(miner); // Adiciona o miner ao array se não existir
+        const existingMiner = minerArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
+        if (existingMiner) {
+          existingMiner.Quantity += miner.Quantity;
+        } else {
+          minerArray.push(miner);
+        }
       }
     }
 
-    // Exibir o array unificado de mineradores no console
-    console.log("Array Unificado de Mineradores:", minerArray);
+    // Implementação do algoritmo da mochila
+    const maxCapacity = 528;
+    const items = minerArray.flatMap(miner => 
+      Array(miner.Quantity).fill({
+        Power: miner.Power,
+        Bonus: miner.Bonus,
+        Size: miner.Size,
+        Nome: miner.Nome,
+      })
+    );
 
-    alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
+    const dp = Array(maxCapacity + 1).fill(0);
+    const selected = Array(maxCapacity + 1).fill(null).map(() => []);
+
+    for (const item of items) {
+      for (let size = maxCapacity; size >= item.Size; size--) {
+        const value = item.Power * (1 + item.Bonus);
+        if (dp[size - item.Size] + value > dp[size]) {
+          dp[size] = dp[size - item.Size] + value;
+          selected[size] = [...selected[size - item.Size], item];
+        }
+      }
+    }
+
+    // Obter o melhor conjunto
+    const bestSet = selected[maxCapacity];
+
+    console.log("Melhor conjunto selecionado:", bestSet);
+    alert(`Processamento concluído! Melhor conjunto encontrado. Veja o console para mais detalhes.`);
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
     alert("Ocorreu um erro ao processar os dados. Verifique o console para mais informações.");
