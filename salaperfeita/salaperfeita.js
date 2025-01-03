@@ -81,6 +81,8 @@ async function organizar() {
         power *= 1000; // Multiplicar por 1000
       } else if (unit === 'Ph/s') {
         power *= 1000000; // Multiplicar por 1000000
+      } else if (unit === 'Eh/s') {
+        power *= 1000000000; // Multiplicar por 1000000000
       }
       // Se for 'Gh/s', mantemos o valor de power original
 
