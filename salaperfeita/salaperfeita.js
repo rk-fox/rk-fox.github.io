@@ -122,7 +122,7 @@ async function organizar() {
     // Calcular somatórios e exibir resultados
     const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
     const totalBonus = bestSet.reduce((sum, miner) => sum + miner.Bonus, 0);
-    const finalPower = totalPower * (1 + (totalBonus/100);
+    const finalPower = totalPower * (1 + (totalBonus/100));
 
     console.log("Melhor conjunto selecionado:", bestSet);
     console.log("Somatório do Power:", totalPower);
