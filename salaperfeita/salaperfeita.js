@@ -46,7 +46,6 @@ async function organizar() {
       minerCount[key] = (minerCount[key] || 0) + 1;
 
       console.log("Minerador Detalhes:", {
-        MinerID: miner.miner_id,
         Nome: miner.name,
         Largura: miner.width,
         Nível: miner.level,
