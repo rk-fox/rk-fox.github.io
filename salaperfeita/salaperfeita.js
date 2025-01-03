@@ -55,6 +55,7 @@ async function organizar() {
           Nome: miner.name,
           Power: miner.power,
           Bonus: miner.bonus_percent / 100,
+          Largura: miner.width,
           Quantity: 1
         });
       }
