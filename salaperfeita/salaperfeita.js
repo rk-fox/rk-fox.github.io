@@ -62,44 +62,48 @@ async function organizar() {
     console.log("Dados da API:", minerArray);
 
     const field2 = document.getElementById("field2").value.trim();
-    const fieldArray = [];
+const fieldArray = [];
 
-    if (field2) {
-      const minerRegex = /\d*\s*([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/g;
-let match;
+if (field2) {
+    // Passo 1: Remover ocorrências indesejadas
+    let cleanedField2 = field2.replace(/\b(Can't be sold|Miner details|open|can be sold)\b/gi, '').trim();
 
-while ((match = minerRegex.exec(field2)) !== null) {
-    let power = parseFloat(match[3].replace(',', '.'));
-    const unit = match[4];
+    // Passo 2: Adicionar "0 " antes de mineradores sem número no início
+    cleanedField2 = cleanedField2.replace(/^(?=[A-Za-z])/gm, '0 ');
 
-    // Ajusta a unidade de medida para cálculo correto do poder
-    if (unit === 'Th/s') {
-        power *= 1000;
-    } else if (unit === 'Ph/s') {
-        power *= 1000000;
-    } else if (unit === 'Eh/s') {
-        power *= 1000000000;
+    // Passo 3: Aplicar regex para extrair dados
+    const minerRegex = /^(?:(\d+)|0)\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
+    let match;
+
+    while ((match = minerRegex.exec(cleanedField2)) !== null) {
+        const level = parseInt(match[1], 10);
+        let power = parseFloat(match[4].replace(',', '.'));
+        const unit = match[5];
+
+        // Converter unidades de medida
+        if (unit === 'Th/s') {
+            power *= 1000;
+        } else if (unit === 'Ph/s') {
+            power *= 1000000;
+        } else if (unit === 'Eh/s') {
+            power *= 1000000000;
+        }
+
+        // Criar objeto minerador
+        const miner = {
+            Level: level,
+            Nome: match[2].trim(),
+            Size: parseInt(match[3], 10),
+            Power: power,
+            Bonus: parseFloat(match[6]),
+            Quantity: parseInt(match[7], 10),
+        };
+
+        fieldArray.push(miner);
     }
-
-    // Remove as palavras indesejadas do nome do minerador
-    const cleanName = match[1]
-        .replace(/\b(Can't be sold|Miner details|open|can be sold)\b/gi, '')
-        .trim();
-
-    const miner = {
-        Nome: cleanName,
-        Size: parseInt(match[2], 10),
-        Power: power,
-        Bonus: parseFloat(match[5]),
-        Quantity: parseInt(match[6], 10),
-    };
-
-    fieldArray.push(miner);
 }
 
-    }
-
-    console.log("Dados do Campo 2:", fieldArray);
+console.log("Dados do Campo 2:", fieldArray);
 
     const unifiedArray = [...minerArray];
 
