@@ -103,26 +103,23 @@ async function organizar() {
     // Exibir o array unificado de mineradores no console
     console.log("Array Unificado de Mineradores:", minerArray);
 
+    // Seleção dos 70 mineradores mais fortes
+    minerArray.sort((a, b) => calculatePowerTotal(b) - calculatePowerTotal(a)); // Ordenar por PowerTotal
+    const top70miners = minerArray.slice(0, 70); // Pegar os 70 mais fortes
+
+    // Seleção dos 50 mineradores com os maiores bônus
+    minerArray.sort((a, b) => b.Bonus - a.Bonus); // Ordenar por Bonus
+    const top50miners = minerArray.slice(0, 50); // Pegar os 50 maiores bônus
+
+    // Combinação dos 70 mais fortes e 50 com maior bônus (sem duplicar)
+    const filteredMiners = [...new Set([...top70miners, ...top50miners])];
+
+    console.log("Mineradores Filtrados:", filteredMiners);
+
     // Função para calcular o PowerTotal
     function calculatePowerTotal(miner) {
       return miner.Power * (1 + miner.Bonus);
     }
-
-    // Filtrar os 50 mineradores mais fortes (baseados no PowerTotal)
-    const strongestMiners = [...minerArray]
-      .sort((a, b) => calculatePowerTotal(b) - calculatePowerTotal(a))
-      .slice(0, 50);
-
-    // Filtrar os 30 mineradores com os maiores bônus
-    const highestBonusMiners = [...minerArray]
-      .sort((a, b) => b.Bonus - a.Bonus)
-      .slice(0, 30);
-
-    // Combinar os mineradores mais fortes com os com maiores bônus
-    const filteredMiners = [...new Set([...strongestMiners, ...highestBonusMiners])];
-
-    // Exibir os mineradores filtrados no console
-    console.log("Mineradores Filtrados:", filteredMiners);
 
     // Função de otimização de mochila (Knapsack)
     function knapsack(miners, sizeLimit) {
