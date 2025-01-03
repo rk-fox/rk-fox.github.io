@@ -65,19 +65,37 @@ async function organizar() {
     }
 
     // Expressão regular para extrair os dados necessários
-    const minerRegex = /([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+Th\/s\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
+    const minerRegex = /([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
     
     const minerArray = [];
     let match;
 
     // Encontrar todas as ocorrências
     while ((match = minerRegex.exec(field2)) !== null) {
+      // Ignorar se algum termo for encontrado
+      const nome = match[1].trim();
+      if (nome.toLowerCase().includes("can be sold") || nome.toLowerCase().includes("can't be sold") || nome.toLowerCase().includes("miner details") || nome.toLowerCase().includes("open")) {
+        continue;
+      }
+
+      // A unidade de poder (Th/s, Ph/s ou Gh/s)
+      let power = parseFloat(match[3].replace(',', '.'));
+      const unit = match[4].toLowerCase();
+
+      // Ajuste no poder de acordo com a unidade
+      if (unit === 'th/s') {
+        power *= 1000; // Multiplicando por 1000 para Th/s
+      } else if (unit === 'ph/s') {
+        power *= 1000000; // Multiplicando por 1000000 para Ph/s
+      }
+      // Caso Gh/s, o poder é mantido igual
+
       const miner = {
-        Nome: match[1].trim(),
+        Nome: nome,
         Size: parseInt(match[2], 10),
-        Power: parseFloat(match[3].replace(',', '.')),
-        Bonus: parseFloat(match[4]),
-        Quantity: parseInt(match[5], 10),
+        Power: power,
+        Bonus: parseFloat(match[5]),
+        Quantity: parseInt(match[6], 10),
       };
 
       minerArray.push(miner);
