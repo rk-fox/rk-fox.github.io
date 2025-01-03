@@ -42,10 +42,10 @@ async function organizar() {
     // Processar os dados e contar repetições
     const minerArray = [];
     miners.forEach(miner => {
-      const key = `${miner.name}_${miner.level}`;
+      const key = `${miner.name}_${miner.bonus_percent}`;
 
       // Verifica se o miner já existe no array e adiciona a quantidade
-      const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Level === miner.level);
+      const existingMiner = minerArray.find(m => m.Nome === miner.name && m.bonus_percent === miner.bonus_percent);
       
       if (existingMiner) {
         existingMiner.Quantity += 1; // Incrementa a quantidade
@@ -53,7 +53,6 @@ async function organizar() {
         // Se o miner não existe no array, adiciona-o com a quantidade inicial
         minerArray.push({
           Nome: miner.name,
-          Level: miner.level,
           Power: miner.power,
           Bonus: miner.bonus_percent / 100,
           Quantity: 1
