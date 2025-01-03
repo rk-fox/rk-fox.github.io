@@ -131,7 +131,7 @@ async function organizar() {
 
     alert(`Processamento concluído! 
       - Somatório do Power: ${totalPower.toFixed(2)} 
-      - Somatório do Bônus: ${(totalBonus * 100).toFixed(2)}% 
+      - Somatório do Bônus: ${(totalBonus).toFixed(2)}% 
       - Resultado Final: ${finalPower.toFixed(2)}`);
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
