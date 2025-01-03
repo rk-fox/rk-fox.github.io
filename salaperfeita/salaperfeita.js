@@ -108,37 +108,32 @@ async function organizar() {
       return miner.Power * (1 + miner.Bonus);
     }
 
-    // Função para gerar todas as combinações possíveis de miners dentro do limite de Size
-    function generateCombinations(miners, sizeLimit) {
-      const results = [];
-      
-      function combine(miners, startIndex, currentCombination) {
-        const totalSize = currentCombination.reduce((sum, miner) => sum + miner.Size, 0);
-        const totalPower = currentCombination.reduce((sum, miner) => sum + calculatePowerTotal(miner), 0);
-        
-        if (totalSize <= sizeLimit) {
-          results.push({ combination: currentCombination, totalSize, totalPower });
+    // Função de otimização de mochila (Knapsack)
+    function knapsack(miners, sizeLimit) {
+      const dp = new Array(sizeLimit + 1).fill(0); // Array para armazenar o melhor PowerTotal para cada tamanho
+      const selectedMiners = new Array(sizeLimit + 1).fill(null); // Para armazenar a combinação de mineradores escolhidos
+
+      miners.forEach(miner => {
+        const minerPowerTotal = calculatePowerTotal(miner);
+        // Atualizar os valores de dp do final para o começo para evitar sobrescrever os resultados durante o cálculo
+        for (let size = sizeLimit; size >= miner.Size; size--) {
+          const newPower = dp[size - miner.Size] + minerPowerTotal;
+          if (newPower > dp[size]) {
+            dp[size] = newPower;
+            selectedMiners[size] = miner;
+          }
         }
-        
-        for (let i = startIndex; i < miners.length; i++) {
-          combine(miners, i + 1, [...currentCombination, miners[i]]);
-        }
-      }
-      
-      combine(miners, 0, []);
-      return results;
+      });
+
+      return { totalPower: dp[sizeLimit], selectedMiners: selectedMiners[sizeLimit] };
     }
 
-    // Gerar combinações possíveis de miners
-    const combinations = generateCombinations(minerArray, 528);
+    // Executar a otimização de mochila para encontrar a melhor combinação
+    const result = knapsack(minerArray, 528);
 
-    // Encontrar a combinação com o maior PowerTotal
-    const bestCombination = combinations.reduce((best, current) => {
-      return current.totalPower > best.totalPower ? current : best;
-    }, { totalPower: 0 });
-
-    // Exibir a melhor combinação no console
-    console.log("Melhor Combinação de Mineradores:", bestCombination);
+    // Exibir o resultado no console
+    console.log("Melhor Combinação de Mineradores:", result.selectedMiners);
+    console.log("Power Total:", result.totalPower);
 
     alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
   } catch (error) {
