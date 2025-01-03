@@ -108,7 +108,7 @@ async function organizar() {
 
     for (const item of items) {
       for (let size = maxCapacity; size >= item.Size; size--) {
-        const value = item.Power * (1 + (item.Bonus/100);
+        const value = item.Power * (1 + (item.Bonus/100));
         if (dp[size - item.Size] + value > dp[size]) {
           dp[size] = dp[size - item.Size] + value;
           selected[size] = [...selected[size - item.Size], item];
