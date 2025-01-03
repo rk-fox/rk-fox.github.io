@@ -92,7 +92,7 @@ async function organizar() {
       }
     }
 
-    // Implementação do algoritmo da mochila
+    // Implementação do algoritmo da mochila (otimizado)
     const maxCapacity = 528;
     const items = minerArray.flatMap(miner => 
       Array(miner.Quantity).fill({
@@ -103,8 +103,8 @@ async function organizar() {
       })
     );
 
-    const dp = Array(maxCapacity + 1).fill(0);
-    const selected = Array(maxCapacity + 1).fill(null).map(() => []);
+    const dp = Array.from({ length: maxCapacity + 1 }, () => 0);
+    const selected = Array.from({ length: maxCapacity + 1 }, () => []);
 
     for (const item of items) {
       for (let size = maxCapacity; size >= item.Size; size--) {
@@ -119,8 +119,20 @@ async function organizar() {
     // Obter o melhor conjunto
     const bestSet = selected[maxCapacity];
 
+    // Calcular somatórios e exibir resultados
+    const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
+    const totalBonus = bestSet.reduce((sum, miner) => sum + miner.Bonus, 0);
+    const finalPower = totalPower * (1 + totalBonus);
+
     console.log("Melhor conjunto selecionado:", bestSet);
-    alert(`Processamento concluído! Melhor conjunto encontrado. Veja o console para mais detalhes.`);
+    console.log("Somatório do Power:", totalPower);
+    console.log("Somatório do Bonus:", totalBonus);
+    console.log("Resultado Final (Power * (1 + Bonus)):", finalPower);
+
+    alert(`Processamento concluído! 
+      - Somatório do Power: ${totalPower.toFixed(2)} 
+      - Somatório do Bônus: ${(totalBonus * 100).toFixed(2)}% 
+      - Resultado Final: ${finalPower.toFixed(2)}`);
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
     alert("Ocorreu um erro ao processar os dados. Verifique o console para mais informações.");
