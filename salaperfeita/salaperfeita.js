@@ -60,12 +60,13 @@ async function organizar() {
     const fieldArray = [];
 
     if (field2) {
-      const minerRegex = /([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/g;
+      const minerRegex = /^(?:(\d+)|([A-Za-z]+))\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/g;
       let match;
 
       while ((match = minerRegex.exec(field2)) !== null) {
-        let power = parseFloat(match[3].replace(',', '.'));
-        const unit = match[4];
+        const level = match[1] ? parseInt(match[1], 10) : 0;
+        let power = parseFloat(match[5].replace(',', '.'));
+        const unit = match[6];
 
         if (unit === 'Th/s') {
           power *= 1000;
@@ -76,11 +77,12 @@ async function organizar() {
         }
 
         const miner = {
-          Nome: match[1].trim(),
-          Size: parseInt(match[2], 10),
+          Level: level,
+          Nome: match[3].trim(),
+          Size: parseInt(match[4], 10),
           Power: power,
-          Bonus: parseFloat(match[5]),
-          Quantity: parseInt(match[6], 10),
+          Bonus: parseFloat(match[7]),
+          Quantity: parseInt(match[8], 10),
         };
 
         fieldArray.push(miner);
