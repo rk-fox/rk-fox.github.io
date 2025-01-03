@@ -12,19 +12,19 @@ async function organizar() {
     const profileResponse = await fetch(profileUrl);
 
     if (!profileResponse.ok) {
-      throw new Error("Erro ao acessar os dados do perfil.");
+      throw new Error("Erro ao acessar os dados do perfil. Verifique o ID inserido.");
     }
 
     const profileData = await profileResponse.json();
     const avatarId = profileData?.data?.avatar_id;
 
     if (!avatarId) {
-      alert("Avatar ID não encontrado.");
+      alert("Avatar ID não encontrado. Verifique o ID do usuário inserido.");
       return;
     }
 
     // URL para acessar os dados do miner
-    const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`;
+    const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`;
     const minerResponse = await fetch(minerUrl);
 
     if (!minerResponse.ok) {
@@ -35,7 +35,7 @@ async function organizar() {
     const miners = minerData?.data?.miner;
 
     if (!miners || !Array.isArray(miners)) {
-      alert("Dados do minerador não encontrados.");
+      alert("Dados dos mineradores não encontrados ou estão em formato inesperado.");
       return;
     }
 
@@ -45,12 +45,13 @@ async function organizar() {
       const key = `${miner.name}_${miner.level}`;
       minerCount[key] = (minerCount[key] || 0) + 1;
 
-      console.log("Minerador:", {
-        Name: miner.name,
-        Width: miner.width,
-        Level: miner.level,
-        Power: miner.power,
-        BonusPercent: miner.bonus_percent,
+      console.log("Minerador Detalhes:", {
+        MinerID: miner.miner_id,
+        Nome: miner.name,
+        Largura: miner.width,
+        Nível: miner.level,
+        Poder: miner.power,
+        BônusPercentual: miner.bonus_percent,
       });
     });
 
@@ -58,7 +59,7 @@ async function organizar() {
     console.log("Contagem de Miners por Nome e Nível:", minerCount);
     alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
   } catch (error) {
-    console.error("Erro:", error);
+    console.error("Erro ao organizar os dados:", error);
     alert("Ocorreu um erro ao processar os dados. Verifique o console para mais informações.");
   }
 }
