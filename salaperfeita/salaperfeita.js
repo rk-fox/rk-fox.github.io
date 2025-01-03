@@ -1,13 +1,11 @@
 async function organizar() {
   try {
-    // Captura o valor do primeiro campo (ID de usuário)
     const userLink = document.getElementById("field1").value.trim();
     if (!userLink) {
       alert("Por favor, insira um valor no Campo 1.");
       return;
     }
 
-    // URL para acessar o avatar_id
     const profileUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`;
     const profileResponse = await fetch(profileUrl);
 
@@ -23,7 +21,6 @@ async function organizar() {
       return;
     }
 
-    // URL para acessar os dados do miner
     const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`;
     const minerResponse = await fetch(minerUrl);
 
@@ -39,10 +36,9 @@ async function organizar() {
       return;
     }
 
-    // Unificar os dados em um único array
     const minerArray = [];
 
-    // Processar os dados da primeira fonte (API do Rollercoin)
+    // Processar dados da API
     miners.forEach(miner => {
       const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Bonus === miner.bonus_percent / 100);
 
@@ -59,8 +55,12 @@ async function organizar() {
       }
     });
 
-    // Processar os dados da segunda fonte (Campo 2)
+    console.log("Dados da API:", minerArray);
+
+    // Processar dados do Campo 2
     const field2 = document.getElementById("field2").value.trim();
+    const fieldArray = [];
+
     if (field2) {
       const minerRegex = /open\s+([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
       let match;
@@ -73,6 +73,8 @@ async function organizar() {
           power *= 1000;
         } else if (unit === 'Ph/s') {
           power *= 1000000;
+        } else if (unit === 'Eh/s') {
+          power *= 1000000000;
         }
 
         const miner = {
@@ -83,18 +85,30 @@ async function organizar() {
           Quantity: parseInt(match[6], 10),
         };
 
-        const existingMiner = minerArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
-        if (existingMiner) {
-          existingMiner.Quantity += miner.Quantity;
-        } else {
-          minerArray.push(miner);
-        }
+        fieldArray.push(miner);
       }
     }
 
-    // Implementação do algoritmo da mochila (otimizado)
+    console.log("Dados do Campo 2:", fieldArray);
+
+    // Unificar os arrays
+    const unifiedArray = [...minerArray];
+
+    fieldArray.forEach(miner => {
+      const existingMiner = unifiedArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
+
+      if (existingMiner) {
+        existingMiner.Quantity += miner.Quantity;
+      } else {
+        unifiedArray.push(miner);
+      }
+    });
+
+    console.log("Array Unificado:", unifiedArray);
+
+    // Otimização da mochila
     const maxCapacity = 528;
-    const items = minerArray.flatMap(miner => 
+    const items = unifiedArray.flatMap(miner => 
       Array(miner.Quantity).fill({
         Power: miner.Power,
         Bonus: miner.Bonus,
@@ -116,10 +130,9 @@ async function organizar() {
       }
     }
 
-    // Obter o melhor conjunto
     const bestSet = selected[maxCapacity];
 
-    // Calcular somatórios e exibir resultados
+    // Calcular somatórios
     const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
     const totalBonus = bestSet.reduce((sum, miner) => sum + miner.Bonus, 0);
     const finalPower = totalPower * (1 + (totalBonus/100));
@@ -127,7 +140,7 @@ async function organizar() {
     console.log("Melhor conjunto selecionado:", bestSet);
     console.log("Somatório do Power:", totalPower);
     console.log("Somatório do Bonus:", totalBonus);
-    console.log("Resultado Final (Power * (1 + (Bonus/100)):", finalPower);
+    console.log("Resultado Final (Power * (1 + (Bonus/100))):", finalPower);
 
     alert(`Processamento concluído! 
       - Somatório do Power: ${totalPower} 
