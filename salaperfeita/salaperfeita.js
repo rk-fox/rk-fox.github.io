@@ -94,14 +94,51 @@ async function organizar() {
       const existingMiner = minerArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
 
       if (existingMiner) {
-        existingMiner.Quantity += miner.Quantity; // Incrementa a quantidade
+        existingMiner.Quantity += miner.Quantity;
       } else {
-        minerArray.push(miner); // Adiciona o miner ao array se não existir
+        minerArray.push(miner);
       }
     }
 
     // Exibir o array unificado de mineradores no console
     console.log("Array Unificado de Mineradores:", minerArray);
+
+    // Função para calcular o PowerTotal
+    function calculatePowerTotal(miner) {
+      return miner.Power * (1 + miner.Bonus);
+    }
+
+    // Função para gerar todas as combinações possíveis de miners dentro do limite de Size
+    function generateCombinations(miners, sizeLimit) {
+      const results = [];
+      
+      function combine(miners, startIndex, currentCombination) {
+        const totalSize = currentCombination.reduce((sum, miner) => sum + miner.Size, 0);
+        const totalPower = currentCombination.reduce((sum, miner) => sum + calculatePowerTotal(miner), 0);
+        
+        if (totalSize <= sizeLimit) {
+          results.push({ combination: currentCombination, totalSize, totalPower });
+        }
+        
+        for (let i = startIndex; i < miners.length; i++) {
+          combine(miners, i + 1, [...currentCombination, miners[i]]);
+        }
+      }
+      
+      combine(miners, 0, []);
+      return results;
+    }
+
+    // Gerar combinações possíveis de miners
+    const combinations = generateCombinations(minerArray, 528);
+
+    // Encontrar a combinação com o maior PowerTotal
+    const bestCombination = combinations.reduce((best, current) => {
+      return current.totalPower > best.totalPower ? current : best;
+    }, { totalPower: 0 });
+
+    // Exibir a melhor combinação no console
+    console.log("Melhor Combinação de Mineradores:", bestCombination);
 
     alert("Dados processados com sucesso! Verifique o console para mais detalhes.");
   } catch (error) {
