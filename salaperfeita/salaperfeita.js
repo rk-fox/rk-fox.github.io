@@ -44,7 +44,11 @@ async function organizar() {
     const minerDetails = processMinerDetails(field2Data);
 
     // Exibir os mineradores organizados
-    console.log("Mineradores Organizados:", minerDetails);
+    if (minerDetails.length > 0) {
+      console.log("Mineradores Organizados:", minerDetails);
+    } else {
+      console.log("Nenhum minerador encontrado no campo 2.");
+    }
 
     // Processar os dados do minerador e contar repetições
     const minerCount = {};
@@ -72,7 +76,7 @@ async function organizar() {
 
 // Função para processar os dados do campo 2
 function processMinerDetails(data) {
-  const minerPattern = /([A-Za-z\s\+]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([0-9.,]+)\s+Th\/s\s+Bonus\s+([0-9.]+)%\s+Quantity:\s+(\d+)\s+/g;
+  const minerPattern = /([A-Za-z\s\+\-]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([0-9.,]+)\s+Th\/s\s+Bonus\s+([0-9.]+)%\s+Quantity:\s+(\d+)\s+/g;
   let matches;
   const minerDetails = [];
 
