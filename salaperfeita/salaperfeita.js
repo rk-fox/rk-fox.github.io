@@ -39,22 +39,24 @@ async function organizar() {
       return;
     }
 
-    // Processar os dados e contar repetições
+    // Processar os dados de mineradores
     const minerCount = {};
+
     miners.forEach(miner => {
-      const key = `${miner.name}_${miner.level}`;
-      minerCount[key] = (minerCount[key] || 0) + 1;
+      // Criar chave única usando Nome e Power
+      const key = `${miner.name}_${miner.power}`;
+      minerCount[key] = (minerCount[key] || 0) + miner.quantity;
 
       console.log("Minerador Detalhes:", {
         Nome: miner.name,
-        Largura: miner.width,
-        Poder: miner.power,
-        BônusPercentual: miner.bonus_percent/100,
+        Power: miner.power,
+        BônusPercentual: miner.bonus_percent / 100,
+        Quantidade: miner.quantity,
       });
     });
 
-    // Exibir contagem de repetições
-    console.log("Contagem de Miners por Nome e Nível:", minerCount);
+    // Exibir contagem de mineradores por Nome e Power
+    console.log("Contagem de Miners por Nome e Power:", minerCount);
 
     // Pegar o valor do Campo 2
     const field2 = document.getElementById("field2").value.trim();
