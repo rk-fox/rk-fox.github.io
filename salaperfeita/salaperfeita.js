@@ -62,12 +62,12 @@ async function organizar() {
     const fieldArray = [];
 
     if (field2) {
-      const minerRegex = /open\s+([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+/g;
+      const minerRegex = /(?:open\s+)?(?:(\d+)\s+)?([A-Za-z\s]+)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d,.]+)\s+(Th\/s|Ph\/s|Gh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/g;
       let match;
 
       while ((match = minerRegex.exec(field2)) !== null) {
-        let power = parseFloat(match[3].replace(',', '.'));
-        const unit = match[4];
+        let power = parseFloat(match[4].replace(',', '.'));
+        const unit = match[5];
 
         if (unit === 'Th/s') {
           power *= 1000;
@@ -78,11 +78,12 @@ async function organizar() {
         }
 
         const miner = {
-          Nome: match[1].trim(),
-          Size: parseInt(match[2], 10),
+          Level: match[1] ? parseInt(match[1], 10) : 0,
+          Nome: match[2].trim(),
+          Size: parseInt(match[3], 10),
           Power: power,
-          Bonus: parseFloat(match[5]),
-          Quantity: parseInt(match[6], 10),
+          Bonus: parseFloat(match[6]),
+          Quantity: parseInt(match[7], 10),
         };
 
         fieldArray.push(miner);
@@ -122,7 +123,7 @@ async function organizar() {
 
     for (const item of items) {
       for (let size = maxCapacity; size >= item.Size; size--) {
-        const value = item.Power * (1 + (item.Bonus/100));
+        const value = item.Power * (1 + (item.Bonus / 100));
         if (dp[size - item.Size] + value > dp[size]) {
           dp[size] = dp[size - item.Size] + value;
           selected[size] = [...selected[size - item.Size], item];
@@ -135,7 +136,7 @@ async function organizar() {
     // Calcular somatórios
     const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
     const totalBonus = bestSet.reduce((sum, miner) => sum + miner.Bonus, 0);
-    const finalPower = totalPower * (1 + (totalBonus/100));
+    const finalPower = totalPower * (1 + (totalBonus / 100));
 
     console.log("Melhor conjunto selecionado:", bestSet);
     console.log("Somatório do Power:", totalPower);
