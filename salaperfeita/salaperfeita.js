@@ -61,7 +61,7 @@ async function organizar() {
 
     console.log("Dados da API:", minerArray);
 
-    // Supondo que `field2` seja o campo de texto
+// Supondo que `field2` seja o campo de texto
 let fieldContent = document.getElementById('field2').value;
 
 // Divida o texto em partes separadas por "open"
@@ -107,8 +107,8 @@ cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sol
 // Exiba o resultado no console para ver o texto processado
 console.log("Texto Limpo:", cleanedField2);
 
-// Regex para capturar as informações de cada entrada
-let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-]+?)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
+// Regex para capturar as informações de cada entrada (ajuste do regex para flexibilidade)
+let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
 
 // Inicializa o array para armazenar as entradas processadas
 let fieldArray = [];
@@ -118,29 +118,32 @@ let match;
 // Procura as entradas no texto com o regex
 while ((match = minerRegex.exec(cleanedField2)) !== null) {
     // Variáveis para armazenar os dados extraídos
-    let power = parseFloat(match[5].replace(',', '.')); // Power convertido para número
-    let unit = match[6]; // Unidade de Power (Th/s, Ph/s, Gh/s, Eh/s)
+    let power = parseFloat(match[4].replace(',', '.')); // Power convertido para número
+    let unit = match[5]; // Unidade de Power (Th/s, Ph/s, Gh/s, Eh/s)
 
-    // Conversão das unidades de medida para TH/s
-    if (unit === 'Ph/s') {
-        power *= 1000; // PH/s para TH/s
-    } else if (unit === 'Eh/s') {
-        power *= 1000000; // EH/s para TH/s
-    } else if (unit === 'Gh/s') {
-        power /= 1000; // GH/s para TH/s
+    // Conversão das unidades de medida para Gh/s (somente se necessário)
+    if (unit === 'Eh/s') {
+        power *= 1000000000; // Eh/s para Gh/s
+        unit = 'Th/s';  // Atualiza para Gh/s após a conversão
+    } else if (unit === 'Ph/s') {
+        power *= 1000000; // Ph/s para Gh/s
+        unit = 'Th/s';  // Atualiza para Gh/s após a conversão
+    } else if (unit === 'Th/s') {
+        power /= 1000; // Th/s para Gh/s
+        unit = 'Th/s';  // Atualiza para Gh/s após a conversão
     }
-    // 'Th/s' já está em TH/s, não precisa de alteração
+    // 'Gh/s' já está em Gh/s, não precisa de alteração
 
     // Cada entrada é capturada e organizada no formato desejado
     let minerData = {
         Level: match[1],         // Level
         Nome: match[2].trim(),   // Nome
         Set: match[3].trim(),    // Set
-        Size: match[4],          // Size
-        Power: power.toFixed(3), // Power (em TH/s) com 3 casas decimais
-        Unit: 'Th/s',            // Sempre convertendo para Th/s
-        Bonus: match[7],         // Bonus
-        Quantity: match[8]       // Quantity
+        Size: match[3],          // Size
+        Power: power, // Power (em Gh/s) com 3 casas decimais
+        Unit: unit,              // A unidade agora pode ser Th/s, Ph/s, Gh/s, ou Eh/s
+        Bonus: match[6].replace(',', '.'),         // Bonus
+        Quantity: match[7]       // Quantity
     };
 
     // Adiciona os dados ao array
@@ -149,6 +152,7 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
 
 // Exibe o array com os dados processados
 console.log(fieldArray);
+
 
 
     const unifiedArray = [...minerArray];
