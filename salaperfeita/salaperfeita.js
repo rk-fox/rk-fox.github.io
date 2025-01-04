@@ -196,75 +196,86 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
 // Exibe o array com os dados processados
 console.log("Inventário:", fieldArray);
 
-    const unifiedArray = [...minerArray];
-const seenMiners = new Map(); // Usado para verificar e armazenar miners já processadas
+const unifiedArray = [...minerArray]; // Miner array original
+const finalArray = []; // Array final onde miner será dividido e atualizado
 
-fieldArray.forEach(miner => {
-  // Cria uma chave única para identificar o miner, considerando Nome, Power e Bonus
-  const minerKey = `${miner.Nome}-${miner.Power}-${miner.Bonus}`;
+unifiedArray.forEach(miner => {
+  // Verifique se a combinação Nome, Power e Bonus já existe no finalArray
+  const existingMiner = finalArray.find(m => m.Nome === miner.Nome && m.Power === miner.Power);
 
-  // Verifica se a combinação Nome-Power-Bonus já foi vista
-  if (seenMiners.has(minerKey)) {
-    // Se já foi, cria uma nova instância com bônus 0, mas não altera o nome, power e bonus
-    const newMiner = { ...miner, Bonus: 0 }; // Clonando o objeto e alterando o bônus para 0
-    unifiedArray.push(newMiner);
+  if (existingMiner) {
+    // Se já existe a combinação, trata a primeira entrada e a repetição com bonus 0
+    if (miner.Bonus > 0) {
+      // Se o Bonus for diferente de zero, criamos a entrada inicial
+      existingMiner.Quantity += miner.Quantity;
+    } else {
+      // Caso contrário, cria-se uma nova entrada com o Bonus 0
+      finalArray.push({
+        miner_id: miner.miner_id,
+        Level: miner.Level,
+        Nome: miner.Nome,
+        Power: miner.Power,
+        Bonus: 0,
+        Size: miner.Size,
+        Quantity: miner.Quantity
+      });
+    }
   } else {
-    // Se não foi, mantém o bônus original e adiciona a miner
-    unifiedArray.push(miner);
-    seenMiners.set(minerKey, true); // Marca que essa combinação foi processada
+    // Se a combinação não existe, adicionamos uma nova entrada
+    finalArray.push({
+      miner_id: miner.miner_id,
+      Level: miner.Level,
+      Nome: miner.Nome,
+      Power: miner.Power,
+      Bonus: miner.Bonus,
+      Size: miner.Size,
+      Quantity: miner.Quantity
+    });
   }
 });
 
 // Ordenar a lista do maior para o menor poder
-unifiedArray.sort((a, b) => b.Power - a.Power);
+finalArray.sort((a, b) => b.Power - a.Power);
+    
+console.log("Unificados:", finalArray);
 
-console.log("Unificados:", unifiedArray);
 
-// A lógica de distribuição das miners dentro do dp e selection parece estar correta
-const items = unifiedArray.flatMap(miner => {
-  return Array(miner.Quantity).fill({
-    Level: miner.Level,
-    Nome: miner.Nome,
-    Power: miner.Power,
-    Bonus: miner.Bonus, // Este será o bônus original para o primeiro miner
-    Size: miner.Size,
-  }).map((item, index) => {
-    // Se não for o primeiro item da mesma miner_id, define o bônus como 0
-    if (index > 0) {
-      item.Bonus = 0;
+const items = finalArray.flatMap(miner => 
+      Array(miner.Quantity).fill({
+        Level: miner.Level,
+        Nome: miner.Nome,
+        Power: miner.Power,
+        Bonus: miner.Bonus,
+        Size: miner.Size,        
+      })
+    );
+
+    const dp = Array.from({ length: maxCapacity + 1 }, () => 0);
+    const selected = Array.from({ length: maxCapacity + 1 }, () => []);
+
+    for (const item of items) {
+      for (let size = maxCapacity; size >= item.Size; size--) {
+        const value = item.Power * (1 + (item.Bonus/100));
+        if (dp[size - item.Size] + value > dp[size]) {
+          dp[size] = dp[size - item.Size] + value;
+          selected[size] = [...selected[size - item.Size], item];
+        }
+      }
     }
-    return item;
-  });
-});
 
-// Lógica de otimização (Knapsack)
-const dp = Array.from({ length: maxCapacity + 1 }, () => 0);
-const selected = Array.from({ length: maxCapacity + 1 }, () => []);
+    const bestSet = selected[maxCapacity];
 
-for (const item of items) {
-  for (let size = maxCapacity; size >= item.Size; size--) {
-    const value = item.Power * (1 + (item.Bonus / 100)); // Aplica o bônus corretamente
-    if (dp[size - item.Size] + value > dp[size]) {
-      dp[size] = dp[size - item.Size] + value;
-      selected[size] = [...selected[size - item.Size], item];
-    }
-  }
-}
+    // Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
+    bestSet.sort((a, b) => b.Power - a.Power);
 
-const bestSet = selected[maxCapacity];
+    const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
+    const totalBonus = (bestSet.reduce((sum, miner) => sum + miner.Bonus, 0)).toFixed(2);
+    const finalPower = (totalPower * (1 + (totalBonus/100))).toFixed(0);
 
-// Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
-bestSet.sort((a, b) => b.Power - a.Power);
-
-const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
-const totalBonus = (bestSet.reduce((sum, miner) => sum + miner.Bonus, 0)).toFixed(2);
-const finalPower = (totalPower * (1 + (totalBonus / 100))).toFixed(0);
-
-console.log("Otimização:", bestSet);
-console.log("Total Miners Power:", totalPower);
-console.log("Total Miners Bonus:", totalBonus);
-console.log("PODER TOTAL:", finalPower);
-
+    console.log("Otimização:", bestSet);
+    console.log("Total Miners Power:", totalPower);
+    console.log("Total Miners Bonus:", totalBonus);
+    console.log("PODER TOTAL:", finalPower);
 
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
