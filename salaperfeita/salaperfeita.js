@@ -138,8 +138,9 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
     let setValue = match[3].trim();
     let sizeValue = match[5] ? match[5].trim() : "";
 
-    // Se "Size" for encontrado após "Set", acrescenta "0" após "Set"
-    if (sizeValue) {
+    // Condição corrigida: Se após Set vem "Size", só acrescentar "0" caso "Size" seja encontrado
+    if (sizeValue && setValue.toLowerCase().indexOf('set') === setValue.toLowerCase().lastIndexOf('set')) {
+        // Só adiciona 0 se não houver outra ocorrência de "Set" após a palavra
         setValue += " 0";
     }
 
