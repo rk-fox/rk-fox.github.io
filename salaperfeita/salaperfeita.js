@@ -67,7 +67,7 @@ async function organizar() {
   // Garantir que a quantidade seja convertida para número
   const quantity = 1;
 
-  const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Level === miner.level);
+  const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Level === miner.level && m.bonus_percent === miner.bonus_percent/100);
 
   if (existingMiner) {
     existingMiner.Quantity += quantity;  // Incrementa a quantidade corretamente
