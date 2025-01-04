@@ -108,7 +108,7 @@ cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sol
 console.log("Texto Limpo:", cleanedField2);
 
 // Regex para capturar as informações de cada entrada (ajuste do regex para flexibilidade)
-let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
+let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+)\s*(Size:\s+(\d+))?\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
 
 // Inicializa o array para armazenar as entradas processadas
 let fieldArray = [];
@@ -118,8 +118,8 @@ let match;
 // Procura as entradas no texto com o regex
 while ((match = minerRegex.exec(cleanedField2)) !== null) {
     // Variáveis para armazenar os dados extraídos
-    let power = parseFloat(match[4].replace(',', '.')); // Power convertido para número
-    let unit = match[5]; // Unidade de Power (Th/s, Ph/s, Gh/s, Eh/s)
+    let power = parseFloat(match[6].replace(',', '.')); // Power convertido para número
+    let unit = match[7]; // Unidade de Power (Th/s, Ph/s, Gh/s, Eh/s)
 
     // Conversão das unidades de medida para Gh/s (somente se necessário)
     if (unit === 'Eh/s') {
@@ -134,15 +134,24 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
     }
     // 'Gh/s' já está em Gh/s, não precisa de alteração
 
+    // Verifique se após "Set" temos "Size" e adicione "0" após "Set" se necessário
+    let setValue = match[3].trim();
+    let sizeValue = match[5] ? match[5].trim() : "";
+
+    // Se "Size" for encontrado, acrescenta 0 após "Set"
+    if (sizeValue) {
+        setValue += " 0";
+    }
+
     // Cada entrada é capturada e organizada no formato desejado
     let minerData = {
         Level: match[1],         // Level
         Nome: match[2].trim(),   // Nome
-        Set: match[3].trim(),    // Set
-        Size: match[3],          // Size
-        Power: power, // Power (em Gh/s) com 3 casas decimais
-        Bonus: match[6].replace(',', '.'),         // Bonus
-        Quantity: match[7]       // Quantity
+        Set: setValue,           // Set (com "0" adicionado, se necessário)
+        Size: sizeValue,         // Size
+        Power: power,            // Power (em Gh/s)
+        Bonus: match[8].replace(',', '.'), // Bonus
+        Quantity: match[9]      // Quantity
     };
 
     // Adiciona os dados ao array
@@ -151,7 +160,6 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
 
 // Exibe o array com os dados processados
 console.log(fieldArray);
-
 
 
     const unifiedArray = [...minerArray];
