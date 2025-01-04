@@ -65,7 +65,7 @@ async function organizar() {
 
     miners.forEach(miner => {
   // Garantir que a quantidade seja convertida para número
-  const quantity = parseInt(miner.quantity, 10) || 1;  // Caso a quantidade não seja um número, assume como 1
+  const quantity = 1;
 
   const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Bonus === miner.bonus_percent / 100);
 
