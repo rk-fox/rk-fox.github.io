@@ -115,8 +115,8 @@ cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sol
 // Exiba o resultado no console para ver o texto processado
 console.log("Texto Limpo:", cleanedField2);
 
-// Regex para capturar as informações de cada entrada
-let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
+// Regex ajustado para capturar as informações de cada entrada
+let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+(\d+)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
 
 // Inicializa o array para armazenar as entradas processadas
 let fieldArray = [];
@@ -142,28 +142,22 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
     }
     // 'Gh/s' já está em Gh/s, não precisa de alteração
 
-    // Verifica quantas vezes "Set" aparece e ajusta a captura de dados
-    let setCount = (match[2].match(/Set/g) || []).length; // Conta quantos "Set" aparecem no nome
+    // Ajuste para Set: pegar o valor entre os termos "Set" e "Size"
+    let set = match[3].trim();  // O valor de Set está em match[3]
 
+    // Ajuste para Nome: pegar o valor antes do termo "Set"
+    let nome = match[2].trim(); // O valor de Nome está em match[2]
+
+    // Cada entrada é capturada e organizada no formato desejado
     let minerData = {
-        Level: match[1], // Level
-        Nome: '',         // Nome
-        Set: '',          // Set
-        Size: match[3],   // Size
-        Power: power,     // Power (em Gh/s)
+        Level: match[1],         // Level
+        Nome: nome,              // Nome (antes de "Set")
+        Set: set,                // Set (entre "Set" e "Size")
+        Size: match[4],          // Size (já capturado em match[4])
+        Power: power,            // Power (em Gh/s) com 3 casas decimais
         Bonus: match[6].replace(',', '.'), // Bonus
-        Quantity: match[7] // Quantity
+        Quantity: match[7]       // Quantity
     };
-
-    if (setCount > 1) {
-        // Se houver mais de um "Set", "Nome" termina antes do primeiro "Set"
-        minerData.Nome = match[2].split('Set')[0].trim(); // Nome antes do primeiro "Set"
-        minerData.Set = match[2].split('Set')[1].trim(); // Set entre "Set" e "Size"
-    } else {
-        // Se houver apenas um "Set", "Nome" termina antes do "Set"
-        minerData.Nome = match[2].split('Set')[0].trim(); // Nome até "Set"
-        minerData.Set = match[2].split('Size')[0].trim(); // Set entre "Set" e "Size"
-    }
 
     // Adiciona os dados ao array
     fieldArray.push(minerData);
