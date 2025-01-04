@@ -198,20 +198,27 @@ console.log("Inventário:", fieldArray);
 
     const unifiedArray = [...minerArray];
 
-    fieldArray.forEach(miner => {
-      const existingMiner = unifiedArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
+// Inicializar um conjunto para verificar se a miner já foi adicionada
+const addedMiners = new Set();
 
-      if (existingMiner) {
-        existingMiner.Quantity += miner.Quantity;
-      } else {
-        unifiedArray.push(miner);
-      }
-    });
+fieldArray.forEach(miner => {
+  const existingMiner = unifiedArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
 
-    // Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
-    unifiedArray.sort((a, b) => b.Power - a.Power);
-    
-    console.log("Unificados:", unifiedArray);
+  if (existingMiner) {
+    // Se a miner já foi adicionada, define o bônus como 0
+    miner.Bonus = 0;
+  } else {
+    // Caso contrário, marca que a miner foi adicionada com o bônus original
+    addedMiners.add(miner.Nome);
+  }
+
+  unifiedArray.push(miner);
+});
+
+// Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
+unifiedArray.sort((a, b) => b.Power - a.Power);
+
+console.log("Unificados:", unifiedArray);
 
     const items = unifiedArray.flatMap(miner => {
   return Array(miner.Quantity).fill({
