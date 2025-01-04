@@ -281,6 +281,7 @@ if (selectedOption === 'op1') {
     console.log("Racks Data:", racks);
     console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
       name: impact.name,
+      level: impact.level,
       power: impact.formattedPower, // Exibe o valor formatado
       bonus_percent: impact.bonus_percent,
       setBonus: impact.setBonus,
