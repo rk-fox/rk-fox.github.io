@@ -70,7 +70,13 @@ function convertPower(value) {
 function getLevelDescription(level) {
         switch (level) {
             case 0: return { text: 'Common', color: '' };
-            case 1: return { text: 'Uncommon', color: '#2bff00' };
+            case 1:
+            if (miner.type === 'merge') {
+                return { text: 'Uncommon', color: '#2bff00' };
+            } else if (miner.type === 'old_merge') {
+                return { text: 'Legacy', color: '#ecab4e' };
+            }
+            break;
             case 2: return { text: 'Rare', color: '#00eaff' };
             case 3: return { text: 'Epic', color: '#ff00bb' };
             case 4: return { text: 'Legendary', color: '#fffb00' };
