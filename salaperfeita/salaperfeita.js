@@ -132,7 +132,6 @@ console.log(cleanedField2);
 
         fieldArray.push(miner);
     }
-}
 
 console.log("Dados do Campo 2:", fieldArray);
 
