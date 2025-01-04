@@ -1,5 +1,30 @@
+document.getElementById("field1").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    organizar(); // Chama a função organizar quando ENTER for pressionado
+  }
+});
+
+document.getElementById("field2").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    organizar(); // Chama a função organizar quando ENTER for pressionado
+  }
+});
+
 async function organizar() {
   try {
+    
+    let maxCapacity = 528; // Valor default
+
+    // Função para atualizar o maxCapacity com base no radio button selecionado
+    function updateMaxCapacity() {
+      const selectedRadio = document.querySelector('input[name="capacity"]:checked');
+      if (selectedRadio) {
+        maxCapacity = parseInt(selectedRadio.value, 10);
+      }
+    }
+    
+    updateMaxCapacity(); // Atualiza maxCapacity com o valor do radio button selecionad
+    
     const userLink = document.getElementById("field1").value.trim();
     if (!userLink) {
       alert("Por favor, insira um valor no Campo 1.");
@@ -179,7 +204,6 @@ console.log("Inventário:", fieldArray);
 
     console.log("Unificados:", unifiedArray);
 
-    const maxCapacity = 528;
     const items = unifiedArray.flatMap(miner => 
       Array(miner.Quantity).fill({
         Power: miner.Power,
