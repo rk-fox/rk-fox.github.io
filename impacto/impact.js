@@ -167,6 +167,7 @@ jsonData.data.miners.forEach(miner => {
     repetitions: isFirst ? "Não" : totalRepetitions, // "Não" para a primeira, total para as subsequentes
     setImpact: 0, // Adiciona o atributo com valor inicial 0
     setBonus: 0, // Adiciona o atributo com valor inicial 0
+    type: miner.type,
   });
 
   minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
