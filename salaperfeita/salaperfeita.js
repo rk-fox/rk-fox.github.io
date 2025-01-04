@@ -202,6 +202,9 @@ console.log("Inventário:", fieldArray);
       }
     });
 
+    // Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
+    unifiedArray.sort((a, b) => b.Power - a.Power);
+    
     console.log("Unificados:", unifiedArray);
 
     const items = unifiedArray.flatMap(miner => 
