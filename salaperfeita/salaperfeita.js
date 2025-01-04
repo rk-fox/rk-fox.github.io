@@ -210,7 +210,7 @@ console.log(fieldArray);
 
     const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
     const totalBonus = (bestSet.reduce((sum, miner) => sum + miner.Bonus, 0)).toFixed(2);
-    const finalPower = totalPower * (1 + (totalBonus/100));
+    const finalPower = (totalPower * (1 + (totalBonus/100))).toFixed(0);
 
     console.log("Melhor conjunto selecionado:", bestSet);
     console.log("Somatório do Power:", totalPower);
