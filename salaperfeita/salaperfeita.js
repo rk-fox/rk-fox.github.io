@@ -102,7 +102,7 @@ for (let i = 0; i < parts.length; i++) {
 let cleanedField2 = resultArray.join(" open ");
 
 // Remova os textos indesejados
-cleanedField2 = cleanedField2.replace(/(set badge|Can be sold|Can't be sold|Miner details|open)/g, '').trim();
+cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sold|Miner details|open)/g, '').trim();
 
 // Exiba o resultado no console
 console.log(cleanedField2);
