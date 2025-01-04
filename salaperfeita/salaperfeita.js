@@ -200,15 +200,18 @@ console.log("Inventário:", fieldArray);
 const seenMiners = new Map(); // Usado para verificar e armazenar miners já processadas
 
 fieldArray.forEach(miner => {
-  // Verifica se a miner já foi adicionada ao conjunto
-  if (seenMiners.has(miner.Nome)) {
-    // Se já foi, cria uma nova instância com bônus 0
-    const newMiner = { ...miner, Bonus: 0 }; // Clonando o objeto e alterando o bônus
+  // Cria uma chave única para identificar o miner, considerando Nome, Power e Bonus
+  const minerKey = `${miner.Nome}-${miner.Power}-${miner.Bonus}`;
+
+  // Verifica se a combinação Nome-Power-Bonus já foi vista
+  if (seenMiners.has(minerKey)) {
+    // Se já foi, cria uma nova instância com bônus 0, mas não altera o nome, power e bonus
+    const newMiner = { ...miner, Bonus: 0 }; // Clonando o objeto e alterando o bônus para 0
     unifiedArray.push(newMiner);
   } else {
     // Se não foi, mantém o bônus original e adiciona a miner
     unifiedArray.push(miner);
-    seenMiners.set(miner.Nome, true); // Marca que essa miner foi processada
+    seenMiners.set(minerKey, true); // Marca que essa combinação foi processada
   }
 });
 
