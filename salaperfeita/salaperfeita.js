@@ -72,7 +72,7 @@ let resultArray = [];
 
 // Verifique se a primeira entrada começa com número; caso contrário, adicione "0"
 if (!/^\d/.test(parts[0].trim())) {
-    parts[0] = "0 " + parts[0];
+    parts[0] = "Level 0 " + parts[0];
 }
 
 // Itere pelas partes para processar o conteúdo
@@ -84,8 +84,9 @@ for (let i = 0; i < parts.length; i++) {
         // Se a próxima parte não começar com um número, insira "0"
         let nextPartStartsWithNumber = /^\d/.test(parts[i + 1].trim());
         if (!nextPartStartsWithNumber) {
-            parts[i + 1] = "0 " + parts[i + 1];
-        }
+            parts[i + 1] = "Level 0 " + parts[i + 1];
+        } else {
+            parts[i + 1] = "Level " + parts[i + 1];
     }
 
     // Adicione a parte processada ao array de resultados
