@@ -67,12 +67,13 @@ async function organizar() {
   // Garantir que a quantidade seja convertida para número
   const quantity = 1;
 
-  const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Bonus === miner.bonus_percent / 100);
+  const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Level === miner.level);
 
   if (existingMiner) {
     existingMiner.Quantity += quantity;  // Incrementa a quantidade corretamente
   } else {
     minerArray.push({
+      Level: miner.level,
       Nome: miner.name,
       Power: miner.power,
       Bonus: miner.bonus_percent / 100,
@@ -207,10 +208,11 @@ console.log("Inventário:", fieldArray);
 
     const items = unifiedArray.flatMap(miner => 
       Array(miner.Quantity).fill({
+        Level: miner.Level,
+        Nome: miner.Nome,
         Power: miner.Power,
         Bonus: miner.Bonus,
-        Size: miner.Size,
-        Nome: miner.Nome,
+        Size: miner.Size,        
       })
     );
 
