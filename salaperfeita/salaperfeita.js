@@ -217,7 +217,8 @@ unifiedArray.sort((a, b) => b.Power - a.Power);
 
 console.log("Unificados:", unifiedArray);
 
-    const items = unifiedArray.flatMap(miner => {
+// A lógica de distribuição das miners dentro do dp e selection parece estar correta
+const items = unifiedArray.flatMap(miner => {
   return Array(miner.Quantity).fill({
     Level: miner.Level,
     Nome: miner.Nome,
@@ -233,8 +234,8 @@ console.log("Unificados:", unifiedArray);
   });
 });
 
-
-    const dp = Array.from({ length: maxCapacity + 1 }, () => 0);
+// Lógica de otimização (Knapsack)
+const dp = Array.from({ length: maxCapacity + 1 }, () => 0);
 const selected = Array.from({ length: maxCapacity + 1 }, () => []);
 
 for (const item of items) {
