@@ -134,11 +134,11 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
     }
     // 'Gh/s' já está em Gh/s, não precisa de alteração
 
-    // Verifique se após "Set" temos "Size" e adicione "0" após "Set" se necessário
+    // Verifique se após "Set" temos "Size" e adicione "0" após "Set" somente se necessário
     let setValue = match[3].trim();
     let sizeValue = match[5] ? match[5].trim() : "";
 
-    // Se "Size" for encontrado, acrescenta 0 após "Set"
+    // Se "Size" for encontrado após "Set", acrescenta "0" após "Set"
     if (sizeValue) {
         setValue += " 0";
     }
@@ -147,7 +147,7 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
     let minerData = {
         Level: match[1],         // Level
         Nome: match[2].trim(),   // Nome
-        Set: setValue,           // Set (com "0" adicionado, se necessário)
+        Set: setValue,           // Set (modificado com "0" apenas se "Size" existir)
         Size: sizeValue,         // Size
         Power: power,            // Power (em Gh/s)
         Bonus: match[8].replace(',', '.'), // Bonus
@@ -160,7 +160,6 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
 
 // Exibe o array com os dados processados
 console.log(fieldArray);
-
 
     const unifiedArray = [...minerArray];
 
