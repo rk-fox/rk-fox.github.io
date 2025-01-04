@@ -108,35 +108,39 @@ cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sol
 console.log(cleanedField2);
 
     // Passo 3: Aplicar regex para extrair dados
-    const minerRegex = /^(?:(\d+)|0)\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
-    let match;
+    const minerRegex = /^(?:Level\s+(\d+)|0)\s+([A-Za-z\s\-’]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
 
-    while ((match = minerRegex.exec(cleanedField2)) !== null) {
-        const level = parseInt(match[1], 10);
-        let power = parseFloat(match[4].replace(',', '.'));
-        const unit = match[5];
+let match;
+const fieldArray = [];
 
-        // Converter unidades de medida
-        if (unit === 'Th/s') {
-            power *= 1000;
-        } else if (unit === 'Ph/s') {
-            power *= 1000000;
-        } else if (unit === 'Eh/s') {
-            power *= 1000000000;
-        }
+while ((match = minerRegex.exec(cleanedField2)) !== null) {
+    const level = parseInt(match[1], 10) || 0; // Garantir que o nível seja 0 se não for definido
+    let power = parseFloat(match[4].replace(',', '.')); // Substituir vírgula por ponto
+    const unit = match[5];
 
-        // Criar objeto minerador
-        const miner = {
-            Level: level,
-            Nome: match[2].trim(),
-            Size: parseInt(match[3], 10),
-            Power: power,
-            Bonus: parseFloat(match[6]),
-            Quantity: parseInt(match[7], 10),
-        };
-
-        fieldArray.push(miner);
+    // Converter unidades de medida para TH/s
+    if (unit === 'Ph/s') {
+        power *= 1000;
+    } else if (unit === 'Eh/s') {
+        power *= 1000000;
+    } else if (unit === 'Th/s') {
+        // Sem alteração; já está em TH/s
+    } else if (unit === 'Gh/s') {
+        power /= 1000;
     }
+
+    // Criar objeto minerador
+    const miner = {
+        Level: level,
+        Nome: match[2].trim(), // Remover espaços extras
+        Size: parseInt(match[3], 10),
+        Power: power.toFixed(2), // Padronizar para duas casas decimais
+        Bonus: parseFloat(match[6]),
+        Quantity: parseInt(match[7], 10),
+    };
+
+    fieldArray.push(miner);
+}
 
 console.log("Dados do Campo 2:", fieldArray);
 
