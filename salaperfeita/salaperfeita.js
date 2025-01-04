@@ -213,42 +213,50 @@ console.log("Inventário:", fieldArray);
     
     console.log("Unificados:", unifiedArray);
 
-    const items = unifiedArray.flatMap(miner => 
-      Array(miner.Quantity).fill({
-        Level: miner.Level,
-        Nome: miner.Nome,
-        Power: miner.Power,
-        Bonus: miner.Bonus,
-        Size: miner.Size,        
-      })
-    );
+    const items = unifiedArray.flatMap(miner => {
+  return Array(miner.Quantity).fill({
+    Level: miner.Level,
+    Nome: miner.Nome,
+    Power: miner.Power,
+    Bonus: miner.Bonus, // Este será o bônus original para o primeiro miner
+    Size: miner.Size,
+  }).map((item, index) => {
+    // Se não for o primeiro item da mesma miner_id, define o bônus como 0
+    if (index > 0) {
+      item.Bonus = 0;
+    }
+    return item;
+  });
+});
+
 
     const dp = Array.from({ length: maxCapacity + 1 }, () => 0);
-    const selected = Array.from({ length: maxCapacity + 1 }, () => []);
+const selected = Array.from({ length: maxCapacity + 1 }, () => []);
 
-    for (const item of items) {
-      for (let size = maxCapacity; size >= item.Size; size--) {
-        const value = item.Power * (1 + (item.Bonus/100));
-        if (dp[size - item.Size] + value > dp[size]) {
-          dp[size] = dp[size - item.Size] + value;
-          selected[size] = [...selected[size - item.Size], item];
-        }
-      }
+for (const item of items) {
+  for (let size = maxCapacity; size >= item.Size; size--) {
+    const value = item.Power * (1 + (item.Bonus / 100)); // Aplica o bônus corretamente
+    if (dp[size - item.Size] + value > dp[size]) {
+      dp[size] = dp[size - item.Size] + value;
+      selected[size] = [...selected[size - item.Size], item];
     }
+  }
+}
 
-    const bestSet = selected[maxCapacity];
+const bestSet = selected[maxCapacity];
 
-    // Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
-    bestSet.sort((a, b) => b.Power - a.Power);
+// Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
+bestSet.sort((a, b) => b.Power - a.Power);
 
-    const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
-    const totalBonus = (bestSet.reduce((sum, miner) => sum + miner.Bonus, 0)).toFixed(2);
-    const finalPower = (totalPower * (1 + (totalBonus/100))).toFixed(0);
+const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
+const totalBonus = (bestSet.reduce((sum, miner) => sum + miner.Bonus, 0)).toFixed(2);
+const finalPower = (totalPower * (1 + (totalBonus / 100))).toFixed(0);
 
-    console.log("Otimização:", bestSet);
-    console.log("Total Miners Power:", totalPower);
-    console.log("Total Miners Bonus:", totalBonus);
-    console.log("PODER TOTAL:", finalPower);
+console.log("Otimização:", bestSet);
+console.log("Total Miners Power:", totalPower);
+console.log("Total Miners Bonus:", totalBonus);
+console.log("PODER TOTAL:", finalPower);
+
 
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
