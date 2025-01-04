@@ -69,6 +69,7 @@ let parts = fieldContent.split(/open\s*/);
 
 // Inicialize o array para armazenar os resultados
 let resultArray = [];
+let appliedSetCondition = false;  // Flag para garantir que a condicional seja aplicada apenas uma vez por entrada
 
 // Verifique se a primeira entrada começa com número; caso contrário, adicione "Level 0"
 if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
@@ -82,16 +83,16 @@ for (let i = 0; i < parts.length; i++) {
     // Pule entradas vazias
     if (!currentPart) continue;
 
-    // Verifique o início da próxima parte
-    if (i < parts.length - 1) { // Exceto o último elemento
-        let nextPart = parts[i + 1].trim();
-
-        // Se a próxima parte não começar com um número, insira "Level 0"
-        if (nextPart && !/^\d/.test(nextPart)) {
-            parts[i + 1] = "Level 0 " + parts[i + 1];
-        } else if (nextPart) {
-            parts[i + 1] = "Level " + parts[i + 1];
-        }
+    // Verifique se a entrada contém "Set" e "Size"
+    if (!appliedSetCondition && currentPart.includes('Set') && currentPart.includes('Size') && currentPart.match(/Set\s+(\S+)\s+Size/)) {
+        // Se "Set" estiver vazio e seguido de "Size", adicione 0
+        currentPart = currentPart.replace(/Set\s+(\S*)\s+Size/, function(match, setValue) {
+            if (!setValue.trim()) {
+                return "Set 0 Size";  // Adiciona "0" após "Set" se ele estiver vazio
+            }
+            return match; // Caso contrário, mantém o valor de "Set" como está
+        });
+        appliedSetCondition = true;  // Marque que a condicional foi aplicada
     }
 
     // Adicione a parte processada ao array de resultados
@@ -138,17 +139,16 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
     let setValue = match[3].trim();
     let sizeValue = match[5] ? match[5].trim() : "";
 
-    // Condição corrigida: Se após Set vem "Size", só acrescentar "0" caso "Size" seja encontrado
-    if (sizeValue && setValue.toLowerCase().indexOf('set') === setValue.toLowerCase().lastIndexOf('set')) {
-        // Só adiciona 0 se não houver outra ocorrência de "Set" após a palavra
-        setValue += " 0";
+    // Condição para verificar se Set está vazio e seguido de "Size"
+    if (!setValue && sizeValue) {
+        setValue = "Set 0"; // Adiciona "0" somente se "Set" estiver vazio e seguido de "Size"
     }
 
     // Cada entrada é capturada e organizada no formato desejado
     let minerData = {
         Level: match[1],         // Level
         Nome: match[2].trim(),   // Nome
-        Set: setValue,           // Set (modificado com "0" apenas se "Size" existir)
+        Set: setValue,           // Set (com a adição de "0" se necessário)
         Size: sizeValue,         // Size
         Power: power,            // Power (em Gh/s)
         Bonus: match[8].replace(',', '.'), // Bonus
