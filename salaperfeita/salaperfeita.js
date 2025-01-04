@@ -124,13 +124,13 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
     // Conversão das unidades de medida para Gh/s (somente se necessário)
     if (unit === 'Eh/s') {
         power *= 1000000000; // Eh/s para Gh/s
-        unit = 'Th/s';  // Atualiza para Gh/s após a conversão
+        unit = 'Gh/s';  // Atualiza para Gh/s após a conversão
     } else if (unit === 'Ph/s') {
         power *= 1000000; // Ph/s para Gh/s
-        unit = 'Th/s';  // Atualiza para Gh/s após a conversão
+        unit = 'Gh/s';  // Atualiza para Gh/s após a conversão
     } else if (unit === 'Th/s') {
-        power /= 1000; // Th/s para Gh/s
-        unit = 'Th/s';  // Atualiza para Gh/s após a conversão
+        power *= 1000; // Th/s para Gh/s
+        unit = 'Gh/s';  // Atualiza para Gh/s após a conversão
     }
     // 'Gh/s' já está em Gh/s, não precisa de alteração
 
@@ -141,7 +141,6 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
         Set: match[3].trim(),    // Set
         Size: match[3],          // Size
         Power: power, // Power (em Gh/s) com 3 casas decimais
-        Unit: unit,              // A unidade agora pode ser Th/s, Ph/s, Gh/s, ou Eh/s
         Bonus: match[6].replace(',', '.'),         // Bonus
         Quantity: match[7]       // Quantity
     };
