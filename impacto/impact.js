@@ -297,7 +297,7 @@ if (selectedOption === 'op1') {
 
       const updateElement = (index, miner) => {
                 if (miner) {
-                    const levelInfo = getLevelDescription(miner.level);
+                    const levelInfo = getLevelDescription(miner.level , miner.type);
                     const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
                     document.getElementById(`nome${index}`).innerHTML = levelSpan;
                     document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
