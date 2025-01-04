@@ -70,8 +70,8 @@ let parts = fieldContent.split(/open\s*/);
 // Inicialize o array para armazenar os resultados
 let resultArray = [];
 
-// Verifique se a primeira entrada começa com número; caso contrário, adicione "0"
-if (!/^\d/.test(parts[0].trim())) {
+// Verifique se a primeira entrada começa com número; caso contrário, adicione "Level 0"
+if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
     parts[0] = "Level 0 " + parts[0];
 }
 
@@ -79,13 +79,17 @@ if (!/^\d/.test(parts[0].trim())) {
 for (let i = 0; i < parts.length; i++) {
     let currentPart = parts[i].trim(); // Remove espaços extras
 
+    // Pule entradas vazias
+    if (!currentPart) continue;
+
     // Verifique o início da próxima parte
     if (i < parts.length - 1) { // Exceto o último elemento
-        // Se a próxima parte não começar com um número, insira "0"
-        let nextPartStartsWithNumber = /^\d/.test(parts[i + 1].trim());
-        if (!nextPartStartsWithNumber) {
+        let nextPart = parts[i + 1].trim();
+
+        // Se a próxima parte não começar com um número, insira "Level 0"
+        if (nextPart && !/^\d/.test(nextPart)) {
             parts[i + 1] = "Level 0 " + parts[i + 1];
-        } else {
+        } else if (nextPart) {
             parts[i + 1] = "Level " + parts[i + 1];
         }
     }
@@ -102,7 +106,6 @@ cleanedField2 = cleanedField2.replace(/(set badge|Can be sold|Can't be sold|Mine
 
 // Exiba o resultado no console
 console.log(cleanedField2);
-
 
     // Passo 3: Aplicar regex para extrair dados
     const minerRegex = /^(?:(\d+)|0)\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
