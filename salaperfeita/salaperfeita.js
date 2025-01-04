@@ -87,6 +87,7 @@ for (let i = 0; i < parts.length; i++) {
             parts[i + 1] = "Level 0 " + parts[i + 1];
         } else {
             parts[i + 1] = "Level " + parts[i + 1];
+        }
     }
 
     // Adicione a parte processada ao array de resultados
