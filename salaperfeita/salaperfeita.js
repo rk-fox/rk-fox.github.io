@@ -228,6 +228,9 @@ console.log("Inventário:", fieldArray);
 
     const bestSet = selected[maxCapacity];
 
+    // Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
+    bestSet.sort((a, b) => b.Power - a.Power);
+
     const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
     const totalBonus = (bestSet.reduce((sum, miner) => sum + miner.Bonus, 0)).toFixed(2);
     const finalPower = (totalPower * (1 + (totalBonus/100))).toFixed(0);
