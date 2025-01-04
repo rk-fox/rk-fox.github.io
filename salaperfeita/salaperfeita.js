@@ -209,7 +209,7 @@ console.log(fieldArray);
     const bestSet = selected[maxCapacity];
 
     const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
-    const totalBonus = bestSet.reduce((sum, miner) => sum + miner.Bonus, 0);
+    const totalBonus = (bestSet.reduce((sum, miner) => sum + miner.Bonus, 0)).toFixed(2);
     const finalPower = totalPower * (1 + (totalBonus/100));
 
     console.log("Melhor conjunto selecionado:", bestSet);
@@ -217,10 +217,6 @@ console.log(fieldArray);
     console.log("Somatório do Bonus:", totalBonus);
     console.log("Resultado Final (Power * (1 + (Bonus/100))):", finalPower);
 
-    alert(`Processamento concluído! 
-      - Somatório do Power: ${totalPower} 
-      - Somatório do Bônus: ${(totalBonus)}% 
-      - Resultado Final: ${finalPower}`);
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
     alert("Ocorreu um erro ao processar os dados. Verifique o console para mais informações.");
