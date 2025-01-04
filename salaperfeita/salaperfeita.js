@@ -61,29 +61,36 @@ async function organizar() {
       return;
     }
 
-    const minerArray = [];
+   // Inicializar o array
+const minerArray = [];
 
-    miners.forEach(miner => {
-  // Garantir que a quantidade seja convertida para número
+// Iterar sobre os miners
+miners.forEach(miner => {
+  // Quantidade inicial sempre 1
   const quantity = 1;
 
+  // Encontrar mineradora existente pelo miner_id
   const existingMiner = minerArray.find(m => m.miner_id === miner.miner_id);
 
   if (existingMiner) {
-    existingMiner.Quantity += quantity;  // Incrementa a quantidade corretamente
+    // Incrementar a quantidade se já existir
+    existingMiner.Quantity += quantity;
   } else {
+    // Adicionar uma nova mineradora ao array
     minerArray.push({
+      miner_id: miner.miner_id,  // Adiciona o miner_id para comparação futura
       Level: miner.level,
       Nome: miner.name,
       Power: miner.power,
       Bonus: miner.bonus_percent / 100,
       Size: miner.width,
-      Quantity: parseInt(quantity), // Armazena a quantidade corretamente como número
+      Quantity: quantity
     });
   }
 });
 
-    console.log("Salas:", minerArray);
+// Exibir o resultado
+console.log("Salas:", minerArray);
 
 // Supondo que `field2` seja o campo de texto
 let fieldContent = document.getElementById('field2').value;
