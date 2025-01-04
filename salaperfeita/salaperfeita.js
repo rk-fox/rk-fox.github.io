@@ -116,7 +116,7 @@ let fieldArray = [];
 let match;
 
 // Procura as entradas no texto com o regex
-while ((match = minerRegex.exec(cleanField2)) !== null) {
+while ((match = minerRegex.exec(cleanedField2)) !== null) {
     // Variáveis para armazenar os dados extraídos
     let power = parseFloat(match[5].replace(',', '.')); // Power convertido para número
     let unit = match[6]; // Unidade de Power (Th/s, Ph/s, Gh/s, Eh/s)
