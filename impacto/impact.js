@@ -71,9 +71,9 @@ function getLevelDescription(level, type) {
         switch (level) {
             case 0: return { text: 'Common', color: '' };
             case 1:
-            if (miner.type === 'merge') {
+            if (type === 'merge') {
                 return { text: 'Uncommon', color: '#2bff00' };
-            } else if (miner.type === 'old_merge') {
+            } else if (type === 'old_merge') {
                 return { text: 'Legacy', color: '#ecab4e' };
             }
             break;
