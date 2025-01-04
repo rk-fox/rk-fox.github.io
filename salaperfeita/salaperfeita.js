@@ -61,17 +61,46 @@ async function organizar() {
 
     console.log("Dados da API:", minerArray);
 
-    const field2 = document.getElementById("field2").value.trim();
-const fieldArray = [];
+    // Supondo que `field2` seja o campo de texto
+let fieldContent = document.getElementById('field2').value;
 
-if (field2) {
-    // Passo 1: Remover ocorrências indesejadas
-    let cleanedField2 = field2.replace(/\b(Can't be sold|Miner details|open|Can be sold)\b/gi, '').trim();
+// Divida o texto em partes separadas por "open"
+let parts = fieldContent.split(/open\s*/);
 
-  console.log(cleanedField2);
+// Inicialize o array para armazenar os resultados
+let resultArray = [];
 
-    // Passo 2: Adicionar "0 " antes de mineradores sem número no início
-    cleanedField2 = cleanedField2.replace(/^(?=[A-Za-z])/gm, '0 ');
+// Verifique se a primeira entrada começa com número; caso contrário, adicione "0"
+if (!/^\d/.test(parts[0].trim())) {
+    parts[0] = "0 " + parts[0];
+}
+
+// Itere pelas partes para processar o conteúdo
+for (let i = 0; i < parts.length; i++) {
+    let currentPart = parts[i].trim(); // Remove espaços extras
+
+    // Verifique o início da próxima parte
+    if (i < parts.length - 1) { // Exceto o último elemento
+        // Se a próxima parte não começar com um número, insira "0"
+        let nextPartStartsWithNumber = /^\d/.test(parts[i + 1].trim());
+        if (!nextPartStartsWithNumber) {
+            parts[i + 1] = "0 " + parts[i + 1];
+        }
+    }
+
+    // Adicione a parte processada ao array de resultados
+    resultArray.push(currentPart);
+}
+
+// Opcional: converta o array novamente em uma string
+let cleanedField2 = resultArray.join(" open ");
+
+// Remova os textos indesejados
+cleanedField2 = cleanedField2.replace(/(set badge|Can be sold|Can't be sold|Miner details|open)/g, '').trim();
+
+// Exiba o resultado no console
+console.log(cleanedField2);
+
 
     // Passo 3: Aplicar regex para extrair dados
     const minerRegex = /^(?:(\d+)|0)\s+([A-Za-z\s]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
