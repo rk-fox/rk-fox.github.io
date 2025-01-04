@@ -77,7 +77,7 @@ async function organizar() {
       Power: miner.power,
       Bonus: miner.bonus_percent / 100,
       Size: miner.width,
-      Quantity: quantity  // Armazena a quantidade corretamente como número
+      Quantity: parseInt(quantity), // Armazena a quantidade corretamente como número
     });
   }
 });
