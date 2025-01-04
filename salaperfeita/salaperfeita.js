@@ -104,45 +104,50 @@ let cleanedField2 = resultArray.join(" open ");
 // Remova os textos indesejados
 cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sold|Miner details|open)/g, '').trim();
 
-// Exiba o resultado no console
-console.log(cleanedField2);
+// Exiba o resultado no console para ver o texto processado
+console.log("Texto Limpo:", cleanedField2);
 
-    // Passo 3: Aplicar regex para extrair dados
-    const minerRegex = /^(?:Level\s+(\d+)|0)\s+([A-Za-z\s\-’]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
+// Aplicar regex para extrair dados
+const minerRegex = /^(?:Level\s+(\d+)|0)\s+([A-Za-z\s\-’]+?)\s+Set\s+Size:\s+(\d+)\s+Cells\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
 
 let match;
 const fieldArray = [];
 
-while ((match = minerRegex.exec(cleanedField2)) !== null) {
-    const level = parseInt(match[1], 10) || 0; // Garantir que o nível seja 0 se não for definido
-    let power = parseFloat(match[4].replace(',', '.')); // Substituir vírgula por ponto
-    const unit = match[5];
+// Certifique-se de que cleanedField2 possui dados
+if (cleanedField2) {
+    while ((match = minerRegex.exec(cleanedField2)) !== null) {
+        const level = parseInt(match[1], 10) || 0; // Garantir que o nível seja 0 se não for definido
+        let power = parseFloat(match[4].replace(',', '.')); // Substituir vírgula por ponto
+        const unit = match[5];
 
-    // Converter unidades de medida para TH/s
-    if (unit === 'Ph/s') {
-        power *= 1000;
-    } else if (unit === 'Eh/s') {
-        power *= 1000000;
-    } else if (unit === 'Th/s') {
-        // Sem alteração; já está em TH/s
-    } else if (unit === 'Gh/s') {
-        power /= 1000;
+        // Converter unidades de medida para TH/s
+        if (unit === 'Ph/s') {
+            power *= 1000;
+        } else if (unit === 'Eh/s') {
+            power *= 1000000;
+        } else if (unit === 'Th/s') {
+            // Sem alteração; já está em TH/s
+        } else if (unit === 'Gh/s') {
+            power /= 1000;
+        }
+
+        // Criar objeto minerador
+        const miner = {
+            Level: level,
+            Nome: match[2].trim(), // Remover espaços extras
+            Size: parseInt(match[3], 10),
+            Power: parseFloat(power.toFixed(2)), // Padronizar para duas casas decimais
+            Bonus: parseFloat(match[6]),
+            Quantity: parseInt(match[7], 10),
+        };
+
+        fieldArray.push(miner);
     }
-
-    // Criar objeto minerador
-    const miner = {
-        Level: level,
-        Nome: match[2].trim(), // Remover espaços extras
-        Size: parseInt(match[3], 10),
-        Power: power.toFixed(2), // Padronizar para duas casas decimais
-        Bonus: parseFloat(match[6]),
-        Quantity: parseInt(match[7], 10),
-    };
-
-    fieldArray.push(miner);
 }
 
-console.log("Dados do Campo 2:", fieldArray);
+// Verifique o array final
+console.log("Array de Mineradores:", fieldArray);
+
 
     const unifiedArray = [...minerArray];
 
