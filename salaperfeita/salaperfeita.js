@@ -196,51 +196,24 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
 // Exibe o array com os dados processados
 console.log("Inventário:", fieldArray);
 
-const unifiedArray = [...minerArray]; // Miner array original
-const finalArray = []; // Array final onde miner será dividido e atualizado
+    const unifiedArray = [...minerArray];
 
-unifiedArray.forEach(miner => {
-  // Verifique se a combinação Nome, Power e Bonus já existe no finalArray
-  const existingMiner = finalArray.find(m => m.Nome === miner.Nome && m.Power === miner.Power);
+    fieldArray.forEach(miner => {
+      const existingMiner = unifiedArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
 
-  if (existingMiner) {
-    // Se já existe a combinação, trata a primeira entrada e a repetição com bonus 0
-    if (miner.Bonus > 0) {
-      // Se o Bonus for diferente de zero, criamos a entrada inicial
-      existingMiner.Quantity += miner.Quantity;
-    } else {
-      // Caso contrário, cria-se uma nova entrada com o Bonus 0
-      finalArray.push({
-        miner_id: miner.miner_id,
-        Level: miner.Level,
-        Nome: miner.Nome,
-        Power: miner.Power,
-        Bonus: 0,
-        Size: miner.Size,
-        Quantity: miner.Quantity
-      });
-    }
-  } else {
-    // Se a combinação não existe, adicionamos uma nova entrada
-    finalArray.push({
-      miner_id: miner.miner_id,
-      Level: miner.Level,
-      Nome: miner.Nome,
-      Power: miner.Power,
-      Bonus: miner.Bonus,
-      Size: miner.Size,
-      Quantity: miner.Quantity
+      if (existingMiner) {
+        existingMiner.Quantity += miner.Quantity;
+      } else {
+        unifiedArray.push(miner);
+      }
     });
-  }
-});
 
-// Ordenar a lista do maior para o menor poder
-finalArray.sort((a, b) => b.Power - a.Power);
+    // Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
+    unifiedArray.sort((a, b) => b.Power - a.Power);
     
-console.log("Unificados:", finalArray);
+    console.log("Unificados:", unifiedArray);
 
-
-const items = finalArray.flatMap(miner => 
+    const items = unifiedArray.flatMap(miner => 
       Array(miner.Quantity).fill({
         Level: miner.Level,
         Nome: miner.Nome,
