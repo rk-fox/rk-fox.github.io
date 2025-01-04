@@ -217,7 +217,7 @@ console.log(fieldArray);
 
     alert(`Processamento concluído! 
       - Somatório do Power: ${totalPower} 
-      - Somatório do Bônus: ${(totalBonus).toFixed(2)}% 
+      - Somatório do Bônus: ${(totalBonus)}% 
       - Resultado Final: ${finalPower}`);
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
