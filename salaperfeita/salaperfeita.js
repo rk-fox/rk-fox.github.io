@@ -59,7 +59,7 @@ async function organizar() {
       }
     });
 
-    console.log("Dados da API:", minerArray);
+    console.log("Salas:", minerArray);
 
 // Supondo que `field2` seja o campo de texto
 let fieldContent = document.getElementById('field2').value;
@@ -114,9 +114,6 @@ let cleanedField2 = resultArray.join(" open ");
 // Remova os textos indesejados
 cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sold|Miner details|open)/g, '').trim();
 
-// Exiba o resultado no console para ver o texto processado
-console.log("Texto Limpo:", cleanedField2);
-
 // Regex ajustado para capturar as informações de cada entrada
 let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+?)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
 
@@ -166,8 +163,7 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
 }
 
 // Exibe o array com os dados processados
-console.log(fieldArray);
-
+console.log("Inventário:", fieldArray);
 
     const unifiedArray = [...minerArray];
 
@@ -181,7 +177,7 @@ console.log(fieldArray);
       }
     });
 
-    console.log("Array Unificado:", unifiedArray);
+    console.log("Unificados:", unifiedArray);
 
     const maxCapacity = 528;
     const items = unifiedArray.flatMap(miner => 
@@ -212,10 +208,10 @@ console.log(fieldArray);
     const totalBonus = (bestSet.reduce((sum, miner) => sum + miner.Bonus, 0)).toFixed(2);
     const finalPower = (totalPower * (1 + (totalBonus/100))).toFixed(0);
 
-    console.log("Melhor conjunto selecionado:", bestSet);
-    console.log("Somatório do Power:", totalPower);
-    console.log("Somatório do Bonus:", totalBonus);
-    console.log("Resultado Final (Power * (1 + (Bonus/100))):", finalPower);
+    console.log("Otimização:", bestSet);
+    console.log("Total Miners Power:", totalPower);
+    console.log("Total Miners Bonus:", totalBonus);
+    console.log("PODER TOTAL:", finalPower);
 
   } catch (error) {
     console.error("Erro ao organizar os dados:", error);
