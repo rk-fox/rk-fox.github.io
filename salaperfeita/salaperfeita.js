@@ -73,6 +73,8 @@ let resultArray = [];
 // Verifique se a primeira entrada começa com número; caso contrário, adicione "Level 0"
 if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
     parts[0] = "Level 0 " + parts[0];
+} else {
+    parts[0] = "Level " + parts[0];
 }
     
 // Itere pelas partes para processar o conteúdo
