@@ -69,12 +69,6 @@ let parts = fieldContent.split(/open\s*/);
 
 // Inicialize o array para armazenar os resultados
 let resultArray = [];
-let appliedSetCondition = false;  // Flag para garantir que a condicional seja aplicada apenas uma vez por entrada
-
-// Verifique se a primeira entrada começa com número; caso contrário, adicione "Level 0"
-if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
-    parts[0] = "Level 0 " + parts[0];
-}
 
 // Itere pelas partes para processar o conteúdo
 for (let i = 0; i < parts.length; i++) {
@@ -83,16 +77,24 @@ for (let i = 0; i < parts.length; i++) {
     // Pule entradas vazias
     if (!currentPart) continue;
 
-    // Verifique se a entrada contém "Set" e "Size"
-    if (!appliedSetCondition && currentPart.includes('Set') && currentPart.includes('Size') && currentPart.match(/Set\s+(\S+)\s+Size/)) {
-        // Se "Set" estiver vazio e seguido de "Size", adicione 0
-        currentPart = currentPart.replace(/Set\s+(\S*)\s+Size/, function(match, setValue) {
-            if (!setValue.trim()) {
-                return "Set 0 Size";  // Adiciona "0" após "Set" se ele estiver vazio
-            }
-            return match; // Caso contrário, mantém o valor de "Set" como está
-        });
-        appliedSetCondition = true;  // Marque que a condicional foi aplicada
+    // Contar quantas vezes "Set" aparece na parte atual
+    let setCount = (currentPart.match(/Set/g) || []).length;
+
+    // Se houver exatamente um "Set", adicionar "0" entre "Set" e "Size"
+    if (setCount === 1) {
+        currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, '$1 0 $2 $3');
+    }
+
+    // Verifique o início da próxima parte
+    if (i < parts.length - 1) { // Exceto o último elemento
+        let nextPart = parts[i + 1].trim();
+
+        // Se a próxima parte não começar com um número, insira "Level 0"
+        if (nextPart && !/^\d/.test(nextPart)) {
+            parts[i + 1] = "Level 0 " + parts[i + 1];
+        } else if (nextPart) {
+            parts[i + 1] = "Level " + parts[i + 1];
+        }
     }
 
     // Adicione a parte processada ao array de resultados
@@ -109,7 +111,7 @@ cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sol
 console.log("Texto Limpo:", cleanedField2);
 
 // Regex para capturar as informações de cada entrada (ajuste do regex para flexibilidade)
-let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+)\s*(Size:\s+(\d+))?\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
+let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
 
 // Inicializa o array para armazenar as entradas processadas
 let fieldArray = [];
@@ -119,8 +121,8 @@ let match;
 // Procura as entradas no texto com o regex
 while ((match = minerRegex.exec(cleanedField2)) !== null) {
     // Variáveis para armazenar os dados extraídos
-    let power = parseFloat(match[6].replace(',', '.')); // Power convertido para número
-    let unit = match[7]; // Unidade de Power (Th/s, Ph/s, Gh/s, Eh/s)
+    let power = parseFloat(match[4].replace(',', '.')); // Power convertido para número
+    let unit = match[5]; // Unidade de Power (Th/s, Ph/s, Gh/s, Eh/s)
 
     // Conversão das unidades de medida para Gh/s (somente se necessário)
     if (unit === 'Eh/s') {
@@ -135,24 +137,15 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
     }
     // 'Gh/s' já está em Gh/s, não precisa de alteração
 
-    // Verifique se após "Set" temos "Size" e adicione "0" após "Set" somente se necessário
-    let setValue = match[3].trim();
-    let sizeValue = match[5] ? match[5].trim() : "";
-
-    // Condição para verificar se Set está vazio e seguido de "Size"
-    if (!setValue && sizeValue) {
-        setValue = "Set 0"; // Adiciona "0" somente se "Set" estiver vazio e seguido de "Size"
-    }
-
     // Cada entrada é capturada e organizada no formato desejado
     let minerData = {
         Level: match[1],         // Level
         Nome: match[2].trim(),   // Nome
-        Set: setValue,           // Set (com a adição de "0" se necessário)
-        Size: sizeValue,         // Size
-        Power: power,            // Power (em Gh/s)
-        Bonus: match[8].replace(',', '.'), // Bonus
-        Quantity: match[9]      // Quantity
+        Set: match[3].trim(),    // Set
+        Size: match[3],          // Size
+        Power: power,            // Power (em Gh/s) com 3 casas decimais
+        Bonus: match[6].replace(',', '.'),         // Bonus
+        Quantity: match[7]       // Quantity
     };
 
     // Adiciona os dados ao array
@@ -161,6 +154,7 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
 
 // Exibe o array com os dados processados
 console.log(fieldArray);
+
 
     const unifiedArray = [...minerArray];
 
