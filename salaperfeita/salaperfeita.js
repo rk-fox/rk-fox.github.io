@@ -158,11 +158,11 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
     if (setCount > 1) {
         // Se houver mais de um "Set", "Nome" termina antes do primeiro "Set"
         minerData.Nome = match[2].split('Set')[0].trim(); // Nome antes do primeiro "Set"
-        minerData.Set = "Set " + match[2].split('Set')[1].trim(); // Set entre "Set" e "Size"
+        minerData.Set = match[2].split('Set')[1].trim(); // Set entre "Set" e "Size"
     } else {
         // Se houver apenas um "Set", "Nome" termina antes do "Set"
-        minerData.Nome = match[2].trim(); // Nome até "Set"
-        minerData.Set = "Set " + match[3].trim(); // Set entre "Set" e "Size"
+        minerData.Nome = match[2].split('Set')[0].trim(); // Nome até "Set"
+        minerData.Set = match[2].split('Size')[0].trim(); // Set entre "Set" e "Size"
     }
 
     // Adiciona os dados ao array
