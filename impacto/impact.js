@@ -264,22 +264,6 @@ if (selectedOption === 'op1') {
     minerImpacts.sort((a, b) => b.impact - a.impact); // Ajuste na ordenação
 
         // Exibindo os dados no console
-    console.log("Miners Data (formatted):", miners.map(miner => ({
-      miner_id: miner.miner_id,
-      name: miner.name,
-      level: miner.level,
-      power: miner.formattedPower, // Exibe o valor formatado
-      bonus_percent: miner.bonus_percent,
-      setBonus: miner.setBonus,
-      setImpact: miner.setImpact,
-      width: miner.width,
-      repetitions: miner.repetitions,
-      rack: miner.user_rack_id,
-      room_level: miner.room_level, // Novo dado de rack
-      rack_x: miner.rack_x,         // Novo dado de rack
-      rack_y: miner.rack_y          // Novo dado de rack
-    })));
-    console.log("Racks Data:", racks);
     console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
       name: impact.name,
       level: impact.level,
@@ -290,7 +274,8 @@ if (selectedOption === 'op1') {
       formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
       room_level: impact.room_level, // Novo dado de rack
       rack_x: impact.rack_x,         // Novo dado de rack
-      rack_y: impact.rack_y          // Novo dado de rack
+      rack_y: impact.rack_y,          // Novo dado de rack
+      type: impact.type,
     })));
 
             const top10NegativeResults = minerImpacts.slice(0, 10);
