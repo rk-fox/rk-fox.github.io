@@ -64,25 +64,23 @@ async function organizar() {
     const minerArray = [];
 
     miners.forEach(miner => {
-      // Remover termos específicos do nome da miner
-      const cleanName = miner.name
-        .replace(/\b(can be sold|can't be sold|Miner details)\b/g, '')
-        .trim();
+  // Garantir que a quantidade seja convertida para número
+  const quantity = parseInt(miner.quantity, 10) || 1;  // Caso a quantidade não seja um número, assume como 1
 
-      const existingMiner = minerArray.find(m => m.Nome === cleanName && m.Bonus === miner.bonus_percent / 100);
+  const existingMiner = minerArray.find(m => m.Nome === miner.name && m.Bonus === miner.bonus_percent / 100);
 
-      if (existingMiner) {
-        existingMiner.Quantity += 1;
-      } else {
-        minerArray.push({
-          Nome: cleanName,
-          Power: miner.power,
-          Bonus: miner.bonus_percent / 100,
-          Size: miner.width,
-          Quantity: 1
-        });
-      }
+  if (existingMiner) {
+    existingMiner.Quantity += quantity;  // Incrementa a quantidade corretamente
+  } else {
+    minerArray.push({
+      Nome: miner.name,
+      Power: miner.power,
+      Bonus: miner.bonus_percent / 100,
+      Size: miner.width,
+      Quantity: quantity  // Armazena a quantidade corretamente como número
     });
+  }
+});
 
     console.log("Salas:", minerArray);
 
