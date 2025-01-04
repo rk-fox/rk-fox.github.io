@@ -67,7 +67,7 @@ function convertPower(value) {
   return value.toFixed(3).replace('.', ',') + ' Ghs';
 }
 
-function getLevelDescription(level) {
+function getLevelDescription(level, miner) {
         switch (level) {
             case 0: return { text: 'Common', color: '' };
             case 1:
