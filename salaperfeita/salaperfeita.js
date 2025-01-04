@@ -117,30 +117,35 @@ let match;
 
 // Procura as entradas no texto com o regex
 while ((match = minerRegex.exec(cleanField2)) !== null) {
+    // Variáveis para armazenar os dados extraídos
+    let power = parseFloat(match[5].replace(',', '.')); // Power convertido para número
+    let unit = match[6]; // Unidade de Power (Th/s, Ph/s, Gh/s, Eh/s)
+
+    // Conversão das unidades de medida para TH/s
+    if (unit === 'Ph/s') {
+        power *= 1000; // PH/s para TH/s
+    } else if (unit === 'Eh/s') {
+        power *= 1000000; // EH/s para TH/s
+    } else if (unit === 'Gh/s') {
+        power /= 1000; // GH/s para TH/s
+    }
+    // 'Th/s' já está em TH/s, não precisa de alteração
+
     // Cada entrada é capturada e organizada no formato desejado
     let minerData = {
-        Level: match[1],        // Level
-        Nome: match[2].trim(),  // Nome
-        Set: match[3].trim(),   // Set
-        Size: match[4],         // Size
-        Power: match[5].replace('.', ','), // Power com ponto substituído por vírgula
-        Unit: match[6],         // Unidade de Power (Th/s, Ph/s, Gh/s, Eh/s)
-// Converter unidades de medida para TH/s
-        if (Unit === 'Ph/s') {
-            power *= 1000;
-        } else if (Unit === 'Eh/s') {
-            power *= 1000000;
-        } else if (Unit === 'Th/s') {
-            // Sem alteração; já está em TH/s
-        } else if (Unit === 'Gh/s') {
-            power /= 1000;
-        }
-        Bonus: match[7],        // Bonus
-        Quantity: match[8]      // Quantity
+        Level: match[1],         // Level
+        Nome: match[2].trim(),   // Nome
+        Set: match[3].trim(),    // Set
+        Size: match[4],          // Size
+        Power: power.toFixed(3), // Power (em TH/s) com 3 casas decimais
+        Unit: 'Th/s',            // Sempre convertendo para Th/s
+        Bonus: match[7],         // Bonus
+        Quantity: match[8]       // Quantity
     };
 
     // Adiciona os dados ao array
     fieldArray.push(minerData);
+}
 
 // Exibe o array com os dados processados
 console.log(fieldArray);
