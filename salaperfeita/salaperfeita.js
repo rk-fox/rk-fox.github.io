@@ -155,7 +155,7 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
         Set: set,                // Set (entre "Set" e "Size")
         Size: match[4],          // Size (já capturado em match[4])
         Power: power,            // Power (em Gh/s) com 3 casas decimais
-        Bonus: match[7], // Bonus
+        Bonus: match[7].replace('.', ','), // Bonus
         Quantity: match[8]       // Quantity
     };
 
