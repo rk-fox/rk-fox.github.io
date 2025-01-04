@@ -116,7 +116,7 @@ cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sol
 console.log("Texto Limpo:", cleanedField2);
 
 // Regex ajustado para capturar as informações de cada entrada
-let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+(\d+)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
+let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+?)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
 
 // Inicializa o array para armazenar as entradas processadas
 let fieldArray = [];
