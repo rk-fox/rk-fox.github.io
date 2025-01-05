@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sala Perfeita</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .field {
+      margin-bottom: 15px;
+    }
+    .field label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .field input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .button-container {
+      text-align: center;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="field">
+      <label for="field1">Link da Sala</label>
+      <input type="text" id="field1" placeholder="Digite o valor do Campo 1">
+    </div>
+    <div class="field">
+      <label for="field2">Inventário</label>
+      <input type="text" id="field2" placeholder="Digite o valor do Campo 2">
+    </div>
+    <div class="field">
+      <label">Quantas Salas?</label>
+      <input type="radio" name="capacity" value="96" id="capacity96">96
+      <input type="radio" name="capacity" value="240" id="capacity240">240
+      <input type="radio" name="capacity" value="384" id="capacity384">384
+      <input type="radio" name="capacity" value="528" checked id="capacity528">528
+    </div>
+    <div class="button-container">
+      <button onclick="organizar()">ORGANIZAR</button>
+    </div>
+  </div>
+
+  <script src="salaperfeita.js"></script>
+
+</body>
+</html>
