@@ -13,18 +13,6 @@ document.getElementById("field2").addEventListener("keydown", function(event) {
 async function organizar() {
   try {
     
-    let maxCapacity = 528; // Valor default
-
-    // Função para atualizar o maxCapacity com base no radio button selecionado
-    function updateMaxCapacity() {
-      const selectedRadio = document.querySelector('input[name="capacity"]:checked');
-      if (selectedRadio) {
-        maxCapacity = parseInt(selectedRadio.value, 10);
-      }
-    }
-    
-    updateMaxCapacity(); // Atualiza maxCapacity com o valor do radio button selecionad
-    
     const userLink = document.getElementById("field1").value.trim();
     if (!userLink) {
       alert("Por favor, insira um valor no Campo 1.");
@@ -83,7 +71,6 @@ miners.forEach(miner => {
       Nome: miner.name,
       Power: miner.power,
       Bonus: miner.bonus_percent / 100,
-      Size: miner.width,
       Quantity: quantity
     });
   }
@@ -143,10 +130,10 @@ for (let i = 0; i < parts.length; i++) {
 let cleanedField2 = resultArray.join(" open ");
 
 // Remova os textos indesejados
-cleanedField2 = cleanedField2.replace(/(set badge|Cells|Can be sold|Can't be sold|Miner details|open)/g, '').trim();
+cleanedField2 = cleanedField2.replace(/(set badge|Cells|Miner details|open)/g, '').trim();
 
 // Regex ajustado para capturar as informações de cada entrada
-let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+?)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)/gm;
+let minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+?)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+(Can(?:'t)?\sbe\sSold)/gm;
 
 // Inicializa o array para armazenar as entradas processadas
 let fieldArray = [];
@@ -187,6 +174,7 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
         Power: parseInt(power),            // Power (em Gh/s) com 3 casas decimais
         Bonus: parseFloat(match[7]), // Bonus
         Quantity: parseInt(match[8])       // Quantity
+        Vende: (match[9])
     };
 
     // Adiciona os dados ao array
@@ -195,63 +183,3 @@ while ((match = minerRegex.exec(cleanedField2)) !== null) {
 
 // Exibe o array com os dados processados
 console.log("Inventário:", fieldArray);
-
-    const unifiedArray = [...minerArray];
-
-    fieldArray.forEach(miner => {
-      const existingMiner = unifiedArray.find(m => m.Nome === miner.Nome && m.Bonus === miner.Bonus);
-
-      if (existingMiner) {
-        existingMiner.Quantity += miner.Quantity;
-      } else {
-        unifiedArray.push(miner);
-      }
-    });
-
-    // Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
-    unifiedArray.sort((a, b) => b.Power - a.Power);
-    
-    console.log("Unificados:", unifiedArray);
-
-    const items = unifiedArray.flatMap(miner => 
-      Array(miner.Quantity).fill({
-        Level: miner.Level,
-        Nome: miner.Nome,
-        Power: miner.Power,
-        Bonus: miner.Bonus,
-        Size: miner.Size,        
-      })
-    );
-
-    const dp = Array.from({ length: maxCapacity + 1 }, () => 0);
-    const selected = Array.from({ length: maxCapacity + 1 }, () => []);
-
-    for (const item of items) {
-      for (let size = maxCapacity; size >= item.Size; size--) {
-        const value = item.Power * (1 + (item.Bonus/100));
-        if (dp[size - item.Size] + value > dp[size]) {
-          dp[size] = dp[size - item.Size] + value;
-          selected[size] = [...selected[size - item.Size], item];
-        }
-      }
-    }
-
-    const bestSet = selected[maxCapacity];
-
-    // Ordenar o bestSet pelo Power de cada miner (do maior para o menor)
-    bestSet.sort((a, b) => b.Power - a.Power);
-
-    const totalPower = bestSet.reduce((sum, miner) => sum + miner.Power, 0);
-    const totalBonus = (bestSet.reduce((sum, miner) => sum + miner.Bonus, 0)).toFixed(2);
-    const finalPower = (totalPower * (1 + (totalBonus/100))).toFixed(0);
-
-    console.log("Otimização:", bestSet);
-    console.log("Total Miners Power:", totalPower);
-    console.log("Total Miners Bonus:", totalBonus);
-    console.log("PODER TOTAL:", finalPower);
-
-  } catch (error) {
-    console.error("Erro ao organizar os dados:", error);
-    alert("Ocorreu um erro ao processar os dados. Verifique o console para mais informações.");
-  }
-}
