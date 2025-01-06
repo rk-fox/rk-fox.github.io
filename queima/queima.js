@@ -61,7 +61,6 @@ async function organizar() {
           Power: miner.power,
           Bonus: miner.bonus_percent / 100,
           Quantity: quantity,
-          Vende: 
         });
       }
     });
