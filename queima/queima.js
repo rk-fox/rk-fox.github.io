@@ -99,9 +99,10 @@ async function organizar() {
     }
 
     return fieldArray;
-let canBeSoldArray = [];
+
+    
+    let canBeSoldArray = [];
     let cannotBeSoldArray = [];
-    let match;
 
     // Itera sobre as correspondências
     while ((match = minerRegex.exec(cleanedField2)) !== null) {
