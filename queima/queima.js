@@ -45,6 +45,94 @@ async function organizar() {
       return;
     }
 
+    const minerCounts = miners.reduce((acc, miner) => {
+      const { miner_id, type } = miner;
+      if (!acc[miner_id]) {
+        acc[miner_id] = { type, quantity: 0 };
+      }
+      acc[miner_id].quantity += 1;
+      return acc;
+    }, {});
+
+    const minerDetails = [];
+
+    for (const [miner_id, { type, quantity }] of Object.entries(minerCounts)) {
+      let url;
+      if (type === "basic") {
+        url = "https://wminerrc.github.io/calculator/data/basic_miners.js";
+      } else if (type === "merge") {
+        url = "https://wminerrc.github.io/calculator/data/merge_miners.js";
+      } else if (type === "old_merge") {
+        url = "https://wminerrc.github.io/calculator/data/old/merge_miners.js";
+      } else {
+        console.warn(`Tipo desconhecido para miner_id ${miner_id}: ${type}`);
+        continue;
+      }
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.warn(`Erro ao buscar detalhes do minerador para miner_id ${miner_id} no tipo ${type}`);
+        continue;
+      }
+
+      const minerInfo = await response.json();
+      const minerData = minerInfo.miners.find((m) => m.miner_id === miner_id);
+
+      if (!minerData) {
+        console.warn(`Minerador com miner_id ${miner_id} não encontrado nos dados de ${type}`);
+        continue;
+      }
+
+      minerDetails.push({
+        miner_id,
+        type,
+        level: minerData.level,
+        name: minerData.name,
+        power: minerData.power,
+        bonus: minerData.bonus_percent / 100,
+        canBeSold: minerData.is_can_be_sold_on_mp,
+        quantity,
+      });
+    }
+
+    console.log("Detalhes dos mineradores:", minerDetails);
+    
+    const userLink = document.getElementById("field1").value.trim();
+    if (!userLink) {
+      alert("Por favor, insira um valor no Campo 1.");
+      return;
+    }
+
+    const profileUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`;
+    const profileResponse = await fetch(profileUrl);
+
+    if (!profileResponse.ok) {
+      throw new Error("Erro ao acessar os dados do perfil. Verifique o ID inserido.");
+    }
+
+    const profileData = await profileResponse.json();
+    const avatarId = profileData?.data?.avatar_id;
+
+    if (!avatarId) {
+      alert("Avatar ID não encontrado. Verifique o ID do usuário inserido.");
+      return;
+    }
+
+    const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`;
+    const minerResponse = await fetch(minerUrl);
+
+    if (!minerResponse.ok) {
+      throw new Error("Erro ao acessar os dados do minerador.");
+    }
+
+    const minerData = await minerResponse.json();
+    const miners = minerData?.data?.miners;
+
+    if (!miners || !Array.isArray(miners)) {
+      alert("Dados dos mineradores não encontrados ou estão em formato inesperado.");
+      return;
+    }
+
     const minerArray = [];
 
     // Processa a lista de mineradores
