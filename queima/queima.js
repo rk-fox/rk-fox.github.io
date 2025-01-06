@@ -56,12 +56,12 @@ async function organizar() {
         existingMiner.Quantity += quantity;
       } else {
         minerArray.push({
-          miner_id: miner.miner_id,
           Level: miner.level,
           Nome: miner.name,
           Power: miner.power,
           Bonus: miner.bonus_percent / 100,
           Quantity: quantity,
+          Vende: 
         });
       }
     });
@@ -102,6 +102,8 @@ async function organizar() {
     let cleanedField2 = resultArray.join(" open ");
     cleanedField2 = cleanedField2.replace(/(set badge|Cells|Miner details|open)/g, "").trim();
 
+    console.log(cleanedField2);
+
     const minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+?)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+(Can(?:'t)?\sbe\sSold)/gm;
     const fieldArray = [];
     let match;
@@ -117,8 +119,6 @@ async function organizar() {
       fieldArray.push({
         Level: parseInt(match[1]),
         Nome: match[2].trim(),
-        Set: match[3].trim(),
-        Size: parseInt(match[4]),
         Power: parseFloat(power.toFixed(3)),
         Bonus: parseFloat(match[7]),
         Quantity: parseInt(match[8]),
