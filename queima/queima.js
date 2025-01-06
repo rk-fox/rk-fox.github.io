@@ -163,7 +163,7 @@ async function organizar() {
     cleanedField2 = cleanedField2.replace(/(set badge|Cells|Miner details|open)/g, '').trim();
     cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
 
-    //console.log("Texto limpo:", cleanedField2);
+    console.log("Texto limpo:", cleanedField2);
 
     // Regex para capturar dados dos miners
     const minerRegex = /Level (?<level>\d+) (?<name>.+?) Set (?<set>.+?) Size: (?<size>\d+) Power (?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+) Bonus (?<bonus>[\d.,]+) % Quantity: (?<quantity>\d+) (?<canBeSold>Can|Can't) be sold/g;
