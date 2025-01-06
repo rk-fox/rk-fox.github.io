@@ -91,7 +91,7 @@ for (let i = 0; i < parts.length; i++) {
     }
 
     return fieldArray;
-};
+
 
     
     // Processa cada correspondência na regex
