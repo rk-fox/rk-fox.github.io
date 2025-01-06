@@ -107,14 +107,14 @@ async function organizar() {
       }
     }
 
-    console.log("Mineradores na Sala:", minerDetails);
+    //console.log("Mineradores na Sala:", minerDetails);
 
     // Dividir os minerDetails em dois arrays
     const canBeSoldMinerDetails = minerDetails.filter(miner => miner.canBeSold);
     const cannotBeSoldMinerDetails = minerDetails.filter(miner => !miner.canBeSold);
 
-    console.log("Mineradores que podem ser vendidos:", canBeSoldMinerDetails);
-    console.log("Mineradores que não podem ser vendidos:", cannotBeSoldMinerDetails);
+    console.log("Mineradores na Sala Negociáveis:", canBeSoldMinerDetails);
+    console.log("Mineradores na Sala Inegociáveis:", cannotBeSoldMinerDetails);
 
     // Processamento do campo field2
     let fieldContent = document.getElementById('field2').value.trim();
