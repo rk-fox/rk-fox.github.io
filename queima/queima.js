@@ -71,6 +71,10 @@ async function organizar() {
         CanBeSold: match[9].trim()
       };
 
+console.log("teste:", match[1], match[2], match[3], match[4], match[5], match[6], match[7], match[8], match[9]);
+
+      
+      
       fieldArray.push(minerData);
     }
 
