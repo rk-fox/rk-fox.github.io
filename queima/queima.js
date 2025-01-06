@@ -7,6 +7,17 @@ document.querySelectorAll("#field1, #field2").forEach(function (field) {
   });
 });
 
+// Função para carregar o script e acessar os dados
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = () => resolve();
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
 async function organizar() {
   try {
     const userLink = document.getElementById("field1").value.trim();
@@ -56,46 +67,53 @@ async function organizar() {
 
     const minerDetails = [];
 
+    // Carregar os scripts dinamicamente
+    await Promise.all([
+      loadScript('https://wminerrc.github.io/calculator/data/basic_miners.js'),
+      loadScript('https://wminerrc.github.io/calculator/data/merge_miners.js'),
+      loadScript('https://wminerrc.github.io/calculator/data/old/merge_miners.js')
+    ]);
+
+    // Agora podemos acessar os dados carregados
     for (const [miner_id, { type, quantity }] of Object.entries(minerCounts)) {
-      let url;
+      let minerData;
+      let minerInfo;
+
       if (type === "basic") {
-        url = "https://wminerrc.github.io/calculator/data/basic_miners.js";
+        minerInfo = window.basic_miners;
       } else if (type === "merge") {
-        url = "https://wminerrc.github.io/calculator/data/merge_miners.js";
+        minerInfo = window.merge_miners;
       } else if (type === "old_merge") {
-        url = "https://wminerrc.github.io/calculator/data/old/merge_miners.js";
+        minerInfo = window.old_merge_miners;
       } else {
         console.warn(`Tipo desconhecido para miner_id ${miner_id}: ${type}`);
         continue;
       }
 
-      const response = await fetch(url);
-      if (!response.ok) {
-        console.warn(`Erro ao buscar detalhes do minerador para miner_id ${miner_id} no tipo ${type}`);
-        continue;
+      const specificMiner = minerInfo.find(miner => miner.miner_id === miner_id);
+      if (specificMiner) {
+        minerData = {
+          miner_id,
+          type,
+          level: specificMiner.level,
+          name: specificMiner.name.en,
+          power: specificMiner.power,
+          bonus: specificMiner.bonus_power / 100,
+          canBeSold: specificMiner.is_can_be_sold_on_mp,
+          quantity
+        };
+        minerDetails.push(minerData);
+      } else {
+        console.warn(`Miner com o ID especificado não encontrado: ${miner_id}`);
       }
-
-      const minerInfo = await response.json();
-      const minerData = minerInfo.miners.find((m) => m.miner_id === miner_id);
-
-      if (!minerData) {
-        console.warn(`Minerador com miner_id ${miner_id} não encontrado nos dados de ${type}`);
-        continue;
-      }
-
-      minerDetails.push({
-        miner_id,
-        type,
-        level: minerData.level,
-        name: minerData.name,
-        power: minerData.power,
-        bonus: minerData.bonus_percent / 100,
-        canBeSold: minerData.is_can_be_sold_on_mp,
-        quantity,
-      });
     }
 
     console.log("Detalhes dos mineradores:", minerDetails);
+    return minerDetails;
+  } catch (error) {
+    console.error("Erro ao processar:", error);
+  }
+}
     
     
     
