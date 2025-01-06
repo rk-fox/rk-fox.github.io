@@ -1,60 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planejador de Queima</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      background-color: #f4f4f4;
-    }
-    .container {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    .field {
-      margin-bottom: 15px;
-    }
-    .field label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    .field input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-    .button-container {
-      text-align: center;
-    }
-    button {
-      background-color: #007bff;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RKFox - Planejador de Queima</title>
+    <link rel="stylesheet" href="styles4.css">
 </head>
 <body>
-
   <div class="container">
+        <div class="ref1">
+            <!--Start rollercoin.com code-->
+            <a href="https://rollercoin.com/?r=kyluudij">
+                <img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png" alt="Rollercoin Referral">
+            </a>
+            <!--End rollercoin.com code-->
+        </div>
+        <div class="profile">
+            <a href="https://rk-fox.github.io/">
+                <img src="/images/profile.png" alt="Foto de Perfil" class="profile-pic">
+            </a>
+        </div>
+        <div class="banner">
+            <a href="https://rk-fox.github.io/">
+                <img src="/images/banner.png" alt="Banner" class="banner-img">
+            </a>
+        </div>
+        <!-- Toggle Switch -->
+        <label class="switch">
+            <input type="checkbox" id="toggle-dark-mode">
+            <span class="slider"></span>
+        </label>
     <div class="field">
       <label for="tutorial">vídeo tutorial: youtube(em breve)</label>
     </div>
@@ -77,7 +52,6 @@
       <button onclick="organizar()">ORGANIZAR</button>
     </div>
   </div>
-
   <script src="queima.js"></script>
   <script src="script2.js"></script>
 </body>
