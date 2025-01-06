@@ -103,11 +103,19 @@ async function organizar() {
 
     console.log(cleanedField2);
 
+    cleanedField2 = cleanedField2
+      .replace(/\s+/g, " ") // Substituir múltiplos espaços por um único espaço
+      .replace(/\r?\n|\r/g, "") // Remover quebras de linha
+      .trim();
+    console.log("Texto final limpo:", cleanedField2);
+
+
     const minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+?)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+(Can(?:'t)?\sbe\sSold)/gm;
     const fieldArray = [];
     let match;
 
     while ((match = minerRegex.exec(cleanedField2)) !== null) {
+      console.log("reg:", match);
       let power = parseFloat(match[5].replace(",", "."));
       let unit = match[6];
 
