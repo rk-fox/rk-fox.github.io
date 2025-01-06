@@ -9,6 +9,67 @@ document.querySelectorAll("#field1, #field2").forEach(function (field) {
 
 async function organizar() {
   try {
+    const userLink = document.getElementById("field1").value.trim();
+    if (!userLink) {
+      alert("Por favor, insira um valor no Campo 1.");
+      return;
+    }
+
+    const profileUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`;
+    const profileResponse = await fetch(profileUrl);
+
+    if (!profileResponse.ok) {
+      throw new Error("Erro ao acessar os dados do perfil. Verifique o ID inserido.");
+    }
+
+    const profileData = await profileResponse.json();
+    const avatarId = profileData?.data?.avatar_id;
+
+    if (!avatarId) {
+      alert("Avatar ID não encontrado. Verifique o ID do usuário inserido.");
+      return;
+    }
+
+    const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`;
+    const minerResponse = await fetch(minerUrl);
+
+    if (!minerResponse.ok) {
+      throw new Error("Erro ao acessar os dados do minerador.");
+    }
+
+    const minerData = await minerResponse.json();
+    const miners = minerData?.data?.miners;
+
+    if (!miners || !Array.isArray(miners)) {
+      alert("Dados dos mineradores não encontrados ou estão em formato inesperado.");
+      return;
+    }
+
+    const minerArray = [];
+
+    // Processa a lista de mineradores
+    miners.forEach((miner) => {
+      const quantity = 1;
+      const existingMiner = minerArray.find((m) => m.miner_id === miner.miner_id);
+
+      if (existingMiner) {
+        existingMiner.Quantity += quantity;
+      } else {
+        minerArray.push({
+          Level: miner.level,
+          Nome: miner.name,
+          Power: miner.power,
+          Bonus: miner.bonus_percent / 100,
+          Quantity: quantity,
+        });
+      }
+    });
+
+    console.log("Salas:", minerArray);
+
+
+
+    
     // Supondo que `field2` seja o campo de texto
     let fieldContent = document.getElementById('field2').value;
 
@@ -61,7 +122,7 @@ async function organizar() {
     cleanedField2 = cleanedField2.replace(/(set badge|Cells|Miner details|open)/g, '').trim();
     cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
 
-    console.log("Texto limpo:", cleanedField2);
+    //console.log("Texto limpo:", cleanedField2);
 
     // Regex para capturar dados dos miners
     const minerRegex = /Level (?<level>\d+) (?<name>.+?) Set (?<set>.+?) Size: (?<size>\d+) Power (?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+) Bonus (?<bonus>[\d.,]+) % Quantity: (?<quantity>\d+) (?<canBeSold>Can|Can't) be sold/g;
