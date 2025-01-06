@@ -81,21 +81,24 @@ for (let i = 0; i < parts.length; i++) {
       else if (unit === "Ph/s") power *= 1e6;
       else if (unit === "Th/s") power *= 1e3;
 
-      const minerData = {
-        Level: parseInt(match[1]),
-        Nome: match[2].trim(),
-        Set: match[3].trim(),
-        Size: parseInt(match[4]),
-        Power: Math.round(power),
-        Bonus: parseFloat(match[7]),
-        Quantity: parseInt(match[8]),
+       // Ajuste para Set: pegar o valor entre os termos "Set" e "Size"
+    let set = match[3].trim();  // O valor de Set está em match[3]
+
+    // Ajuste para Nome: pegar o valor antes do termo "Set"
+    let nome = match[2].trim(); // O valor de Nome está em match[2]
+
+      // Cada entrada é capturada e organizada no formato desejado
+    let minerData = {
+        Level: parseInt(match[1]),         // Level
+        Nome: nome,              // Nome (antes de "Set")
+        Set: set,                // Set (entre "Set" e "Size")
+        Size: parseInt(match[4]),          // Size (já capturado em match[4])
+        Power: parseInt(power),            // Power (em Gh/s) com 3 casas decimais
+        Bonus: parseFloat(match[7]), // Bonus
+        Quantity: parseInt(match[8]),       // Quantity
         CanBeSold: match[9].trim()
       };
 
-console.log("teste:", match[1], match[2], match[3], match[4], match[5], match[6], match[7], match[8], match[9]);
-
-      
-      
       fieldArray.push(minerData);
     }
 
