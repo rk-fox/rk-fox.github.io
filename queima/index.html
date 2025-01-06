@@ -8,53 +8,66 @@
 </head>
 <body>
   <div class="container">
-        <div class="ref1">
-            <!--Start rollercoin.com code-->
-            <a href="https://rollercoin.com/?r=kyluudij">
-                <img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png" alt="Rollercoin Referral">
-            </a>
-            <!--End rollercoin.com code-->
+    <div class="ref1">
+        <!--Start rollercoin.com code-->
+        <a href="https://rollercoin.com/?r=kyluudij">
+            <img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png" alt="Rollercoin Referral">
+        </a>
+        <!--End rollercoin.com code-->
+    </div>
+    
+    <div class="profile">
+        <a href="https://rk-fox.github.io/">
+            <img src="/images/profile.png" alt="Foto de Perfil" class="profile-pic">
+        </a>
+    </div>
+    
+    <div class="banner">
+        <a href="https://rk-fox.github.io/">
+            <img src="/images/banner.png" alt="Banner" class="banner-img">
+        </a>
+    </div>
+    
+    <!-- Toggle Switch -->
+    <label class="switch">
+        <input type="checkbox" id="toggle-dark-mode">
+        <span class="slider"></span>
+    </label>
+    
+    <div class="content">
+        <h1>Planejador de Queima</h1>
+        <h3>vídeo tutorial: youtube(em breve)</h3>
+        
+        <!-- Form Fields -->
+        <div class="field">
+            <label for="field1">Link da Sala (após /p/)</label>
+            <input type="text" id="field1" placeholder="RKFox">
         </div>
-        <div class="profile">
-            <a href="https://rk-fox.github.io/">
-                <img src="/images/profile.png" alt="Foto de Perfil" class="profile-pic">
-            </a>
+
+        <div class="field">
+            <label for="field2">Inventário</label>
+            <input type="text" id="field2" placeholder="Cole os dados do seu inventário">
         </div>
-        <div class="banner">
-            <a href="https://rk-fox.github.io/">
-                <img src="/images/banner.png" alt="Banner" class="banner-img">
-            </a>
+
+        <div class="field">
+            <label for="field3">Conversão de Pontos</label>
+            <div class="conversion-fields">
+                <label for="field3">Quantos Ths por 1000 pontos?</label>
+                <input type="text" id="field3" value="100">
+            </div>
+            <div class="conversion-fields">
+                <label for="field4">Quantos % por 1000 pontos?</label>
+                <input type="text" id="field4" value="10">
+            </div>
         </div>
-        <!-- Toggle Switch -->
-        <label class="switch">
-            <input type="checkbox" id="toggle-dark-mode">
-            <span class="slider"></span>
-        </label>
-     <div class="container"> 
-         <h1>Planejador de Queima</h1>
-      <h3>vídeo tutorial: youtube(em breve)</h3>
-    <div class="field">
-      <label for="field1">Link da Sala (após /p/)</label>
-      <input type="text" id="field1" placeholder="RKFox">
+
+        <!-- Button Container -->
+        <div class="button-container">
+            <button onclick="organizar()">ORGANIZAR</button>
+        </div>
     </div>
-         <div class="input-container">
-    <div class="field">
-      <label for="field2">Inventário</label>
-      <input type="text" id="field2" placeholder="Cole os dados do seu inventário">
-    </div>
-    <div class="field">
-      <label>Conversão de Pontos</label>
-      <label for="field1">Quantos Ths por 1000 pontos?</label>
-      <input type="text" id="field3" value="100">
-      <label for="field1">Quantos % por 1000 pontos?</label>
-      <input type="text" id="field4" value="10">
-    </div>
-    <div class="button-container">
-      <button onclick="organizar()">ORGANIZAR</button>
-    </div>
-     </div>
   </div>
-  </div>
+  
   <script src="queima.js"></script>
   <script src="script2.js"></script>
 </body>
