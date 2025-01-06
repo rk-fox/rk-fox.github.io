@@ -1,13 +1,10 @@
-document.getElementById("field1").addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    organizar(); // Chama a função organizar quando ENTER for pressionado
-  }
-});
-
-document.getElementById("field2").addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    organizar(); // Chama a função organizar quando ENTER for pressionado
-  }
+// Adiciona um único evento keydown para ambos os campos
+document.querySelectorAll("#field1, #field2").forEach(function (field) {
+  field.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      organizar(); // Chama a função organizar quando ENTER for pressionado
+    }
+  });
 });
 
 async function organizar() {
