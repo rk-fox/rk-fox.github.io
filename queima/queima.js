@@ -73,7 +73,7 @@ for (let i = 0; i < parts.length; i++) {
     let match;
 
     // Itera sobre as correspondências
-    while ((match = minerRegex.exec(input)) !== null) {
+    while ((match = minerRegex.exec(cleanedField2)) !== null) {
         const { level, name, set, size, power, unit, bonus, quantity, canBeSold } = match.groups;
 
         // Adiciona o objeto correspondente ao array
