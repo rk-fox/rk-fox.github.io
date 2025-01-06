@@ -99,6 +99,7 @@ async function organizar() {
           power: specificMiner.power,
           bonus: specificMiner.bonus_power / 100,
           canBeSold: specificMiner.is_can_be_sold_on_mp,
+          filename: specificMiner.filename,
           quantity
         };
         minerDetails.push(minerData);
