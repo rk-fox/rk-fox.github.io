@@ -9,37 +9,58 @@ document.querySelectorAll("#field1, #field2").forEach(function (field) {
 
 async function organizar() {
   try {
-    const fieldContent = document.getElementById("field2").value.trim();
+    // Supondo que `field2` seja o campo de texto
+let fieldContent = document.getElementById('field2').value;
 
-    if (!fieldContent) {
-      console.error("O campo field2 está vazio.");
-      return;
+// Divida o texto em partes separadas por "open"
+let parts = fieldContent.split(/open\s*/);
+
+// Inicialize o array para armazenar os resultados
+let resultArray = [];
+
+// Verifique se a primeira entrada começa com número; caso contrário, adicione "Level 0"
+if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
+    parts[0] = "Level 0 " + parts[0];
+} else {
+    parts[0] = "Level " + parts[0];
+}
+    
+// Itere pelas partes para processar o conteúdo
+for (let i = 0; i < parts.length; i++) {
+    let currentPart = parts[i].trim(); // Remove espaços extras
+
+    // Pule entradas vazias
+    if (!currentPart) continue;
+
+    // Contar quantas vezes "Set" aparece na parte atual
+    let setCount = (currentPart.match(/Set/g) || []).length;
+
+    // Se houver exatamente um "Set", adicionar "0" entre "Set" e "Size"
+    if (setCount === 1) {
+        currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, '$1 0 $2 $3');
     }
 
-    const parts = fieldContent.split(/open\s*/);
-    const resultArray = [];
+    // Verifique o início da próxima parte
+    if (i < parts.length - 1) { // Exceto o último elemento
+        let nextPart = parts[i + 1].trim();
 
-    // Processa cada parte do conteúdo
-    parts.forEach((part, index) => {
-      let currentPart = part.trim();
-      if (!currentPart) return;
+        // Se a próxima parte não começar com um número, insira "Level 0"
+        if (nextPart && !/^\d/.test(nextPart)) {
+            parts[i + 1] = "Level 0 " + parts[i + 1];
+        } else if (nextPart) {
+            parts[i + 1] = "Level " + parts[i + 1];
+        }
+    }
 
-      // Adiciona prefixo "Level 0" se necessário
-      if (index === 0 && !/^\d/.test(currentPart)) {
-        currentPart = "Level 0 " + currentPart;
-      }
+    // Adicione a parte processada ao array de resultados
+    resultArray.push(currentPart);
+}
 
-      const setCount = (currentPart.match(/Set/g) || []).length;
-      if (setCount === 1) {
-        currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, "$1 0 $2 $3");
-      }
 
-      resultArray.push(currentPart);
-    });
 
     // Combina as partes e remove texto irrelevante
     let cleanedField2 = resultArray.join(" open ");
-    cleanedField2 = cleanedField2.replace(/(set badge|Cells|Miner details|open)/gi, "").trim();
+    cleanedField2 = cleanedField2.replace(/(set badge|Cells|Miner details|open)/g, '').trim();
     cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
 
     console.log("Texto limpo:", cleanedField2);
