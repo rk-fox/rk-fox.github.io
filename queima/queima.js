@@ -107,7 +107,7 @@ async function organizar() {
       }
     }
 
-    console.log("Detalhes dos mineradores:", minerDetails);
+    console.log("Mineradores na Sala:", minerDetails);
 
     // Processamento do campo field2
     let fieldContent = document.getElementById('field2').value.trim();
@@ -186,8 +186,8 @@ async function organizar() {
         }
     }
 
-    console.log("Miners que podem ser vendidos:", canBeSoldArray);
-    console.log("Miners que não podem ser vendidos:", cannotBeSoldArray);
+    console.log("Inventário Negociável:", canBeSoldArray);
+    console.log("Inventário Inegociável:", cannotBeSoldArray);
 
     if (canBeSoldArray.length === 0 && cannotBeSoldArray.length === 0) {
       console.warn("Nenhum miner foi capturado. Verifique o texto de entrada e a regex.");
