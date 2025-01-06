@@ -187,6 +187,7 @@ async function organizar() {
     quantity: parseInt(quantity, 10),
     filename: name.trim()
         .replace(/'/g, '')        // Remove o apóstrofo (')
+        .replace(/+/g, 'plus')
         .replace(/-/g, '_')       // Substitui o hífen (-) por underscore (_)
         .replace(/\s+/g, '_')     // Substitui o espaço por underscore (_)
         .toLowerCase()            // Converte tudo para minúsculas
