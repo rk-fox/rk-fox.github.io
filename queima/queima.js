@@ -83,10 +83,10 @@ async function organizar() {
         fieldArray.push({
             level: parseInt(level, 10),
             name: name.trim(),
-            set: set.trim(),
-            size: parseInt(size, 10),
+            //set: set.trim(),
+            //size: parseInt(size, 10),
             power,
-            unit: "Gh/s",
+            //unit: "Gh/s",
             bonus: parseFloat(bonus),
             quantity: parseInt(quantity, 10),
             canBeSold: canBeSold === "Can",
