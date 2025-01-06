@@ -110,14 +110,15 @@ async function organizar() {
 
     console.log("Detalhes dos mineradores:", minerDetails);
     return minerDetails;
+
   } catch (error) {
     console.error("Erro ao processar:", error);
   }
 }
-    
-    
-    
-    // Supondo que `field2` seja o campo de texto
+
+// Supondo que `field2` seja o campo de texto
+async function processField2() {
+  try {
     let fieldContent = document.getElementById('field2').value;
 
     // Divida o texto em partes separadas por "open"
@@ -213,7 +214,11 @@ async function organizar() {
     }
 
     return { canBeSoldArray, cannotBeSoldArray };
+
   } catch (error) {
-    console.error("Erro ao processar:", error);
+    console.error("Erro ao processar field2:", error);
   }
 }
+
+// Chama processField2 quando necessário
+processField2();
