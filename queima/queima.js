@@ -72,7 +72,7 @@ async function organizar() {
 
     // Itera sobre as correspondências
     while ((match = minerRegex.exec(cleanedField2)) !== null) {
-        let { level, name, set, size, power, unit, bonus, quantity, canBeSold } = match.groups;
+        let { level, name, power, unit, bonus, quantity, canBeSold } = match.groups;
 
         // Converte unidades para Gh/s
         power = parseFloat(power.replace(/,/g, ''));
@@ -80,21 +80,17 @@ async function organizar() {
         else if (unit === "Ph/s") power *= 1e6;
         else if (unit === "Th/s") power *= 1e3;
 
-        // Cria o objeto miner
+        // Cria o objeto miner simplificado
         const miner = {
             level: parseInt(level, 10),
             name: name.trim(),
-            set: set.trim(),
-            size: parseInt(size, 10),
             power,
-            unit: "Gh/s",
             bonus: parseFloat(bonus),
             quantity: parseInt(quantity, 10),
-            canBeSold: canBeSold === "Can",
         };
 
         // Adiciona ao array apropriado
-        if (miner.canBeSold) {
+        if (canBeSold === "Can") {
             canBeSoldArray.push(miner);
         } else {
             cannotBeSoldArray.push(miner);
