@@ -211,6 +211,3 @@ async function organizar() {
     console.error("Erro ao processar:", error);
   }
 }
-
-// Chama processField2 quando necessário
-processField2();
