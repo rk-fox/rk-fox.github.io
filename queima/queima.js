@@ -66,41 +66,64 @@ for (let i = 0; i < parts.length; i++) {
     console.log("Texto limpo:", cleanedField2);
 
     // Regex para capturar dados dos miners
-    const minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+?)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+(Can(?:'t)?\sbe\sSold)/gm;
-
+    //const minerRegex = /Level\s+(\d+)\s+([A-Za-z0-9\s\-\']+?)\s+Set\s+([A-Za-z0-9\s\-\']+?)\s+Size:\s+(\d+)\s+Power\s+([\d.,]+)\s+(Th\/s|Ph\/s|Gh\/s|Eh\/s)\s+Bonus\s+([\d.]+)\s+%\s+Quantity:\s+(\d+)\s+(Can(?:'t)?\sbe\sSold)/gm;
+    const minerRegex = /Level (?<level>\d+) (?<name>.+?) Set (?<set>.+?) Size: (?<size>\d+) Power (?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+) Bonus (?<bonus>[\d.,]+) % Quantity: (?<quantity>\d+) (?<canBeSold>Can|Can't) be sold/g;
+    
     const fieldArray = [];
     let match;
 
-    // Processa cada correspondência na regex
-    while ((match = minerRegex.exec(cleanedField2)) !== null) {
-      let power = parseFloat(match[5].replace(',', '.'));
-      const unit = match[6];
+    // Itera sobre as correspondências
+    while ((match = regex.exec(input)) !== null) {
+        const { level, name, set, size, power, unit, bonus, quantity, canBeSold } = match.groups;
 
+        // Adiciona o objeto correspondente ao array
+        fieldArray.push({
+            level: parseInt(level, 10),
+            name: name.trim(),
+            set: set.trim(),
+            size: parseInt(size, 10),
+            power: parseFloat(power.replace(/,/g, '')),
+            unit: unit.trim(),
+            bonus: parseFloat(bonus),
+            quantity: parseInt(quantity, 10),
+            canBeSold: canBeSold === "Can",
+        });
+    }
+
+    return fieldArray;
+};
+
+    
+    // Processa cada correspondência na regex
+    //while ((match = minerRegex.exec(cleanedField2)) !== null) {
+//      let power = parseFloat(match[5].replace(',', '.'));
+      //const unit = match[6];
+//
       // Converte unidades para Gh/s
-      if (unit === "Eh/s") power *= 1e9;
-      else if (unit === "Ph/s") power *= 1e6;
-      else if (unit === "Th/s") power *= 1e3;
+      //if (unit === "Eh/s") power *= 1e9;
+      //else if (unit === "Ph/s") power *= 1e6;
+      //else if (unit === "Th/s") power *= 1e3;
 
        // Ajuste para Set: pegar o valor entre os termos "Set" e "Size"
-    let set = match[3].trim();  // O valor de Set está em match[3]
+    //let set = match[3].trim();  // O valor de Set está em match[3]
 
     // Ajuste para Nome: pegar o valor antes do termo "Set"
-    let nome = match[2].trim(); // O valor de Nome está em match[2]
+    //let nome = match[2].trim(); // O valor de Nome está em match[2]
 
       // Cada entrada é capturada e organizada no formato desejado
-    let minerData = {
-        Level: parseInt(match[1]),         // Level
-        Nome: nome,              // Nome (antes de "Set")
-        Set: set,                // Set (entre "Set" e "Size")
-        Size: parseInt(match[4]),          // Size (já capturado em match[4])
-        Power: parseInt(power),            // Power (em Gh/s) com 3 casas decimais
-        Bonus: parseFloat(match[7]), // Bonus
-        Quantity: parseInt(match[8]),       // Quantity
-        CanBeSold: match[9].trim()
-      };
-
-      fieldArray.push(minerData);
-    }
+    //let minerData = {
+        //Level: parseInt(match[1]),         // Level
+        //Nome: nome,              // Nome (antes de "Set")
+        //Set: set,                // Set (entre "Set" e "Size")
+        //Size: parseInt(match[4]),          // Size (já capturado em match[4])
+        //Power: parseInt(power),            // Power (em Gh/s) com 3 casas decimais
+        //Bonus: parseFloat(match[7]), // Bonus
+        //Quantity: parseInt(match[8]),       // Quantity
+        //CanBeSold: match[9].trim()
+      //};
+//
+      //fieldArray.push(minerData);
+    //}
 
     console.log("Inventário:", fieldArray);
     if (fieldArray.length === 0) {
