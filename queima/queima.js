@@ -180,12 +180,17 @@ async function organizar() {
         else if (unit === "Th/s") power *= 1e3;
 
         const miner = {
-            level: parseInt(level, 10),
-            name: name.trim(),
-            power,
-            bonus: parseFloat(bonus),
-            quantity: parseInt(quantity, 10),
-        };
+    level: parseInt(level, 10),
+    name: name.trim(),
+    power,
+    bonus: parseFloat(bonus),
+    quantity: parseInt(quantity, 10),
+    filename: name.trim()
+        .replace(/'/g, '')        // Remove o apóstrofo (')
+        .replace(/-/g, '_')       // Substitui o hífen (-) por underscore (_)
+        .replace(/\s+/g, '_')     // Substitui o espaço por underscore (_)
+        .toLowerCase()            // Converte tudo para minúsculas
+};
 
         if (canBeSold === "Can") {
             canBeSoldArray.push(miner);
