@@ -90,23 +90,36 @@ async function organizar() {
       }
 
       const specificMiner = minerInfo.find(miner => miner.miner_id === miner_id);
-      if (specificMiner) {
-        const minerData = {
-          miner_id,
-          type,
-          level: specificMiner.level,
-          name: specificMiner.name.en,
-          power: specificMiner.power,
-          bonus: specificMiner.bonus_power / 100,
-          canBeSold: specificMiner.is_can_be_sold_on_mp,
-          filename: specificMiner.filename,
-          quantity
-        };
-        minerDetails.push(minerData);
-      } else {
-        console.warn(`Miner com o ID especificado não encontrado: ${miner_id}`);
-      }
-    }
+if (specificMiner) {
+  const power = specificMiner.power;
+  const bonus = specificMiner.bonus_power / 100;
+  const field3 = parseFloat(document.getElementById('field3').value); // Valor de field3
+  const field4 = parseFloat(document.getElementById('field4').value); // Valor de field4
+
+  // Calculando o unitário
+  const unitario = ((power / field3) + (bonus / field4)) * 1000;
+
+  // Calculando o total
+  const total = unitario * quantity;
+
+  const minerData = {
+    miner_id,
+    type,
+    level: specificMiner.level,
+    name: specificMiner.name.en,
+    power,
+    bonus,
+    canBeSold: specificMiner.is_can_be_sold_on_mp,
+    filename: specificMiner.filename,
+    quantity,
+    unitario, // Adicionando o campo unitario
+    total // Adicionando o campo total
+  };
+  minerDetails.push(minerData);
+  } else {
+    console.warn(`Miner com o ID especificado não encontrado: ${miner_id}`);
+  }
+}
 
     //console.log("Mineradores na Sala:", minerDetails);
 
@@ -115,8 +128,8 @@ async function organizar() {
     const cannotBeSoldMinerDetails = minerDetails.filter(miner => !miner.canBeSold);
 
     // Ordena os arrays pelo atributo 'power' do maior para o menor
-    canBeSoldMinerDetails.sort((a, b) => b.power - a.power);
-    cannotBeSoldMinerDetails.sort((a, b) => b.power - a.power);
+    canBeSoldMinerDetails.sort((a, b) => b.unitario - a.unitario);
+    cannotBeSoldMinerDetails.sort((a, b) => b.unitario - a.unitario);
 
     console.log("Mineradores na Sala Negociáveis:", canBeSoldMinerDetails);
     console.log("Mineradores na Sala Inegociáveis:", cannotBeSoldMinerDetails);
@@ -183,6 +196,14 @@ async function organizar() {
         else if (unit === "Ph/s") power *= 1e6;
         else if (unit === "Th/s") power *= 1e3;
 
+      // Obter os valores dos campos field3 e field4
+        const field3 = parseFloat(document.getElementById("field3").value) || 1; // Valor de field3 (evita NaN)
+        const field4 = parseFloat(document.getElementById("field4").value) || 1; // Valor de field4 (evita NaN)
+
+        // Calcular unitario e total
+        const unitario = ((power / field3) + (bonus / field4)) * 1000;
+        const total = unitario * parseInt(quantity, 10);
+
         const miner = {
     level: parseInt(level, 10),
     name: name.trim(),
@@ -195,7 +216,9 @@ async function organizar() {
         .replace(/\+/g, 'plus')       // Substitui o + por underscore (_)
         .replace(/-/g, '_')        // Substitui o hífen (-) por underscore (_)
         .replace(/\s+/g, '_')      // Substitui o espaço por underscore (_)
-        .toLowerCase()             // Converte tudo para minúsculas
+        .toLowerCase(),             // Converte tudo para minúsculas
+    unitario,
+    total,
 };
 
         if (canBeSold === "Can") {
@@ -206,8 +229,8 @@ async function organizar() {
     }
 
     // Ordena os arrays pelo atributo 'power' do maior para o menor
-    canBeSoldArray.sort((a, b) => b.power - a.power);
-    cannotBeSoldArray.sort((a, b) => b.power - a.power);
+    canBeSoldArray.sort((a, b) => b.unitario - a.unitario);
+    cannotBeSoldArray.sort((a, b) => b.unitario - a.unitario);
 
     console.log("Inventário Negociável:", canBeSoldArray);
     console.log("Inventário Inegociável:", cannotBeSoldArray);
