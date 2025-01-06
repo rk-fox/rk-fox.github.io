@@ -114,6 +114,10 @@ async function organizar() {
     const canBeSoldMinerDetails = minerDetails.filter(miner => miner.canBeSold);
     const cannotBeSoldMinerDetails = minerDetails.filter(miner => !miner.canBeSold);
 
+    // Ordena os arrays pelo atributo 'power' do maior para o menor
+    canBeSoldMinerDetails.sort((a, b) => b.power - a.power);
+    cannotBeSoldMinerDetails.sort((a, b) => b.power - a.power);
+
     console.log("Mineradores na Sala Negociáveis:", canBeSoldMinerDetails);
     console.log("Mineradores na Sala Inegociáveis:", cannotBeSoldMinerDetails);
 
@@ -200,6 +204,10 @@ async function organizar() {
             cannotBeSoldArray.push(miner);
         }
     }
+
+    // Ordena os arrays pelo atributo 'power' do maior para o menor
+    canBeSoldArray.sort((a, b) => b.power - a.power);
+    cannotBeSoldArray.sort((a, b) => b.power - a.power);
 
     console.log("Inventário Negociável:", canBeSoldArray);
     console.log("Inventário Inegociável:", cannotBeSoldArray);
