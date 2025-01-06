@@ -61,7 +61,7 @@ async function organizar() {
     cleanedField2 = cleanedField2.replace(/(set badge|Cells|Miner details|open)/g, '').trim();
     cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
 
-    console.log("Texto limpo:", cleanedField2);
+    //console.log("Texto limpo:", cleanedField2);
 
     // Regex para capturar dados dos miners
     const minerRegex = /Level (?<level>\d+) (?<name>.+?) Set (?<set>.+?) Size: (?<size>\d+) Power (?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+) Bonus (?<bonus>[\d.,]+) % Quantity: (?<quantity>\d+) (?<canBeSold>Can|Can't) be sold/g;
@@ -99,10 +99,52 @@ async function organizar() {
     }
 
     return fieldArray;
+let canBeSoldArray = [];
+    let cannotBeSoldArray = [];
+    let match;
+
+    // Itera sobre as correspondências
+    while ((match = minerRegex.exec(cleanedField2)) !== null) {
+        let { level, name, set, size, power, unit, bonus, quantity, canBeSold } = match.groups;
+
+        // Converte unidades para Gh/s
+        power = parseFloat(power.replace(/,/g, ''));
+        if (unit === "Eh/s") power *= 1e9;
+        else if (unit === "Ph/s") power *= 1e6;
+        else if (unit === "Th/s") power *= 1e3;
+
+        // Cria o objeto miner
+        const miner = {
+            level: parseInt(level, 10),
+            name: name.trim(),
+            set: set.trim(),
+            size: parseInt(size, 10),
+            power,
+            unit: "Gh/s",
+            bonus: parseFloat(bonus),
+            quantity: parseInt(quantity, 10),
+            canBeSold: canBeSold === "Can",
+        };
+
+        // Adiciona ao array apropriado
+        if (miner.canBeSold) {
+            canBeSoldArray.push(miner);
+        } else {
+            cannotBeSoldArray.push(miner);
+        }
+    }
+
+    console.log("Miners que podem ser vendidos:", canBeSoldArray);
+    console.log("Miners que não podem ser vendidos:", cannotBeSoldArray);
+
+    if (canBeSoldArray.length === 0 && cannotBeSoldArray.length === 0) {
+      console.warn("Nenhum miner foi capturado. Verifique o texto de entrada e a regex.");
+    }
+
+    return { canBeSoldArray, cannotBeSoldArray };
   } catch (error) {
     console.error("Erro ao processar:", error);
   }
-}
 
 
 
