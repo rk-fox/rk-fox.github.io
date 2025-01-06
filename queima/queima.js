@@ -121,7 +121,6 @@ async function organizar() {
         Power: parseFloat(power.toFixed(3)),
         Bonus: parseFloat(match[7]),
         Quantity: parseInt(match[8]),
-        Vende: match[9],
       });
     }
 
