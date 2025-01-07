@@ -7,7 +7,7 @@ function getLevelDescription(level) {
             case 4: return { text: 'Legendary', color: '#fffb00' };
             case 5: return { text: 'Unreal', color: '#ff0000' };
             case 6: return { text: 'Legacy', color: '#ecab4e' };
-            default: return { text: 'Unknown', color: '' };
+            default: return { text: 'Legacy', color: '#ecab4e' };
         }
 }
 
