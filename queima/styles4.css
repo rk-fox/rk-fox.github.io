@@ -13,7 +13,7 @@ body {
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    padding: 20px; /* Adiciona espaçamento para o conteúdo */
+    padding: 20px;
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -81,7 +81,7 @@ body {
 
 /* Estilo para o link da sala e o botão de pesquisa */
 .input-container {
-    margin-bottom: 15px; /* Adiciona margin-bottom */
+    margin-bottom: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -91,7 +91,13 @@ body {
     padding: 10px;
     font-size: 16px;
     margin-right: 10px;
-    flex: 1; /* Faz o input preencher o espaço disponível */
+    flex: 1;
+}
+
+/* Novo estilo para garantir que label e input não fiquem na mesma linha */
+.input-container label {
+    display: block;
+    margin-bottom: 8px; /* Espaçamento entre o label e o input */
 }
 
 #searchButton {
@@ -200,10 +206,10 @@ body.dark-mode th {
 /* Estilo para o toggle switch */
 .switch {
     display: block;
-    margin: 20px auto; /* Centraliza o switch horizontalmente e adiciona margem */
+    margin: 20px auto;
     width: 60px;
     height: 34px;
-    position: relative; /* Removido para centralização */
+    position: relative;
 }
 
 .switch input {
@@ -246,19 +252,19 @@ input:checked + .slider:before {
 }
 
 .conversion-row {
-    margin-bottom: 10px; /* Espaçamento entre as linhas */
+    margin-bottom: 10px;
 }
 
 .conversion-row label, .conversion-row input {
-    display: block; /* Cada elemento ocupa sua própria linha */
+    display: block;
 }
 
-        /* Adicione o estilo para garantir que os radio buttons estejam centralizados e em linha */
 .radio-buttons {
     margin-top: 10px;
     display: flex;
     justify-content: center;
 }
+
 .radio-buttons label {
     margin: 0 10px;
 }
