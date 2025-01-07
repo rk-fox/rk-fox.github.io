@@ -206,38 +206,43 @@ if (specificMiner) {
     let resultArray = [];
 
     // Verifique a primeira parte
-    if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
-        parts[0] = "Level 0 " + parts[0];
-    } else {
-        parts[0] = "Level " + parts[0];
+if (parts[0].trim().startsWith("Rating star")) {
+    parts[0] = "Level 6 " + parts[0];
+} else if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
+    parts[0] = "Level 0 " + parts[0];
+} else {
+    parts[0] = "Level " + parts[0];
+}
+
+// Iterar e processar
+for (let i = 0; i < parts.length; i++) {
+    let currentPart = parts[i].trim();
+    if (!currentPart) continue;
+
+    let setCount = (currentPart.match(/Set/g) || []).length;
+
+    if (setCount === 1) {
+        currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, '$1 0 $2 $3');
     }
 
-    // Iterar e processar
-    for (let i = 0; i < parts.length; i++) {
-        let currentPart = parts[i].trim();
-        if (!currentPart) continue;
-
-        let setCount = (currentPart.match(/Set/g) || []).length;
-
-        if (setCount === 1) {
-            currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, '$1 0 $2 $3');
+    if (i < parts.length - 1) {
+        let nextPart = parts[i + 1].trim();
+        if (nextPart.startsWith("Rating star")) {
+            parts[i + 1] = "Level 6 " + nextPart;
+        } else if (nextPart && !/^\d/.test(nextPart)) {
+            parts[i + 1] = "Level 0 " + nextPart;
+        } else if (nextPart) {
+            parts[i + 1] = "Level " + nextPart;
         }
-
-        if (i < parts.length - 1) {
-            let nextPart = parts[i + 1].trim();
-            if (nextPart && !/^\d/.test(nextPart)) {
-                parts[i + 1] = "Level 0 " + parts[i + 1];
-            } else if (nextPart) {
-                parts[i + 1] = "Level " + parts[i + 1];
-            }
-        }
-
-        resultArray.push(currentPart);
     }
 
-    let cleanedField2 = resultArray.join(" open ");
-    cleanedField2 = cleanedField2.replace(/(set badge|Cells|Miner details|open)/g, '').trim();
-    cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
+    resultArray.push(currentPart);
+}
+
+let cleanedField2 = resultArray.join(" open ");
+cleanedField2 = cleanedField2.replace(/(Rating star|set badge|Cells|Miner details|open)/g, '').trim();
+cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
+
 
     // Regex para capturar dados dos miners
     const minerRegex = /Level (?<level>\d+) (?<name>.+?) Set (?<set>.+?) Size: (?<size>\d+) Power (?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+) Bonus (?<bonus>[\d.,]+) % Quantity: (?<quantity>\d+) (?<canBeSold>Can|Can't) be sold/g;
