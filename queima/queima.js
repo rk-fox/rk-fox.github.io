@@ -28,13 +28,13 @@ function preencherTabela(tableId, minerDetails) {
   
   // Definir título de acordo com o ID da tabela
   if (tableId === 'salaneg') {
-    title = 'Miners da Sala NEGOCIÁVEIS';
+    title = 'Miners NEGOCIÁVEIS da Sala';
   } else if (tableId === 'salaineg') {
-    title = 'Miners da Sala INEGOCIÁVEIS';
+    title = 'Miners INEGOCIÁVEIS da Sala';
   } else if (tableId === 'invneg') {
-    title = 'Miners da Inventário NEGOCIÁVEIS';
+    title = 'Miners NEGOCIÁVEIS do Inventário';
   } else if (tableId === 'invineg') {
-    title = 'Miners da Inventário INEGOCIÁVEIS';
+    title = 'Miners INEGOCIÁVEIS do Inventário';
   }
 
   // Adicionar o título como uma célula com colspan="5"
