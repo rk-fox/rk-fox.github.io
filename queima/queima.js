@@ -68,41 +68,46 @@ function loadScript(url) {
 
 async function organizar() {
   try {
-    const userLink = document.getElementById("field1").value.trim();
-    if (!userLink) {
-      alert("Por favor, insira um valor no Campo 1.");
+    const field1Value = document.getElementById("field1").value.trim();
+    const field2Value = document.getElementById("field2").value.trim();
+
+    // Verificar se pelo menos um campo está preenchido
+    if (!field1Value && !field2Value) {
+      alert("Por favor, preencha pelo menos um dos campos (Campo 1 ou Campo 2).");
       return;
     }
 
-    const profileUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`;
-    const profileResponse = await fetch(profileUrl);
+    // Verificar e processar o Campo 1
+    if (field1Value) {
+      const profileUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${field1Value}`;
+      const profileResponse = await fetch(profileUrl);
 
-    if (!profileResponse.ok) {
-      throw new Error("Erro ao acessar os dados do perfil. Verifique o ID inserido.");
-    }
+      if (!profileResponse.ok) {
+        throw new Error("Erro ao acessar os dados do perfil. Verifique o ID inserido.");
+      }
 
-    const profileData = await profileResponse.json();
-    const avatarId = profileData?.data?.avatar_id;
+      const profileData = await profileResponse.json();
+      const avatarId = profileData?.data?.avatar_id;
 
-    if (!avatarId) {
-      alert("Avatar ID não encontrado. Verifique o ID do usuário inserido.");
-      return;
-    }
+      if (!avatarId) {
+        alert("Avatar ID não encontrado. Verifique o ID do usuário inserido.");
+        return;
+      }
 
-    const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`;
-    const minerResponse = await fetch(minerUrl);
+      const minerUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`;
+      const minerResponse = await fetch(minerUrl);
 
-    if (!minerResponse.ok) {
-      throw new Error("Erro ao acessar os dados do minerador.");
-    }
+      if (!minerResponse.ok) {
+        throw new Error("Erro ao acessar os dados do minerador.");
+      }
 
-    const minerData = await minerResponse.json();
-    const miners = minerData?.data?.miners;
+      const minerData = await minerResponse.json();
+      const miners = minerData?.data?.miners;
 
-    if (!miners || !Array.isArray(miners)) {
-      alert("Dados dos mineradores não encontrados ou estão em formato inesperado.");
-      return;
-    }
+      if (!miners || !Array.isArray(miners)) {
+        alert("Dados dos mineradores não encontrados ou estão em formato inesperado.");
+        return;
+      }
 
     const minerCounts = miners.reduce((acc, miner) => {
       const { miner_id, type } = miner;
@@ -168,7 +173,7 @@ if (specificMiner) {
     console.warn(`Miner com o ID especificado não encontrado: ${miner_id}`);
   }
 }
-
+    
 
     //console.log("Mineradores na Sala:", minerDetails);
 
@@ -192,7 +197,11 @@ if (specificMiner) {
 
     console.log("Mineradores na Sala Negociáveis:", canBeSoldMinerDetails);
     console.log("Mineradores na Sala Inegociáveis:", cannotBeSoldMinerDetails);
+    }
 
+     // Verificar e processar o Campo 2
+    if (field2Value) {
+            
     // Processamento do campo field2
     let fieldContent = document.getElementById('field2').value.trim();
     if (!fieldContent) {
@@ -313,7 +322,7 @@ cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
 
     return { canBeSoldArray, cannotBeSoldArray };
 
-
+}
 
     
   } catch (error) {
