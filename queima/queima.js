@@ -128,7 +128,7 @@ if (specificMiner) {
   const field4 = parseFloat(document.getElementById('field4').value); // Valor de field4
 
   // Calculando o unitário
-  const unitario = Math.round(((power / (field3 * 1000)) + (bonus / (field4 * 1000))));
+  const unitario = Math.round(((power / (field3 * 1000)) + (bonus / field4) * 1000));
 
   // Calculando o total
   const total = unitario * quantity;
@@ -243,7 +243,7 @@ if (specificMiner) {
         const field4 = parseFloat(document.getElementById("field4").value) || 1; // Valor de field4 (evita NaN)
 
         // Calcular unitario e total
-        const unitario = Math.round(((power / (field3 * 1000)) + (bonus / (field4 * 1000))));
+        const unitario = Math.round(((power / (field3 * 1000)) + (bonus / field4) * 1000));
         const total = unitario * parseInt(quantity, 10);
 
         const miner = {
