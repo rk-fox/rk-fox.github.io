@@ -13,30 +13,54 @@ function getLevelDescription(level) {
 
 
 // Função para preencher as tabelas
-function preencherTabela(tableId, minerDetails, title) {
+function preencherTabela(tableId, minerDetails) {
   const table = document.getElementById(tableId);
   table.innerHTML = ''; // Limpar conteúdo anterior
 
-  // Criar o título da tabela (caption)
-  const caption = document.createElement('caption');
-  caption.textContent = title;
-  table.appendChild(caption);
-
   // Criar cabeçalhos
   const headers = ['Miner', 'Power', 'Bonus', 'Unitário', 'Total'];
+
+  // Criar o cabeçalho da tabela com título dinâmico
+  const thead = document.createElement('thead');
+  const titleRow = document.createElement('tr');
+  
+  let title = '';  // Variável para armazenar o título da tabela
+  
+  // Definir título de acordo com o ID da tabela
+  if (tableId === 'salaneg') {
+    title = 'Miners da Sala NEGOCIÁVEIS';
+  } else if (tableId === 'salaineg') {
+    title = 'Miners da Sala INEGOCIÁVEIS';
+  } else if (tableId === 'invneg') {
+    title = 'Miners da Inventário NEGOCIÁVEIS';
+  } else if (tableId === 'invineg') {
+    title = 'Miners da Inventário INEGOCIÁVEIS';
+  }
+
+  // Adicionar o título como uma célula com colspan="5"
+  const titleCell = document.createElement('th');
+  titleCell.colSpan = 5;
+  titleCell.textContent = title;
+  titleRow.appendChild(titleCell);
+  thead.appendChild(titleRow);
+  
+  // Criar a linha dos cabeçalhos
   const headerRow = document.createElement('tr');
   headers.forEach(header => {
     const th = document.createElement('th');
     th.textContent = header;
     headerRow.appendChild(th);
   });
-  table.appendChild(headerRow);
+  thead.appendChild(headerRow);
+
+  // Adicionar o <thead> à tabela
+  table.appendChild(thead);
 
   let totalUnitario = 0;
   let totalTotal = 0;
 
   // Adicionar os dados dos mineradores
-  minerDetails.forEach((miner, index) => {
+  minerDetails.forEach((miner) => {
     const row = document.createElement('tr');
 
     const levelInfo = getLevelDescription(miner.level);
@@ -57,7 +81,7 @@ function preencherTabela(tableId, minerDetails, title) {
     table.appendChild(row);
   });
 
-  // Adicionar as linhas totais (se necessário)
+  // Adicionar a linha de totais
   const totalRow = document.createElement('tr');
   totalRow.innerHTML = `
     <td colspan="3">Totais</td>
