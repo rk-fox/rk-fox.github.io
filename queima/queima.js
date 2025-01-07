@@ -73,7 +73,7 @@ async function organizar() {
 
     // Verificar se pelo menos um campo está preenchido
     if (!field1Value && !field2Value) {
-      alert("Por favor, preencha pelo menos um dos campos (Campo 1 ou Campo 2).");
+      alert("Por favor, preencha pelo menos um dos campos (Perfil ou Inventário).");
       return;
     }
 
