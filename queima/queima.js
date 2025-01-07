@@ -1,4 +1,18 @@
- // Função para preencher as tabelas
+function getLevelDescription(level) {
+        switch (level) {
+            case 0: return { text: 'Common', color: '' };
+            case 1: return { text: 'Uncommon', color: '#2bff00' };
+            case 2: return { text: 'Rare', color: '#00eaff' };
+            case 3: return { text: 'Epic', color: '#ff00bb' };
+            case 4: return { text: 'Legendary', color: '#fffb00' };
+            case 5: return { text: 'Unreal', color: '#ff0000' };
+            case 6: return { text: 'Legacy', color: '#ecab4e' };
+            default: return { text: 'Unknown', color: '' };
+        }
+}
+
+
+// Função para preencher as tabelas
     function preencherTabela(tableId, minerDetails) {
       const table = document.getElementById(tableId);
       table.innerHTML = ''; // Limpar conteúdo anterior
@@ -14,19 +28,23 @@
       table.appendChild(headerRow);
 
       // Adicionar os dados dos mineradores
-      minerDetails.forEach(miner => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${miner.level}</td>
-          <td>${miner.name}</td>
-          <td>${miner.power}</td>
-          <td>${miner.bonus}</td>
-          <td>${miner.unitario}</td>
-          <td>${miner.total}</td>
-          <td>${miner.filename}</td>
-        `;
-        table.appendChild(row);
-      });
+minerDetails.forEach((miner, index) => {
+    const row = document.createElement('tr');
+
+    const levelInfo = getLevelDescription(miner.level);
+    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
+    
+    row.innerHTML = `
+        <td>${levelSpan}</td>
+        <td>${miner.power}</td>
+        <td>${miner.bonus}</td>
+        <td>${miner.unitario}</td>
+        <td>${miner.total}</td>
+        <td>${miner.filename}</td>
+    `;
+
+    table.appendChild(row);
+});
     }
 
 // Adiciona um único evento keydown para ambos os campos
@@ -136,7 +154,7 @@ if (specificMiner) {
   const minerData = {
     miner_id,
     type,
-    level: specificMiner.level,
+    level: type === "old_merge" ? 6 : specificMiner.level, // Condição para ajustar o level
     name: specificMiner.name.en,
     power,
     bonus,
@@ -145,7 +163,7 @@ if (specificMiner) {
     quantity,
     unitario, // Adicionando o campo unitario
     total // Adicionando o campo total
-  };
+ };
   minerDetails.push(minerData);
   } else {
     console.warn(`Miner com o ID especificado não encontrado: ${miner_id}`);
