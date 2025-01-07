@@ -1,14 +1,3 @@
-// Função para carregar o script dinamicamente
-async function loadScript(url) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = url;
-    script.onload = () => resolve();
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-
 // Função para calcular o bônus extra com base nos IDs específicos
 function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
   // Filtra as miners do grupo específico
@@ -147,6 +136,21 @@ let miners = [];
 const minerCount = {}; // Para contar repetições gerais
 
 
+// Função para carregar os scripts dinamicamente
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+// Array para armazenar mineradores processados
+let miners = [];
+const minerCount = {}; // Para contar repetições gerais
+
 // Carregando os scripts necessários
 Promise.all([
   loadScript('https://wminerrc.github.io/calculator/data/basic_miners.js'),
@@ -177,13 +181,23 @@ function processMiners(minerList) {
 
     // Obter a informação sobre o tipo de minerador
     let isCanBeSold = false; // Valor padrão
-    const minerInfo = miner.type === 'basic' ? window.basic_miners :
-                      miner.type === 'merge' ? window.merge_miners :
-                      miner.type === 'old_merge' ? window.old_merge_miners : null;
+    let minerInfo = null;
 
-    // Verifica se o minerador está presente no tipo correto
-    if (minerInfo && minerInfo[miner.miner_id]) {
-      isCanBeSold = minerInfo[miner.miner_id].is_can_be_sold_on_mp || false; // Define como false caso não exista
+    // Carregar dados de acordo com o tipo do minerador
+    if (miner.type === 'basic') {
+      minerInfo = window.basic_miners;
+    } else if (miner.type === 'merge') {
+      minerInfo = window.merge_miners;
+    } else if (miner.type === 'old_merge') {
+      minerInfo = window.old_merge_miners;
+    }
+
+    // Verifica se o minerador está presente no tipo correto e ajusta is_can_be_sold_on_mp
+    if (minerInfo) {
+      const minerData = minerInfo.find(m => m.miner_id === miner.miner_id);
+      if (minerData) {
+        isCanBeSold = minerData.is_can_be_sold_on_mp || false; // Define como false caso não exista
+      }
     }
 
     // Adiciona o minerador à lista final
@@ -212,7 +226,6 @@ function processMiners(minerList) {
   console.log("Miners processados:", miners);
 }
 
-
 // Filtro adicional baseado na opção selecionada
 const selectedOption = document.querySelector('input[name="option"]:checked').value;
 if (selectedOption === 'op1') {
@@ -228,7 +241,6 @@ if (selectedOption2 === 'op1') {
 } else if (selectedOption2 === 'op2') {
   miners = miners.filter(miner => miner.is_can_be_sold_on_mp === false);
 }
-
 
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
