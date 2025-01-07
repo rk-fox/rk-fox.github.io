@@ -65,8 +65,8 @@ function preencherTabela(tableId, minerDetails, title) {
     <td>${totalTotal}</td>
   `;
   table.appendChild(totalRow);
-}
-            // Adicionar linha de somatórios
+
+// Adicionar linha de somatórios
     const sumRow = document.createElement('tr');
     sumRow.innerHTML = `
         <td colspan="3" style="font-weight: bold; text-align: right;">Totais:</td>
@@ -74,7 +74,7 @@ function preencherTabela(tableId, minerDetails, title) {
         <td style="font-weight: bold;">${totalTotal}</td>
     `;
     table.appendChild(sumRow);
-    }
+}
 
 // Adiciona um único evento keydown para ambos os campos
 document.querySelectorAll("#field1, #field2").forEach(function (field) {
