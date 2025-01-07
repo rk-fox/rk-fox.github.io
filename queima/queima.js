@@ -13,25 +13,30 @@ function getLevelDescription(level) {
 
 
 // Função para preencher as tabelas
-    function preencherTabela(tableId, minerDetails) {
-      const table = document.getElementById(tableId);
-      table.innerHTML = ''; // Limpar conteúdo anterior
+function preencherTabela(tableId, minerDetails, title) {
+  const table = document.getElementById(tableId);
+  table.innerHTML = ''; // Limpar conteúdo anterior
 
-      // Criar cabeçalhos
-      const headers = ['Miner', 'Power', 'Bonus', 'Unitário', 'Total'];
-      const headerRow = document.createElement('tr');
-      headers.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        headerRow.appendChild(th);
-      });
-      table.appendChild(headerRow);
+  // Criar o título da tabela (caption)
+  const caption = document.createElement('caption');
+  caption.textContent = title;
+  table.appendChild(caption);
 
-        let totalUnitario = 0;
-        let totalTotal = 0;
+  // Criar cabeçalhos
+  const headers = ['Miner', 'Power', 'Bonus', 'Unitário', 'Total'];
+  const headerRow = document.createElement('tr');
+  headers.forEach(header => {
+    const th = document.createElement('th');
+    th.textContent = header;
+    headerRow.appendChild(th);
+  });
+  table.appendChild(headerRow);
 
-      // Adicionar os dados dos mineradores
-minerDetails.forEach((miner, index) => {
+  let totalUnitario = 0;
+  let totalTotal = 0;
+
+  // Adicionar os dados dos mineradores
+  minerDetails.forEach((miner, index) => {
     const row = document.createElement('tr');
 
     const levelInfo = getLevelDescription(miner.level);
@@ -45,12 +50,22 @@ minerDetails.forEach((miner, index) => {
         <td>${miner.total}</td>
     `;
 
-        // Acumular os valores de Unitário e Total
-        totalUnitario += miner.unitario;
-        totalTotal += miner.total;
+    // Acumular os valores de Unitário e Total
+    totalUnitario += miner.unitario;
+    totalTotal += miner.total;
 
     table.appendChild(row);
-});
+  });
+
+  // Adicionar as linhas totais (se necessário)
+  const totalRow = document.createElement('tr');
+  totalRow.innerHTML = `
+    <td colspan="3">Totais</td>
+    <td>${totalUnitario}</td>
+    <td>${totalTotal}</td>
+  `;
+  table.appendChild(totalRow);
+}
             // Adicionar linha de somatórios
     const sumRow = document.createElement('tr');
     sumRow.innerHTML = `
