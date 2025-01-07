@@ -94,7 +94,7 @@ function preencherTabela(tableId, minerDetails) {
     const sumRow = document.createElement('tr');
     sumRow.innerHTML = `
         <td colspan="4" style="font-weight: bold; text-align: right;">Totais:</td>
-        <td style="font-weight: bold;">${totalUnitario}</td>
+        //<td style="font-weight: bold;">${totalUnitario}</td>
         <td style="font-weight: bold;">${totalTotal}</td>
     `;
     table.appendChild(sumRow);
