@@ -131,7 +131,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             return response.json();
           })
           .then(jsonData => {
-    // Array para armazenar mineradores processados
+            
+// Array para armazenar mineradores processados
 let miners = [];
 const minerCount = {}; // Para contar repetições gerais
 
@@ -147,9 +148,6 @@ function loadScript(url) {
   });
 }
 
-// Array para armazenar mineradores processados
-let miners = [];
-const minerCount = {}; // Para contar repetições gerais
 
 // Carregando os scripts necessários
 Promise.all([
