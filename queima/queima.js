@@ -305,6 +305,7 @@ cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
         .replace(/-/g, '_')        // Substitui o hífen (-) por underscore (_)
         .replace(/\s+/g, '_')      // Substitui o espaço por underscore (_)
         .replace(/,/g, '')
+        .replace(/\./g, '')
         .toLowerCase(),             // Converte tudo para minúsculas
     unitario,
     total,
