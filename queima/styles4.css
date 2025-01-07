@@ -102,6 +102,7 @@ body {
 
 #searchButton {
     padding: 10px 20px;
+    margin-top: 5px;
     font-size: 16px;
     background-color: #007bff;
     color: #fff;
