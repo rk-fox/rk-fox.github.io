@@ -280,9 +280,9 @@ cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
 
         // Converte unidades para Gh/s
         power = parseFloat(power.replace(/,/g, ''));
-        if (unit === "Eh/s") power *= 1e9;
-        else if (unit === "Ph/s") power *= 1e6;
-        else if (unit === "Th/s") power *= 1e3;
+        if (unit === "Eh/s") Math.round(power *= 1e9);
+        else if (unit === "Ph/s") Math.round(power *= 1e6);
+        else if (unit === "Th/s") Math.round(power *= 1e3);
 
       // Obter os valores dos campos field3 e field4
         const field3 = parseFloat(document.getElementById("field3").value) || 1; // Valor de field3 (evita NaN)
