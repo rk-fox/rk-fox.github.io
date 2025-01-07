@@ -146,16 +146,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 let miners = [];
 const minerCount = {}; // Para contar repetições gerais
 
-// Função para carregar scripts dinamicamente
-function loadScript(url) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = url;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
 
 // Carregando os scripts necessários
 Promise.all([
