@@ -40,6 +40,7 @@ minerDetails.forEach((miner, index) => {
         <td>${miner.bonus}</td>
         <td>${miner.unitario}</td>
         <td>${miner.total}</td>
+        <td><img src="https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1" alt="${miner.filename}" style="width: 50px; height: auto;"></td>
         <td>${miner.filename}</td>
     `;
 
