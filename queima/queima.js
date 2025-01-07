@@ -295,7 +295,7 @@ cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
         const miner = {
     level: parseInt(level, 10),
     name: name.trim(),
-    power.toFixed(0),
+    power: power.toFixed(0),
     bonus: parseFloat(bonus),
     quantity: parseInt(quantity, 10),
     filename: name.trim()
