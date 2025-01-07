@@ -281,28 +281,28 @@ if (selectedOption === 'op1') {
             const top10NegativeResults = minerImpacts.slice(0, 10);
 
       const updateElement = (index, miner) => {
-                if (miner) {
-                    const levelInfo = getLevelDescription(miner.level , miner.type);
-                    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-                    document.getElementById(`nome${index}`).innerHTML = levelSpan;
-                    document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
-                    document.getElementById(`img${index}`).style.display = 'block';
-                    document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
-                    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
-                    document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
-                    if (miner.setBonus > 0) {                      
-                      document.getElementById(`set${index}`).innerText = `${(miner.setBonus).toFixed(2).replace('.', ',')}%`;
-                    } else if (miner.setImpact > 0) {
-                      document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
-                    } else {
-                    document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
-                    }
-                    document.getElementById(`merge${index}`).innerText = miner.repetitions;
-                    document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
-                } else {
-                    document.getElementById(`nome${index}`).innerText = '';
-                }
-            };
+    if (miner) {
+        const levelInfo = getLevelDescription(miner.level, miner.type);
+        const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
+        document.getElementById(`nome${index}`).innerHTML = levelSpan;
+        document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
+        document.getElementById(`img${index}`).style.display = 'block';
+        document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
+        document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
+        document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
+        if (miner.setBonus > 0) {                      
+            document.getElementById(`set${index}`).innerText = `${(miner.setBonus).toFixed(2).replace('.', ',')}%`;
+        } else if (miner.setImpact > 0) {
+            document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
+        } else {
+            document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
+        }
+        document.getElementById(`merge${index}`).innerText = miner.repetitions;
+        document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
+    } else {
+        document.getElementById(`nome${index}`).innerText = '';
+    }
+};
 
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
   }) 
