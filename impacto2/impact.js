@@ -67,10 +67,16 @@ function convertPower(value) {
   return value.toFixed(3).replace('.', ',') + ' Ghs';
 }
 
-function getLevelDescription(level) {
+function getLevelDescription(level, type) {
         switch (level) {
             case 0: return { text: 'Common', color: '' };
-            case 1: return { text: 'Uncommon', color: '#2bff00' };
+            case 1:
+            if (type === 'merge') {
+                return { text: 'Uncommon', color: '#2bff00' };
+            } else if (type === 'old_merge') {
+                return { text: 'Legacy', color: '#ecab4e' };
+            }
+            break;
             case 2: return { text: 'Rare', color: '#00eaff' };
             case 3: return { text: 'Epic', color: '#ff00bb' };
             case 4: return { text: 'Legendary', color: '#fffb00' };
@@ -161,6 +167,7 @@ jsonData.data.miners.forEach(miner => {
     repetitions: isFirst ? "Não" : totalRepetitions, // "Não" para a primeira, total para as subsequentes
     setImpact: 0, // Adiciona o atributo com valor inicial 0
     setBonus: 0, // Adiciona o atributo com valor inicial 0
+    type: miner.type,
   });
 
   minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
@@ -257,24 +264,9 @@ if (selectedOption === 'op1') {
     minerImpacts.sort((a, b) => b.impact - a.impact); // Ajuste na ordenação
 
         // Exibindo os dados no console
-    console.log("Miners Data (formatted):", miners.map(miner => ({
-      miner_id: miner.miner_id,
-      name: miner.name,
-      level: miner.level,
-      power: miner.formattedPower, // Exibe o valor formatado
-      bonus_percent: miner.bonus_percent,
-      setBonus: miner.setBonus,
-      setImpact: miner.setImpact,
-      width: miner.width,
-      repetitions: miner.repetitions,
-      rack: miner.user_rack_id,
-      room_level: miner.room_level, // Novo dado de rack
-      rack_x: miner.rack_x,         // Novo dado de rack
-      rack_y: miner.rack_y          // Novo dado de rack
-    })));
-    console.log("Racks Data:", racks);
     console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
       name: impact.name,
+      level: impact.level,
       power: impact.formattedPower, // Exibe o valor formatado
       bonus_percent: impact.bonus_percent,
       setBonus: impact.setBonus,
@@ -282,14 +274,15 @@ if (selectedOption === 'op1') {
       formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
       room_level: impact.room_level, // Novo dado de rack
       rack_x: impact.rack_x,         // Novo dado de rack
-      rack_y: impact.rack_y          // Novo dado de rack
+      rack_y: impact.rack_y,          // Novo dado de rack
+      type: impact.type,
     })));
 
             const top10NegativeResults = minerImpacts.slice(0, 10);
 
       const updateElement = (index, miner) => {
                 if (miner) {
-                    const levelInfo = getLevelDescription(miner.level);
+                    const levelInfo = getLevelDescription(miner.level , miner.type);
                     const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
                     document.getElementById(`nome${index}`).innerHTML = levelSpan;
                     document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
