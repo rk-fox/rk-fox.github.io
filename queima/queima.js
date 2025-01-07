@@ -1,3 +1,34 @@
+ // Função para preencher as tabelas
+    function preencherTabela(tableId, minerDetails) {
+      const table = document.getElementById(tableId);
+      table.innerHTML = ''; // Limpar conteúdo anterior
+
+      // Criar cabeçalhos
+      const headers = ['Level', 'Nome', 'Power', 'Bonus', 'Unitário', 'Total', 'Filename'];
+      const headerRow = document.createElement('tr');
+      headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      // Adicionar os dados dos mineradores
+      minerDetails.forEach(miner => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${miner.level}</td>
+          <td>${miner.name}</td>
+          <td>${miner.power}</td>
+          <td>${miner.bonus}</td>
+          <td>${miner.unitario}</td>
+          <td>${miner.total}</td>
+          <td>${miner.filename}</td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
 // Adiciona um único evento keydown para ambos os campos
 document.querySelectorAll("#field1, #field2").forEach(function (field) {
   field.addEventListener("keydown", function (event) {
@@ -121,6 +152,7 @@ if (specificMiner) {
   }
 }
 
+
     //console.log("Mineradores na Sala:", minerDetails);
 
     // Dividir os minerDetails em dois arrays
@@ -130,6 +162,16 @@ if (specificMiner) {
     // Ordena os arrays pelo atributo 'power' do maior para o menor
     canBeSoldMinerDetails.sort((a, b) => b.unitario - a.unitario);
     cannotBeSoldMinerDetails.sort((a, b) => b.unitario - a.unitario);
+
+    // Preencher as tabelas com os dados
+    preencherTabela('salaneg', canBeSoldMinerDetails);
+    preencherTabela('salaineg', cannotBeSoldMinerDetails);
+
+    // Exibir as tabelas
+    document.getElementById('salaneg').style.display = 'table';
+    document.getElementById('salaineg').style.display = 'table';
+
+   
 
     console.log("Mineradores na Sala Negociáveis:", canBeSoldMinerDetails);
     console.log("Mineradores na Sala Inegociáveis:", cannotBeSoldMinerDetails);
@@ -232,6 +274,14 @@ if (specificMiner) {
     canBeSoldArray.sort((a, b) => b.unitario - a.unitario);
     cannotBeSoldArray.sort((a, b) => b.unitario - a.unitario);
 
+    // Preencher as tabelas com os dados
+    preencherTabela('invneg', canBeSoldArray);
+    preencherTabela('invineg', cannotBeSoldArray);
+
+    // Exibir as tabelas
+    document.getElementById('invneg').style.display = 'table';
+    document.getElementById('invineg').style.display = 'table';
+
     console.log("Inventário Negociável:", canBeSoldArray);
     console.log("Inventário Inegociável:", cannotBeSoldArray);
 
@@ -240,6 +290,10 @@ if (specificMiner) {
     }
 
     return { canBeSoldArray, cannotBeSoldArray };
+
+
+
+    
   } catch (error) {
     console.error("Erro ao processar:", error);
   }
