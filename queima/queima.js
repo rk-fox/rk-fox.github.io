@@ -27,6 +27,9 @@ function getLevelDescription(level) {
       });
       table.appendChild(headerRow);
 
+        let totalUnitario = 0;
+        let totalTotal = 0;
+
       // Adicionar os dados dos mineradores
 minerDetails.forEach((miner, index) => {
     const row = document.createElement('tr');
@@ -42,8 +45,20 @@ minerDetails.forEach((miner, index) => {
         <td>${miner.total}</td>
     `;
 
+        // Acumular os valores de Unitário e Total
+        totalUnitario += miner.unitario;
+        totalTotal += miner.total;
+
     table.appendChild(row);
 });
+            // Adicionar linha de somatórios
+    const sumRow = document.createElement('tr');
+    sumRow.innerHTML = `
+        <td colspan="3" style="font-weight: bold; text-align: right;">Totais:</td>
+        <td style="font-weight: bold;">${totalUnitario}</td>
+        <td style="font-weight: bold;">${totalTotal}</td>
+    `;
+    table.appendChild(sumRow);
     }
 
 // Adiciona um único evento keydown para ambos os campos
