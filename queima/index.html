@@ -9,11 +9,9 @@
 <body>
   <div class="container">
     <div class="ref1">
-        <!--Start rollercoin.com code-->
         <a href="https://rollercoin.com/?r=kyluudij">
             <img src="https://static.rollercoin.com/static/img/ref/gen2/w320h50.png" alt="Rollercoin Referral">
         </a>
-        <!--End rollercoin.com code-->
     </div>
     
     <div class="profile">
@@ -39,46 +37,44 @@
         <h3>Tutorial: youtube(em breve)</h3>
         
         <div class="container">
-        <div class="input-container">
-            <label>Link da Sala (após /p/)</label>
-            <input type="text" id="field1" class="textInput" placeholder="RKFox">
-        </div>
-        <div class="input-container">
-            <label>Dados do Inventário</label>
-            <input type="text" id="field2" class="textInput" placeholder="Cole os dados do seu inventário">
+            <!-- Link da Sala -->
+            <div class="input-container">
+                <label for="field1">Link da Sala (após /p/)</label>
+                <input type="text" id="field1" class="textInput" placeholder="RKFox">
+            </div>
+            <!-- Dados do Inventário -->
+            <div class="input-container">
+                <label for="field2">Dados do Inventário</label>
+                <input type="text" id="field2" class="textInput" placeholder="Cole os dados do seu inventário">
+            </div>
+
+            <!-- Conversão de Pontos -->
+            <div class="container">
+                <div>
+                    <h3>Conversão de Pontos</h3>
+                </div>
+                <div class="input-container">
+                    <label for="field3">Quantos Ths por 1000 pontos?</label>
+                    <input type="text" class="textInput" id="field3" value="100">
+                </div>
+                <div class="input-container">
+                    <label for="field4">Quantos % por 1000 pontos?</label>
+                    <input type="text" class="textInput" id="field4" value="10">
+                </div>
+            </div>
+
+            <!-- Botão de Organizar -->
+            <div class="input-container">
+                <button id="searchButton" onclick="organizar()">ORGANIZAR</button>
+            </div>
         </div>
 
-        <!-- Conversão de Pontos -->
         <div class="container">
-            <div>
-            <h3>Conversão de Pontos</h3>
-            </div>
-            <div class="input-container">
-                <div>
-            <h3>Quantos Ths por 1000 pontos?</h3>
-            </div>
-                <input type="text" class="textInput" id="field3" value="100">
-            </div>
-            <div class="input-container">
-                <div>
-            <h3>Quantos % por 1000 pontos?</h3>
-            </div>
-                <input type="text" class="textInput" id="field4" value="10">
-            </div>
+            <table id="salaneg" style="display: none;"><caption>Miners da Sala NEGOCIÁVEIS</caption></table>
+            <table id="salaineg" style="display: none;"><caption>Miners da Sala INEGOCIÁVEIS</caption></table>
+            <table id="invneg" style="display: none;"><caption>Miners da Inventário NEGOCIÁVEIS</caption></table>
+            <table id="invineg" style="display: none;"><caption>Miners da Inventário INEGOCIÁVEIS</caption></table>
         </div>
-
-        <!-- Button Container -->
-        <div class="input-container">
-            <button id="searchButton" onclick="organizar()">ORGANIZAR</button>
-        </div>
-    </div>
-
-    <div class="container">
-        <table id="salaneg" style="display: none;"><caption>Miners da Sala NEGOCIÁVEIS</caption></table>
-        <table id="salaineg" style="display: none;"><caption>Miners da Sala INEGOCIÁVEIS</caption></table>
-        <table id="invneg" style="display: none;"><caption>Miners da Inventário NEGOCIÁVEIS</caption></table>
-        <table id="invineg" style="display: none;"><caption>Miners da Inventário INEGOCIÁVEIS</caption></table>
-    </div>
     </div>
   </div>
   
