@@ -87,7 +87,7 @@ body {
     align-items: center;
 }
 
-.textInput {
+#textInput {
     padding: 5px;
     font-size: 16px;
     margin-right: 10px;
@@ -100,7 +100,7 @@ body {
     margin-bottom: 8px; /* Espaçamento entre o label e o input */
 }
 
-.searchButton {
+#searchButton {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #007bff;
@@ -110,7 +110,7 @@ body {
     cursor: pointer;
 }
 
-.searchButton:hover {
+#searchButton:hover {
     background-color: #0056b3;
 }
 
