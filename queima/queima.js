@@ -81,19 +81,19 @@ function preencherTabela(tableId, minerDetails) {
     table.appendChild(row);
   });
 
-  // Adicionar a linha de totais
-  const totalRow = document.createElement('tr');
-  totalRow.innerHTML = `
-    <td colspan="3">Totais</td>
-    <td>${totalUnitario}</td>
-    <td>${totalTotal}</td>
-  `;
-  table.appendChild(totalRow);
+    //Adicionar a linha de totais
+ //   const totalRow = document.createElement('tr');
+//    totalRow.innerHTML = `
+//    <td colspan="3">Totais</td>
+//    <td>${totalUnitario}</td>
+//    <td>${totalTotal}</td>
+//  `;
+//  table.appendChild(totalRow);
 
 // Adicionar linha de somatórios
     const sumRow = document.createElement('tr');
     sumRow.innerHTML = `
-        <td colspan="3" style="font-weight: bold; text-align: right;">Totais:</td>
+        <td colspan="4" style="font-weight: bold; text-align: right;">Totais:</td>
         <td style="font-weight: bold;">${totalUnitario}</td>
         <td style="font-weight: bold;">${totalTotal}</td>
     `;
