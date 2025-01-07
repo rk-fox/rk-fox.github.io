@@ -240,6 +240,14 @@ input:checked + .slider:before {
     background-color: #000;
 }
 
+.conversion-row {
+    margin-bottom: 10px; /* Espaçamento entre as linhas */
+}
+
+.conversion-row label, .conversion-row input {
+    display: block; /* Cada elemento ocupa sua própria linha */
+}
+
         /* Adicione o estilo para garantir que os radio buttons estejam centralizados e em linha */
 .radio-buttons {
     margin-top: 10px;
