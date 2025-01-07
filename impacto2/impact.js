@@ -1,5 +1,5 @@
 // Função para carregar o script dinamicamente
-function loadScript(url) {
+async function loadScript(url) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = url;
@@ -146,12 +146,9 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             let miners = [];
             const minerCount = {}; // Para contar repetições
 
-// Carregar os scripts dinamicamente
-await Promise.all([
   loadScript('https://wminerrc.github.io/calculator/data/basic_miners.js'),
   loadScript('https://wminerrc.github.io/calculator/data/merge_miners.js'),
   loadScript('https://wminerrc.github.io/calculator/data/old/merge_miners.js')
-]);
 
 // Agora podemos acessar os dados carregados
 for (const [miner_id, { type, quantity }] of Object.entries(minerCounts)) {
