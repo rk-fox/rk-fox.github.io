@@ -18,7 +18,7 @@ function getLevelDescription(level) {
       table.innerHTML = ''; // Limpar conteúdo anterior
 
       // Criar cabeçalhos
-      const headers = ['Level', 'Nome', 'Power', 'Bonus', 'Unitário', 'Total', 'Filename'];
+      const headers = ['Miner', 'Power', 'Bonus', 'Unitário', 'Total'];
       const headerRow = document.createElement('tr');
       headers.forEach(header => {
         const th = document.createElement('th');
@@ -35,12 +35,11 @@ minerDetails.forEach((miner, index) => {
     const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
     
     row.innerHTML = `
-        <td>${levelSpan}</td>
+        <td><img src="https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1" alt="${miner.filename}" style="width: 50px; height: auto;"><br>${levelSpan}</td>
         <td>${miner.power}</td>
         <td>${miner.bonus}</td>
         <td>${miner.unitario}</td>
         <td>${miner.total}</td>
-        <td><img src="https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1" alt="${miner.filename}" style="width: 50px; height: auto;"></td>
         <td>${miner.filename}</td>
     `;
 
