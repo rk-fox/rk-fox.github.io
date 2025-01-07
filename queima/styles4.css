@@ -129,6 +129,11 @@ body {
     margin-bottom: 10px;
 }
 
+.calc h4 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
 /* Estilo para a tabela */
 table {
     width: 100%;
