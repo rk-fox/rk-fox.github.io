@@ -164,6 +164,7 @@ jsonData.data.miners.forEach(miner => {
     filename: miner.filename,
     bonus_percent: isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus dividido por 100
     is_in_set: miner.is_in_set,
+    is_can_be_sold_on_mp: miner.is_can_be_sold_on_mp,
     repetitions: isFirst ? "Não" : totalRepetitions, // "Não" para a primeira, total para as subsequentes
     setImpact: 0, // Adiciona o atributo com valor inicial 0
     setBonus: 0, // Adiciona o atributo com valor inicial 0
@@ -181,6 +182,13 @@ if (selectedOption === 'op1') {
   miners = miners.filter(miner => miner.width === 2);
 }
 
+// Filtro adicional negociável
+const selectedOption2 = document.querySelector('input[name="neg"]:checked').value;
+if (selectedOption2 === 'op1') {
+  miners = miners.filter(miner => miner.is_can_be_sold_on_mp === true);
+} else if (selectedOption2 === 'op2') {
+  miners = miners.filter(miner => miner.is_can_be_sold_on_mp === false);
+}
 
 
             
