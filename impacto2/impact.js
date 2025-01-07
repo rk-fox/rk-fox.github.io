@@ -1,3 +1,14 @@
+// Função para carregar o script dinamicamente
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = () => resolve();
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
 // Função para calcular o bônus extra com base nos IDs específicos
 function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
   // Filtra as miners do grupo específico
@@ -135,7 +146,32 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             let miners = [];
             const minerCount = {}; // Para contar repetições
 
+// Carregar os scripts dinamicamente
+await Promise.all([
+  loadScript('https://wminerrc.github.io/calculator/data/basic_miners.js'),
+  loadScript('https://wminerrc.github.io/calculator/data/merge_miners.js'),
+  loadScript('https://wminerrc.github.io/calculator/data/old/merge_miners.js')
+]);
 
+// Agora podemos acessar os dados carregados
+for (const [miner_id, { type, quantity }] of Object.entries(minerCounts)) {
+  let minerInfo;
+
+  if (type === "basic") {
+    minerInfo = window.basic_miners;
+  } else if (type === "merge") {
+    minerInfo = window.merge_miners;
+  } else if (type === "old_merge") {
+    minerInfo = window.old_merge_miners;
+  } else {
+    console.warn(`Tipo desconhecido para miner_id ${miner_id}: ${type}`);
+    continue;
+  }
+  
+  // Aqui, você pode acessar miner.is_can_be_sold_on_mp
+  let isCanBeSold = minerInfo[miner_id]?.is_can_be_sold_on_mp;
+  // Você pode então utilizar isCanBeSold dentro da lógica que manipula os mineradores
+}
 
             
     // Primeiro, conta todas as repetições gerais
@@ -153,6 +189,17 @@ jsonData.data.miners.forEach(miner => {
   const totalRepetitions = minerCount[key].count; // Total de repetições geral
   const isFirst = !minerCount[key].firstAssigned; // Verifica se é a primeira ocorrência
 
+  let isCanBeSold = false; // Valor default
+
+   // Acessar a informação de is_can_be_sold_on_mp do miner carregado no script
+  const minerInfo = miner.type === 'basic' ? window.basic_miners :
+                    miner.type === 'merge' ? window.merge_miners :
+                    miner.type === 'old_merge' ? window.old_merge_miners : null;
+  
+  if (minerInfo && minerInfo[miner.miner_id]) {
+    isCanBeSold = minerInfo[miner.miner_id].is_can_be_sold_on_mp;
+  }
+
   miners.push({
     miner_id: miner.miner_id,
     user_rack_id: miner.placement.user_rack_id,
@@ -160,18 +207,18 @@ jsonData.data.miners.forEach(miner => {
     width: miner.width,
     level: miner.level,
     power: miner.power,
-    formattedPower: convertPower(miner.power), // Formata o valor de power para exibição
+    formattedPower: convertPower(miner.power),
     filename: miner.filename,
-    bonus_percent: isFirst ? miner.bonus_percent / 100 : 0, // Apenas a primeira mantém o bônus dividido por 100
+    bonus_percent: isFirst ? miner.bonus_percent / 100 : 0,
     is_in_set: miner.is_in_set,
-    is_can_be_sold_on_mp: miner.is_can_be_sold_on_mp,
-    repetitions: isFirst ? "Não" : totalRepetitions, // "Não" para a primeira, total para as subsequentes
-    setImpact: 0, // Adiciona o atributo com valor inicial 0
-    setBonus: 0, // Adiciona o atributo com valor inicial 0
+    is_can_be_sold_on_mp: isCanBeSold,  // Aqui você define o valor de is_can_be_sold_on_mp
+    repetitions: isFirst ? "Não" : totalRepetitions,
+    setImpact: 0,
+    setBonus: 0,
     type: miner.type,
   });
 
-  minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
+  minerCount[key].firstAssigned = true;
 });
 
 // Filtro adicional baseado na opção selecionada
