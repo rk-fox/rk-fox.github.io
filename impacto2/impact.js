@@ -284,6 +284,7 @@ if (selectedOption2 === 'op1') {
       rack_x: impact.rack_x,         // Novo dado de rack
       rack_y: impact.rack_y,          // Novo dado de rack
       type: impact.type,
+      vende: impact.is_can_be_sold_on_mp,
     })));
 
             const top10NegativeResults = minerImpacts.slice(0, 10);
@@ -295,6 +296,7 @@ if (selectedOption2 === 'op1') {
         document.getElementById(`nome${index}`).innerHTML = levelSpan;
         document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
         document.getElementById(`img${index}`).style.display = 'block';
+        document.getElementById(`sell${index}`).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável'; 
         document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
         document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
         document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
