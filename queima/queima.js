@@ -40,7 +40,6 @@ minerDetails.forEach((miner, index) => {
         <td>${miner.bonus}</td>
         <td>${miner.unitario}</td>
         <td>${miner.total}</td>
-        <td>${miner.filename}</td>
     `;
 
     table.appendChild(row);
