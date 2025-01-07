@@ -49,13 +49,14 @@
             <input type="text" id="field2" placeholder="Cole os dados do seu inventário">
         </div>
 
+        <!-- Conversão de Pontos -->
         <div class="input-container">
             <h3>Conversão de Pontos</h3>
-            <div class="input-container">
+            <div class="conversion-row">
                 <label for="field3">Quantos Ths por 1000 pontos?</label>
                 <input type="text" id="field3" value="100">
             </div>
-            <div class="input-container">
+            <div class="conversion-row">
                 <label for="field4">Quantos % por 1000 pontos?</label>
                 <input type="text" id="field4" value="10">
             </div>
@@ -66,13 +67,15 @@
             <button id="searchButton" onclick="organizar()">ORGANIZAR</button>
         </div>
     </div>
-  <div class="container">
-      <table id="salaneg" style="display: none;"></table>
-      <table id="salaineg" style="display: none;"></table>
-      <table id="invneg" style="display: none;"></table>
-      <table id="invineg" style="display: none;"></table>
+
+    <div class="container">
+        <table id="salaneg" style="display: none;"></table>
+        <table id="salaineg" style="display: none;"></table>
+        <table id="invneg" style="display: none;"></table>
+        <table id="invineg" style="display: none;"></table>
+    </div>
   </div>
-</div>
+  
   <script src="queima.js"></script>
   <script src="script2.js"></script>
 </body>
