@@ -256,7 +256,7 @@ async function main() {
   }
 
   console.log(miners);
-//}
+}
 
 // Chama a função assíncrona
 main().catch(error => console.error('Erro na execução da função main:', error));
@@ -357,19 +357,6 @@ main().catch(error => console.error('Erro na execução da função main:', erro
 
 const top10NegativeResults = minerImpacts.slice(0, 10);
 
-// Limpar os dados do elemento antes de atualizá-los
-for (let j = 1; j <= 10; j++) {
-    document.getElementById(`nome${j}`).innerText = '';
-    document.getElementById(`img${j}`).src = '';
-    document.getElementById(`img${j}`).style.display = 'none';
-    // document.getElementById(`sell${j}`).innerText = ''; // Se usar o campo 'sell'
-    document.getElementById(`poder${j}`).innerText = '';
-    document.getElementById(`bonus${j}`).innerText = '';
-    document.getElementById(`impact${j}`).innerText = '';
-    document.getElementById(`set${j}`).innerText = '';
-    document.getElementById(`merge${j}`).innerText = '';
-    document.getElementById(`rack${j}`).innerText = '';
-}
               
       const updateElement = (index, miner) => {
     if (miner) {
@@ -395,10 +382,8 @@ for (let j = 1; j <= 10; j++) {
         document.getElementById(`nome${index}`).innerText = '';
     }
 };
-
-      top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
-  }}) 
-        
+            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+  })         
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
