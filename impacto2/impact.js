@@ -357,11 +357,11 @@ main().catch(error => console.error('Erro na execução da função main:', erro
 
 // Função para limpar os dados dos elementos
 const clearElements = () => {
-  for (let i = 0; i < 10; i++) {
+  for (let i = 1; i < 11; i++) {
     document.getElementById(`nome${i}`).innerText = '';
     document.getElementById(`img${i}`).src = '';
     document.getElementById(`img${i}`).style.display = 'none';
-    // document.getElementById(`sell${i}`).innerText = ''; // Se usar o campo 'sell'
+    document.getElementById(`sell${i}`).innerText = ''; // Se usar o campo 'sell'
     document.getElementById(`poder${i}`).innerText = '';
     document.getElementById(`bonus${i}`).innerText = '';
     document.getElementById(`impact${i}`).innerText = '';
@@ -371,17 +371,15 @@ const clearElements = () => {
   }
 };
 
-// Função para atualizar os elementos com os dados
-const updateElements = (miners) => {
-  miners.forEach((miner, index) => {
-    if (index >= 10) return; // Garante que não ultrapasse o índice 9
-
+/ Função para atualizar os dados do índice especificado
+const updateElement = (index, miner) => {
+  if (miner) {
     const levelInfo = getLevelDescription(miner.level, miner.type);
     const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
     document.getElementById(`nome${index}`).innerHTML = levelSpan;
     document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
     document.getElementById(`img${index}`).style.display = 'block';
-    // document.getElementById(`sell${index}`).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável';
+    document.getElementById(`sell${index}`).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável';
     document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
     document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
     document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
@@ -397,10 +395,22 @@ const updateElements = (miners) => {
   });
 };
 
-// Chamada para limpar e atualizar
-clearElements(); // Primeiro limpa todos os elementos
-const top10NegativeResults = minerImpacts.slice(0, 10);
-updateElements(top10NegativeResults); // Atualiza com os novos dados
+// Função principal para limpar e atualizar
+const updateTop10NegativeResults = (minerImpacts) => {
+  // Seleciona os 10 primeiros resultados
+  const top10NegativeResults = minerImpacts.slice(0, 10);
+
+  // Primeiro, limpa todos os índices de 1 a 10
+  for (let i = 1; i <= 10; i++) {
+    clearElement(i);
+  }
+
+  // Em seguida, atualiza apenas os índices que possuem dados
+  top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+};
+
+// Chamada da função com os dados de impacto
+updateTop10NegativeResults(minerImpacts);
 })
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
