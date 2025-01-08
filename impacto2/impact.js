@@ -333,7 +333,7 @@ if (selectedOption2 === 'op1') {
       rack_x: impact.rack_x,         // Novo dado de rack
       rack_y: impact.rack_y,          // Novo dado de rack
       type: impact.type,
-      vende: impact.is_can_be_sold_on_mp,
+      is_can_be_sold_on_mp: impact.is_can_be_sold_on_mp,
     })));
 
             const top10NegativeResults = minerImpacts.slice(0, 10);
