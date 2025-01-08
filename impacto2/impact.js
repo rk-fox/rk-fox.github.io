@@ -244,9 +244,9 @@ addSellableToMiners(miners);
 // Filtro adicional negociável
 const selectedOption2 = document.querySelector('input[name="neg"]:checked').value;
 if (selectedOption2 === 'op1') {
-  miners = miners.filter(miner => miner.is_can_be_sold_on_mp === true);
+  miners = miners.filter(miner => miner.sellable === true);
 } else if (selectedOption2 === 'op2') {
-  miners = miners.filter(miner => miner.is_can_be_sold_on_mp === false);
+  miners = miners.filter(miner => miner.sellable === false);
 }
             
 console.log(miners)
