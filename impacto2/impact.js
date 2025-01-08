@@ -85,7 +85,7 @@ async function loadAllScripts() {
       await loadScript(url);
     }
     console.log("Todos os scripts foram carregados com sucesso!");
-    processMiners(minerList); // minerList seria os dados que você está processando
+    
   } catch (error) {
     console.error("Erro ao carregar os scripts:", error);
   }
@@ -231,6 +231,7 @@ let miners = [];
 const minerCount = {}; // Para contar repetições gerais
 
 loadAllScripts();
+processMiners(minerList); // minerList seria os dados que você está processando
             
 
 // Filtro adicional baseado na opção selecionada
