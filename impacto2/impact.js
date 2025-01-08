@@ -340,6 +340,18 @@ console.log(miners)
             const top10NegativeResults = minerImpacts.slice(0, 10);
 
       const updateElement = (index, miner) => {
+           // Limpar os dados do elemento antes de atualizá-los
+    document.getElementById(`nome${index}`).innerText = '';
+    document.getElementById(`img${index}`).src = '';
+    document.getElementById(`img${index}`).style.display = 'none';
+    //document.getElementById(`sell${index}`).innerText = ''; // Se usar o campo 'sell'
+    document.getElementById(`poder${index}`).innerText = '';
+    document.getElementById(`bonus${index}`).innerText = '';
+    document.getElementById(`impact${index}`).innerText = '';
+    document.getElementById(`set${index}`).innerText = '';
+    document.getElementById(`merge${index}`).innerText = '';
+    document.getElementById(`rack${index}`).innerText = '';
+          
     if (miner) {
         const levelInfo = getLevelDescription(miner.level, miner.type);
         const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
