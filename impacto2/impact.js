@@ -17,14 +17,16 @@ async function loadAllScripts() {
   ];
 
   try {
-    await Promise.all(urls.map(url => loadScript(url)));
+    for (const url of urls) {
+      await loadScript(url);
+    }
     console.log("Todos os scripts foram carregados com sucesso!");
-    // Agora, você pode chamar a função para processar os miners
     processMiners(minerList); // minerList seria os dados que você está processando
   } catch (error) {
     console.error("Erro ao carregar os scripts:", error);
   }
 }
+
 
 // Função para calcular o bônus extra com base nos IDs específicos
 function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
@@ -164,10 +166,9 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 let miners = [];
 const minerCount = {}; // Para contar repetições gerais
 
+loadAllScripts();
             
 function processMiners(minerList) {
-
-  loadAllScripts();
   
   // Primeiro, conta todas as repetições gerais
   minerList.forEach(miner => {
