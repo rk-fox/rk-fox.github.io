@@ -393,9 +393,10 @@ const clearAllFields = () => {
         document.getElementById(`rack${j}`).innerText = '';
     }
 };
+
+    clearAllFields();
               
       const updateElement = (index, miner) => {
-          clearAllFields();
           
     if (miner) {
         const levelInfo = getLevelDescription(miner.level, miner.type);
