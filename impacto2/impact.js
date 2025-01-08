@@ -235,28 +235,38 @@ async function main() {
   // Adiciona atributo `sellable`
   await addSellableToMiners(miners);
 
-  // Obter opção selecionada (width)
+  // Filtro baseado na opção selecionada (width)
   const selectedOption = document.querySelector('input[name="option"]:checked');
   if (selectedOption) {
-    const filteredWidth = selectedOption.value === 'op1' 
-      ? miners.filter(miner => miner.width === 1) 
-      : selectedOption.value === 'op2' 
-        ? miners.filter(miner => miner.width === 2) 
-        : miners;
+    let filteredWidth;
+    if (selectedOption.value === 'op1') {
+      filteredWidth = miners.filter(miner => miner.width === 1);
+    } else if (selectedOption.value === 'op2') {
+      filteredWidth = miners.filter(miner => miner.width === 2);
+    } else if (selectedOption.value === 'op3') {
+      filteredWidth = miners.filter(miner => miner.width === 1 || miner.width === 2); // Inclui width 1 e 2
+    } else {
+      filteredWidth = miners; // Sem filtro
+    }
 
     // Atualizar o array global mantendo referências
     miners.length = 0;
     miners.push(...filteredWidth);
   }
 
-  // Obter opção selecionada para "neg" (sellable)
+  // Filtro baseado na opção selecionada para "neg" (sellable)
   const selectedNegOption = document.querySelector('input[name="neg"]:checked');
   if (selectedNegOption) {
-    const filteredNeg = selectedNegOption.value === 'op1' 
-      ? miners.filter(miner => miner.sellable === true) 
-      : selectedNegOption.value === 'op2' 
-        ? miners.filter(miner => miner.sellable === false) 
-        : miners;
+    let filteredNeg;
+    if (selectedNegOption.value === 'op1') {
+      filteredNeg = miners.filter(miner => miner.sellable === true); // Negociável
+    } else if (selectedNegOption.value === 'op2') {
+      filteredNeg = miners.filter(miner => miner.sellable === false); // Inegociável
+    } else if (selectedNegOption.value === 'op3') {
+      filteredNeg = miners.filter(miner => miner.sellable === true || miner.sellable === false); // Inclui ambos
+    } else {
+      filteredNeg = miners; // Sem filtro
+    }
 
     // Atualizar o array global mantendo referências
     miners.length = 0;
@@ -269,7 +279,6 @@ async function main() {
 
 // Chama a função assíncrona
 main().catch(error => console.error('Erro na execução da função main:', error));
-
 
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
