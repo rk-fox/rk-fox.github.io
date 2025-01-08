@@ -179,9 +179,9 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         let total_orig = minersPower * (1 + (totalbonusPercent / 100));
 
-        console.log("Miners Power:", convertPower(minersPower));
-        console.log("Miners Bonus:", totalbonusPercent + '%');
-        console.log("Total Power:", convertPower(total_orig));
+        //console.log("Miners Power:", convertPower(minersPower));
+        //console.log("Miners Bonus:", totalbonusPercent + '%');
+        //console.log("Total Power:", convertPower(total_orig));
 
         // Fazendo uma requisição à API para obter dados dinâmicos
         fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`)
@@ -274,7 +274,7 @@ async function main() {
   }
 
   // Exemplo de atualização do DOM ou console log
- console.log(miners);
+ //console.log(miners);
 
 
 }
@@ -363,19 +363,19 @@ main().then(() => {
     minerImpacts.sort((a, b) => b.impact - a.impact); // Ajuste na ordenação
 
         // Exibindo os dados no console
-    console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
-      name: impact.name,
-      level: impact.level,
-      power: impact.formattedPower, // Exibe o valor formatado
-      bonus_percent: impact.bonus_percent,
-      setBonus: impact.setBonus,
-      setImpact: impact.setImpact,
-      formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
-      room_level: impact.room_level, // Novo dado de rack
-      rack_x: impact.rack_x,         // Novo dado de rack
-      rack_y: impact.rack_y,          // Novo dado de rack
-      type: impact.type,
-    })));
+    //console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
+    //name: impact.name,
+      //level: impact.level,
+      //power: impact.formattedPower, // Exibe o valor formatado
+      //bonus_percent: impact.bonus_percent,
+      //setBonus: impact.setBonus,
+      //setImpact: impact.setImpact,
+      //formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
+      //room_level: impact.room_level, // Novo dado de rack
+      //rack_x: impact.rack_x,         // Novo dado de rack
+      //rack_y: impact.rack_y,          // Novo dado de rack
+      //type: impact.type,
+    //})));
 
 const top10NegativeResults = minerImpacts.slice(0, 10);
 
