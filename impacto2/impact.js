@@ -355,8 +355,6 @@ main().catch(error => console.error('Erro na execução da função main:', erro
       type: impact.type,
     })));
 
-const top10NegativeResults = minerImpacts.slice(0, 10);
-
 // Função para limpar os dados dos elementos
 const clearElements = () => {
   for (let i = 0; i < 10; i++) {
@@ -373,34 +371,37 @@ const clearElements = () => {
   }
 };
 
-      const updateElement = (index, miner) => {
-    if (miner) {
-        const levelInfo = getLevelDescription(miner.level, miner.type);
-        const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-        document.getElementById(`nome${index}`).innerHTML = levelSpan;
-        document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
-        document.getElementById(`img${index}`).style.display = 'block';
-        //document.getElementById(`sell${index}`).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável'; 
-        document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
-        document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
-        document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
-        if (miner.setBonus > 0) {                      
-            document.getElementById(`set${index}`).innerText = `${(miner.setBonus).toFixed(2).replace('.', ',')}%`;
-        } else if (miner.setImpact > 0) {
-            document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
-        } else {
-            document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
-        }
-        document.getElementById(`merge${index}`).innerText = miner.repetitions;
-        document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
+// Função para atualizar os elementos com os dados
+const updateElements = (miners) => {
+  miners.forEach((miner, index) => {
+    if (index >= 10) return; // Garante que não ultrapasse o índice 9
+
+    const levelInfo = getLevelDescription(miner.level, miner.type);
+    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
+    document.getElementById(`nome${index}`).innerHTML = levelSpan;
+    document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
+    document.getElementById(`img${index}`).style.display = 'block';
+    // document.getElementById(`sell${index}`).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável';
+    document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
+    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
+    document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
+    if (miner.setBonus > 0) {                      
+      document.getElementById(`set${index}`).innerText = `${(miner.setBonus).toFixed(2).replace('.', ',')}%`;
+    } else if (miner.setImpact > 0) {
+      document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
     } else {
-        document.getElementById(`nome${index}`).innerText = '';
+      document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
     }
+    document.getElementById(`merge${index}`).innerText = miner.repetitions;
+    document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
+  });
 };
 
-            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
-  }) 
-  
+// Chamada para limpar e atualizar
+clearElements(); // Primeiro limpa todos os elementos
+const top10NegativeResults = minerImpacts.slice(0, 10);
+updateElements(top10NegativeResults); // Atualiza com os novos dados
+}
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
