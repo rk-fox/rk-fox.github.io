@@ -155,7 +155,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     }
 
     try {
-        const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}`); 
+        const profileResponse = await fetch(https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userLink}); 
         const profileData = await profileResponse.json();
         const userName = profileData.data.name; 
         const avatarId = profileData.data.avatar_id;
@@ -165,12 +165,12 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             return;
         }
 
-        const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
+        const avatarUrl = https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png;
         document.getElementById('avatar').src = avatarUrl;
         document.getElementById('avatar').style.display = 'block';
-        document.getElementById('welcomeMessage').innerText = `Olá, ${userName}!`;
+        document.getElementById('welcomeMessage').innerText = Olá, ${userName}!;
 
-        const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+        const powerDataResponse = await fetch(https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId});
         const powerData = await powerDataResponse.json();
         let minersPower = powerData.data.miners;
         let totalbonusPercent = powerData.data.bonus_percent;
@@ -184,10 +184,10 @@ document.getElementById('searchButton').addEventListener('click', async () => {
         console.log("Total Power:", convertPower(total_orig));
 
         // Fazendo uma requisição à API para obter dados dinâmicos
-        fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`)
+        fetch(https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId})
           .then(response => {
             if (!response.ok) {
-              throw new Error(`Erro na requisição: ${response.status}`);
+              throw new Error(Erro na requisição: ${response.status});
             }
             return response.json();
           })
@@ -198,7 +198,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
             
     // Primeiro, conta todas as repetições gerais
 jsonData.data.miners.forEach(miner => {
-  const key = `${miner.miner_id}_${miner.level}`;
+  const key = ${miner.miner_id}_${miner.level};
   if (!minerCount[key]) {
     minerCount[key] = { count: 0, firstAssigned: false }; // Adiciona flag para controlar a primeira ocorrência
   }
@@ -207,7 +207,7 @@ jsonData.data.miners.forEach(miner => {
 
 // Em seguida, monta a lista final com as informações desejadas
 jsonData.data.miners.forEach(miner => {
-  const key = `${miner.miner_id}_${miner.level}`;
+  const key = ${miner.miner_id}_${miner.level};
   const totalRepetitions = minerCount[key].count; // Total de repetições geral
   const isFirst = !minerCount[key].firstAssigned; // Verifica se é a primeira ocorrência
 
@@ -232,7 +232,7 @@ jsonData.data.miners.forEach(miner => {
 });
 
 async function main() {
-  // Adiciona atributo `sellable`
+  // Adiciona atributo sellable
   await addSellableToMiners(miners);
 
   // Filtro baseado na opção selecionada (width)
@@ -383,25 +383,25 @@ console.log(miners);
       const updateElement = (index, miner) => {
     if (miner) {
         const levelInfo = getLevelDescription(miner.level, miner.type);
-        const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-        document.getElementById(`nome${index}`).innerHTML = levelSpan;
-        document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
-        document.getElementById(`img${index}`).style.display = 'block';
-        // document.getElementById(`sell${index}`).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável';
-        document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
-        document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
-        document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
+        const levelSpan = <span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name};
+        document.getElementById(nome${index}).innerHTML = levelSpan;
+        document.getElementById(img${index}).src = https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1;
+        document.getElementById(img${index}).style.display = 'block';
+        // document.getElementById(sell${index}).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável';
+        document.getElementById(poder${index}).innerText = convertPower(miner.power);
+        document.getElementById(bonus${index}).innerText = ${(miner.bonus_percent).toFixed(2).replace('.', ',')}%;
+        document.getElementById(impact${index}).innerText = convertPower(miner.impact);
         if (miner.setBonus > 0) {
-            document.getElementById(`set${index}`).innerText = `${(miner.setBonus).toFixed(2).replace('.', ',')}%`;
+            document.getElementById(set${index}).innerText = ${(miner.setBonus).toFixed(2).replace('.', ',')}%;
         } else if (miner.setImpact > 0) {
-            document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
+            document.getElementById(set${index}).innerText = convertPower(miner.setImpact);
         } else {
-            document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
+            document.getElementById(set${index}).innerText = miner.is_in_set ? 'Sim' : 'Não';
         }
-        document.getElementById(`merge${index}`).innerText = miner.repetitions;
-        document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
+        document.getElementById(merge${index}).innerText = miner.repetitions;
+        document.getElementById(rack${index}).innerText = Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1};
     } else {
-        document.getElementById(`nome${index}`).innerText = '';
+        document.getElementById(nome${index}).innerText = '';
     }
 };
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
