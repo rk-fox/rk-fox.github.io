@@ -280,11 +280,7 @@ async function main() {
 }
 
 // Chama a função assíncrona
-try {
-    await main()
-} .catch(err) {
-            console.error('Erro na  main:', error);
-        }
+main().then(() => {
 
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
@@ -411,7 +407,7 @@ const top10NegativeResults = minerImpacts.slice(0, 10);
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
               // Chama a função assíncrona
  
-          })         
+          }})         
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
