@@ -138,7 +138,7 @@ const minerCount = {}; // Para contar repetições gerais
 
 
 // Função para carregar os scripts dinamicamente
-function loadScript(url) {
+async function loadScript(url) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = url;
