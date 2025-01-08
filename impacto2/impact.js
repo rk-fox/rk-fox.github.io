@@ -355,63 +355,50 @@ main().catch(error => console.error('Erro na execução da função main:', erro
       type: impact.type,
     })));
 
-// Função para limpar os dados dos elementos
-const clearElements = () => {
-  for (let i = 1; i < 11; i++) {
-    document.getElementById(`nome${i}`).innerText = '';
-    document.getElementById(`img${i}`).src = '';
-    document.getElementById(`img${i}`).style.display = 'none';
-    document.getElementById(`sell${i}`).innerText = ''; // Se usar o campo 'sell'
-    document.getElementById(`poder${i}`).innerText = '';
-    document.getElementById(`bonus${i}`).innerText = '';
-    document.getElementById(`impact${i}`).innerText = '';
-    document.getElementById(`set${i}`).innerText = '';
-    document.getElementById(`merge${i}`).innerText = '';
-    document.getElementById(`rack${i}`).innerText = '';
-  }
-};
+const top10NegativeResults = minerImpacts.slice(0, 10);
 
-// Função para atualizar os dados do índice especificado
+for (let j = 1; j <= 10; j++) {
+  // Limpar os dados do elemento antes de atualizá-los
+  document.getElementById(`nome${j}`).innerText = '';
+  document.getElementById(`img${j}`).src = '';
+  document.getElementById(`img${j}`).style.display = 'none';
+  //document.getElementById(`sell${j}`).innerText = '';
+  document.getElementById(`poder${j}`).innerText = '';
+  document.getElementById(`bonus${j}`).innerText = '';
+  document.getElementById(`impact${j}`).innerText = '';
+  document.getElementById(`set${j}`).innerText = '';
+  document.getElementById(`merge${j}`).innerText = '';
+  document.getElementById(`rack${j}`).innerText = '';
+}
+
 const updateElement = (index, miner) => {
-  if (miner) {
-    const levelInfo = getLevelDescription(miner.level, miner.type);
-    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-    document.getElementById(`nome${index}`).innerHTML = levelSpan;
-    document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
-    document.getElementById(`img${index}`).style.display = 'block';
-    document.getElementById(`sell${index}`).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável';
-    document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
-    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
-    document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
-    if (miner.setBonus > 0) {                      
-      document.getElementById(`set${index}`).innerText = `${(miner.setBonus).toFixed(2).replace('.', ',')}%`;
-    } else if (miner.setImpact > 0) {
-      document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
+   
+    if (miner) {
+        const levelInfo = getLevelDescription(miner.level, miner.type);
+        const levelSpan = <span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name};
+        document.getElementById(nome${index}).innerHTML = levelSpan;
+        document.getElementById(img${index}).src = https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1;
+        document.getElementById(img${index}).style.display = 'block';
+        //document.getElementById(sell${index}).innerText = miner.sellable ? 'Negociável' : 'Inegociável'; 
+        document.getElementById(poder${index}).innerText = convertPower(miner.power);
+        document.getElementById(bonus${index}).innerText = ${(miner.bonus_percent).toFixed(2).replace('.', ',')}%;
+        document.getElementById(impact${index}).innerText = convertPower(miner.impact);
+        if (miner.setBonus > 0) {                      
+            document.getElementById(set${index}).innerText = ${(miner.setBonus).toFixed(2).replace('.', ',')}%;
+        } else if (miner.setImpact > 0) {
+            document.getElementById(set${index}).innerText = convertPower(miner.setImpact);
+        } else {
+            document.getElementById(set${index}).innerText = miner.is_in_set ? 'Sim' : 'Não';
+        }
+        document.getElementById(merge${index}).innerText = miner.repetitions;
+        document.getElementById(rack${index}).innerText = Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1};
     } else {
-      document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
+        document.getElementById(nome${index}).innerText = '';
     }
-    document.getElementById(`merge${index}`).innerText = miner.repetitions;
-    document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
-  });
 };
 
-// Função principal para limpar e atualizar
-const updateTop10NegativeResults = (minerImpacts) => {
-  // Seleciona os 10 primeiros resultados
-  const top10NegativeResults = minerImpacts.slice(0, 10);
-
-  // Primeiro, limpa todos os índices de 1 a 10
-  for (let i = 1; i <= 10; i++) {
-    clearElement(i);
-  }
-
-  // Em seguida, atualiza apenas os índices que possuem dados
-  top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
-};
-
-// Chamada da função com os dados de impacto
-updateTop10NegativeResults(minerImpacts);
-})
+            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+  }) 
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
