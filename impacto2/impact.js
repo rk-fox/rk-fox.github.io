@@ -164,10 +164,11 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 let miners = [];
 const minerCount = {}; // Para contar repetições gerais
 
-
-loadAllScripts();
             
 function processMiners(minerList) {
+
+  loadAllScripts();
+  
   // Primeiro, conta todas as repetições gerais
   minerList.forEach(miner => {
     const key = `${miner.miner_id}_${miner.level}`;
