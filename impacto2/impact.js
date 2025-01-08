@@ -1,3 +1,31 @@
+// Função para carregar os scripts dinamicamente
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = resolve;  // Resolve a promessa quando o script carregar
+    script.onerror = reject;  // Rejeita a promessa se ocorrer erro no carregamento
+    document.head.appendChild(script);
+  });
+}
+
+// Função para carregar múltiplos scripts
+async function loadAllScripts() {
+  const urls = [
+    'https://wminerrc.github.io/calculator/data/basic_miners.js',
+    'https://wminerrc.github.io/calculator/data/merge_miners.js',
+    'https://wminerrc.github.io/calculator/data/old/merge_miners.js'
+  ];
+
+  try {
+    // Usando Promise.all com await para carregar todos os scripts simultaneamente
+    await Promise.all(urls.map(url => loadScript(url)));
+    console.log("Todos os scripts foram carregados com sucesso!");
+  } catch (error) {
+    console.error("Erro ao carregar os scripts:", error);
+  }
+}
+
 // Função para calcular o bônus extra com base nos IDs específicos
 function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
   // Filtra as miners do grupo específico
@@ -137,25 +165,8 @@ let miners = [];
 const minerCount = {}; // Para contar repetições gerais
 
 
-// Função para carregar os scripts dinamicamente
-async function loadScript(url) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = url;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-
-
-// Carregando os scripts necessários
-await Promise.all([
-  loadScript('https://wminerrc.github.io/calculator/data/basic_miners.js'),
-  loadScript('https://wminerrc.github.io/calculator/data/merge_miners.js'),
-  loadScript('https://wminerrc.github.io/calculator/data/old/merge_miners.js')
-]);
-
+loadAllScripts();
+            
 function processMiners(minerList) {
   // Primeiro, conta todas as repetições gerais
   minerList.forEach(miner => {
