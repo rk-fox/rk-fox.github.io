@@ -274,7 +274,7 @@ async function main() {
   }
 
   // Exemplo de atualização do DOM ou console log
-  console.log(miners);
+ // console.log(miners);
 }
 
 // Chama a função assíncrona
@@ -378,7 +378,7 @@ main().catch(error => console.error('Erro na execução da função main:', erro
 const top10NegativeResults = minerImpacts.slice(0, 10);
 
   
-
+console.log(miners);
               
       const updateElement = (index, miner) => {
     if (miner) {
