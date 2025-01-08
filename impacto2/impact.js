@@ -226,9 +226,9 @@ function processMiners(minerList) {
     // Marca a primeira ocorrência como atribuída
     minerCount[key].firstAssigned = true;
   });
-
-  console.log("Miners processados:", miners);
 }
+  console.log("Miners processados:", miners);
+
 
 // Filtro adicional baseado na opção selecionada
 const selectedOption = document.querySelector('input[name="option"]:checked').value;
