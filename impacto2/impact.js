@@ -256,7 +256,7 @@ async function main() {
   }
 
   console.log(miners);
-}
+//}
 
 // Chama a função assíncrona
 main().catch(error => console.error('Erro na execução da função main:', error));
@@ -398,6 +398,7 @@ for (let j = 1; j <= 10; j++) {
 
       top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
   }) 
+        }
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
