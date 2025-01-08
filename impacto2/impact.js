@@ -404,7 +404,9 @@ const clearAllFields = () => {
         document.getElementById(`nome${index}`).innerHTML = levelSpan;
         document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
         document.getElementById(`img${index}`).style.display = 'block';
-        document.getElementById(`sell${index}`).innerText = miner.sellable ? 'Negociável' : 'Inegociável';
+        const sellElement = document.getElementById(`sell${index}`);
+        sellElement.innerText = miner.sellable ? 'Negociável' : 'Inegociável';
+        sellElement.style.color = miner.sellable ? '' : 'red';
         document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
         document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
         document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
@@ -422,7 +424,6 @@ const clearAllFields = () => {
     }
 };
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
-              // Chama a função assíncrona
  
           })})        
           } catch (error) {
