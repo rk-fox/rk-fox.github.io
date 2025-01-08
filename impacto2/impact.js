@@ -359,16 +359,16 @@ const top10NegativeResults = minerImpacts.slice(0, 10);
 
 for (let j = 1; j <= 10; j++) {
     // Limpar os dados do elemento antes de atualizá-los
-    document.getElementById(nome${index}).innerText = '';
-    document.getElementById(img${index}).src = '';
-    document.getElementById(img${index}).style.display = 'none';
-    //document.getElementById(sell${index}).innerText = ''; // Se usar o campo 'sell'
-    document.getElementById(poder${index}).innerText = '';
-    document.getElementById(bonus${index}).innerText = '';
-    document.getElementById(impact${index}).innerText = '';
-    document.getElementById(set${index}).innerText = '';
-    document.getElementById(merge${index}).innerText = '';
-    document.getElementById(rack${index}).innerText = '';
+    document.getElementById(nome${j}).innerText = '';
+    document.getElementById(img${j}).src = '';
+    document.getElementById(img${j}).style.display = 'none';
+    //document.getElementById(sell${j}).innerText = ''; // Se usar o campo 'sell'
+    document.getElementById(poder${j}).innerText = '';
+    document.getElementById(bonus${j}).innerText = '';
+    document.getElementById(impact${j}).innerText = '';
+    document.getElementById(set${j}).innerText = '';
+    document.getElementById(merge${j}).innerText = '';
+    document.getElementById(rack${j}).innerText = '';
 }
               
       const updateElement = (index, miner) => {
