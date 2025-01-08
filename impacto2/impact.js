@@ -235,38 +235,41 @@ async function main() {
   // Adiciona atributo `sellable`
   await addSellableToMiners(miners);
 
-  // Cria uma cópia dos miners para aplicar filtros sem modificar o original
-  let filteredMiners = [...miners];
-
-  // Filtro baseado na opção selecionada (width)
+  // Obter opção selecionada (width)
   const selectedOption = document.querySelector('input[name="option"]:checked');
   if (selectedOption) {
-    if (selectedOption.value === 'op1') {
-      filteredMiners = filteredMiners.filter(miner => miner.width === 1);
-    } else if (selectedOption.value === 'op2') {
-      filteredMiners = filteredMiners.filter(miner => miner.width === 2);
-    }
+    const filteredWidth = selectedOption.value === 'op1' 
+      ? miners.filter(miner => miner.width === 1) 
+      : selectedOption.value === 'op2' 
+        ? miners.filter(miner => miner.width === 2) 
+        : miners;
+
+    // Atualizar o array global mantendo referências
+    miners.length = 0;
+    miners.push(...filteredWidth);
   }
 
-  // Filtro baseado na opção selecionada para "neg" (sellable)
+  // Obter opção selecionada para "neg" (sellable)
   const selectedNegOption = document.querySelector('input[name="neg"]:checked');
   if (selectedNegOption) {
-    if (selectedNegOption.value === 'op1') {
-      filteredMiners = filteredMiners.filter(miner => miner.sellable === true); // Negociável
-    } else if (selectedNegOption.value === 'op2') {
-      filteredMiners = filteredMiners.filter(miner => miner.sellable === false); // Inegociável
-    }
-  }
+    const filteredNeg = selectedNegOption.value === 'op1' 
+      ? miners.filter(miner => miner.sellable === true) 
+      : selectedNegOption.value === 'op2' 
+        ? miners.filter(miner => miner.sellable === false) 
+        : miners;
 
-  // Atualiza o DOM ou o array global (miners) com os miners filtrados
-  miners = filteredMiners;
+    // Atualizar o array global mantendo referências
+    miners.length = 0;
+    miners.push(...filteredNeg);
+  }
 
   // Exemplo de atualização do DOM ou console log
   console.log(miners);
 }
-              
+
 // Chama a função assíncrona
 main().catch(error => console.error('Erro na execução da função main:', error));
+
 
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
