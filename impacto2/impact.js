@@ -231,6 +231,43 @@ jsonData.data.miners.forEach(miner => {
   minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
 });
 
+async function main() {
+  // Adiciona atributo `sellable`
+  await addSellableToMiners(miners);
+
+  // Cria uma cópia dos miners para aplicar filtros sem modificar o original
+  let filteredMiners = [...miners];
+
+  // Filtro baseado na opção selecionada (width)
+  const selectedOption = document.querySelector('input[name="option"]:checked');
+  if (selectedOption) {
+    if (selectedOption.value === 'op1') {
+      filteredMiners = filteredMiners.filter(miner => miner.width === 1);
+    } else if (selectedOption.value === 'op2') {
+      filteredMiners = filteredMiners.filter(miner => miner.width === 2);
+    }
+  }
+
+  // Filtro baseado na opção selecionada para "neg" (sellable)
+  const selectedNegOption = document.querySelector('input[name="neg"]:checked');
+  if (selectedNegOption) {
+    if (selectedNegOption.value === 'op1') {
+      filteredMiners = filteredMiners.filter(miner => miner.sellable === true); // Negociável
+    } else if (selectedNegOption.value === 'op2') {
+      filteredMiners = filteredMiners.filter(miner => miner.sellable === false); // Inegociável
+    }
+  }
+
+  // Atualiza o DOM ou o array global (miners) com os miners filtrados
+  miners = filteredMiners;
+
+  // Exemplo de atualização do DOM ou console log
+  console.log(miners);
+}
+              
+// Chama a função assíncrona
+main().catch(error => console.error('Erro na execução da função main:', error));
+
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
     applyBonusAdjustment(miners, 
@@ -328,33 +365,7 @@ jsonData.data.miners.forEach(miner => {
 
 const top10NegativeResults = minerImpacts.slice(0, 10);
 
-              async function main() {
-  // Adiciona atributo `sellable`
-  await addSellableToMiners(miners);
-
-  // Filtro adicional baseado na opção selecionada
-  const selectedOption = document.querySelector('input[name="option"]:checked');
-  if (selectedOption) {
-    if (selectedOption.value === 'op1') {
-      miners = miners.filter(miner => miner.width === 1);
-    } else if (selectedOption.value === 'op2') {
-      miners = miners.filter(miner => miner.width === 2);
-    }
-  }
-
-  // Filtro adicional baseado na opção selecionada para "neg"
-  const selectedNegOption = document.querySelector('input[name="neg"]:checked');
-  if (selectedNegOption) {
-    if (selectedNegOption.value === 'op1') {
-      miners = miners.filter(miner => miner.sellable === true); // Negociável
-    } else if (selectedNegOption.value === 'op2') {
-      miners = miners.filter(miner => miner.sellable === false); // Inegociável
-    }
-  }
-
-  console.log(miners);
-}
-
+  
 
               
       const updateElement = (index, miner) => {
@@ -382,8 +393,7 @@ const top10NegativeResults = minerImpacts.slice(0, 10);
     }
 };
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
- // Chama a função assíncrona
-main().catch(error => console.error('Erro na execução da função main:', error));
+ 
           })         
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
