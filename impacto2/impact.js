@@ -280,7 +280,7 @@ async function main() {
 }
 
 // Chama a função assíncrona
-main().catch(error => console.error('Erro na execução da função main:', error));
+await main().catch(error => console.error('Erro na execução da função main:', error));
 
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
