@@ -9,7 +9,6 @@ function loadScript(url) {
   });
 }
 
-// Função para carregar múltiplos scripts
 async function loadAllScripts() {
   const urls = [
     'https://wminerrc.github.io/calculator/data/basic_miners.js',
@@ -18,9 +17,10 @@ async function loadAllScripts() {
   ];
 
   try {
-    // Usando Promise.all com await para carregar todos os scripts simultaneamente
     await Promise.all(urls.map(url => loadScript(url)));
     console.log("Todos os scripts foram carregados com sucesso!");
+    // Agora, você pode chamar a função para processar os miners
+    processMiners(minerList); // minerList seria os dados que você está processando
   } catch (error) {
     console.error("Erro ao carregar os scripts:", error);
   }
@@ -226,9 +226,9 @@ function processMiners(minerList) {
     // Marca a primeira ocorrência como atribuída
     minerCount[key].firstAssigned = true;
   });
-}
-  console.log("Miners processados:", miners);
 
+  console.log("Miners processados:", miners);
+}
 
 // Filtro adicional baseado na opção selecionada
 const selectedOption = document.querySelector('input[name="option"]:checked').value;
