@@ -231,29 +231,35 @@ jsonData.data.miners.forEach(miner => {
   minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
 });
 
-// Filtro adicional baseado na opção selecionada
-const selectedOption = document.querySelector('input[name="option"]:checked').value;
-if (selectedOption === 'op1') {
-  miners = miners.filter(miner => miner.width === 1);
-} else if (selectedOption === 'op2') {
-  miners = miners.filter(miner => miner.width === 2);
-}
-
 async function main() {
-await addSellableToMiners(miners);
-              
-// Filtro adicional baseado na opção selecionada para "neg"
-const selectedNegOption = document.querySelector('input[name="neg"]:checked').value;
-if (selectedNegOption === 'op1') {
-  miners = miners.filter(miner => miner.sellable === true); // Negociável
-} else if (selectedNegOption === 'op2') {
-  miners = miners.filter(miner => miner.sellable === false); // Inegociável
-}
+  // Adiciona atributo `sellable`
+  await addSellableToMiners(miners);
+
+  // Filtro adicional baseado na opção selecionada
+  const selectedOption = document.querySelector('input[name="option"]:checked');
+  if (selectedOption) {
+    if (selectedOption.value === 'op1') {
+      miners = miners.filter(miner => miner.width === 1);
+    } else if (selectedOption.value === 'op2') {
+      miners = miners.filter(miner => miner.width === 2);
+    }
+  }
+
+  // Filtro adicional baseado na opção selecionada para "neg"
+  const selectedNegOption = document.querySelector('input[name="neg"]:checked');
+  if (selectedNegOption) {
+    if (selectedNegOption.value === 'op1') {
+      miners = miners.filter(miner => miner.sellable === true); // Negociável
+    } else if (selectedNegOption.value === 'op2') {
+      miners = miners.filter(miner => miner.sellable === false); // Inegociável
+    }
+  }
+
+  console.log(miners);
 }
 
-main();
-            
-console.log(miners)
+// Chama a função assíncrona
+main().catch(error => console.error('Erro na execução da função main:', error));
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
     applyBonusAdjustment(miners, 
