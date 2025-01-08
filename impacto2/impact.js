@@ -239,6 +239,7 @@ if (selectedOption === 'op1') {
   miners = miners.filter(miner => miner.width === 2);
 }
 
+async function main() {
 await addSellableToMiners(miners);
               
 // Filtro adicional baseado na opção selecionada para "neg"
@@ -248,6 +249,9 @@ if (selectedNegOption === 'op1') {
 } else if (selectedNegOption === 'op2') {
   miners = miners.filter(miner => miner.sellable === false); // Inegociável
 }
+}
+
+main();
             
 console.log(miners)
             
