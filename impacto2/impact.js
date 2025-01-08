@@ -355,21 +355,25 @@ main().catch(error => console.error('Erro na execução da função main:', erro
       type: impact.type,
     })));
 
-            const top10NegativeResults = minerImpacts.slice(0, 10);
+const top10NegativeResults = minerImpacts.slice(0, 10);
+
+// Função para limpar os dados dos elementos
+const clearElements = () => {
+  for (let i = 0; i < 10; i++) {
+    document.getElementById(`nome${i}`).innerText = '';
+    document.getElementById(`img${i}`).src = '';
+    document.getElementById(`img${i}`).style.display = 'none';
+    // document.getElementById(`sell${i}`).innerText = ''; // Se usar o campo 'sell'
+    document.getElementById(`poder${i}`).innerText = '';
+    document.getElementById(`bonus${i}`).innerText = '';
+    document.getElementById(`impact${i}`).innerText = '';
+    document.getElementById(`set${i}`).innerText = '';
+    document.getElementById(`merge${i}`).innerText = '';
+    document.getElementById(`rack${i}`).innerText = '';
+  }
+};
 
       const updateElement = (index, miner) => {
-           // Limpar os dados do elemento antes de atualizá-los
-    document.getElementById(`nome${index}`).innerText = '';
-    document.getElementById(`img${index}`).src = '';
-    document.getElementById(`img${index}`).style.display = 'none';
-    //document.getElementById(`sell${index}`).innerText = ''; // Se usar o campo 'sell'
-    document.getElementById(`poder${index}`).innerText = '';
-    document.getElementById(`bonus${index}`).innerText = '';
-    document.getElementById(`impact${index}`).innerText = '';
-    document.getElementById(`set${index}`).innerText = '';
-    document.getElementById(`merge${index}`).innerText = '';
-    document.getElementById(`rack${index}`).innerText = '';
-          
     if (miner) {
         const levelInfo = getLevelDescription(miner.level, miner.type);
         const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
