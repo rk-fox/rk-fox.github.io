@@ -401,7 +401,7 @@ const updateElements = (miners) => {
 clearElements(); // Primeiro limpa todos os elementos
 const top10NegativeResults = minerImpacts.slice(0, 10);
 updateElements(top10NegativeResults); // Atualiza com os novos dados
-}
+})
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
