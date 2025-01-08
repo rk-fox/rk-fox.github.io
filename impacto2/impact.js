@@ -1,5 +1,5 @@
 // Função para carregar os scripts dinamicamente
-async function loadScript(url) {
+function loadScript(url) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = url;
@@ -9,7 +9,7 @@ async function loadScript(url) {
   });
 }
 
-function loadAllScripts() {
+async function loadAllScripts() {
   const urls = [
     'https://wminerrc.github.io/calculator/data/basic_miners.js',
     'https://wminerrc.github.io/calculator/data/merge_miners.js',
