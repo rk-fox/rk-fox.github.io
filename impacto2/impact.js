@@ -1,3 +1,16 @@
+// Seleciona o input e o botão
+const searchInput = document.getElementById('linkInput');
+const searchButton = document.getElementById('searchButton');
+
+// Adiciona um evento ao input para ouvir a tecla Enter
+searchInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') { // Verifica se a tecla pressionada é "Enter"
+        event.preventDefault(); // Evita o comportamento padrão (se necessário)
+        searchButton.click(); // Simula o clique do botão
+    }
+});
+
+
 // Função para carregar scripts dinamicamente
   function loadScript(url) {
     return new Promise((resolve, reject) => {
@@ -45,14 +58,6 @@
       console.error('Erro ao carregar scripts ou processar miners:', error);
     }
   }
-
-// Filtro adicional baseado na opção selecionada
-const selectedOption = document.querySelector('input[name="option"]:checked').value;
-if (selectedOption === 'op1') {
-  miners = miners.filter(miner => miner.width === 1);
-} else if (selectedOption === 'op2') {
-  miners = miners.filter(miner => miner.width === 2);
-}
 
 // Função para calcular o bônus extra com base nos IDs específicos
 function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
@@ -226,9 +231,16 @@ jsonData.data.miners.forEach(miner => {
   minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
 });
 
-
 addSellableToMiners(miners);
 
+// Filtro adicional baseado na opção selecionada
+const selectedOption = document.querySelector('input[name="option"]:checked').value;
+if (selectedOption === 'op1') {
+  miners = miners.filter(miner => miner.width === 1);
+} else if (selectedOption === 'op2') {
+  miners = miners.filter(miner => miner.width === 2);
+}
+            
 console.log(miners)
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
