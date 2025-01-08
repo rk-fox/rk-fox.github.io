@@ -1,69 +1,5 @@
-// Função para processar os miners
-function processMiners(minerList) {
-  // Primeiro, conta todas as repetições gerais
-  minerList.forEach(miner => {
-    const key = `${miner.miner_id}_${miner.level}`;
-    if (!minerCount[key]) {
-      minerCount[key] = { count: 0, firstAssigned: false }; // Adiciona flag para controlar a primeira ocorrência
-    }
-    minerCount[key].count++; // Incrementa o contador total para essa combinação
-  });
-
-  // Em seguida, monta a lista final com as informações desejadas
-  minerList.forEach(miner => {
-    const key = `${miner.miner_id}_${miner.level}`;
-    const totalRepetitions = minerCount[key].count; // Total de repetições geral
-    const isFirst = !minerCount[key].firstAssigned; // Verifica se é a primeira ocorrência
-
-    // Obter a informação sobre o tipo de minerador
-    let isCanBeSold = false; // Valor padrão
-    let minerInfo = null;
-
-    // Carregar dados de acordo com o tipo do minerador
-    if (miner.type === 'basic') {
-      minerInfo = window.basic_miners;
-    } else if (miner.type === 'merge') {
-      minerInfo = window.merge_miners;
-    } else if (miner.type === 'old_merge') {
-      minerInfo = window.old_merge_miners;
-    }
-
-    // Verifica se o minerador está presente no tipo correto e ajusta is_can_be_sold_on_mp
-    if (minerInfo) {
-      const minerData = minerInfo.find(m => m.miner_id === miner.miner_id);
-      if (minerData) {
-        isCanBeSold = minerData.is_can_be_sold_on_mp || false; // Define como false caso não exista
-      }
-    }
-
-    // Adiciona o minerador à lista final
-    miners.push({
-      miner_id: miner.miner_id,
-      user_rack_id: miner.placement?.user_rack_id || null,
-      name: miner.name || "Desconhecido",
-      width: miner.width || 0,
-      level: miner.level || 1,
-      power: miner.power || 0,
-      formattedPower: convertPower(miner.power || 0),
-      filename: miner.filename || "N/A",
-      bonus_percent: isFirst ? (miner.bonus_percent || 0) / 100 : 0,
-      is_in_set: miner.is_in_set || false,
-      is_can_be_sold_on_mp: isCanBeSold,  // Define o valor de is_can_be_sold_on_mp
-      repetitions: isFirst ? "Não" : totalRepetitions,
-      setImpact: 0,
-      setBonus: 0,
-      type: miner.type || "desconhecido",
-    });
-
-    // Marca a primeira ocorrência como atribuída
-    minerCount[key].firstAssigned = true;
-  });
-
-  console.log("Miners processados:", miners);
-}
-
 // Função para carregar os scripts dinamicamente
-function loadScript(url) {
+async function loadScript(url) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = url;
@@ -73,7 +9,7 @@ function loadScript(url) {
   });
 }
 
-async function loadAllScripts() {
+function loadAllScripts() {
   const urls = [
     'https://wminerrc.github.io/calculator/data/basic_miners.js',
     'https://wminerrc.github.io/calculator/data/merge_miners.js',
@@ -85,7 +21,7 @@ async function loadAllScripts() {
       await loadScript(url);
     }
     console.log("Todos os scripts foram carregados com sucesso!");
-    
+    processMiners(minerList); // minerList seria os dados que você está processando
   } catch (error) {
     console.error("Erro ao carregar os scripts:", error);
   }
@@ -231,7 +167,70 @@ let miners = [];
 const minerCount = {}; // Para contar repetições gerais
 
 loadAllScripts();
-processMiners(minerList); // minerList seria os dados que você está processando
+            
+// Função para processar os miners
+function processMiners(minerList) {
+  // Primeiro, conta todas as repetições gerais
+  minerList.forEach(miner => {
+    const key = `${miner.miner_id}_${miner.level}`;
+    if (!minerCount[key]) {
+      minerCount[key] = { count: 0, firstAssigned: false }; // Adiciona flag para controlar a primeira ocorrência
+    }
+    minerCount[key].count++; // Incrementa o contador total para essa combinação
+  });
+
+  // Em seguida, monta a lista final com as informações desejadas
+  minerList.forEach(miner => {
+    const key = `${miner.miner_id}_${miner.level}`;
+    const totalRepetitions = minerCount[key].count; // Total de repetições geral
+    const isFirst = !minerCount[key].firstAssigned; // Verifica se é a primeira ocorrência
+
+    // Obter a informação sobre o tipo de minerador
+    let isCanBeSold = false; // Valor padrão
+    let minerInfo = null;
+
+    // Carregar dados de acordo com o tipo do minerador
+    if (miner.type === 'basic') {
+      minerInfo = window.basic_miners;
+    } else if (miner.type === 'merge') {
+      minerInfo = window.merge_miners;
+    } else if (miner.type === 'old_merge') {
+      minerInfo = window.old_merge_miners;
+    }
+
+    // Verifica se o minerador está presente no tipo correto e ajusta is_can_be_sold_on_mp
+    if (minerInfo) {
+      const minerData = minerInfo.find(m => m.miner_id === miner.miner_id);
+      if (minerData) {
+        isCanBeSold = minerData.is_can_be_sold_on_mp || false; // Define como false caso não exista
+      }
+    }
+
+    // Adiciona o minerador à lista final
+    miners.push({
+      miner_id: miner.miner_id,
+      user_rack_id: miner.placement?.user_rack_id || null,
+      name: miner.name || "Desconhecido",
+      width: miner.width || 0,
+      level: miner.level || 1,
+      power: miner.power || 0,
+      formattedPower: convertPower(miner.power || 0),
+      filename: miner.filename || "N/A",
+      bonus_percent: isFirst ? (miner.bonus_percent || 0) / 100 : 0,
+      is_in_set: miner.is_in_set || false,
+      is_can_be_sold_on_mp: isCanBeSold,  // Define o valor de is_can_be_sold_on_mp
+      repetitions: isFirst ? "Não" : totalRepetitions,
+      setImpact: 0,
+      setBonus: 0,
+      type: miner.type || "desconhecido",
+    });
+
+    // Marca a primeira ocorrência como atribuída
+    minerCount[key].firstAssigned = true;
+  });
+
+  console.log("Miners processados:", miners);
+}
             
 
 // Filtro adicional baseado na opção selecionada
