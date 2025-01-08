@@ -1,33 +1,3 @@
-// Função para carregar os scripts dinamicamente
-function loadScript(url) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = url;
-    script.onload = resolve;  // Resolve a promessa quando o script carregar
-    script.onerror = reject;  // Rejeita a promessa se ocorrer erro no carregamento
-    document.head.appendChild(script);
-  });
-}
-
-async function loadAllScripts() {
-  const urls = [
-    'https://wminerrc.github.io/calculator/data/basic_miners.js',
-    'https://wminerrc.github.io/calculator/data/merge_miners.js',
-    'https://wminerrc.github.io/calculator/data/old/merge_miners.js'
-  ];
-
-  try {
-    for (const url of urls) {
-      await loadScript(url);
-    }
-    console.log("Todos os scripts foram carregados com sucesso!");
-    processMiners(minerList); // minerList seria os dados que você está processando
-  } catch (error) {
-    console.error("Erro ao carregar os scripts:", error);
-  }
-}
-
-
 // Função para calcular o bônus extra com base nos IDs específicos
 function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
   // Filtra as miners do grupo específico
@@ -165,9 +135,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 // Array para armazenar mineradores processados
 let miners = [];
 const minerCount = {}; // Para contar repetições gerais
-
-loadAllScripts();
-            
+          
 // Função para processar os miners
 function processMiners(minerList) {
   // Primeiro, conta todas as repetições gerais
@@ -184,7 +152,64 @@ function processMiners(minerList) {
     const key = `${miner.miner_id}_${miner.level}`;
     const totalRepetitions = minerCount[key].count; // Total de repetições geral
     const isFirst = !minerCount[key].firstAssigned; // Verifica se é a primeira ocorrência
+   
 
+    // Adiciona o minerador à lista final
+    miners.push({
+      miner_id: miner.miner_id,
+      user_rack_id: miner.placement?.user_rack_id || null,
+      name: miner.name || "Desconhecido",
+      width: miner.width || 0,
+      level: miner.level || 1,
+      power: miner.power || 0,
+      formattedPower: convertPower(miner.power || 0),
+      filename: miner.filename || "N/A",
+      bonus_percent: isFirst ? (miner.bonus_percent || 0) / 100 : 0,
+      is_in_set: miner.is_in_set || false,
+      repetitions: isFirst ? "Não" : totalRepetitions,
+      setImpact: 0,
+      setBonus: 0,
+      type: miner.type || "desconhecido",
+    });
+
+    // Marca a primeira ocorrência como atribuída
+    minerCount[key].firstAssigned = true;
+  });
+
+  console.log("Miners processados:", miners);
+}
+
+// Função para carregar os scripts dinamicamente
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = resolve;  // Resolve a promessa quando o script carregar
+    script.onerror = reject;  // Rejeita a promessa se ocorrer erro no carregamento
+    document.head.appendChild(script);
+  });
+}
+
+async function loadAllScripts() {
+  const urls = [
+    'https://wminerrc.github.io/calculator/data/basic_miners.js',
+    'https://wminerrc.github.io/calculator/data/merge_miners.js',
+    'https://wminerrc.github.io/calculator/data/old/merge_miners.js'
+  ];
+
+  try {
+    for (const url of urls) {
+      await loadScript(url);
+    }
+    console.log("Todos os scripts foram carregados com sucesso!");
+    updateMinersWithCanBeSold(); // Atualizar miners após o carregamento dos scripts
+  } catch (error) {
+    console.error("Erro ao carregar os scripts:", error);
+  }
+}
+
+function updateMinersWithCanBeSold() {
+  miners.forEach(miner => {
     // Obter a informação sobre o tipo de minerador
     let isCanBeSold = false; // Valor padrão
     let minerInfo = null;
@@ -202,36 +227,11 @@ function processMiners(minerList) {
     if (minerInfo) {
       const minerData = minerInfo.find(m => m.miner_id === miner.miner_id);
       if (minerData) {
-        isCanBeSold = minerData.is_can_be_sold_on_mp || false; // Define como false caso não exista
+        miner.is_can_be_sold_on_mp = minerData.is_can_be_sold_on_mp || false; // Atualiza o campo
       }
     }
-
-    // Adiciona o minerador à lista final
-    miners.push({
-      miner_id: miner.miner_id,
-      user_rack_id: miner.placement?.user_rack_id || null,
-      name: miner.name || "Desconhecido",
-      width: miner.width || 0,
-      level: miner.level || 1,
-      power: miner.power || 0,
-      formattedPower: convertPower(miner.power || 0),
-      filename: miner.filename || "N/A",
-      bonus_percent: isFirst ? (miner.bonus_percent || 0) / 100 : 0,
-      is_in_set: miner.is_in_set || false,
-      is_can_be_sold_on_mp: isCanBeSold,  // Define o valor de is_can_be_sold_on_mp
-      repetitions: isFirst ? "Não" : totalRepetitions,
-      setImpact: 0,
-      setBonus: 0,
-      type: miner.type || "desconhecido",
-    });
-
-    // Marca a primeira ocorrência como atribuída
-    minerCount[key].firstAssigned = true;
   });
-
-  console.log("Miners processados:", miners);
 }
-            
 
 // Filtro adicional baseado na opção selecionada
 const selectedOption = document.querySelector('input[name="option"]:checked').value;
