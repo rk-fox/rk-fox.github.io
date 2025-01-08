@@ -53,7 +53,7 @@ linkInput.addEventListener('keydown', function(event) {
         miner.sellable = checkSellable(miner.miner_id);
       });
 
-      console.log('Miners com atributo sellable:', miners);
+      //console.log('Miners com atributo sellable:', miners);
     } catch (error) {
       console.error('Erro ao carregar scripts ou processar miners:', error);
     }
@@ -231,14 +231,22 @@ jsonData.data.miners.forEach(miner => {
   minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
 });
 
-addSellableToMiners(miners);
-
 // Filtro adicional baseado na opção selecionada
 const selectedOption = document.querySelector('input[name="option"]:checked').value;
 if (selectedOption === 'op1') {
   miners = miners.filter(miner => miner.width === 1);
 } else if (selectedOption === 'op2') {
   miners = miners.filter(miner => miner.width === 2);
+}
+
+addSellableToMiners(miners);
+              
+// Filtro adicional negociável
+const selectedOption2 = document.querySelector('input[name="neg"]:checked').value;
+if (selectedOption2 === 'op1') {
+  miners = miners.filter(miner => miner.is_can_be_sold_on_mp === true);
+} else if (selectedOption2 === 'op2') {
+  miners = miners.filter(miner => miner.is_can_be_sold_on_mp === false);
 }
             
 console.log(miners)
