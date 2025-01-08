@@ -239,14 +239,14 @@ if (selectedOption === 'op1') {
   miners = miners.filter(miner => miner.width === 2);
 }
 
-addSellableToMiners(miners);
+await addSellableToMiners(miners);
               
-// Filtro adicional negociável
-const selectedOption2 = document.querySelector('input[name="neg"]:checked').value;
-if (selectedOption2 === 'op1') {
-  miners = miners.filter(miner => miner.sellable === true);
-} else if (selectedOption2 === 'op2') {
-  miners = miners.filter(miner => miner.sellable === false);
+// Filtro adicional baseado na opção selecionada para "neg"
+const selectedNegOption = document.querySelector('input[name="neg"]:checked').value;
+if (selectedNegOption === 'op1') {
+  miners = miners.filter(miner => miner.sellable === true); // Negociável
+} else if (selectedNegOption === 'op2') {
+  miners = miners.filter(miner => miner.sellable === false); // Inegociável
 }
             
 console.log(miners)
