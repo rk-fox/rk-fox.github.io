@@ -275,6 +275,9 @@ async function main() {
 
   // Exemplo de atualização do DOM ou console log
  console.log(miners);
+
+    top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+
 }
 
 // Chama a função assíncrona
@@ -402,7 +405,9 @@ const top10NegativeResults = minerImpacts.slice(0, 10);
         document.getElementById(`nome${index}`).innerText = '';
     }
 };
-            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+//            top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
+              // Chama a função assíncrona
+main().catch(error => console.error('Erro na execução da função main:', error));
  
           })         
           } catch (error) {
