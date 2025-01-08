@@ -1,3 +1,59 @@
+// Função para carregar scripts dinamicamente
+  function loadScript(url) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = url;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  // Função para verificar o atributo is_can_be_sold_on_mp
+  function checkSellable(minerId) {
+    // Procurar o miner_id em cada dataset
+    const datasets = [window.basic_miners, window.merge_miners, window.old_merge_miners];
+    for (const dataset of datasets) {
+      const miner = dataset.find((m) => m.miner_id === minerId);
+      if (miner) {
+        return miner.is_can_be_sold_on_mp || false;
+      }
+    }
+    return false;
+  }
+
+  // Carregar os scripts e adicionar o atributo sellable
+  async function addSellableToMiners(miners) {
+    try {
+      // URLs dos scripts
+      const scripts = [
+        'https://wminerrc.github.io/calculator/data/basic_miners.js',
+        'https://wminerrc.github.io/calculator/data/merge_miners.js',
+        'https://wminerrc.github.io/calculator/data/old/merge_miners.js',
+      ];
+
+      // Carregar os scripts dinamicamente
+      await Promise.all(scripts.map((url) => loadScript(url)));
+
+      // Adicionar atributo sellable aos miners
+      miners.forEach((miner) => {
+        miner.sellable = checkSellable(miner.miner_id);
+      });
+
+      console.log('Miners com atributo sellable:', miners);
+    } catch (error) {
+      console.error('Erro ao carregar scripts ou processar miners:', error);
+    }
+  }
+
+// Filtro adicional baseado na opção selecionada
+const selectedOption = document.querySelector('input[name="option"]:checked').value;
+if (selectedOption === 'op1') {
+  miners = miners.filter(miner => miner.width === 1);
+} else if (selectedOption === 'op2') {
+  miners = miners.filter(miner => miner.width === 2);
+}
+
 // Função para calcular o bônus extra com base nos IDs específicos
 function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
   // Filtra as miners do grupo específico
@@ -134,9 +190,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     // Extraindo dados de data.miners
             let miners = [];
             const minerCount = {}; // Para contar repetições
-
-
-
             
     // Primeiro, conta todas as repetições gerais
 jsonData.data.miners.forEach(miner => {
@@ -173,66 +226,10 @@ jsonData.data.miners.forEach(miner => {
   minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
 });
 
-<script>
-  // Função para carregar scripts dinamicamente
-  function loadScript(url) {
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = url;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-  }
-
-  // Função para verificar o atributo is_can_be_sold_on_mp
-  function checkSellable(minerId) {
-    // Procurar o miner_id em cada dataset
-    const datasets = [window.basic_miners, window.merge_miners, window.old_merge_miners];
-    for (const dataset of datasets) {
-      const miner = dataset.find((m) => m.miner_id === minerId);
-      if (miner) {
-        return miner.is_can_be_sold_on_mp || false;
-      }
-    }
-    return false;
-  }
-
-  // Carregar os scripts e adicionar o atributo sellable
-  async function addSellableToMiners(miners) {
-    try {
-      // URLs dos scripts
-      const scripts = [
-        'https://wminerrc.github.io/calculator/data/basic_miners.js',
-        'https://wminerrc.github.io/calculator/data/merge_miners.js',
-        'https://wminerrc.github.io/calculator/data/old/merge_miners.js',
-      ];
-
-      // Carregar os scripts dinamicamente
-      await Promise.all(scripts.map((url) => loadScript(url)));
-
-      // Adicionar atributo sellable aos miners
-      miners.forEach((miner) => {
-        miner.sellable = checkSellable(miner.miner_id);
-      });
-
-      console.log('Miners com atributo sellable:', miners);
-    } catch (error) {
-      console.error('Erro ao carregar scripts ou processar miners:', error);
-    }
-  }
-
-// Filtro adicional baseado na opção selecionada
-const selectedOption = document.querySelector('input[name="option"]:checked').value;
-if (selectedOption === 'op1') {
-  miners = miners.filter(miner => miner.width === 1);
-} else if (selectedOption === 'op2') {
-  miners = miners.filter(miner => miner.width === 2);
-}
 
 addSellableToMiners(miners);
-</script>
 
+console.log(miners)
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
     applyBonusAdjustment(miners, 
