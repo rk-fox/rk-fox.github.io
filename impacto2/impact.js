@@ -276,6 +276,21 @@ async function main() {
   // Exemplo de atualização do DOM ou console log
  console.log(miners);
 
+    // Simulando a remoção de miners e calculando o impacto no total
+    let minerImpacts = miners.map(miner => {
+      const remainingPower = minersPower - miner.power;
+      const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
+      const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent - miner.setBonus) / 100);
+      const impact = (newAdjustedPower - total_orig) - miner.setImpact; // Alteração na fórmula do impacto
+      
+      return { 
+        ...miner, 
+        impact, 
+        formattedImpact: convertPower((impact)) // Formata o impacto
+      };
+    });
+
+    
     top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
 
 }
@@ -346,18 +361,18 @@ async function main() {
     });
 
     // Simulando a remoção de miners e calculando o impacto no total
-    let minerImpacts = miners.map(miner => {
-      const remainingPower = minersPower - miner.power;
-      const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
-      const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent - miner.setBonus) / 100);
-      const impact = (newAdjustedPower - total_orig) - miner.setImpact; // Alteração na fórmula do impacto
+   // let minerImpacts = miners.map(miner => {
+      //const remainingPower = minersPower - miner.power;
+      //const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
+      //const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent - miner.setBonus) / 100);
+      //const impact = (newAdjustedPower - total_orig) - miner.setImpact; // Alteração na fórmula do impacto
       
-      return { 
-        ...miner, 
-        impact, 
-        formattedImpact: convertPower((impact)) // Formata o impacto
-      };
-    });
+      //return { 
+//        ...miner, 
+        //impact, 
+        //formattedImpact: convertPower((impact)) // Formata o impacto
+      //};
+    //});
 
     
     // Ordenando os miners pelo impacto (negativo mais próximo de zero até o mais distante)
