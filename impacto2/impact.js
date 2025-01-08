@@ -379,15 +379,31 @@ main().then(() => {
 
 const top10NegativeResults = minerImpacts.slice(0, 10);
 
+const clearAllFields = () => {
+    for (let j = 1; j <= 10; j++) {
+        document.getElementById(`nome${j}`).innerHTML = '';
+        document.getElementById(`img${j}`).src = '';
+        document.getElementById(`img${j}`).style.display = 'none';
+        document.getElementById(`sell${index}`).innerText = '';
+        document.getElementById(`poder${j}`).innerText = '';
+        document.getElementById(`bonus${j}`).innerText = '';
+        document.getElementById(`impact${j}`).innerText = '';
+        document.getElementById(`set${j}`).innerText = '';
+        document.getElementById(`merge${j}`).innerText = '';
+        document.getElementById(`rack${j}`).innerText = '';
+    }
+};
               
       const updateElement = (index, miner) => {
+          clearAllFields();
+          
     if (miner) {
         const levelInfo = getLevelDescription(miner.level, miner.type);
         const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
         document.getElementById(`nome${index}`).innerHTML = levelSpan;
         document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
         document.getElementById(`img${index}`).style.display = 'block';
-        // document.getElementById(`sell${index}`).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável';
+        document.getElementById(`sell${index}`).innerText = miner.is_can_be_sold_on_mp ? 'Negociável' : 'Inegociável';
         document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
         document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
         document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
