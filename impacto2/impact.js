@@ -371,7 +371,7 @@ const clearElements = () => {
   }
 };
 
-/ Função para atualizar os dados do índice especificado
+// Função para atualizar os dados do índice especificado
 const updateElement = (index, miner) => {
   if (miner) {
     const levelInfo = getLevelDescription(miner.level, miner.type);
