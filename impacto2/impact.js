@@ -154,12 +154,7 @@ await Promise.all([
   loadScript('https://wminerrc.github.io/calculator/data/basic_miners.js'),
   loadScript('https://wminerrc.github.io/calculator/data/merge_miners.js'),
   loadScript('https://wminerrc.github.io/calculator/data/old/merge_miners.js')
-]).then(() => {
-  // Scripts carregados, agora acessamos os dados
-  processMiners(jsonData.data.miners);
-}).catch(error => {
-  console.error('Erro ao carregar scripts:', error);
-});
+]);
 
 function processMiners(minerList) {
   // Primeiro, conta todas as repetições gerais
