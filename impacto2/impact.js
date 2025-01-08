@@ -1,15 +1,15 @@
-// Seleciona o input e o botão
-const searchInput = document.getElementById('linkInput');
+// Obter os elementos do botão e do campo de entrada
 const searchButton = document.getElementById('searchButton');
+const linkInput = document.getElementById('linkInput');
 
-// Adiciona um evento ao input para ouvir a tecla Enter
-searchInput.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') { // Verifica se a tecla pressionada é "Enter"
-        event.preventDefault(); // Evita o comportamento padrão (se necessário)
-        searchButton.click(); // Simula o clique do botão
+// Adicionar um ouvinte de evento ao campo de entrada para capturar a tecla Enter
+linkInput.addEventListener('keydown', function(event) {
+    // Verificar se a tecla pressionada foi a tecla Enter (código 13 ou 'Enter')
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Evitar o comportamento padrão (como submissão de formulário, se aplicável)
+        searchButton.click(); // Executar o clique no botão
     }
 });
-
 
 // Função para carregar scripts dinamicamente
   function loadScript(url) {
