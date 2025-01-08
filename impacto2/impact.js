@@ -345,7 +345,7 @@ main().catch(error => console.error('Erro na execução da função main:', erro
     });
 
     // Simulando a remoção de miners e calculando o impacto no total
-    let minerImpacts = miners.map(miner => {
+    let minerImpacts = main(miners).map(miner => {
       const remainingPower = minersPower - miner.power;
       const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
       const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent - miner.setBonus) / 100);
