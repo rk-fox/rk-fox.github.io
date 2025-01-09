@@ -1,3 +1,64 @@
+// Obter os elementos do botão e do campo de entrada
+const searchButton = document.getElementById('searchButton');
+const linkInput = document.getElementById('linkInput');
+
+// Adicionar um ouvinte de evento ao campo de entrada para capturar a tecla Enter
+linkInput.addEventListener('keydown', function(event) {
+    // Verificar se a tecla pressionada foi a tecla Enter (código 13 ou 'Enter')
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Evitar o comportamento padrão (como submissão de formulário, se aplicável)
+        searchButton.click(); // Executar o clique no botão
+    }
+});
+
+// Função para carregar scripts dinamicamente
+  function loadScript(url) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = url;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  // Função para verificar o atributo is_can_be_sold_on_mp
+  function checkSellable(minerId) {
+    // Procurar o miner_id em cada dataset
+    const datasets = [window.basic_miners, window.merge_miners, window.old_merge_miners];
+    for (const dataset of datasets) {
+      const miner = dataset.find((m) => m.miner_id === minerId);
+      if (miner) {
+        return miner.is_can_be_sold_on_mp || false;
+      }
+    }
+    return false;
+  }
+
+  // Carregar os scripts e adicionar o atributo sellable
+  async function addSellableToMiners(miners) {
+    try {
+      // URLs dos scripts
+      const scripts = [
+        'https://wminerrc.github.io/calculator/data/basic_miners.js',
+        'https://wminerrc.github.io/calculator/data/merge_miners.js',
+        'https://wminerrc.github.io/calculator/data/old/merge_miners.js',
+      ];
+
+      // Carregar os scripts dinamicamente
+      await Promise.all(scripts.map((url) => loadScript(url)));
+
+      // Adicionar atributo sellable aos miners
+      miners.forEach((miner) => {
+        miner.sellable = checkSellable(miner.miner_id);
+      });
+
+      //console.log('Miners com atributo sellable:', miners);
+    } catch (error) {
+      console.error('Erro ao carregar scripts ou processar miners:', error);
+    }
+  }
+
 // Função para calcular o bônus extra com base nos IDs específicos
 function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
   // Filtra as miners do grupo específico
@@ -118,9 +179,9 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         let total_orig = minersPower * (1 + (totalbonusPercent / 100));
 
-        console.log("Miners Power:", convertPower(minersPower));
-        console.log("Miners Bonus:", totalbonusPercent + '%');
-        console.log("Total Power:", convertPower(total_orig));
+        //console.log("Miners Power:", convertPower(minersPower));
+        //console.log("Miners Bonus:", totalbonusPercent + '%');
+        //console.log("Total Power:", convertPower(total_orig));
 
         // Fazendo uma requisição à API para obter dados dinâmicos
         fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/game/room-config/${avatarId}`)
@@ -134,9 +195,6 @@ document.getElementById('searchButton').addEventListener('click', async () => {
     // Extraindo dados de data.miners
             let miners = [];
             const minerCount = {}; // Para contar repetições
-
-
-
             
     // Primeiro, conta todas as repetições gerais
 jsonData.data.miners.forEach(miner => {
@@ -173,15 +231,56 @@ jsonData.data.miners.forEach(miner => {
   minerCount[key].firstAssigned = true; // Marca a primeira ocorrência como já atribuída
 });
 
-// Filtro adicional baseado na opção selecionada
-const selectedOption = document.querySelector('input[name="option"]:checked').value;
-if (selectedOption === 'op1') {
-  miners = miners.filter(miner => miner.width === 1);
-} else if (selectedOption === 'op2') {
-  miners = miners.filter(miner => miner.width === 2);
+async function main() {
+  // Adiciona atributo `sellable`
+  await addSellableToMiners(miners);
+
+  // Filtro baseado na opção selecionada (width)
+  const selectedOption = document.querySelector('input[name="option"]:checked');
+  if (selectedOption) {
+    let filteredWidth;
+    if (selectedOption.value === 'op1') {
+      filteredWidth = miners.filter(miner => miner.width === 1);
+    } else if (selectedOption.value === 'op2') {
+      filteredWidth = miners.filter(miner => miner.width === 2);
+    } else if (selectedOption.value === 'op3') {
+      filteredWidth = miners.filter(miner => miner.width === 1 || miner.width === 2); // Inclui width 1 e 2
+    } else {
+      filteredWidth = miners; // Sem filtro
+    }
+
+    // Atualizar o array global mantendo referências
+    miners.length = 0;
+    miners.push(...filteredWidth);
+  }
+
+  // Filtro baseado na opção selecionada para "neg" (sellable)
+  const selectedNegOption = document.querySelector('input[name="neg"]:checked');
+  if (selectedNegOption) {
+    let filteredNeg;
+    if (selectedNegOption.value === 'op1') {
+      filteredNeg = miners.filter(miner => miner.sellable === true); // Negociável
+    } else if (selectedNegOption.value === 'op2') {
+      filteredNeg = miners.filter(miner => miner.sellable === false); // Inegociável
+    } else if (selectedNegOption.value === 'op3') {
+      filteredNeg = miners.filter(miner => miner.sellable === true || miner.sellable === false); // Inclui ambos
+    } else {
+      filteredNeg = miners; // Sem filtro
+    }
+
+    // Atualizar o array global mantendo referências
+    miners.length = 0;
+    miners.push(...filteredNeg);
+  }
+
+  // Exemplo de atualização do DOM ou console log
+ //console.log(miners);
+
+
 }
 
-
+// Chama a função assíncrona
+main().then(() => {
 
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
@@ -264,49 +363,69 @@ if (selectedOption === 'op1') {
     minerImpacts.sort((a, b) => b.impact - a.impact); // Ajuste na ordenação
 
         // Exibindo os dados no console
-    console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
-      name: impact.name,
-      level: impact.level,
-      power: impact.formattedPower, // Exibe o valor formatado
-      bonus_percent: impact.bonus_percent,
-      setBonus: impact.setBonus,
-      setImpact: impact.setImpact,
-      formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
-      room_level: impact.room_level, // Novo dado de rack
-      rack_x: impact.rack_x,         // Novo dado de rack
-      rack_y: impact.rack_y,          // Novo dado de rack
-      type: impact.type,
-    })));
+    //console.log("Miner Impacts (sorted):", minerImpacts.map(impact => ({
+    //name: impact.name,
+      //level: impact.level,
+      //power: impact.formattedPower, // Exibe o valor formatado
+      //bonus_percent: impact.bonus_percent,
+      //setBonus: impact.setBonus,
+      //setImpact: impact.setImpact,
+      //formattedImpact: impact.formattedImpact, // Exibe o impacto formatado
+      //room_level: impact.room_level, // Novo dado de rack
+      //rack_x: impact.rack_x,         // Novo dado de rack
+      //rack_y: impact.rack_y,          // Novo dado de rack
+      //type: impact.type,
+    //})));
 
-            const top10NegativeResults = minerImpacts.slice(0, 10);
+const top10NegativeResults = minerImpacts.slice(0, 10);
 
+const clearAllFields = () => {
+    for (let j = 1; j <= 10; j++) {
+        document.getElementById(`nome${j}`).innerHTML = '';
+        document.getElementById(`img${j}`).src = '';
+        document.getElementById(`img${j}`).style.display = 'none';
+        document.getElementById(`sell${j}`).innerText = '';
+        document.getElementById(`poder${j}`).innerText = '';
+        document.getElementById(`bonus${j}`).innerText = '';
+        document.getElementById(`impact${j}`).innerText = '';
+        document.getElementById(`set${j}`).innerText = '';
+        document.getElementById(`merge${j}`).innerText = '';
+        document.getElementById(`rack${j}`).innerText = '';
+    }
+};
+
+    clearAllFields();
+              
       const updateElement = (index, miner) => {
-                if (miner) {
-                    const levelInfo = getLevelDescription(miner.level , miner.type);
-                    const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-                    document.getElementById(`nome${index}`).innerHTML = levelSpan;
-                    document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
-                    document.getElementById(`img${index}`).style.display = 'block';
-                    document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
-                    document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
-                    document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
-                    if (miner.setBonus > 0) {                      
-                      document.getElementById(`set${index}`).innerText = `${(miner.setBonus).toFixed(2).replace('.', ',')}%`;
-                    } else if (miner.setImpact > 0) {
-                      document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
-                    } else {
-                    document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
-                    }
-                    document.getElementById(`merge${index}`).innerText = miner.repetitions;
-                    document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
-                } else {
-                    document.getElementById(`nome${index}`).innerText = '';
-                }
-            };
-
+          
+    if (miner) {
+        const levelInfo = getLevelDescription(miner.level, miner.type);
+        const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
+        document.getElementById(`nome${index}`).innerHTML = levelSpan;
+        document.getElementById(`img${index}`).src = `https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`;
+        document.getElementById(`img${index}`).style.display = 'block';
+        const sellElement = document.getElementById(`sell${index}`);
+        sellElement.innerText = miner.sellable ? 'Negociável' : 'Inegociável';
+        sellElement.style.color = miner.sellable ? '' : 'red';
+        document.getElementById(`poder${index}`).innerText = convertPower(miner.power);
+        document.getElementById(`bonus${index}`).innerText = `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`;
+        document.getElementById(`impact${index}`).innerText = convertPower(miner.impact);
+        if (miner.setBonus > 0) {
+            document.getElementById(`set${index}`).innerText = `${(miner.setBonus).toFixed(2).replace('.', ',')}%`;
+        } else if (miner.setImpact > 0) {
+            document.getElementById(`set${index}`).innerText = convertPower(miner.setImpact);
+        } else {
+            document.getElementById(`set${index}`).innerText = miner.is_in_set ? 'Sim' : 'Não';
+        }
+        document.getElementById(`merge${index}`).innerText = miner.repetitions;
+        document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
+    } else {
+        document.getElementById(`nome${index}`).innerText = '';
+    }
+};
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
-  }) 
-  
+ 
+          })})        
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
