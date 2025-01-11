@@ -97,19 +97,19 @@ async function loadGoogleSheetData() {
         // Extraímos apenas as colunas desejadas e exibimos o resultado
 result = data.values.map(row => [
     row[0], 
-    parseInt(row[1].replace('.', '')),  // Remove o ponto e converte para inteiro
+    row[1].replace('.', ''),  // Remove o ponto e converte para inteiro
     row[2].replace('.', ','), 
-    parseInt(row[23].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[23].replace('.', ''), // Remove o ponto e converte para inteiro
     row[28].replace('.', ','),
-    parseInt(row[24].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[24].replace('.', ''), // Remove o ponto e converte para inteiro
     row[29].replace('.', ','),
-    parseInt(row[25].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[25].replace('.', ''), // Remove o ponto e converte para inteiro
     row[30].replace('.', ','),
-    parseInt(row[26].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[26].replace('.', ''), // Remove o ponto e converte para inteiro
     row[31].replace('.', ','),
-    parseInt(row[27].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[27].replace('.', ''), // Remove o ponto e converte para inteiro
     row[32].replace('.', ','),
-    parseInt(row[38].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[38].replace('.', ''), // Remove o ponto e converte para inteiro
     row[39].replace('.', ','),
 ]);
 
