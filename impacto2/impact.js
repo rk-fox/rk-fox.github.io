@@ -1,3 +1,5 @@
+let minersPower, totalbonusPercent, total_orig;
+
 // Obter os elementos do botão e do campo de entrada
 const searchButton = document.getElementById('searchButton');
 const linkInput = document.getElementById('linkInput');
@@ -172,12 +174,12 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
         const powerData = await powerDataResponse.json();
-        let minersPower = powerData.data.miners;
-        let totalbonusPercent = powerData.data.bonus_percent;
+        minersPower = powerData.data.miners;
+        totalbonusPercent = powerData.data.bonus_percent;
 
         totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
 
-        let total_orig = minersPower * (1 + (totalbonusPercent / 100));
+        total_orig = minersPower * (1 + (totalbonusPercent / 100));
 
         //console.log("Miners Power:", convertPower(minersPower));
         //console.log("Miners Bonus:", totalbonusPercent + '%');
