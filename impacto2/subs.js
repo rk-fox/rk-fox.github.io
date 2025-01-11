@@ -65,43 +65,39 @@ async function loadGoogleSheetData() {
 }
 
 // Função para processar os dados e preencher os dropdowns
-function populateDropdowns() {
+async function populateDropdowns() {
     if (result.length === 0) return; // Verifica se result está vazio
 
-    const miners = result.map(row => {
-        const name = row[0]; // Nome
-        if (!name) return null;
-
-        const classifications = ["Comum"]; // Começa com "Comum" para todos
-
-        // Verifica as classificações específicas e adiciona ao array de classificações
-        if (row[3] !== "-") classifications.push("Incomum");   // Coluna Z
-        if (row[5] !== "-") classifications.push("Rara");      // Coluna AA
-        if (row[7] !== "-") classifications.push("Épica");     // Coluna AB
-        if (row[9] !== "-") classifications.push("Lendária");  // Coluna AC
-        if (row[11] !== "-") classifications.push("Unreal");   // Coluna AD
-        if (row[13] !== "-") classifications.push("Legacy");   // Coluna AO
-
-        return { name, classifications };
-    }).filter(miner => miner !== null);
-
     // Preenche o dropdown de nomes
-    populateNameDropdown(miners);
+    populateNameDropdown(result);
 
     // Adiciona o evento de mudança no nome da miner
     const nameDropdown = document.getElementById("name-dropdown");
     nameDropdown.addEventListener("change", (event) => {
         const selectedMinerName = event.target.value;
-        const selectedMiner = miners.find(miner => miner.name === selectedMinerName);
 
-        if (selectedMiner) {
-            populateClassificationDropdown(selectedMiner.classifications);
+        // Encontra o miner selecionado no array result
+        const selectedMinerRow = result.find(row => row[0] === selectedMinerName); // row[0] contém o nome
+
+        if (selectedMinerRow) {
+            const classifications = ["Comum"]; // Começa com "Comum" para todos
+
+            // Verifica as classificações específicas e adiciona ao array de classificações
+            if (selectedMinerRow[3] !== "-") classifications.push("Incomum");   // Coluna Z
+            if (selectedMinerRow[5] !== "-") classifications.push("Rara");      // Coluna AA
+            if (selectedMinerRow[7] !== "-") classifications.push("Épica");     // Coluna AB
+            if (selectedMinerRow[9] !== "-") classifications.push("Lendária");  // Coluna AC
+            if (selectedMinerRow[11] !== "-") classifications.push("Unreal");   // Coluna AD
+            if (selectedMinerRow[13] !== "-") classifications.push("Legacy");   // Coluna AO
+
+            // Preenche o dropdown de classificações
+            populateClassificationDropdown(classifications);
         }
     });
 }
 
 // Preenche o dropdown de nomes com filtro usando input e datalist
-function populateNameDropdown(miners) {
+function populateNameDropdown(result) {
     const nameDropdown = document.getElementById("name-dropdown");
     nameDropdown.innerHTML = ""; // Limpa o dropdown
 
@@ -113,10 +109,13 @@ function populateNameDropdown(miners) {
 
     const datalist = document.createElement("datalist");
     datalist.id = "names-list";
-    miners.forEach(miner => {
-        const option = document.createElement("option");
-        option.value = miner.name;
-        datalist.appendChild(option);
+    result.forEach(row => {
+        const name = row[0]; // Nome
+        if (name) {
+            const option = document.createElement("option");
+            option.value = name;
+            datalist.appendChild(option);
+        }
     });
     nameDropdown.appendChild(datalist);
 
@@ -133,13 +132,6 @@ function populateNameDropdown(miners) {
             }
         });
     });
-
-    input.addEventListener("change", () => {
-        const selectedMiner = miners.find(miner => miner.name === input.value);
-        if (selectedMiner) {
-            populateClassificationDropdown(selectedMiner.classifications);
-        }
-    });
 }
 
 // Preenche o dropdown de classificações com as classificações da miner selecionada
@@ -155,6 +147,7 @@ function populateClassificationDropdown(classifications) {
         classificationDropdown.appendChild(option);
     });
 }
+
 
 // Inicializa o script ao carregar a página
 document.addEventListener("DOMContentLoaded", () => {
