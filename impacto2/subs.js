@@ -10,6 +10,11 @@ function closePopup() {
     popup.style.display = "none"; // Oculta o popup
 }
 
+// Adiciona o evento de clique para as imagens com a classe "popup-trigger"
+document.querySelectorAll(".popup-trigger").forEach(item => {
+    item.addEventListener("click", openPopup);
+});
+
 // Função para carregar dados da planilha Google Sheets
 async function loadGoogleSheetData() {
     const sheetId = "1Qj0XBNaI6hihidQV0krraWD2AJr1nDukrFW8DUf_094";
