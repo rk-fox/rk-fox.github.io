@@ -24,7 +24,7 @@ function openPopup(event) {
         popupLeft.innerHTML = `
         <div></div>
         <div></div>
-            <table>
+            <table style="margin-top: 20px;">
                 <tbody>
                     <tr>
                         <td>Miner:</td>
