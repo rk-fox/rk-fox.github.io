@@ -78,12 +78,12 @@ async function populateDropdowns() {
         const classifications = new Set(["Comum"]); // Começa com "Comum" para todos
 
         // Verifica as colunas de classificações específicas para cada miner
-        if (row[23]) classifications.add("Incomum");   // Coluna Z
-        if (row[24]) classifications.add("Rara");      // Coluna AA
-        if (row[25]) classifications.add("Épica");     // Coluna AB
-        if (row[26]) classifications.add("Lendária");  // Coluna AC
-        if (row[27]) classifications.add("Unreal");    // Coluna AD
-        if (row[38]) classifications.add("Legacy");    // Coluna AO
+        if (row[23] !== "-") classifications.add("Incomum");   // Coluna Z
+        if (row[24] !== "-") classifications.add("Rara");      // Coluna AA
+        if (row[25] !== "-") classifications.add("Épica");     // Coluna AB
+        if (row[26] !== "-") classifications.add("Lendária");  // Coluna AC
+        if (row[27] !== "-") classifications.add("Unreal");    // Coluna AD
+        if (row[38] !== "-") classifications.add("Legacy");    // Coluna AO
 
         miners.push({ name, classifications: [...classifications] });
     });
