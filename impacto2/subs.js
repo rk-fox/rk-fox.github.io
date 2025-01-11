@@ -4,6 +4,20 @@ let result = [];
 function openPopup() {
     const popup = document.getElementById("popup");
     popup.style.display = "flex"; // Exibe o popup
+
+// Identifica qual imagem foi clicada
+    const clickedImage = event.target; // Obtem a imagem clicada
+    console.log("Imagem clicada:", clickedImage);
+
+    // Você pode acessar o id ou qualquer atributo da imagem
+    const imageId = clickedImage.id;
+    console.log("ID da imagem clicada:", imageId);
+
+    // Se precisar armazenar informações para uso posterior
+    const popupContent = document.getElementById("popup-content");
+    if (popupContent) {
+        popupContent.innerHTML = `Você clicou na imagem com ID: ${imageId}`;
+    }
 }
 
 // Função para fechar o popup
