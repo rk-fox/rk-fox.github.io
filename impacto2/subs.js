@@ -195,7 +195,74 @@ function populateClassificationDropdown(classifications) {
         option.textContent = classification;
         classificationDropdown.appendChild(option);
     });
+    // Atualizar conteúdo do "new" após preencher o dropdown
+    updateNewContent();
 }
+
+
+function updateNewContent() {
+    const nameDropdown = document.getElementById("name-dropdown");
+    const classificationDropdown = document.getElementById("classification-dropdown");
+    const newDiv = document.getElementById("new");
+
+    // Obter valores selecionados
+    const selectedName = nameDropdown.querySelector("input")?.value;
+    const selectedClassification = classificationDropdown.value;
+
+    if (!selectedName || !selectedClassification) {
+        newDiv.innerHTML = "<p>Selecione um nome e uma classificação.</p>";
+        return;
+    }
+
+    // Encontrar a linha correspondente no array result
+    const selectedMinerRow = result.find(row => row[0] === selectedName);
+
+    if (!selectedMinerRow) {
+        newDiv.innerHTML = "<p>Miner não encontrado nos dados.</p>";
+        return;
+    }
+
+    // Mapear as classificações para os índices corretos
+    const classificationMap = {
+        "Comum": [1, 2],
+        "Incomum": [3, 4],
+        "Rara": [5, 6],
+        "Épica": [7, 8],
+        "Lendária": [9, 10],
+        "Unreal": [11, 12],
+        "Legacy": [13, 14]
+    };
+
+    const indices = classificationMap[selectedClassification];
+    if (!indices) {
+        newDiv.innerHTML = "<p>Classificação inválida.</p>";
+        return;
+    }
+
+    const poderText = selectedMinerRow[indices[0]] || "N/A";
+    const bonusText = selectedMinerRow[indices[1]] || "N/A";
+
+    // Atualizar o conteúdo do elemento "new"
+    newDiv.innerHTML = `
+        <table>
+            <tbody>
+                <tr>
+                    <td>Classificação:</td>
+                    <td>${selectedClassification}</td>
+                </tr>
+                <tr>
+                    <td>Poder:</td>
+                    <td>${poderText}</td>
+                </tr>
+                <tr>
+                    <td>Bônus:</td>
+                    <td>${bonusText}</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+}
+
 
 // Função para limpar o campo de texto quando clicado
 function clearInputOnClick() {
