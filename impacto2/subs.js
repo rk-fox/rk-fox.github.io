@@ -1,15 +1,15 @@
 let result = [];
 
-// Função para converter valores de poder
+// Função para converter valores de poder (GH, TH, PH)
 function convertPower(value) {
-  const absValue = Math.abs(value); // Obter o valor absoluto
-  if (absValue >= 1e6) {
-    return (value / 1e6).toFixed(3).replace('.', ',') + ' Phs';
-  }
-  if (absValue >= 1e3) {
-    return (value / 1e3).toFixed(3).replace('.', ',') + ' Ths';
-  }
-  return value.toFixed(3).replace('.', ',') + ' Ghs';
+    const absValue = Math.abs(value); // Obter o valor absoluto
+    if (absValue >= 1e6) {
+        return (value / 1e6).toFixed(3).replace('.', ',') + ' Phs';
+    }
+    if (absValue >= 1e3) {
+        return (value / 1e3).toFixed(3).replace('.', ',') + ' Ths';
+    }
+    return value.toFixed(3).replace('.', ',') + ' Ghs';
 }
 
 function openPopup(event) {
@@ -97,19 +97,19 @@ async function loadGoogleSheetData() {
         // Extraímos apenas as colunas desejadas e exibimos o resultado
         result = data.values.map(row => [
             row[0], 
-            convertPower(row[1]),  
+            row[1].replace('.', ''),  
             row[2].replace('.', ','), 
-            convertPower(row[23]),
+            row[23].replace('.', ''),
             row[28].replace('.', ','),
-            convertPower(row[24]), 
+            row[24].replace('.', ''), 
             row[29].replace('.', ','),
-            convertPower(row[25]), 
+            row[25].replace('.', ''), 
             row[30].replace('.', ','),
-            convertPower(row[26]), 
+            row[26].replace('.', ''), 
             row[31].replace('.', ','),
-            convertPower(row[27]),
+            row[27].replace('.', ''),
             row[32].replace('.', ','),
-            convertPower(row[38]),
+            row[38].replace('.', ''),
             row[39].replace('.', ','),
         ]);
 
