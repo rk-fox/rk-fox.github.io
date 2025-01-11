@@ -95,23 +95,23 @@ async function loadGoogleSheetData() {
         }
 
         // Extraímos apenas as colunas desejadas e exibimos o resultado
-        result = data.values.map(row => [
-            row[0], 
-            row[1].replace('.', ''),  
-            row[2].replace('.', ','), 
-            row[23].replace('.', ''),
-            row[28].replace('.', ','),
-            row[24].replace('.', ''), 
-            row[29].replace('.', ','),
-            row[25].replace('.', ''), 
-            row[30].replace('.', ','),
-            row[26].replace('.', ''), 
-            row[31].replace('.', ','),
-            row[27].replace('.', ''),
-            row[32].replace('.', ','),
-            row[38].replace('.', ''),
-            row[39].replace('.', ','),
-        ]);
+result = data.values.map(row => [
+    row[0], 
+    parseInt(row[1].replace('.', '')),  // Remove o ponto e converte para inteiro
+    row[2].replace('.', ','), 
+    parseInt(row[23].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[28].replace('.', ','),
+    parseInt(row[24].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[29].replace('.', ','),
+    parseInt(row[25].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[30].replace('.', ','),
+    parseInt(row[26].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[31].replace('.', ','),
+    parseInt(row[27].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[32].replace('.', ','),
+    parseInt(row[38].replace('.', '')), // Remove o ponto e converte para inteiro
+    row[39].replace('.', ','),
+]);
 
         // Exibindo o resultado no console
         console.log(result);
@@ -277,8 +277,11 @@ function updateNewContent() {
     }
     
     const nameText = selectedMinerRow[indices[0]] || "N/A";
-    const poderText = selectedMinerRow[indices[1]] || "N/A";
+    let poderText = selectedMinerRow[indices[1]] || "N/A";
     const bonusText = selectedMinerRow[indices[2]] || "N/A";
+
+    poderText = convertPower(poderText); 
+    
 
     // Formatando o nome para o filename
     const filename = formatFilename(selectedName);
