@@ -7,10 +7,10 @@ function openPopup() {
 
 // Identifica qual imagem foi clicada
     const clickedImage = event.target; // Obtem a imagem clicada
-    console.log("Imagem clicada:", clickedImage);
+    let imageId = clickedImage.id;
 
-    // Você pode acessar o id ou qualquer atributo da imagem
-    const imageId = clickedImage.id;
+// Remove os 3 primeiros caracteres de imageId
+    imageId = imageId.substring(3); // Ou imageId = imageId.slice(3);
     console.log("ID da imagem clicada:", imageId);
 
     // Se precisar armazenar informações para uso posterior
