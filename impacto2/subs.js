@@ -72,7 +72,7 @@ async function populateDropdowns() {
 
     // Processa cada miner e suas classificações
     sheetData.forEach(row => {
-        const name = row[0]; // Coluna C
+        const name = row[0]; // Nome (Coluna C)
         if (!name) return;
 
         const classifications = new Set(["Comum"]); // Começa com "Comum" para todos
@@ -83,13 +83,14 @@ async function populateDropdowns() {
         if (row[25] !== "-") classifications.add("Épica");     // Coluna AB
         if (row[26] !== "-") classifications.add("Lendária");  // Coluna AC
         if (row[27] !== "-") classifications.add("Unreal");    // Coluna AD
-        if (row[38] !== "-") classifications.add("Legacy");    // Coluna AO
+        if (row[38] !== "-") classifications.add("Legacy");   // Coluna AO
 
         miners.push({ name, classifications: [...classifications] });
     });
 
     populateNameDropdown(miners);
 }
+
 
 // Preenche o dropdown de nomes com filtro usando input e datalist
 function populateNameDropdown(miners) {
