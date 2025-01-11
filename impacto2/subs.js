@@ -1,4 +1,3 @@
-// Definição global de result
 let result = [];
 
 // Função para abrir o popup
@@ -57,16 +56,16 @@ async function loadGoogleSheetData() {
         // Exibindo o resultado no console
         console.log(result);
 
-        return result;
+        // Chama a função para preencher os dropdowns após o carregamento de dados
+        populateDropdowns();
+
     } catch (error) {
         console.error("Erro ao carregar dados da planilha:", error);
-        return [];
     }
 }
 
 // Função para processar os dados e preencher os dropdowns
-async function populateDropdowns() {
-    // Não precisa mais carregar novamente os dados, pois o result já foi preenchido
+function populateDropdowns() {
     if (result.length === 0) return; // Verifica se result está vazio
 
     const miners = result.map(row => {
@@ -100,7 +99,6 @@ async function populateDropdowns() {
         }
     });
 }
-
 
 // Preenche o dropdown de nomes com filtro usando input e datalist
 function populateNameDropdown(miners) {
@@ -160,6 +158,5 @@ function populateClassificationDropdown(classifications) {
 
 // Inicializa o script ao carregar a página
 document.addEventListener("DOMContentLoaded", () => {
-    populateDropdowns();
+    loadGoogleSheetData(); // Agora chama loadGoogleSheetData que por sua vez chama populateDropdowns
 });
-
