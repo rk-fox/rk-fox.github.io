@@ -22,6 +22,8 @@ function openPopup(event) {
         const impactText = document.getElementById(`impact${imageId}`)?.innerText || "N/A";
     // Preenche o popup com os dados extraídos
         popupLeft.innerHTML = `
+        <div></div>
+        <div></div>
             <table>
                 <tbody>
                     <tr>
@@ -182,6 +184,7 @@ function populateNameDropdown(result) {
     input.setAttribute("list", "names-list"); // Associa o datalist ao input
 }
 
+// Preenche o dropdown de classificação (Level) com os dados recebidos
 function populateClassificationDropdown(classifications) {
     const classificationDropdown = document.getElementById("classification-dropdown");
     classificationDropdown.innerHTML = ""; // Limpa o dropdown
@@ -192,17 +195,26 @@ function populateClassificationDropdown(classifications) {
     levelLabel.innerText = "Level:";  // Definindo o texto "Level:"
     levelDiv.appendChild(levelLabel);  // Adiciona o rótulo ao levelDiv
 
-    // Adiciona as opções de classificação disponíveis para a miner selecionada
+    // Cria o select para o dropdown de níveis
+    const select = document.createElement("select");
+    select.id = "classification-dropdown"; // Garante que o id seja único
+
+    // Adiciona as opções de classificação disponíveis
     classifications.forEach(classification => {
         const option = document.createElement("option");
         option.value = classification;
         option.textContent = classification;
-        classificationDropdown.appendChild(option);
+        select.appendChild(option);
     });
 
+    // Adiciona o dropdown "Level:" ao levelDiv
+    levelDiv.appendChild(select);
+
     // Adiciona a div do Level ao container principal
-    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
+    const popupRight = document.getElementById("popup-right");
+    popupRight.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
 }
+
 
 // Adiciona o evento de mudança para a classificação
 const classificationDropdown = document.getElementById("classification-dropdown");
