@@ -151,11 +151,21 @@ function populateNameDropdown(result) {
     const nameDropdown = document.getElementById("name-dropdown");
     nameDropdown.innerHTML = ""; // Limpa o dropdown
 
+    // Cria o rótulo "Miner:"
+    const minerLabel = document.createElement("label");
+    minerLabel.innerText = "Miner:";  // Definindo o texto "Miner:"
+    nameDropdown.appendChild(minerLabel);  // Adiciona o rótulo ao dropdown
+
     const input = document.createElement("input");
     input.type = "text";
     input.placeholder = "Filtrar nomes...";
     input.className = "filter-input";
     nameDropdown.appendChild(input);
+
+    // Cria o rótulo "Level:"
+    const levelLabel = document.createElement("label");
+    levelLabel.innerText = "Level:";  // Definindo o texto "Level:"
+    nameDropdown.appendChild(levelLabel);  // Adiciona o rótulo "Level:" ao dropdown
 
     const datalist = document.createElement("datalist");
     datalist.id = "names-list";
@@ -183,6 +193,7 @@ function populateNameDropdown(result) {
         });
     });
 }
+
 
 // Preenche o dropdown de classificações com as classificações da miner selecionada
 function populateClassificationDropdown(classifications) {
