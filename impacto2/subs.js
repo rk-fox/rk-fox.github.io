@@ -1,3 +1,15 @@
+// Função para abrir o popup
+function openPopup() {
+    const popup = document.getElementById("popup");
+    popup.style.display = "flex"; // Exibe o popup
+}
+
+// Função para fechar o popup
+function closePopup() {
+    const popup = document.getElementById("popup");
+    popup.style.display = "none"; // Oculta o popup
+}
+
 // Função para carregar dados da planilha Google Sheets
 async function loadGoogleSheetData() {
     const sheetId = "1Qj0XBNaI6hihidQV0krraWD2AJr1nDukrFW8DUf_094";
