@@ -128,9 +128,10 @@ async function populateDropdowns() {
         const selectedMinerRow = result.find(row => row[0] === selectedMinerName); // row[0] contém o nome
 
         if (selectedMinerRow) {
-            const classifications = ["Comum"]; // Começa com "Comum" para todos
+            const classifications = []; // Começa com "Comum" para todos
 
             // Verifica as classificações específicas e adiciona ao array de classificações
+if (selectedMinerRow[1] !== "-" && selectedMinerRow[3] !== "#N/A") classifications.push("Comum");   // Começa com "Comum" para todos
 if (selectedMinerRow[3] !== "-" && selectedMinerRow[3] !== "#N/A") classifications.push("Incomum");   // Coluna Z
 if (selectedMinerRow[5] !== "-" && selectedMinerRow[5] !== "#N/A") classifications.push("Rara");      // Coluna AA
 if (selectedMinerRow[7] !== "-" && selectedMinerRow[7] !== "#N/A") classifications.push("Épica");     // Coluna AB
