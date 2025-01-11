@@ -130,7 +130,7 @@ async function populateDropdowns() {
         const selectedMinerRow = result.find(row => row[0] === selectedMinerName); // row[0] contém o nome
 
         if (selectedMinerRow) {
-            const classifications = []; // Começa com "Comum" para todos
+            const classifications = [""]; // Começa com "Comum" para todos
 
             // Verifica as classificações específicas e adiciona ao array de classificações
 if (selectedMinerRow[1] !== "-" && selectedMinerRow[3] !== "#N/A") classifications.push("Common");   // Começa com "Comum" para todos
