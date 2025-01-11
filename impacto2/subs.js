@@ -1,3 +1,6 @@
+// Definição global de result
+let result = [];
+
 // Função para abrir o popup
 function openPopup() {
     const popup = document.getElementById("popup");
@@ -33,7 +36,7 @@ async function loadGoogleSheetData() {
         }
 
         // Extraímos apenas as colunas desejadas e exibimos o resultado
-        let result = data.values.map(row => [
+        result = data.values.map(row => [
             row[0], 
             row[1],  
             row[2], 
