@@ -34,19 +34,21 @@ async function loadGoogleSheetData() {
 
         // Extraímos apenas as colunas desejadas e exibimos o resultado
         const result = data.values.map(row => [
-            row[0],  // Nome (Coluna C)
-            row[1],  // PComum (Coluna D)
-            row[2],  // BComum (Coluna E)
-            row[22], // PIncomum (Coluna Z)
-            row[23], // BIncomum (Coluna AA)
-            row[24], // PRara (Coluna AB)
-            row[25], // BRara (Coluna AC)
-            row[26], // PEpica (Coluna AD)
-            row[27], // BEpica (Coluna AE)
-            row[28], // PUnreal (Coluna AF)
-            row[29], // BUnreal (Coluna AG)
-            row[30], // PLegacy (Coluna AH)
-            row[31], // BLegacy (Coluna AI)
+            row[0], 
+            row[1],  
+            row[2], 
+            row[23],
+            row[24], 
+            row[25], 
+            row[26], 
+            row[27],
+            row[28],
+            row[29],
+            row[30], 
+            row[31],
+            row[32],
+            row[37],
+            row[38],
         ]);
 
         // Exibindo o resultado no console
