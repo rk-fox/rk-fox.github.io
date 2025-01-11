@@ -1,22 +1,56 @@
 let result = [];
 
-// Função para abrir o popup
-function openPopup() {
+// Função para abrir o popup e identificar a imagem clicada
+function openPopup(event) {
     const popup = document.getElementById("popup");
     popup.style.display = "flex"; // Exibe o popup
 
-// Identifica qual imagem foi clicada
+    // Identifica qual imagem foi clicada
     const clickedImage = event.target; // Obtem a imagem clicada
     let imageId = clickedImage.id;
 
 // Remove os 3 primeiros caracteres de imageId
     imageId = imageId.substring(3); // Ou imageId = imageId.slice(3);
-    console.log("ID da imagem clicada:", imageId);
 
-    // Se precisar armazenar informações para uso posterior
-    const popupContent = document.getElementById("popup-content");
-    if (popupContent) {
-        popupContent.innerHTML = `Você clicou na imagem com ID: ${imageId}`;
+// Atualiza o conteúdo de #popup-left
+    const popupLeft = document.getElementById("popup-left");
+    if (popupLeft) {
+        popupLeft.innerHTML = `
+            <tbody>
+                <tr>
+                    <td>Miner:</td>
+                    <td>
+                        <img id="img${imageId}" class="popup-trigger" src="" style="display: none; margin: auto; width: 120px; height: auto;"> 
+                        <span id="nome${imageId}" style="display: block; margin-top: 2px;"></span>
+                        <span id="sell${imageId}" style="display: block;"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Poder:</td>
+                    <td style="font-weight: bold"><span id="poder${imageId}"></span></td>
+                </tr>
+                <tr>
+                    <td>Bônus:</td>
+                    <td style="font-weight: bold"><span id="bonus${imageId}"></span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold">Impacto Total:</td>
+                    <td style="font-weight: bold"><span id="impact${imageId}"></span></td>
+                </tr>
+                <tr>
+                    <td>Faz parte de Set?</td>
+                    <td style="font-weight: bold"><span id="set${imageId}"></span></td>
+                </tr>
+                <tr>
+                    <td>Repetida/Merge:</td>
+                    <td style="font-weight: bold"><span id="merge${imageId}"></span></td> 
+                </tr>
+                <tr>
+                    <td>Localização:</td>
+                    <td style="font-weight: bold"><span id="rack${imageId}"></span></td> 
+                </tr>
+            </tbody>
+        `;
     }
 }
 
