@@ -14,18 +14,14 @@ function openPopup(event) {
     // Atualiza o conteúdo de #popup-left
     const popupLeft = document.getElementById("popup-left");
     if (popupLeft) {
-        // Copia os dados existentes da página para preencher o popup
+    // Copia os dados existentes da página para preencher o popup
         const imgSrc = document.getElementById(`img${imageId}`)?.src || "";
         const nomeText = document.getElementById(`nome${imageId}`)?.innerText || "N/A";
         const sellText = document.getElementById(`sell${imageId}`)?.innerText || "N/A";
         const poderText = document.getElementById(`poder${imageId}`)?.innerText || "N/A";
         const bonusText = document.getElementById(`bonus${imageId}`)?.innerText || "N/A";
         const impactText = document.getElementById(`impact${imageId}`)?.innerText || "N/A";
-        const setText = document.getElementById(`set${imageId}`)?.innerText || "N/A";
-        const mergeText = document.getElementById(`merge${imageId}`)?.innerText || "N/A";
-        const rackText = document.getElementById(`rack${imageId}`)?.innerText || "N/A";
-
-        // Preenche o popup com os dados extraídos
+    // Preenche o popup com os dados extraídos
         popupLeft.innerHTML = `
             <table>
                 <tbody>
@@ -48,18 +44,6 @@ function openPopup(event) {
                     <tr>
                         <td style="font-weight: bold">Impacto Total:</td>
                         <td style="font-weight: bold">${impactText}</td>
-                    </tr>
-                    <tr>
-                        <td>Faz parte de Set?</td>
-                        <td style="font-weight: bold">${setText}</td>
-                    </tr>
-                    <tr>
-                        <td>Repetida/Merge:</td>
-                        <td style="font-weight: bold">${mergeText}</td> 
-                    </tr>
-                    <tr>
-                        <td>Localização:</td>
-                        <td style="font-weight: bold">${rackText}</td> 
                     </tr>
                 </tbody>
             </table>
