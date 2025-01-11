@@ -19,7 +19,8 @@ document.querySelectorAll(".popup-trigger").forEach(item => {
 async function loadGoogleSheetData() {
     const sheetId = "1Qj0XBNaI6hihidQV0krraWD2AJr1nDukrFW8DUf_094";
     const sheetName = "Database";
-    const range = "C4:AO"; // Inclui coluna C até AO
+    // Defina o intervalo para pegar apenas as colunas que você precisa
+    const range = "C4:AP"; // Inclui as colunas C até AP, que cobrem as colunas que você quer
     const apiKey = "AIzaSyBP12YfPrz9MhCH3J7boeondSm7HYVCUvA"; // Substitua pela sua API Key
 
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!${range}?key=${apiKey}`;
@@ -33,12 +34,28 @@ async function loadGoogleSheetData() {
             return [];
         }
 
-        return data.values;
+        // Extraímos apenas as colunas desejadas
+        return data.values.map(row => [
+            row[0],  // Nome (Coluna C)
+            row[1],  // PComum (Coluna D)
+            row[2],  // BComum (Coluna E)
+            row[22], // PIncomum (Coluna Z)
+            row[23], // BIncomum (Coluna AA)
+            row[24], // PRara (Coluna AB)
+            row[25], // BRara (Coluna AC)
+            row[26], // PEpica (Coluna AD)
+            row[27], // BEpica (Coluna AE)
+            row[28], // PUnreal (Coluna AF)
+            row[29], // BUnreal (Coluna AG)
+            row[30], // PLegacy (Coluna AH)
+            row[31], // BLegacy (Coluna AI)
+        ]);
     } catch (error) {
         console.error("Erro ao carregar dados da planilha:", error);
         return [];
     }
 }
+
 
 // Função para processar os dados e preencher os dropdowns
 async function populateDropdowns() {
