@@ -20,9 +20,9 @@ function openPopup(event) {
                 <tr>
                     <td>Miner:</td>
                     <td>
-                        <img id="img${imageId}" class="popup-trigger" src="" style="display: none; margin: auto; width: 120px; height: auto;"> 
-                        <span id="nome${imageId}" style="display: block; margin-top: 2px;"></span>
-                        <span id="sell${imageId}" style="display: block;"></span>
+                        <img id="img${imageId}" src="" style="margin: auto; width: 120px; height: auto;"> 
+                        <span id="nome${imageId}" style="margin-top: 2px;"></span>
+                        <span id="sell${imageId}" style=""></span>
                     </td>
                 </tr>
                 <tr>
