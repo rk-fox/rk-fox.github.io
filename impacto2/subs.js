@@ -47,8 +47,8 @@ async function loadGoogleSheetData() {
             row[30], 
             row[31],
             row[32],
-            row[37],
             row[38],
+            row[39],
         ]);
 
         // Exibindo o resultado no console
