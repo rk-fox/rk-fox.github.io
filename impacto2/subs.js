@@ -15,12 +15,10 @@ document.querySelectorAll(".popup-trigger").forEach(item => {
     item.addEventListener("click", openPopup);
 });
 
-// Função para carregar dados da planilha Google Sheets
 async function loadGoogleSheetData() {
     const sheetId = "1Qj0XBNaI6hihidQV0krraWD2AJr1nDukrFW8DUf_094";
     const sheetName = "Database";
-    // Defina o intervalo para pegar apenas as colunas que você precisa
-    const range = "C4:AP"; // Inclui as colunas C até AP, que cobrem as colunas que você quer
+    const range = "C4:AP"; // Inclui as colunas C até AP
     const apiKey = "AIzaSyBP12YfPrz9MhCH3J7boeondSm7HYVCUvA"; // Substitua pela sua API Key
 
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!${range}?key=${apiKey}`;
@@ -34,8 +32,8 @@ async function loadGoogleSheetData() {
             return [];
         }
 
-        // Extraímos apenas as colunas desejadas
-        return data.values.map(row => [
+        // Extraímos apenas as colunas desejadas e exibimos o resultado
+        const result = data.values.map(row => [
             row[0],  // Nome (Coluna C)
             row[1],  // PComum (Coluna D)
             row[2],  // BComum (Coluna E)
@@ -51,13 +49,15 @@ async function loadGoogleSheetData() {
             row[31], // BLegacy (Coluna AI)
         ]);
 
-        console.log (data);
+        // Exibindo o resultado no console
+        console.log(result);
+
+        return result;
     } catch (error) {
         console.error("Erro ao carregar dados da planilha:", error);
         return [];
     }
 }
-
 
 // Função para processar os dados e preencher os dropdowns
 async function populateDropdowns() {
