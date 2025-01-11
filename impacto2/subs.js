@@ -66,11 +66,9 @@ async function loadGoogleSheetData() {
 
 // Função para processar os dados e preencher os dropdowns
 async function populateDropdowns() {
-    const sheetData = await loadGoogleSheetData();
+    // Não precisa mais carregar novamente os dados, pois o result já foi preenchido
+    if (result.length === 0) return; // Verifica se result está vazio
 
-    if (sheetData.length === 0) return;
-
-    // O array result já está preenchido pela função loadGoogleSheetData
     const miners = result.map(row => {
         const name = row[0]; // Nome
         if (!name) return null;
