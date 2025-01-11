@@ -50,6 +50,8 @@ async function loadGoogleSheetData() {
             row[30], // PLegacy (Coluna AH)
             row[31], // BLegacy (Coluna AI)
         ]);
+
+        console.log (data);
     } catch (error) {
         console.error("Erro ao carregar dados da planilha:", error);
         return [];
