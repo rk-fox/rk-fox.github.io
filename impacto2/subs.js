@@ -216,7 +216,7 @@ function populateClassificationDropdown(classifications) {
     });
 
     // Adiciona a div do Level ao container principal
-    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
+  //  nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
 }
 
 
@@ -251,11 +251,11 @@ function updateNewContent() {
 
     // Mapear as classificações para os índices corretos
     const classificationMap = {
-        "Comum": [0, 1, 2],
-        "Incomum": [0, 3, 4],
-        "Rara": [0, 5, 6],
-        "Épica": [0, 7, 8],
-        "Lendária": [0, 9, 10],
+        "Common": [0, 1, 2],
+        "Uncommon": [0, 3, 4],
+        "Rare": [0, 5, 6],
+        "Epic": [0, 7, 8],
+        "Legendary": [0, 9, 10],
         "Unreal": [0, 11, 12],
         "Legacy": [0, 13, 14]
     };
@@ -281,10 +281,10 @@ function updateNewContent() {
                     <td>Miner:</td>
                     <td>
                         <div>
-                            <img src="https://static.rollercoin.com/static/img/market/miners/${filename}.gif?v=1" style="width: 50px; height: auto;">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/${filename}.gif?v=1" style="width: 120px; height: auto;">
                         </div>
                         <div>
-                            ${nameText} ${selectedClassification}
+                            ${selectedClassification} ${nameText}
                         </div>
                     </td>
                 </tr>
