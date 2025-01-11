@@ -153,16 +153,16 @@ function populateClassificationDropdown(classifications) {
 function clearInputOnClick() {
     const input = document.querySelector('.filter-input');
     
-    // Adiciona um evento de clique que limpa o texto
-    input.addEventListener('click', () => {
-        input.value = ''; // Limpa o conteúdo do campo de texto
-    });
+    // Verifica se o input existe antes de adicionar o evento
+    if (input) {
+        input.addEventListener('click', () => {
+            input.value = ''; // Limpa o conteúdo do campo de texto
+        });
+    }
 }
 
 // Chama a função assim que a página for carregada
-document.addEventListener("DOMContentLoaded", clearInputOnClick);
-
-// Inicializa o script ao carregar a página
 document.addEventListener("DOMContentLoaded", () => {
+    clearInputOnClick(); // Chama a função de limpar o campo de texto
     loadGoogleSheetData(); // Agora chama loadGoogleSheetData que por sua vez chama populateDropdowns
 });
