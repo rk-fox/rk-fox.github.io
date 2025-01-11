@@ -1,6 +1,5 @@
 let result = [];
 
-// Função para abrir o popup e identificar a imagem clicada
 function openPopup(event) {
     const popup = document.getElementById("popup");
     popup.style.display = "flex"; // Exibe o popup
@@ -9,50 +8,65 @@ function openPopup(event) {
     const clickedImage = event.target; // Obtem a imagem clicada
     let imageId = clickedImage.id;
 
-// Remove os 3 primeiros caracteres de imageId
-    imageId = imageId.substring(3); // Ou imageId = imageId.slice(3);
+    // Remove os 3 primeiros caracteres de imageId
+    imageId = imageId.substring(3);
 
-// Atualiza o conteúdo de #popup-left
+    // Atualiza o conteúdo de #popup-left
     const popupLeft = document.getElementById("popup-left");
     if (popupLeft) {
+        // Copia os dados existentes da página para preencher o popup
+        const imgSrc = document.getElementById(`img${imageId}`)?.src || "";
+        const nomeText = document.getElementById(`nome${imageId}`)?.innerText || "N/A";
+        const sellText = document.getElementById(`sell${imageId}`)?.innerText || "N/A";
+        const poderText = document.getElementById(`poder${imageId}`)?.innerText || "N/A";
+        const bonusText = document.getElementById(`bonus${imageId}`)?.innerText || "N/A";
+        const impactText = document.getElementById(`impact${imageId}`)?.innerText || "N/A";
+        const setText = document.getElementById(`set${imageId}`)?.innerText || "N/A";
+        const mergeText = document.getElementById(`merge${imageId}`)?.innerText || "N/A";
+        const rackText = document.getElementById(`rack${imageId}`)?.innerText || "N/A";
+
+        // Preenche o popup com os dados extraídos
         popupLeft.innerHTML = `
-            <tbody>
-                <tr>
-                    <td>Miner:</td>
-                    <td>
-                        <img id="img${imageId}" src="" style="margin: auto; width: 120px; height: auto;"> 
-                        <span id="nome${imageId}" style="margin-top: 2px;"></span>
-                        <span id="sell${imageId}" style=""></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Poder:</td>
-                    <td style="font-weight: bold"><span id="poder${imageId}"></span></td>
-                </tr>
-                <tr>
-                    <td>Bônus:</td>
-                    <td style="font-weight: bold"><span id="bonus${imageId}"></span></td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold">Impacto Total:</td>
-                    <td style="font-weight: bold"><span id="impact${imageId}"></span></td>
-                </tr>
-                <tr>
-                    <td>Faz parte de Set?</td>
-                    <td style="font-weight: bold"><span id="set${imageId}"></span></td>
-                </tr>
-                <tr>
-                    <td>Repetida/Merge:</td>
-                    <td style="font-weight: bold"><span id="merge${imageId}"></span></td> 
-                </tr>
-                <tr>
-                    <td>Localização:</td>
-                    <td style="font-weight: bold"><span id="rack${imageId}"></span></td> 
-                </tr>
-            </tbody>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Miner:</td>
+                        <td>
+                            <img src="${imgSrc}" style="margin: auto; width: 120px; height: auto;"> 
+                            <span style="margin-top: 2px;">${nomeText}</span>
+                            <span>${sellText}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Poder:</td>
+                        <td style="font-weight: bold">${poderText}</td>
+                    </tr>
+                    <tr>
+                        <td>Bônus:</td>
+                        <td style="font-weight: bold">${bonusText}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold">Impacto Total:</td>
+                        <td style="font-weight: bold">${impactText}</td>
+                    </tr>
+                    <tr>
+                        <td>Faz parte de Set?</td>
+                        <td style="font-weight: bold">${setText}</td>
+                    </tr>
+                    <tr>
+                        <td>Repetida/Merge:</td>
+                        <td style="font-weight: bold">${mergeText}</td> 
+                    </tr>
+                    <tr>
+                        <td>Localização:</td>
+                        <td style="font-weight: bold">${rackText}</td> 
+                    </tr>
+                </tbody>
+            </table>
         `;
     }
 }
+
 
 // Função para fechar o popup
 function closePopup() {
