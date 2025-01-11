@@ -204,7 +204,6 @@ function populateClassificationDropdown(classifications) {
     nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
 }
 
-
 // Adiciona o evento de mudança para a classificação
 const classificationDropdown = document.getElementById("classification-dropdown");
 classificationDropdown.addEventListener("change", updateNewContent);
