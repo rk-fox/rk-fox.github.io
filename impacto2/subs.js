@@ -154,6 +154,7 @@ function populateNameDropdown(result) {
     // Cria o rótulo "Miner:"
     const minerLabel = document.createElement("label");
     minerLabel.innerText = "Miner:";  // Definindo o texto "Miner:"
+    minerLabel.style.display = "block";  // Garante que "Miner:" fique em uma linha separada
     nameDropdown.appendChild(minerLabel);  // Adiciona o rótulo ao dropdown
 
     const input = document.createElement("input");
@@ -165,6 +166,7 @@ function populateNameDropdown(result) {
     // Cria o rótulo "Level:"
     const levelLabel = document.createElement("label");
     levelLabel.innerText = "Level:";  // Definindo o texto "Level:"
+    levelLabel.style.display = "block";  // Garante que "Level:" fique em uma linha separada
     nameDropdown.appendChild(levelLabel);  // Adiciona o rótulo "Level:" ao dropdown
 
     const datalist = document.createElement("datalist");
@@ -238,13 +240,13 @@ function updateNewContent() {
 
     // Mapear as classificações para os índices corretos
     const classificationMap = {
-        "Comum": [1, 2],
-        "Incomum": [3, 4],
-        "Rara": [5, 6],
-        "Épica": [7, 8],
-        "Lendária": [9, 10],
-        "Unreal": [11, 12],
-        "Legacy": [13, 14]
+        "Comum": [0, 1, 2],
+        "Incomum": [0, 3, 4],
+        "Rara": [0, 5, 6],
+        "Épica": [0, 7, 8],
+        "Lendária": [0, 9, 10],
+        "Unreal": [0, 11, 12],
+        "Legacy": [0, 13, 14]
     };
 
     const indices = classificationMap[selectedClassification];
@@ -252,8 +254,9 @@ function updateNewContent() {
         newDiv.innerHTML = "<p>Classificação inválida.</p>";
         return;
     }
-
-    const poderText = selectedMinerRow[indices[0]] || "N/A";
+    
+    const nameText = selectedMinerRow[indices[0]] || "N/A";
+    const poderText = selectedMinerRow[indices[1]] || "N/A";
     const bonusText = selectedMinerRow[indices[1]] || "N/A";
 
     // Atualizar o conteúdo do elemento "new"
@@ -261,8 +264,8 @@ function updateNewContent() {
         <table>
             <tbody>
                 <tr>
-                    <td>Classificação:</td>
-                    <td>${selectedClassification}</td>
+                    <td>Miner:</td>
+                    <td>${selectedClassification} ${nameText}</td>
                 </tr>
                 <tr>
                     <td>Poder:</td>
