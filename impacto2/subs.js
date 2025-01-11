@@ -27,21 +27,25 @@ function openPopup(event) {
                     <tr>
                         <td>Miner:</td>
                         <td>
-                            <img src="${imgSrc}" style="margin: auto; width: 120px; height: auto;"> 
-                            <span style="color:#000000 margin-top: 2px;">${nomeText}</span>
+                            <div>
+                                <img src="${imgSrc}" style="margin: auto; width: 120px; height: auto;">
+                            </div>
+                            <div>
+                                <span style="margin-top: 2px;">${nomeText}</span>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <td>Poder:</td>
-                        <td style="color:#000000 font-weight: bold">${poderText}</td>
+                        <td style="font-weight: bold">${poderText}</td>
                     </tr>
                     <tr>
                         <td>Bônus:</td>
-                        <td style="color:#000000 font-weight: bold">${bonusText}</td>
+                        <td style="font-weight: bold">${bonusText}</td>
                     </tr>
                     <tr>
-                        <td style="color:#000000 font-weight: bold">Impacto Total:</td>
-                        <td style="color:#000000 font-weight: bold">${impactText}</td>
+                        <td style="font-weight: bold">Impacto Total:</td>
+                        <td style="font-weight: bold">${impactText}</td>
                     </tr>
                 </tbody>
             </table>
