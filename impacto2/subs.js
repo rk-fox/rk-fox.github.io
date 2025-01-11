@@ -195,9 +195,11 @@ function populateClassificationDropdown(classifications) {
         option.textContent = classification;
         classificationDropdown.appendChild(option);
     });
-    // Atualizar conteúdo do "new" após preencher o dropdown
-    updateNewContent();
 }
+
+// Adiciona o evento de mudança para a classificação
+const classificationDropdown = document.getElementById("classification-dropdown");
+classificationDropdown.addEventListener("change", updateNewContent);
 
 
 function updateNewContent() {
