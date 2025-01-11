@@ -277,7 +277,7 @@ function updateNewContent() {
             <tbody>
                 <tr>
                     <td>Miner:</td>
-                    <td>${selectedClassification} ${nameText}</td>
+                    <td>${nameText} ${selectedClassification}</td>
                 </tr>
                 <tr>
                     <td>Poder:</td>
