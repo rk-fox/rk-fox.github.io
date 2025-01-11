@@ -68,7 +68,7 @@ async function populateDropdowns() {
     populateClassificationDropdown([...classifications]);
 }
 
-// Preenche o dropdown de nomes com filtro
+// Preenche o dropdown de nomes com filtro usando input e datalist
 function populateNameDropdown(names) {
     const nameDropdown = document.getElementById("name-dropdown");
     nameDropdown.innerHTML = ""; // Limpa o dropdown
@@ -79,28 +79,16 @@ function populateNameDropdown(names) {
     input.className = "filter-input";
     nameDropdown.appendChild(input);
 
-    const list = document.createElement("div");
-    list.className = "dropdown-list";
+    const datalist = document.createElement("datalist");
+    datalist.id = "names-list";
     names.forEach(name => {
-        const option = document.createElement("div");
-        option.className = "dropdown-item";
-        option.textContent = name;
-        option.onclick = () => selectName(name);
-        list.appendChild(option);
+        const option = document.createElement("option");
+        option.value = name;
+        datalist.appendChild(option);
     });
-    nameDropdown.appendChild(list);
+    nameDropdown.appendChild(datalist);
 
-    input.addEventListener("input", () => {
-        const filter = input.value.toLowerCase();
-        const items = list.querySelectorAll(".dropdown-item");
-        items.forEach(item => {
-            if (item.textContent.toLowerCase().includes(filter)) {
-                item.style.display = "block";
-            } else {
-                item.style.display = "none";
-            }
-        });
-    });
+    input.setAttribute("list", "names-list"); // Associa o datalist ao input
 }
 
 // Preenche o dropdown de classificações
