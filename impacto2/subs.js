@@ -83,12 +83,13 @@ async function populateDropdowns() {
             const classifications = ["Comum"]; // Começa com "Comum" para todos
 
             // Verifica as classificações específicas e adiciona ao array de classificações
-            if (selectedMinerRow[3] !== "-") classifications.push("Incomum");   // Coluna Z
-            if (selectedMinerRow[5] !== "-") classifications.push("Rara");      // Coluna AA
-            if (selectedMinerRow[7] !== "-") classifications.push("Épica");     // Coluna AB
-            if (selectedMinerRow[9] !== "-") classifications.push("Lendária");  // Coluna AC
-            if (selectedMinerRow[11] !== "-") classifications.push("Unreal");   // Coluna AD
-            if (selectedMinerRow[13] !== "-") classifications.push("Legacy");   // Coluna AO
+if (selectedMinerRow[3] !== "-" && selectedMinerRow[3] !== "#N/A") classifications.push("Incomum");   // Coluna Z
+if (selectedMinerRow[5] !== "-" && selectedMinerRow[5] !== "#N/A") classifications.push("Rara");      // Coluna AA
+if (selectedMinerRow[7] !== "-" && selectedMinerRow[7] !== "#N/A") classifications.push("Épica");     // Coluna AB
+if (selectedMinerRow[9] !== "-" && selectedMinerRow[9] !== "#N/A") classifications.push("Lendária");  // Coluna AC
+if (selectedMinerRow[11] !== "-" && selectedMinerRow[11] !== "#N/A") classifications.push("Unreal");   // Coluna AD
+if (selectedMinerRow[13] !== "-" && selectedMinerRow[13] !== "#N/A") classifications.push("Legacy");   // Coluna AO
+
 
             // Preenche o dropdown de classificações
             populateClassificationDropdown(classifications);
