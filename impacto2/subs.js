@@ -155,7 +155,7 @@ function clearInputOnClick() {
     
     // Verifica se o input existe antes de adicionar o evento
     if (input) {
-        input.addEventListener('click', () => {
+        input.addEventListener('focus', () => {
             input.value = ''; // Limpa o conteúdo do campo de texto
         });
     }
