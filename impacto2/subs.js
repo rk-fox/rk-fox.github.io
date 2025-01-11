@@ -46,30 +46,32 @@ async function populateDropdowns() {
 
     if (sheetData.length === 0) return;
 
-    const names = [];
-    const classifications = new Set(["Comum"]); // Inicia com "Comum"
+    const miners = [];
+    const allClassifications = new Set(["Comum"]); // Inicia com "Comum"
 
+    // Processa cada miner e suas classificações
     sheetData.forEach(row => {
         const name = row[0]; // Coluna C
         if (!name) return;
 
-        names.push(name);
+        const classifications = new Set(["Comum"]); // Começa com "Comum" para todos
 
-        // Verifica colunas Z a AD e AO para as classificações
+        // Verifica as colunas de classificações específicas para cada miner
         if (row[22]) classifications.add("Incomum");   // Coluna Z
         if (row[23]) classifications.add("Rara");      // Coluna AA
-        if (row[24]) classifications.add("Épica");    // Coluna AB
-        if (row[25]) classifications.add("Lendária"); // Coluna AC
-        if (row[26]) classifications.add("Unreal");   // Coluna AD
-        if (row[41]) classifications.add("Legacy");   // Coluna AO
+        if (row[24]) classifications.add("Épica");     // Coluna AB
+        if (row[25]) classifications.add("Lendária");  // Coluna AC
+        if (row[26]) classifications.add("Unreal");    // Coluna AD
+        if (row[41]) classifications.add("Legacy");    // Coluna AO
+
+        miners.push({ name, classifications: [...classifications] });
     });
 
-    populateNameDropdown(names);
-    populateClassificationDropdown([...classifications]);
+    populateNameDropdown(miners);
 }
 
 // Preenche o dropdown de nomes com filtro usando input e datalist
-function populateNameDropdown(names) {
+function populateNameDropdown(miners) {
     const nameDropdown = document.getElementById("name-dropdown");
     nameDropdown.innerHTML = ""; // Limpa o dropdown
 
@@ -81,21 +83,41 @@ function populateNameDropdown(names) {
 
     const datalist = document.createElement("datalist");
     datalist.id = "names-list";
-    names.forEach(name => {
+    miners.forEach(miner => {
         const option = document.createElement("option");
-        option.value = name;
+        option.value = miner.name;
         datalist.appendChild(option);
     });
     nameDropdown.appendChild(datalist);
 
     input.setAttribute("list", "names-list"); // Associa o datalist ao input
+
+    input.addEventListener("input", () => {
+        const filter = input.value.toLowerCase();
+        const options = datalist.querySelectorAll("option");
+        options.forEach(option => {
+            if (option.value.toLowerCase().includes(filter)) {
+                option.style.display = "block";
+            } else {
+                option.style.display = "none";
+            }
+        });
+    });
+
+    input.addEventListener("change", () => {
+        const selectedMiner = miners.find(miner => miner.name === input.value);
+        if (selectedMiner) {
+            populateClassificationDropdown(selectedMiner.classifications);
+        }
+    });
 }
 
-// Preenche o dropdown de classificações
+// Preenche o dropdown de classificações com as classificações da miner selecionada
 function populateClassificationDropdown(classifications) {
     const classificationDropdown = document.getElementById("classification-dropdown");
     classificationDropdown.innerHTML = ""; // Limpa o dropdown
 
+    // Adiciona as opções de classificação disponíveis para a miner selecionada
     classifications.forEach(classification => {
         const option = document.createElement("option");
         option.value = classification;
@@ -104,13 +126,8 @@ function populateClassificationDropdown(classifications) {
     });
 }
 
-// Ação ao selecionar um nome
-function selectName(name) {
-    console.log("Nome selecionado:", name);
-    // Aqui você pode adicionar a lógica para quando um nome for selecionado
-}
-
 // Inicializa o script ao carregar a página
 document.addEventListener("DOMContentLoaded", () => {
     populateDropdowns();
 });
+
