@@ -148,6 +148,21 @@ if (selectedMinerRow[13] !== "-" && selectedMinerRow[13] !== "#N/A") classificat
     });
 }
 
+// Função para tratar e formatar o nome do arquivo
+function formatFilename(name) {
+    return name.trim()
+        .replace(/'/g, '')         // Remove o apóstrofo simples (')
+        .replace(/’/g, '')         // Remove o apóstrofo (’)
+        .replace(/\+/g, 'plus')    // Substitui o + por "plus"
+        .replace(/-/g, '_')        // Substitui o hífen (-) por underline (_)
+        .replace(/\s+/g, '_')      // Substitui o espaço por underline (_)
+        .replace(/,/g, '')         // Remove a vírgula
+        .replace(/\./g, '')        // Remove o ponto
+        .toLowerCase();            // Converte tudo para minúsculas
+}
+
+
+
 // Preenche o dropdown de nomes com filtro usando input e datalist
 function populateNameDropdown(result) {
     const nameDropdown = document.getElementById("name-dropdown");
@@ -184,6 +199,7 @@ function populateNameDropdown(result) {
     input.setAttribute("list", "names-list"); // Associa o datalist ao input
 }
 
+// Preenche o dropdown de classificação (Level) com os dados recebidos
 function populateClassificationDropdown(classifications) {
     const classificationDropdown = document.getElementById("classification-dropdown");
     classificationDropdown.innerHTML = ""; // Limpa o dropdown
@@ -194,16 +210,24 @@ function populateClassificationDropdown(classifications) {
     levelLabel.innerText = "Level:";  // Definindo o texto "Level:"
     levelDiv.appendChild(levelLabel);  // Adiciona o rótulo ao levelDiv
 
-    // Adiciona as opções de classificação disponíveis para a miner selecionada
+    // Cria o select para o dropdown de níveis
+    const select = document.createElement("select");
+    select.id = "classification-dropdown"; // Garante que o id seja único
+
+    // Adiciona as opções de classificação disponíveis
     classifications.forEach(classification => {
         const option = document.createElement("option");
         option.value = classification;
         option.textContent = classification;
-        classificationDropdown.appendChild(option);
+        select.appendChild(option);
     });
 
+    // Adiciona o dropdown "Level:" ao levelDiv
+    levelDiv.appendChild(select);
+
     // Adiciona a div do Level ao container principal
-    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
+    const popupRight = document.getElementById("popup-right");
+    popupRight.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
 }
 
 
@@ -212,6 +236,7 @@ const classificationDropdown = document.getElementById("classification-dropdown"
 classificationDropdown.addEventListener("change", updateNewContent);
 
 
+// Função para atualizar o conteúdo na div "new"
 function updateNewContent() {
     const nameDropdown = document.getElementById("name-dropdown");
     const classificationDropdown = document.getElementById("classification-dropdown");
@@ -255,13 +280,23 @@ function updateNewContent() {
     const poderText = selectedMinerRow[indices[1]] || "N/A";
     const bonusText = selectedMinerRow[indices[2]] || "N/A";
 
-    // Atualizar o conteúdo do elemento "new"
+    // Formatando o nome para o filename
+    const filename = formatFilename(selectedName);
+
+    // Atualizar o conteúdo do elemento "new" com os dados da tabela
     newDiv.innerHTML = `
         <table>
             <tbody>
                 <tr>
                     <td>Miner:</td>
-                    <td>${nameText} ${selectedClassification}</td>
+                    <td>
+                        <div>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/${filename}.gif?v=1" style="width: 50px; height: auto;">
+                        </div>
+                        <div>
+                            ${nameText} ${selectedClassification}
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>Poder:</td>
@@ -275,6 +310,7 @@ function updateNewContent() {
         </table>
     `;
 }
+
 
 
 // Função para limpar o campo de texto quando clicado
