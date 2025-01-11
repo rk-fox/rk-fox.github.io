@@ -171,6 +171,15 @@ function populateNameDropdown(result) {
     levelLabel.innerText = "Level:";  // Definindo o texto "Level:"
     levelDiv.appendChild(levelLabel);  // Adiciona o rótulo ao levelDiv
 
+    const classificationInput = document.createElement("input");
+    classificationInput.type = "text";
+    classificationInput.placeholder = "Filtrar níveis...";
+    classificationInput.className = "filter-input";
+    levelDiv.appendChild(classificationInput);  // Adiciona o input ao levelDiv
+
+    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
+
+    // Criação do datalist para o nome
     const datalist = document.createElement("datalist");
     datalist.id = "names-list";
     result.forEach(row => {
@@ -197,6 +206,7 @@ function populateNameDropdown(result) {
         });
     });
 }
+
 
 
 // Preenche o dropdown de classificações com as classificações da miner selecionada
@@ -259,7 +269,7 @@ function updateNewContent() {
     
     const nameText = selectedMinerRow[indices[0]] || "N/A";
     const poderText = selectedMinerRow[indices[1]] || "N/A";
-    const bonusText = selectedMinerRow[indices[1]] || "N/A";
+    const bonusText = selectedMinerRow[indices[2]] || "N/A";
 
     // Atualizar o conteúdo do elemento "new"
     newDiv.innerHTML = `
