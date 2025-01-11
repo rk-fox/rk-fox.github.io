@@ -85,8 +85,14 @@ async function populateDropdowns() {
         if (row[27] !== "-") classifications.add("Unreal");    // Coluna AD
         if (row[38] !== "-") classifications.add("Legacy");   // Coluna AO
 
+        // Adiciona as classificações de cada miner ao conjunto allClassifications
+        classifications.forEach(classification => allClassifications.add(classification));
+
         miners.push({ name, classifications: [...classifications] });
     });
+
+    // Preenche o dropdown de classificações com todas as classificações encontradas
+    populateClassificationDropdown([...allClassifications]);
 
     populateNameDropdown(miners);
 }
