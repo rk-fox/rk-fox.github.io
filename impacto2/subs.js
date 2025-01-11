@@ -17,7 +17,6 @@ function openPopup(event) {
     // Copia os dados existentes da página para preencher o popup
         const imgSrc = document.getElementById(`img${imageId}`)?.src || "";
         const nomeText = document.getElementById(`nome${imageId}`)?.innerText || "N/A";
-        const sellText = document.getElementById(`sell${imageId}`)?.innerText || "N/A";
         const poderText = document.getElementById(`poder${imageId}`)?.innerText || "N/A";
         const bonusText = document.getElementById(`bonus${imageId}`)?.innerText || "N/A";
         const impactText = document.getElementById(`impact${imageId}`)?.innerText || "N/A";
@@ -29,21 +28,20 @@ function openPopup(event) {
                         <td>Miner:</td>
                         <td>
                             <img src="${imgSrc}" style="margin: auto; width: 120px; height: auto;"> 
-                            <span style="margin-top: 2px;">${nomeText}</span>
-                            <span>${sellText}</span>
+                            <span style="color:#000000 margin-top: 2px;">${nomeText}</span>
                         </td>
                     </tr>
                     <tr>
                         <td>Poder:</td>
-                        <td style="font-weight: bold">${poderText}</td>
+                        <td style="color:#000000 font-weight: bold">${poderText}</td>
                     </tr>
                     <tr>
                         <td>Bônus:</td>
-                        <td style="font-weight: bold">${bonusText}</td>
+                        <td style="color:#000000 font-weight: bold">${bonusText}</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold">Impacto Total:</td>
-                        <td style="font-weight: bold">${impactText}</td>
+                        <td style="color:#000000 font-weight: bold">Impacto Total:</td>
+                        <td style="color:#000000 font-weight: bold">${impactText}</td>
                     </tr>
                 </tbody>
             </table>
