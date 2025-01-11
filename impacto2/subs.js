@@ -296,6 +296,10 @@ function updateNewContent() {
                     <td>Bônus:</td>
                     <td>${bonusText}</td>
                 </tr>
+                <tr>
+                    <td>Novo Impacto:</td>
+                    <td>x</td>
+                </tr>
             </tbody>
         </table>
     `;
