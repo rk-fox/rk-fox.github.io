@@ -182,13 +182,15 @@ function populateNameDropdown(result) {
             datalist.appendChild(option);
         }
     });
-    nameDropdown.appendChild(datalist);
-    
-    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
-    
 
+    // Adiciona o datalist ao nível do input (para "Miner:")
+    nameDropdown.appendChild(datalist);
     input.setAttribute("list", "names-list"); // Associa o datalist ao input
 
+    // Adiciona a div do Level ao container principal
+    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
+
+    // Filtro para o input de nomes
     input.addEventListener("input", () => {
         const filter = input.value.toLowerCase();
         const options = datalist.querySelectorAll("option");
@@ -201,6 +203,7 @@ function populateNameDropdown(result) {
         });
     });
 }
+
 
 
 
