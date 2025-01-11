@@ -272,6 +272,12 @@ function clearInputOnClick() {
         // Verifica se o elemento focado é o input correto
         if (event.target && event.target.matches('.filter-input')) {
             event.target.value = ''; // Limpa o conteúdo do campo de texto
+
+            // Obtém a referência para a div com id 'new' e limpa o conteúdo
+            const newDiv = document.getElementById("new");
+            if (newDiv) {
+                newDiv.innerHTML = '';
+            }
         }
     }, true); // Use captura para garantir que o evento "focus" seja capturado corretamente
 }
