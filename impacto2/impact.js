@@ -1,4 +1,4 @@
-let minersPower, totalbonusPercent, total_orig;
+let minersPower, totalbonusPercent, total_orig, minerImpacts;
 
 // Obter os elementos do botão e do campo de entrada
 const searchButton = document.getElementById('searchButton');
@@ -347,7 +347,7 @@ main().then(() => {
     });
 
     // Simulando a remoção de miners e calculando o impacto no total
-    let minerImpacts = miners.map(miner => {
+    minerImpacts = miners.map(miner => {
       const remainingPower = minersPower - miner.power;
       const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
       const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent - miner.setBonus) / 100);
