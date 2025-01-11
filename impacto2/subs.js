@@ -163,11 +163,7 @@ function populateNameDropdown(result) {
     input.className = "filter-input";
     minerDiv.appendChild(input);  // Adiciona o input ao minerDiv
 
-    // Cria uma div para "Level:" e o input (classification-dropdown)
-    const levelDiv = document.createElement("div");
-    const levelLabel = document.createElement("label");
-    levelLabel.innerText = "Level:";  // Definindo o texto "Level:"
-    levelDiv.appendChild(levelLabel);  // Adiciona o rótulo ao levelDiv
+    nameDropdown.appendChild(minerDiv);  // Adiciona minerDiv ao container principal
 
     // Criação do datalist para o nome
     const datalist = document.createElement("datalist");
@@ -182,38 +178,19 @@ function populateNameDropdown(result) {
     });
 
     // Adiciona o datalist ao nível do input (para "Miner:")
+    nameDropdown.appendChild(datalist);
     input.setAttribute("list", "names-list"); // Associa o datalist ao input
-
-    // Empacota Miner e Level em um contêiner flexível para alinhamento na mesma linha
-    const container = document.createElement("div");
-    container.style.display = "flex";
-    container.style.justifyContent = "space-between"; // Espaça os elementos
-    container.style.alignItems = "center"; // Alinha os itens verticalmente no centro
-
-    // Adiciona "Miner:" e input à esquerda, "Level:" e datalist à direita
-    container.appendChild(minerDiv);
-    container.appendChild(levelDiv);
-    nameDropdown.appendChild(container); // Adiciona o contêiner ao dropdown
-
-    // Filtro para o input de nomes
-    input.addEventListener("input", () => {
-        const filter = input.value.toLowerCase();
-        const options = datalist.querySelectorAll("option");
-        options.forEach(option => {
-            if (option.value.toLowerCase().includes(filter)) {
-                option.style.display = "block";
-            } else {
-                option.style.display = "none";
-            }
-        });
-    });
 }
 
-
-// Preenche o dropdown de classificações com as classificações da miner selecionada
 function populateClassificationDropdown(classifications) {
     const classificationDropdown = document.getElementById("classification-dropdown");
     classificationDropdown.innerHTML = ""; // Limpa o dropdown
+
+    // Cria a div para "Level:" e o dropdown de classificação
+    const levelDiv = document.createElement("div");
+    const levelLabel = document.createElement("label");
+    levelLabel.innerText = "Level:";  // Definindo o texto "Level:"
+    levelDiv.appendChild(levelLabel);  // Adiciona o rótulo ao levelDiv
 
     // Adiciona as opções de classificação disponíveis para a miner selecionada
     classifications.forEach(classification => {
@@ -222,7 +199,11 @@ function populateClassificationDropdown(classifications) {
         option.textContent = classification;
         classificationDropdown.appendChild(option);
     });
+
+    // Adiciona a div do Level ao container principal
+    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
 }
+
 
 // Adiciona o evento de mudança para a classificação
 const classificationDropdown = document.getElementById("classification-dropdown");
