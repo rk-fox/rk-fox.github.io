@@ -151,23 +151,25 @@ function populateNameDropdown(result) {
     const nameDropdown = document.getElementById("name-dropdown");
     nameDropdown.innerHTML = ""; // Limpa o dropdown
 
-    // Cria o rótulo "Miner:"
+    // Cria uma div para "Miner:" e o input (name-dropdown)
+    const minerDiv = document.createElement("div");
     const minerLabel = document.createElement("label");
     minerLabel.innerText = "Miner:";  // Definindo o texto "Miner:"
-    minerLabel.style.display = "block";  // Garante que "Miner:" fique em uma linha separada
-    nameDropdown.appendChild(minerLabel);  // Adiciona o rótulo ao dropdown
+    minerDiv.appendChild(minerLabel);  // Adiciona o rótulo ao minerDiv
 
     const input = document.createElement("input");
     input.type = "text";
     input.placeholder = "Filtrar nomes...";
     input.className = "filter-input";
-    nameDropdown.appendChild(input);
+    minerDiv.appendChild(input);  // Adiciona o input ao minerDiv
 
-    // Cria o rótulo "Level:"
+    nameDropdown.appendChild(minerDiv);  // Adiciona minerDiv ao container principal
+
+    // Cria uma div para "Level:" e o input (classification-dropdown)
+    const levelDiv = document.createElement("div");
     const levelLabel = document.createElement("label");
     levelLabel.innerText = "Level:";  // Definindo o texto "Level:"
-    levelLabel.style.display = "block";  // Garante que "Level:" fique em uma linha separada
-    nameDropdown.appendChild(levelLabel);  // Adiciona o rótulo "Level:" ao dropdown
+    levelDiv.appendChild(levelLabel);  // Adiciona o rótulo ao levelDiv
 
     const datalist = document.createElement("datalist");
     datalist.id = "names-list";
