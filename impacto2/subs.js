@@ -22,7 +22,7 @@ function openPopup(event) {
         const impactText = document.getElementById(`impact${imageId}`)?.innerText || "N/A";
     // Preenche o popup com os dados extraídos
         popupLeft.innerHTML = `
-            <table style="margin-top: 40px;">
+            <table style="margin-top: 60px;">
                 <tbody>
                     <tr>
                         <td>Miner:</td>
