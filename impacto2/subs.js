@@ -33,7 +33,7 @@ async function loadGoogleSheetData() {
         }
 
         // Extraímos apenas as colunas desejadas e exibimos o resultado
-        const result = data.values.map(row => [
+        let result = data.values.map(row => [
             row[0], 
             row[1],  
             row[2], 
@@ -67,34 +67,37 @@ async function populateDropdowns() {
 
     if (sheetData.length === 0) return;
 
-    const miners = [];
-    const allClassifications = new Set(["Comum"]); // Inicia com "Comum"
+    // O array result já está preenchido pela função loadGoogleSheetData
+    const miners = result.map(row => {
+        const name = row[0]; // Nome
+        if (!name) return null;
 
-    // Processa cada miner e suas classificações
-    sheetData.forEach(row => {
-        const name = row[0]; // Nome (Coluna C)
-        if (!name) return;
+        const classifications = ["Comum"]; // Começa com "Comum" para todos
 
-        const classifications = new Set(["Comum"]); // Começa com "Comum" para todos
+        // Verifica as classificações específicas e adiciona ao array de classificações
+        if (row[3] !== "-") classifications.push("Incomum");   // Coluna Z
+        if (row[5] !== "-") classifications.push("Rara");      // Coluna AA
+        if (row[7] !== "-") classifications.push("Épica");     // Coluna AB
+        if (row[9] !== "-") classifications.push("Lendária");  // Coluna AC
+        if (row[11] !== "-") classifications.push("Unreal");   // Coluna AD
+        if (row[13] !== "-") classifications.push("Legacy");   // Coluna AO
 
-        // Verifica as colunas de classificações específicas para cada miner
-        if (row[23] !== "-") classifications.add("Incomum");   // Coluna Z
-        if (row[24] !== "-") classifications.add("Rara");      // Coluna AA
-        if (row[25] !== "-") classifications.add("Épica");     // Coluna AB
-        if (row[26] !== "-") classifications.add("Lendária");  // Coluna AC
-        if (row[27] !== "-") classifications.add("Unreal");    // Coluna AD
-        if (row[38] !== "-") classifications.add("Legacy");   // Coluna AO
+        return { name, classifications };
+    }).filter(miner => miner !== null);
 
-        // Adiciona as classificações de cada miner ao conjunto allClassifications
-        classifications.forEach(classification => allClassifications.add(classification));
-
-        miners.push({ name, classifications: [...classifications] });
-    });
-
-    // Preenche o dropdown de classificações com todas as classificações encontradas
-    populateClassificationDropdown([...allClassifications]);
-
+    // Preenche o dropdown de nomes
     populateNameDropdown(miners);
+
+    // Adiciona o evento de mudança no nome da miner
+    const nameDropdown = document.getElementById("name-dropdown");
+    nameDropdown.addEventListener("change", (event) => {
+        const selectedMinerName = event.target.value;
+        const selectedMiner = miners.find(miner => miner.name === selectedMinerName);
+
+        if (selectedMiner) {
+            populateClassificationDropdown(selectedMiner.classifications);
+        }
+    });
 }
 
 
