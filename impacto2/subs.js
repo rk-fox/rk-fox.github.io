@@ -149,6 +149,18 @@ function populateClassificationDropdown(classifications) {
     });
 }
 
+// Função para limpar o campo de texto quando clicado
+function clearInputOnClick() {
+    const input = document.querySelector('.filter-input');
+    
+    // Adiciona um evento de clique que limpa o texto
+    input.addEventListener('click', () => {
+        input.value = ''; // Limpa o conteúdo do campo de texto
+    });
+}
+
+// Chama a função assim que a página for carregada
+document.addEventListener("DOMContentLoaded", clearInputOnClick);
 
 // Inicializa o script ao carregar a página
 document.addEventListener("DOMContentLoaded", () => {
