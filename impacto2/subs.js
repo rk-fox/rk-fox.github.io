@@ -38,14 +38,14 @@ async function loadGoogleSheetData() {
             row[1],  
             row[2], 
             row[23],
-            row[24], 
-            row[25], 
-            row[26], 
-            row[27],
             row[28],
+            row[24], 
             row[29],
-            row[30], 
+            row[25], 
+            row[30],
+            row[26], 
             row[31],
+            row[27],
             row[32],
             row[38],
             row[39],
@@ -78,12 +78,12 @@ async function populateDropdowns() {
         const classifications = new Set(["Comum"]); // Começa com "Comum" para todos
 
         // Verifica as colunas de classificações específicas para cada miner
-        if (row[22]) classifications.add("Incomum");   // Coluna Z
-        if (row[23]) classifications.add("Rara");      // Coluna AA
-        if (row[24]) classifications.add("Épica");     // Coluna AB
-        if (row[25]) classifications.add("Lendária");  // Coluna AC
-        if (row[26]) classifications.add("Unreal");    // Coluna AD
-        if (row[41]) classifications.add("Legacy");    // Coluna AO
+        if (row[23]) classifications.add("Incomum");   // Coluna Z
+        if (row[24]) classifications.add("Rara");      // Coluna AA
+        if (row[25]) classifications.add("Épica");     // Coluna AB
+        if (row[26]) classifications.add("Lendária");  // Coluna AC
+        if (row[27]) classifications.add("Unreal");    // Coluna AD
+        if (row[38]) classifications.add("Legacy");    // Coluna AO
 
         miners.push({ name, classifications: [...classifications] });
     });
