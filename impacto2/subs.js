@@ -171,14 +171,6 @@ function populateNameDropdown(result) {
     levelLabel.innerText = "Level:";  // Definindo o texto "Level:"
     levelDiv.appendChild(levelLabel);  // Adiciona o rótulo ao levelDiv
 
-    const classificationInput = document.createElement("input");
-    classificationInput.type = "text";
-    classificationInput.placeholder = "Filtrar níveis...";
-    classificationInput.className = "filter-input";
-    levelDiv.appendChild(classificationInput);  // Adiciona o input ao levelDiv
-
-    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
-
     // Criação do datalist para o nome
     const datalist = document.createElement("datalist");
     datalist.id = "names-list";
@@ -191,6 +183,9 @@ function populateNameDropdown(result) {
         }
     });
     nameDropdown.appendChild(datalist);
+    
+    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
+    
 
     input.setAttribute("list", "names-list"); // Associa o datalist ao input
 
