@@ -163,8 +163,6 @@ function populateNameDropdown(result) {
     input.className = "filter-input";
     minerDiv.appendChild(input);  // Adiciona o input ao minerDiv
 
-    nameDropdown.appendChild(minerDiv);  // Adiciona minerDiv ao container principal
-
     // Cria uma div para "Level:" e o input (classification-dropdown)
     const levelDiv = document.createElement("div");
     const levelLabel = document.createElement("label");
@@ -184,11 +182,18 @@ function populateNameDropdown(result) {
     });
 
     // Adiciona o datalist ao nível do input (para "Miner:")
-    nameDropdown.appendChild(datalist);
     input.setAttribute("list", "names-list"); // Associa o datalist ao input
 
-    // Adiciona a div do Level ao container principal
-    nameDropdown.appendChild(levelDiv);  // Adiciona levelDiv ao container principal
+    // Empacota Miner e Level em um contêiner flexível para alinhamento na mesma linha
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.justifyContent = "space-between"; // Espaça os elementos
+    container.style.alignItems = "center"; // Alinha os itens verticalmente no centro
+
+    // Adiciona "Miner:" e input à esquerda, "Level:" e datalist à direita
+    container.appendChild(minerDiv);
+    container.appendChild(levelDiv);
+    nameDropdown.appendChild(container); // Adiciona o contêiner ao dropdown
 
     // Filtro para o input de nomes
     input.addEventListener("input", () => {
@@ -203,8 +208,6 @@ function populateNameDropdown(result) {
         });
     });
 }
-
-
 
 
 // Preenche o dropdown de classificações com as classificações da miner selecionada
