@@ -192,7 +192,7 @@ input:checked + .slider:before {
 }
 
 .links a.btn-dourado { 
-    background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+    background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) !important;
     color: #000000;
     padding: 10px;
     margin: 10px 0;
