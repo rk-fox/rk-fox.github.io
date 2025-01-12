@@ -781,8 +781,8 @@ const clearAllFields = () => {
         // Armazenando os dados no array
         subimpactArray.push({
             name: miner.name,
-            power: convertPower(miner.power),
-            bonus: `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`,
+            power: miner.power,
+            bonus: `${(miner.bonus_percent).toFixed(2)`,
         });
         
     } else {
