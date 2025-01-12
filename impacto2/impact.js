@@ -295,8 +295,11 @@ function updateNewContent() {
     let imageIdInt = parseInt(imageId, 10);
     imageIdInt = imageIdInt - 1;
 
+    console.log(subimpactArray[imageIdInt]);
     console.log(subimpactArray[imageIdInt].power);
+    let podervelho = subimpactArray[imageIdInt].power;
     console.log(subimpactArray[imageIdInt].bonus);
+    let bonusvelho = subimpactArray[imageIdInt].bonus;
     console.log(total_orig);
     console.log(minersPower);
     console.log(bonusPercent);
@@ -528,8 +531,8 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
         const powerData = await powerDataResponse.json();
-        let minersPower = powerData.data.miners;
-        let totalbonusPercent = powerData.data.bonus_percent;
+        minersPower = powerData.data.miners;
+        totalbonusPercent = powerData.data.bonus_percent;
 
         totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
 
