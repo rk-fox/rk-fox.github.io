@@ -1,4 +1,5 @@
 let result = [];
+let imageId;
 
 // Função para converter valores de poder (GH, TH, PH)
 function convertPower(value) {
@@ -18,7 +19,7 @@ function openPopup(event) {
 
     // Identifica qual imagem foi clicada
     const clickedImage = event.target; // Obtem a imagem clicada
-    let imageId = clickedImage.id;
+    imageId = clickedImage.id;
 
     // Remove os 3 primeiros caracteres de imageId
     imageId = imageId.substring(3);
