@@ -289,7 +289,7 @@ function updateNewContent() {
 
     const powerValue = parseInt(poderText, 10); // Converte para número
     const bonusTextWithoutPercentage = bonusText.slice(0, -1).replace(',', '.'); // Remove o último caractere (%)
-    const bonusValue = parseFloat(bonusTextWithoutPercentage)); // Converte para número
+    const bonusValue = parseFloat(bonusTextWithoutPercentage); // Converte para número
 
     // Calculando o novo impacto
     let imageIdInt = parseInt(imageId, 10);
