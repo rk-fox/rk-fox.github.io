@@ -193,11 +193,7 @@ input:checked + .slider:before {
 
 .links a.btn-dourado { 
     background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) !important;
-    color: #000000;
-    padding: 10px;
-    margin: 10px 0;
     text-decoration: none;
-    border-radius: 5px;
     transition: transform 0.5s, letter-spacing 0.5s, background-position 0.5s;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.144);
     background-size: 250% 200%;
