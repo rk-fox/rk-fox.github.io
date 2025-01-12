@@ -299,12 +299,12 @@ function updateNewContent() {
     console.log(subimpactArray[imageIdInt].power);
     let podervelho = subimpactArray[imageIdInt].power;
     console.log(subimpactArray[imageIdInt].bonus);
-    let bonusvelho = subimpactArray[imageIdInt].bonus;
+    let bonusvelho = parseFloat(subimpactArray[imageIdInt].bonus);
     console.log(total_orig);
     console.log(minersPower);
     console.log(bonusPercent);
     
-    let newImpact = ((total_orig - (minersPower - subimpactArray[imageIdInt].power + powerValue) * (1 + bonusPercent - subimpactArray[imageIdInt].bonus + bonusValue)));
+    let newImpact = ((total_orig - (minersPower - podervelho + powerValue) * (1 + bonusPercent - bonusvelho + bonusValue)));
     let newImpactarrumado = convertPower(newImpact); 
 
     poderText = convertPower(poderText); 
