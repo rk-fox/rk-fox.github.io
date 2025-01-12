@@ -90,7 +90,7 @@ document.querySelectorAll(".popup-trigger").forEach(item => {
 });
 
 async function loadGoogleSheetData() {
-    const sheetId = "171LSMNAiJ74obfmLzueKtzuyu7Bg9Ql5dBWQ1GkjQTI";
+    const sheetId = "171LSMNAiJ74obfmLzueKtzuyu7Bg9Ql5dBWQ1GkjQTI"; //baseada na minha copy of Database (precisa que eu atualize)
     const sheetName = "Database";
     const range = "C4:AP"; // Inclui as colunas C até AP
     const apiKey = "AIzaSyBP12YfPrz9MhCH3J7boeondSm7HYVCUvA"; // Substitua pela sua API Key
