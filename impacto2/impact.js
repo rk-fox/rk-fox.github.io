@@ -782,7 +782,7 @@ const clearAllFields = () => {
         subimpactArray.push({
             name: miner.name,
             power: miner.power,
-            bonus: `${(miner.bonus_percent).toFixed(2)`,
+            bonus: miner.bonus_percent.toFixed(2),
         });
         
     } else {
