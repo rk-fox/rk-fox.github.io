@@ -445,12 +445,15 @@ const clearAllFields = () => {
     }
 };    
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
- 
-          })})        
+          })}) 
+
+            // Salvar os valores no localStorage
+        localStorage.setItem('minersPower2', minersPower2);
+        localStorage.setItem('totalbonusPercent2', totalbonusPercent2);
+        localStorage.setItem('total_orig2', total_orig2);
+        localStorage.setItem('subimpactArray', JSON.stringify(subimpactArray));
+        
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
-})
-     // Exportando as variáveis após a execução da função
-export { minersPower2, totalbonusPercent2, total_orig2, subimpactArray };
-;
+});
