@@ -91,7 +91,7 @@ document.querySelectorAll(".popup-trigger").forEach(item => {
 
 async function loadGoogleSheetData() {
     const sheetId = "1GZODeuzd1LdJVp0zNZVJ8IHnJXJrues4nyRZvEa0kZg";
-    const sheetName = "Database";
+    const sheetName = "Plantilla Check List";
     const range = "C11:Y"; // Inclui as colunas C até AP
     const apiKey = "AIzaSyBP12YfPrz9MhCH3J7boeondSm7HYVCUvA"; // Substitua pela sua API Key
 
