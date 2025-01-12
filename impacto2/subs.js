@@ -1,3 +1,5 @@
+console.log(subimpactArray)
+
 let result = [];
 
 // Função para converter valores de poder (GH, TH, PH)
