@@ -304,7 +304,8 @@ function updateNewContent() {
     console.log(minersPower);
     console.log(totalbonusPercent);
     
-    let newImpact = ((total_orig - (minersPower - podervelho + powerValue) * (1 + totalbonusPercent - bonusvelho + bonusValue)));
+    let newImpact = (((minersPower - podervelho + powerValue) * (1 + totalbonusPercent - bonusvelho + bonusValue)) - ((minersPower * (1 + totalbonusPercent))));
+    newImpact = parseInt(newImpact);
     let newImpactarrumado = convertPower(newImpact); 
 
     poderText = convertPower(poderText); 
