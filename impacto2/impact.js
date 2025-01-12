@@ -303,9 +303,11 @@ function updateNewContent() {
     bonusvelho = parseFloat(subimpactArray[imageIdInt].bonus);
     console.log(total_orig);
     console.log(minersPower);
+    let somaminer = minersPower;
     console.log(totalbonusPercent);
+    let somabonus = totalbonusPercent;
     
-    let newImpact = (((minersPower - podervelho + powerValue) * (1 + totalbonusPercent - bonusvelho + bonusValue)) - ((minersPower * (1 + totalbonusPercent))));
+    let newImpact = (((somaminer - podervelho + powerValue) * (1 + somabonus - bonusvelho + bonusValue)) - ((somaminer * (1 + somabonus))));
     newImpact = Math.round(newImpact);
     let newImpactarrumado = convertPower(newImpact); 
 
