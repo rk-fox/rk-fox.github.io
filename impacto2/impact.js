@@ -307,7 +307,7 @@ function updateNewContent() {
     console.log(totalbonusPercent);
     let somabonus = totalbonusPercent;
     
-    let newImpact = (((somaminer - podervelho + powerValue) * (1 + somabonus - bonusvelho + bonusValue)) - ((somaminer * (1 + somabonus))));
+    let newImpact = (((somaminer - podervelho + powerValue) * (1 + (somabonus - bonusvelho + bonusValue)/100)) - ((somaminer * (1 + somabonus))));
     newImpact = Math.round(newImpact);
     let newImpactarrumado = convertPower(newImpact); 
 
