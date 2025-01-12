@@ -191,32 +191,16 @@ input:checked + .slider:before {
     background-color: #000;
 }
 
-.btn-dourado {
-  width: 160px;
-  height: 45px;
-  margin: auto;
-  border: none;
-  border-radius: 40px;
+.links a.btn-dourado {
   background: linear-gradient(to right,#bf953f,#fcf6ba,#b38728,#fbf5b7,#aa771c);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 8px;
-  font-size: 1em;
-  letter-spacing: 3px;
   color: #000000;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  position: relative;
-  z-index: 2;
   transition-duration: 0.5s;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.144);
   background-size: 250% 200%;
-  padding: 0 20px;
 }
 
-.btn-dourado:hover {
+.links a.btn-dourado:hover {
   transform: scale(0.95);
   letter-spacing: 2px;
   transition-duration: 0.5s;
