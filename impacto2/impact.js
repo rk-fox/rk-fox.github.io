@@ -292,8 +292,8 @@ function updateNewContent() {
     // Calculando o novo impacto
     let imageIdInt = parseInt(imageId, 10);
     imageIdInt = imageIdInt - 1;
-    const newImpact = ((total_orig - (minersPower - subimpactArray[imageId].power + poderText) * (1 + bonusPercent - subimpactArray[imageId].bonus + bonusText)));
-    
+    let newImpact = ((total_orig - (minersPower - subimpactArray[imageId].power + poderText) * (1 + bonusPercent - subimpactArray[imageId].bonus + bonusText)));
+    let newImpactarrumado = convertPower(newImpact); 
 
     poderText = convertPower(poderText); 
     
@@ -326,7 +326,7 @@ function updateNewContent() {
                 </tr>
                 <tr>
                     <td>Novo Impacto:</td>
-                    <td>x</td>
+                    <td>${newImpact}</td>
                 </tr>
             </tbody>
         </table>
