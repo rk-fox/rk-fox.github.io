@@ -295,7 +295,11 @@ function updateNewContent() {
     let imageIdInt = parseInt(imageId, 10);
     imageIdInt = imageIdInt - 1;
 
-console.log(subimpactArray[imageIdInt]);
+    console.log(subimpactArray[imageIdInt].power);
+    console.log(subimpactArray[imageIdInt].bonus);
+    console.log(total_orig);
+    console.log(minersPower);
+    console.log(bonusPercent);
     
     let newImpact = ((total_orig - (minersPower - subimpactArray[imageIdInt].power + powerValue) * (1 + bonusPercent - subimpactArray[imageIdInt].bonus + bonusValue)));
     let newImpactarrumado = convertPower(newImpact); 
@@ -776,7 +780,6 @@ const clearAllFields = () => {
 
         // Armazenando os dados no array
         subimpactArray.push({
-            index: index + 1,
             name: miner.name,
             power: convertPower(miner.power),
             bonus: `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`,
