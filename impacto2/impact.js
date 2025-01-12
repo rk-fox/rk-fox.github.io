@@ -456,4 +456,5 @@ const clearAllFields = () => {
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
+    export { minersPower2, totalbonusPercent2, total_orig2, subimpactArray };
 });
