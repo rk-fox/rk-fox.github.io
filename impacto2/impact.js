@@ -355,7 +355,7 @@ main().then(() => {
     });
 
     // Simulando a remoção de miners e calculando o impacto no total
-    minerImpacts = miners.map(miner => {
+    let minerImpacts = miners.map(miner => {
       const remainingPower = minersPower - miner.power;
       const remainingBonusPercent = totalbonusPercent - miner.bonus_percent;
       const newAdjustedPower = remainingPower * ((100 + remainingBonusPercent - miner.setBonus) / 100);
