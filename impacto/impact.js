@@ -10,6 +10,9 @@ function convertPower(value) {
     const absValue = Math.abs(value); // Obter o valor absoluto
     const numericValue = parseFloat(value); // Garantir que o valor seja um número
 
+    if (absValue >= 1e9) {
+        return (numericValue / 1e9).toFixed(3).replace('.', ',') + ' Ehs';
+    }
     if (absValue >= 1e6) {
         return (numericValue / 1e6).toFixed(3).replace('.', ',') + ' Phs';
     }
