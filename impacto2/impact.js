@@ -769,6 +769,9 @@ const clearAllFields = () => {
         document.getElementById(`nome${index}`).innerText = '';
     }
 };    
+
+console.log(subimpactArray);
+    
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
           })})
           } catch (error) {
