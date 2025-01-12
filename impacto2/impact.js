@@ -306,7 +306,7 @@ function updateNewContent() {
     console.log(totalbonusPercent);
     
     let newImpact = (((minersPower - podervelho + powerValue) * (1 + totalbonusPercent - bonusvelho + bonusValue)) - ((minersPower * (1 + totalbonusPercent))));
-    newImpact = parseInt(newImpact);
+    newImpact = Math.round(newImpact);
     let newImpactarrumado = convertPower(newImpact); 
 
     poderText = convertPower(poderText); 
@@ -340,7 +340,7 @@ function updateNewContent() {
                 </tr>
                 <tr>
                     <td>Novo Impacto:</td>
-                    <td>${newImpact}</td>
+                    <td>${newImpactarrumado}</td>
                 </tr>
             </tbody>
         </table>
