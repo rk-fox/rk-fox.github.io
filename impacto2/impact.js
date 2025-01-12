@@ -1,7 +1,7 @@
 let result = [];
 let imageId;
 let minersPower;
-let bonusPercent;
+let totalbonusPercent;
 let total_orig;
 let subimpactArray;
 
@@ -302,9 +302,9 @@ function updateNewContent() {
     let bonusvelho = parseFloat(subimpactArray[imageIdInt].bonus);
     console.log(total_orig);
     console.log(minersPower);
-    console.log(bonusPercent);
+    console.log(totalbonusPercent);
     
-    let newImpact = ((total_orig - (minersPower - podervelho + powerValue) * (1 + bonusPercent - bonusvelho + bonusValue)));
+    let newImpact = ((total_orig - (minersPower - podervelho + powerValue) * (1 + totalbonusPercent - bonusvelho + bonusValue)));
     let newImpactarrumado = convertPower(newImpact); 
 
     poderText = convertPower(poderText); 
