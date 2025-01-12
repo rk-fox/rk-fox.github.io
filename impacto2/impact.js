@@ -295,9 +295,9 @@ function updateNewContent() {
     let imageIdInt = parseInt(imageId, 10);
     imageIdInt = imageIdInt - 1;
 
-console.log(subimpactArray[imageId]);
+console.log(subimpactArray[imageIdInt]);
     
-    let newImpact = ((total_orig - (minersPower - subimpactArray[imageId].power + powerValue) * (1 + bonusPercent - subimpactArray[imageId].bonus + bonusValue)));
+    let newImpact = ((total_orig - (minersPower - subimpactArray[imageIdInt].power + powerValue) * (1 + bonusPercent - subimpactArray[imageIdInt].bonus + bonusValue)));
     let newImpactarrumado = convertPower(newImpact); 
 
     poderText = convertPower(poderText); 
