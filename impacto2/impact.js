@@ -289,12 +289,15 @@ function updateNewContent() {
 
     const powerValue = parseInt(poderText, 10); // Converte para número
     const bonusTextWithoutPercentage = bonusText.slice(0, -1).replace(',', '.'); // Remove o último caractere (%)
-    const bonusValue = parseFloat(bonusTextWithoutPercentage); // Converte para número
+    const bonusValue = parseFloat(bonusTextWithoutPercentage).replace('.', ','); // Converte para número
 
     // Calculando o novo impacto
     let imageIdInt = parseInt(imageId, 10);
     imageIdInt = imageIdInt - 1;
-    let newImpact = ((total_orig - (minersPower - subimpactArray[imageId].power + poderText) * (1 + bonusPercent - subimpactArray[imageId].bonus + bonusValue)));
+
+console.log(subimpactArray[imageId]);
+    
+    let newImpact = ((total_orig - (minersPower - subimpactArray[imageId].power + powerValue) * (1 + bonusPercent - subimpactArray[imageId].bonus + bonusValue)));
     let newImpactarrumado = convertPower(newImpact); 
 
     poderText = convertPower(poderText); 
