@@ -90,9 +90,9 @@ document.querySelectorAll(".popup-trigger").forEach(item => {
 });
 
 async function loadGoogleSheetData() {
-    const sheetId = "1Qj0XBNaI6hihidQV0krraWD2AJr1nDukrFW8DUf_094";
+    const sheetId = "1GZODeuzd1LdJVp0zNZVJ8IHnJXJrues4nyRZvEa0kZg";
     const sheetName = "Database";
-    const range = "C4:AP"; // Inclui as colunas C até AP
+    const range = "C11:Y"; // Inclui as colunas C até AP
     const apiKey = "AIzaSyBP12YfPrz9MhCH3J7boeondSm7HYVCUvA"; // Substitua pela sua API Key
 
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!${range}?key=${apiKey}`;
@@ -110,20 +110,21 @@ async function loadGoogleSheetData() {
 // Extraímos apenas as colunas desejadas e exibimos o resultado
 result = data.values.map(row => [
     row[0], 
-    row[1] && row[1] !== "-" && row[1] !== "#N/A" ? row[1].replace(/[.,]/g, '') : row[1],
-    row[2] ? row[2].replace('.', ',') : '',
-    row[23] && row[23] !== "-" && row[23] !== "#N/A" ? row[23].replace(/[.,]/g, '') : row[23],
-    row[28] ? row[28].replace('.', ',') : '',
-    row[24] && row[24] !== "-" && row[24] !== "#N/A" ? row[24].replace(/[.,]/g, '') : row[24],
-    row[29] ? row[29].replace('.', ',') : '',
-    row[25] && row[25] !== "-" && row[25] !== "#N/A" ? row[25].replace(/[.,]/g, '') : row[25],
-    row[30] ? row[30].replace('.', ',') : '',
-    row[26] && row[26] !== "-" && row[26] !== "#N/A" ? row[26].replace(/[.,]/g, '') : row[26],
-    row[31] ? row[31].replace('.', ',') : '',
-    row[27] && row[27] !== "-" && row[27] !== "#N/A" ? row[27].replace(/[.,]/g, '') : row[27],
-    row[32] ? row[32].replace('.', ',') : '',
-    row[38] && row[38] !== "-" && row[38] !== "#N/A" ? row[38].replace(/[.,]/g, '') : row[38],
-    row[39] ? row[39].replace('.', ',') : '',
+    row[3] && row[3] !== "" && row[3] !== "#N/A" ? (row[3]*1000) : row[1],
+    row[4] ? row[4].replace('.', ',') : '',
+    row[6] && row[6] !== "" && row[6] !== "#N/A" ? row[6].replace(/[.,]/g, '') : row[23],
+    row[7] ? row[7].replace('.', ',') : '',
+    row[9] && row[9] !== "" && row[9] !== "#N/A" ? row[9].replace(/[.,]/g, '') : row[24],
+    row[10] ? row[10].replace('.', ',') : '',
+    row[12] && row[12] !== "" && row[12] !== "#N/A" ? row[12].replace(/[.,]/g, '') : row[25],
+    row[13] ? row[13].replace('.', ',') : '',
+    row[15] && row[15] !== "" && row[15] !== "#N/A" ? row[15].replace(/[.,]/g, '') : row[26],
+    row[16] ? row[16].replace('.', ',') : '',
+    row[18] && row[18] !== "" && row[18] !== "#N/A" ? row[18].replace(/[.,]/g, '') : row[27],
+    row[19] ? row[19].replace('.', ',') : '',
+    row[21] && row[21] !== "" && row[21] !== "#N/A" ? row[21].replace(/[.,]/g, '') : row[38],
+    row[22] ? row[22].replace('.', ',') : '',
+    row[2],
 ]);
 
         // Exibindo o resultado no console
@@ -156,13 +157,13 @@ async function populateDropdowns() {
             const classifications = [""]; // Começa com "Comum" para todos
 
             // Verifica as classificações específicas e adiciona ao array de classificações
-if (selectedMinerRow[1] !== "-" && selectedMinerRow[1] !== "#N/A") classifications.push("Common");   // Começa com "Comum" para todos
-if (selectedMinerRow[3] !== "-" && selectedMinerRow[3] !== "#N/A") classifications.push("Uncommon");   // Coluna Z
-if (selectedMinerRow[5] !== "-" && selectedMinerRow[5] !== "#N/A") classifications.push("Rare");      // Coluna AA
-if (selectedMinerRow[7] !== "-" && selectedMinerRow[7] !== "#N/A") classifications.push("Epic");     // Coluna AB
-if (selectedMinerRow[9] !== "-" && selectedMinerRow[9] !== "#N/A") classifications.push("Legendary");  // Coluna AC
-if (selectedMinerRow[11] !== "-" && selectedMinerRow[11] !== "#N/A") classifications.push("Unreal");   // Coluna AD
-if (selectedMinerRow[13] !== "-" && selectedMinerRow[13] !== "#N/A") classifications.push("Legacy");   // Coluna AO
+if (selectedMinerRow[3] !== "" && selectedMinerRow[3] !== "#N/A") classifications.push("Common");   // Começa com "Comum" para todos
+if (selectedMinerRow[6] !== "" && selectedMinerRow[6] !== "#N/A") classifications.push("Uncommon");   // Coluna Z
+if (selectedMinerRow[9] !== "" && selectedMinerRow[9] !== "#N/A") classifications.push("Rare");      // Coluna AA
+if (selectedMinerRow[12] !== "" && selectedMinerRow[12] !== "#N/A") classifications.push("Epic");     // Coluna AB
+if (selectedMinerRow[15] !== "" && selectedMinerRow[15] !== "#N/A") classifications.push("Legendary");  // Coluna AC
+if (selectedMinerRow[18] !== "" && selectedMinerRow[18] !== "#N/A") classifications.push("Unreal");   // Coluna AD
+if (selectedMinerRow[21] !== "" && selectedMinerRow[21] !== "#N/A") classifications.push("Legacy");   // Coluna AO
 
 
             // Preenche o dropdown de classificações
