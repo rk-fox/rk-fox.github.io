@@ -1,5 +1,7 @@
 let result = [];
 let imageId;
+let minersPower;
+let bonusPercent;
 let total_orig;
 let subimpactArray;
 
