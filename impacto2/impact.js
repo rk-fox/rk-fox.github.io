@@ -1,3 +1,10 @@
+// Variáveis que serão exportadas
+let minersPower2;
+let totalbonusPercent2;
+let total_orig2;
+let subimpactArray;
+
+
 // Obter os elementos do botão e do campo de entrada
 const searchButton = document.getElementById('searchButton');
 const linkInput = document.getElementById('linkInput');
@@ -174,13 +181,13 @@ document.getElementById('searchButton').addEventListener('click', async () => {
         const powerData = await powerDataResponse.json();
         let minersPower = powerData.data.miners;
         let totalbonusPercent = powerData.data.bonus_percent;
-        export let minersPower2 = minersPower;
+        minersPower2 = minersPower;
 
         totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
-        export let totalbonusPercent2 = totalbonusPercent
+        totalbonusPercent2 = totalbonusPercent
 
         total_orig = minersPower * (1 + (totalbonusPercent / 100));
-        export let total_orig2 = total_orig;
+        total_orig2 = total_orig;
 
         //console.log("Miners Power:", convertPower(minersPower));
         //console.log("Miners Bonus:", totalbonusPercent + '%');
@@ -399,7 +406,7 @@ const clearAllFields = () => {
 
     clearAllFields();
 
-    export let subimpactArray = [];
+    subimpactArray = []
     
       const updateElement = (index, miner) => {
           
@@ -436,11 +443,14 @@ const clearAllFields = () => {
     } else {
         document.getElementById(`nome${index}`).innerText = '';
     }
-};
+};    
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
  
           })})        
           } catch (error) {
         console.error("Erro ao obter dados da API:", error);
     }
-});
+})
+     // Exportando as variáveis após a execução da função
+export { minersPower2, totalbonusPercent2, total_orig2, subimpactArray };
+;
