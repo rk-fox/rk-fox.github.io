@@ -191,19 +191,30 @@ input:checked + .slider:before {
     background-color: #000;
 }
 
-.links a.btn-dourado {
-  background: linear-gradient(to right,#bf953f,#fcf6ba,#b38728,#fbf5b7,#aa771c);
-  gap: 8px;
-  color: #000000;
-  transition-duration: 0.5s;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.144);
-  background-size: 250% 200%;
+.links a.btn-dourado { 
+    background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+    color: #000000;
+    padding: 10px;
+    margin: 10px 0;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: transform 0.5s, letter-spacing 0.5s, background-position 0.5s;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.144);
+    background-size: 250% 200%;
 }
 
 .links a.btn-dourado:hover {
-  transform: scale(0.95);
-  letter-spacing: 2px;
-  transition-duration: 0.5s;
-  animation: gradient 0.5s ease infinite;
-  background-position: 22%;
+    transform: scale(0.95);
+    letter-spacing: 2px;
+    background-position: 22%;
+    animation: gradient 0.5s ease infinite;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
 }
