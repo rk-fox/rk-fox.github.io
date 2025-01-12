@@ -61,7 +61,7 @@ function openPopup(event) {
                         <td style="font-weight: bold">${bonusText}</td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold">Impacto Total:</td>
+                        <td style="font-weight: bold">Impacto:</td>
                         <td style="font-weight: bold">${impactText}</td>
                     </tr>
                 </tbody>
@@ -75,7 +75,11 @@ function openPopup(event) {
 function closePopup() {
     const popup = document.getElementById("popup");
     popup.style.display = "none"; // Oculta o popup
-    clearInputOnClick();
+    // Obtém a referência para a div com id 'new' e limpa o conteúdo
+            const newDiv = document.getElementById("new");
+            if (newDiv) {
+                newDiv.innerHTML = '';
+            }
 }
 
 // Adiciona o evento de clique para as imagens com a classe "popup-trigger"
