@@ -289,10 +289,14 @@ function updateNewContent() {
     let poderText = selectedMinerRow[indices[1]] || "N/A";
     const bonusText = selectedMinerRow[indices[2]] || "N/A";
 
+    const powerValue = parseInt(poderText, 10); // Converte para número
+    const bonusTextWithoutPercentage = bonusText.slice(0, -1); // Remove o último caractere (%)
+    const bonusValue = parseFloat(bonusTextWithoutPercentage); // Converte para número
+
     // Calculando o novo impacto
     let imageIdInt = parseInt(imageId, 10);
     imageIdInt = imageIdInt - 1;
-    let newImpact = ((total_orig - (minersPower - subimpactArray[imageId].power + poderText) * (1 + bonusPercent - subimpactArray[imageId].bonus + bonusText)));
+    let newImpact = ((total_orig - (minersPower - subimpactArray[imageId].power + poderText) * (1 + bonusPercent - subimpactArray[imageId].bonus + bonusValue)));
     let newImpactarrumado = convertPower(newImpact); 
 
     poderText = convertPower(poderText); 
