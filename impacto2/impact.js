@@ -288,7 +288,7 @@ function updateNewContent() {
     const bonusText = selectedMinerRow[indices[2]] || "N/A";
 
     const powerValue = parseInt(poderText, 10); // Converte para número
-    const bonusTextWithoutPercentage = bonusText.slice(0, -1); // Remove o último caractere (%)
+    const bonusTextWithoutPercentage = bonusText.slice(0, -1).replace(',', '.'); // Remove o último caractere (%)
     const bonusValue = parseFloat(bonusTextWithoutPercentage); // Converte para número
 
     // Calculando o novo impacto
