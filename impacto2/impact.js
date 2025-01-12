@@ -56,11 +56,11 @@ function openPopup(event) {
                     </tr>
                     <tr>
                         <td>Poder:</td>
-                        <td style="font-weight: bold">${poderText}</td>
+                        <td>${poderText}</td>
                     </tr>
                     <tr>
                         <td>Bônus:</td>
-                        <td style="font-weight: bold">${bonusText}</td>
+                        <td>${bonusText}</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold">Impacto:</td>
@@ -347,8 +347,8 @@ function updateNewContent() {
                     <td>${bonusText}</td>
                 </tr>
                 <tr>
-                    <td>Novo Impacto:</td>
-                    <td>${newImpactarrumado}</td>
+                    <td style="font-weight: bold">Novo Impacto:</td>
+                    <td style="font-weight: bold">${newImpactarrumado}</td>
                 </tr>
             </tbody>
         </table>
