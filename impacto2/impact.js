@@ -1,5 +1,7 @@
 let result = [];
 let imageId;
+let total_orig;
+let subimpactArray;
 
 // Função para converter valores de poder (GH, TH, PH)
 function convertPower(value) {
@@ -519,7 +521,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
 
-        let total_orig = minersPower * (1 + (totalbonusPercent / 100));
+        total_orig = minersPower * (1 + (totalbonusPercent / 100));
 
         //console.log("Miners Power:", convertPower(minersPower));
         //console.log("Miners Bonus:", totalbonusPercent + '%');
@@ -738,7 +740,7 @@ const clearAllFields = () => {
 
     clearAllFields();
 
-    let subimpactArray = []
+    subimpactArray = []
     
       const updateElement = (index, miner) => {
           
