@@ -299,7 +299,8 @@ function updateNewContent() {
     console.log(subimpactArray[imageIdInt].power);
     let podervelho = subimpactArray[imageIdInt].power;
     console.log(subimpactArray[imageIdInt].bonus);
-    let bonusvelho = parseFloat(subimpactArray[imageIdInt].bonus);
+    let bonusvelho = subimpactArray[imageIdInt].bonus;
+    bonusvelho = parseFloat(subimpactArray[imageIdInt].bonus;
     console.log(total_orig);
     console.log(minersPower);
     console.log(totalbonusPercent);
