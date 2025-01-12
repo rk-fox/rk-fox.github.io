@@ -146,7 +146,7 @@ async function populateDropdowns() {
             const classifications = [""]; // Começa com "Comum" para todos
 
             // Verifica as classificações específicas e adiciona ao array de classificações
-if (selectedMinerRow[1] !== "-" && selectedMinerRow[3] !== "#N/A") classifications.push("Common");   // Começa com "Comum" para todos
+if (selectedMinerRow[1] !== "-" && selectedMinerRow[1] !== "#N/A") classifications.push("Common");   // Começa com "Comum" para todos
 if (selectedMinerRow[3] !== "-" && selectedMinerRow[3] !== "#N/A") classifications.push("Uncommon");   // Coluna Z
 if (selectedMinerRow[5] !== "-" && selectedMinerRow[5] !== "#N/A") classifications.push("Rare");      // Coluna AA
 if (selectedMinerRow[7] !== "-" && selectedMinerRow[7] !== "#N/A") classifications.push("Epic");     // Coluna AB
