@@ -97,21 +97,22 @@ async function loadGoogleSheetData() {
         // Extraímos apenas as colunas desejadas e exibimos o resultado
 result = data.values.map(row => [
     row[0], 
-    row[1].replace('.', ''),  // Remove o ponto e converte para inteiro
+    row[1] !== "-" && row[1] !== "#N/A" ? row[1].replace('.', '') : row[1],
     row[2].replace('.', ','), 
-    row[23].replace('.', ''), // Remove o ponto e converte para inteiro
-    row[28].replace('.', ','),
-    row[24].replace('.', ''), // Remove o ponto e converte para inteiro
-    row[29].replace('.', ','),
-    row[25].replace('.', ''), // Remove o ponto e converte para inteiro
-    row[30].replace('.', ','),
-    row[26].replace('.', ''), // Remove o ponto e converte para inteiro
-    row[31].replace('.', ','),
-    row[27].replace('.', ''), // Remove o ponto e converte para inteiro
-    row[32].replace('.', ','),
-    row[38].replace('.', ''), // Remove o ponto e converte para inteiro
+    row[23] !== "-" && row[23] !== "#N/A" ? row[23].replace('.', '') : row[23],
+    row[28].replace('.', ','), 
+    row[24] !== "-" && row[24] !== "#N/A" ? row[24].replace('.', '') : row[24],
+    row[29].replace('.', ','), 
+    row[25] !== "-" && row[25] !== "#N/A" ? row[25].replace('.', '') : row[25],
+    row[30].replace('.', ','), 
+    row[26] !== "-" && row[26] !== "#N/A" ? row[26].replace('.', '') : row[26],
+    row[31].replace('.', ','), 
+    row[27] !== "-" && row[27] !== "#N/A" ? row[27].replace('.', '') : row[27],
+    row[32].replace('.', ','), 
+    row[38] !== "-" && row[38] !== "#N/A" ? row[38].replace('.', '') : row[38],
     row[39].replace('.', ','),
 ]);
+
 
         // Exibindo o resultado no console
         console.log(result);
