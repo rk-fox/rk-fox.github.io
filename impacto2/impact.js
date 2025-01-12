@@ -284,7 +284,9 @@ function updateNewContent() {
     const bonusText = selectedMinerRow[indices[2]] || "N/A";
 
     // Calculando o novo impacto
-    const newImpact = ((total_orig - (minersPower - subimpactArray[${imageClicked}-1].power + poderText) * (1 + bonusPercent - subimpactArray[${imageClicked}-1].bonus + bonusText)));
+    const imageIdInt = parseInt(imageId, 10);
+    imageIdInt = imageIdInt - 1;
+    const newImpact = ((total_orig - (minersPower - subimpactArray[imageId].power + poderText) * (1 + bonusPercent - subimpactArray[imageId].bonus + bonusText)));
     
 
     poderText = convertPower(poderText); 
