@@ -73,6 +73,7 @@ function openPopup(event) {
 function closePopup() {
     const popup = document.getElementById("popup");
     popup.style.display = "none"; // Oculta o popup
+    clearInputOnClick();
 }
 
 // Adiciona o evento de clique para as imagens com a classe "popup-trigger"
