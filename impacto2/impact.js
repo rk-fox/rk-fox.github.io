@@ -283,6 +283,10 @@ function updateNewContent() {
     let poderText = selectedMinerRow[indices[1]] || "N/A";
     const bonusText = selectedMinerRow[indices[2]] || "N/A";
 
+    // Calculando o novo impacto
+    const newImpact = ((total_orig - (minersPower - subimpactArray[${imageClicked}-1].power + poderText) * (1 + bonusPercent - subimpactArray[${imageClicked}-1].bonus + bonusText)));
+    
+
     poderText = convertPower(poderText); 
     
 
@@ -769,9 +773,7 @@ const clearAllFields = () => {
         document.getElementById(`nome${index}`).innerText = '';
     }
 };    
-
-console.log(subimpactArray);
-    
+   
             top10NegativeResults.forEach((miner, i) => updateElement(i + 1, miner));
           })})
           } catch (error) {
