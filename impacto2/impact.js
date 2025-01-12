@@ -1,5 +1,3 @@
-let minersPower2, totalbonusPercent2, total_orig2, subimpactArray;
-
 // Obter os elementos do botão e do campo de entrada
 const searchButton = document.getElementById('searchButton');
 const linkInput = document.getElementById('linkInput');
@@ -176,10 +174,13 @@ document.getElementById('searchButton').addEventListener('click', async () => {
         const powerData = await powerDataResponse.json();
         let minersPower = powerData.data.miners;
         let totalbonusPercent = powerData.data.bonus_percent;
+        export let minersPower2 = minersPower;
 
         totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
+        export let totalbonusPercent2 = totalbonusPercent
 
         total_orig = minersPower * (1 + (totalbonusPercent / 100));
+        export let total_orig2 = total_orig;
 
         //console.log("Miners Power:", convertPower(minersPower));
         //console.log("Miners Bonus:", totalbonusPercent + '%');
@@ -398,7 +399,7 @@ const clearAllFields = () => {
 
     clearAllFields();
 
-    subimpactArray = [];
+    export let subimpactArray = [];
     
       const updateElement = (index, miner) => {
           
