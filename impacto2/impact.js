@@ -177,7 +177,7 @@ document.getElementById('searchButton').addEventListener('click', async () => {
         let minersPower = powerData.data.miners;
         let totalbonusPercent = powerData.data.bonus_percent;
 
-        let totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
+        totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
 
         total_orig = minersPower * (1 + (totalbonusPercent / 100));
 
