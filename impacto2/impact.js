@@ -1,4 +1,4 @@
-let minersPower, totalbonusPercent, total_orig, minerImpacts;
+let minersPower2, totalbonusPercent2, total_orig2, subimpactArray;
 
 // Obter os elementos do botão e do campo de entrada
 const searchButton = document.getElementById('searchButton');
@@ -174,10 +174,10 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
         const powerData = await powerDataResponse.json();
-        minersPower = powerData.data.miners;
-        totalbonusPercent = powerData.data.bonus_percent;
+        let minersPower = powerData.data.miners;
+        let totalbonusPercent = powerData.data.bonus_percent;
 
-        totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
+        let totalbonusPercent = parseFloat((totalbonusPercent / 100).toFixed(2));
 
         total_orig = minersPower * (1 + (totalbonusPercent / 100));
 
@@ -397,7 +397,9 @@ const clearAllFields = () => {
 };
 
     clearAllFields();
-              
+
+    subimpactArray = [];
+    
       const updateElement = (index, miner) => {
           
     if (miner) {
@@ -421,6 +423,15 @@ const clearAllFields = () => {
         }
         document.getElementById(`merge${index}`).innerText = miner.repetitions;
         document.getElementById(`rack${index}`).innerText = `Sala: ${miner.room_level + 1}, Linha: ${miner.rack_y + 1}, Rack: ${miner.rack_x + 1}`;
+
+        // Armazenando os dados no array
+        subimpactArray.push({
+            index: index + 1,
+            name: miner.name,
+            power: convertPower(miner.power),
+            bonus: `${(miner.bonus_percent).toFixed(2).replace('.', ',')}%`,
+        });
+        
     } else {
         document.getElementById(`nome${index}`).innerText = '';
     }
