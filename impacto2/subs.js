@@ -1,8 +1,3 @@
-import { subimpactArray } from './impact.js';
-
-console.log(subimpactArray); // Agora você pode acessar e logar o array
-
-
 let result = [];
 
 // Função para converter valores de poder (GH, TH, PH)
