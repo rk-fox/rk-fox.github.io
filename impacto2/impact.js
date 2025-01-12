@@ -8,13 +8,15 @@ let subimpactArray;
 // Função para converter valores de poder (GH, TH, PH)
 function convertPower(value) {
     const absValue = Math.abs(value); // Obter o valor absoluto
+    const numericValue = parseFloat(value); // Garantir que o valor seja um número
+
     if (absValue >= 1e6) {
-        return (value / 1e6).toFixed(3).replace('.', ',') + ' Phs';
+        return (numericValue / 1e6).toFixed(3).replace('.', ',') + ' Phs';
     }
     if (absValue >= 1e3) {
-        return (value / 1e3).toFixed(3).replace('.', ',') + ' Ths';
+        return (numericValue / 1e3).toFixed(3).replace('.', ',') + ' Ths';
     }
-    return value.toFixed(3).replace('.', ',') + ' Ghs';
+    return numericValue.toFixed(3).replace('.', ',') + ' Ghs';
 }
 
 function openPopup(event) {
