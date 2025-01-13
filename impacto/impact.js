@@ -137,7 +137,7 @@ result = data.values.map(row => [
 ]);
 
         // Exibindo o resultado no console
-        console.log(result);
+        //console.log(result);
 
         // Chama a função para preencher os dropdowns após o carregamento de dados
         populateDropdowns();
