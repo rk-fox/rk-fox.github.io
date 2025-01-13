@@ -11,4 +11,4 @@ dados_cont.addEventListener('submit', function (e) {
     .catch(error => {
         console.error('Erro no contador', error);
 });
-}
+});
