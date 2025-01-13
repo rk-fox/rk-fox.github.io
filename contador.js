@@ -6,7 +6,7 @@ dados_cont.addEventListener('submit', function (e) {
 
     fetch(script_google, { method: 'POST', body: new FormData(dados_cont) })
     .then(response => {
-        alert('Contador atualizado'), response);
+        alert('Contador atualizado', response);
     })
     .catch(error =>
         console.error('Erro no contador', error);
