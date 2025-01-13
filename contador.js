@@ -8,6 +8,7 @@ dados_cont.addEventListener('submit', function (e) {
     .then(response => {
         alert('Contador atualizado', response);
     })
-    .catch(error =>
+    .catch(error => {
         console.error('Erro no contador', error);
 });
+}
