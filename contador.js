@@ -2,12 +2,10 @@ const script_google = 'https://script.google.com/macros/s/AKfycbyiwGM4G3QVt0DQTP
 
 // Atualizar a célula A2
 function updateCounterA2() {
-    fetch(`${script_google}?action=updateA2`, {
+    fetch(`${script_google}`, {
         method: 'POST',
         mode: 'no-cors'
-    })
-    //.then(() => console.log('A2 atualizado com sucesso'))
-    //.catch(error => console.error('Erro:', error));
+    });
 }
 
 // Atualiza A2 quando o site for carregado
