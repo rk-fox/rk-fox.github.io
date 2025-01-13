@@ -26,18 +26,22 @@ function incrementCounter() {
             currentValue = isNaN(currentValue) ? 0 : currentValue + 1;  // Incrementa 1 ao valor
 
             // Atualizar a célula A2 com o novo valor
-            const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=RAW&key=AIzaSyBP12YfPrz9MhCH3J7boeondSm7HYVCUvA`;
+            const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`;
 
+            // Corpo da requisição de atualização
+            const requestBody = {
+                range: range,
+                majorDimension: 'ROWS',
+                values: [[currentValue]],
+            };
+
+            // Enviar a requisição PUT para atualizar a célula
             fetch(updateUrl, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    range: range,
-                    majorDimension: 'ROWS',
-                    values: [[currentValue]],
-                }),
+                body: JSON.stringify(requestBody),
             })
             .then(response => response.json())
             .then(updatedData => {
