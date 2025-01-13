@@ -1,24 +1,21 @@
-const script_google = 'https://script.google.com/macros/s/AKfycbx_7K6yHodCjqrHr0x3IdVUVD4jUWRcteOpjPNcVw_wyw4dh-R84p8TrWmFRRuwlvOz/exec';
+const script_google = 'https://script.google.com/macros/s/AKfycbwcaI45b-FgWqcCjgyqkKQnxVhlTw8z2NDL0lggfTwOH0gVIJoThIIatDHV912fsVPu/exec';
 
-// Atualizar a célula D2
-function updateCounterD2() {
+// Função para fazer a requisição e chamar a função do Google Apps
+function updateCounter() {
     fetch(`${script_google}`, {
         method: 'POST',
-        mode: 'no-cors'
+        mode: 'no-cors'  // Usado para fazer a requisição sem precisar de resposta
     })
     .then(response => {
-        if (response.ok) {
-            console.log('Contador atualizado com sucesso.');
-        } else {
-            console.error('Erro ao atualizar contador.');
-        }
+        // Se a requisição for bem-sucedida, você pode fazer o que quiser com a resposta
+        console.log('Contador atualizado com sucesso.');
     })
     .catch(error => {
         console.error('Erro ao fazer a requisição:', error);
     });
 }
 
-// Atualiza D2 quando o site for carregado
+// Chama a função quando o site é carregado
 document.addEventListener('DOMContentLoaded', function () {
-    updateCounterD2();
+    updateCounter();
 });
