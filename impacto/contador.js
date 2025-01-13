@@ -12,5 +12,5 @@ function updateCounterB2() {
 
 // Atualiza A2 quando o site for carregado
 document.addEventListener('DOMContentLoaded', function () {
-    updateCounterA2();
+    updateCounterB2();
 });
