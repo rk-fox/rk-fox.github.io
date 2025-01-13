@@ -5,6 +5,16 @@ function updateCounterD2() {
     fetch(`${script_google}`, {
         method: 'POST',
         mode: 'no-cors'
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Contador atualizado com sucesso.');
+        } else {
+            console.error('Erro ao atualizar contador.');
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao fazer a requisição:', error);
     });
 }
 
