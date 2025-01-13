@@ -6,8 +6,8 @@ function updateCounterA2() {
         method: 'POST',
         mode: 'no-cors'
     })
-    .then(() => console.log('A2 atualizado com sucesso'))
-    .catch(error => console.error('Erro:', error));
+    //.then(() => console.log('A2 atualizado com sucesso'))
+    //.catch(error => console.error('Erro:', error));
 }
 
 // Atualiza A2 quando o site for carregado
