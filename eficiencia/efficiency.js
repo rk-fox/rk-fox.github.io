@@ -102,9 +102,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let custoRLT = parseFloat(document.getElementById('custoInput').value.replace(',', '.')) || 0;
         let efiPower = parseFloat(document.getElementById('finalPower').textContent.replace(',', '.')) || 0;
         let efiMiner = parseFloat(document.getElementById('buyPower').value.replace(',', '.')) || 0;
+        let efiBMiner = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) / 100 || 0;
         
         // Calcule a eficiência em Miner e Power
-        efiMiner = custoRLT / (efiMiner / 1000);
+        efiMiner = custoRLT / ((efiMiner * ((100 + efiBMiner)/100) / 1000);
         efiPower = custoRLT / (efiPower / 1000);
 
         // Atualize os resultados na página
