@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let efiBMiner = parseFloat(document.getElementById('buyBonus').value.replace(',', '.')) / 100 || 0;
         
         // Calcule a eficiência em Miner e Power
-        efiMiner = custoRLT / ((efiMiner /1000) * ((100 + efiBMiner)/100));
+        efiMiner = custoRLT / ((efiMiner /1000) * (1 + efiBMiner));
         efiPower = custoRLT / (efiPower / 1000);
 
         // Atualize os resultados na página
