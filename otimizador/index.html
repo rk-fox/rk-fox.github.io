@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabela Agrupada</title>
+    <title>Tabela com Subtabelas</title>
     <style>
         table {
             width: 100%;
@@ -12,34 +12,31 @@
         table, th, td {
             border: 1px solid black;
         }
-        th, td {
+        td {
+            text-align: center;
+            padding: 0;
+            position: relative;
+            background-image: url('https://static.rollercoin.com/static/img/market/racks/662a2ed024d9775f45fd6e9e.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 210px;
+        }
+        .inner-table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+        }
+        .inner-table td {
+            width: 50%;
+            height: 25%;
             padding: 0;
             text-align: center;
         }
-        td.group {
-            background-image: url('https://static.rollercoin.com/static/img/market/racks/662a2ed024d9775f45fd6e9e.png');
-            background-size: contain; /* Ajusta a imagem para caber na célula sem distorcer */
-            background-position: center; /* Centraliza a imagem de fundo */
-            background-repeat: no-repeat;
-            height: 210px; /* Altura da primeira imagem */
-            position: relative;
-        }
-        td .cell {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .inner-table td img {
             width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 1px;
-        }
-        td .cell img {
-            width: 100%;
-            height: 50px; /* Altura das imagens adicionais */
+            height: 50px;
             object-fit: contain;
-            padding: 1px; /* Padding de 1px */
         }
     </style>
 </head>
@@ -48,64 +45,252 @@
 <table>
     <tbody>
         <tr>
-            <!-- Primeira linha: as duas primeiras imagens ocupam duas colunas -->
-            <td colspan="2" class="group">
-                <div class="cell">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
-                </div>
+            <td>
+                <table class="inner-table">
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                        </td>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
+                        </td>
+                    </tr>
+                </table>
             </td>
-            <td colspan="2" class="group">
-                <div class="cell">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
-                </div>
+            <td>
+                <table class="inner-table">
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                        </td>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table class="inner-table">
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                        </td>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
         <tr>
-            <!-- Segunda linha: vazia por enquanto -->
-            <td class="group">
-                <div class="cell"></div>
+            <td>
+                <table class="inner-table">
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                        </td>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
+                        </td>
+                    </tr>
+                </table>
             </td>
-            <td class="group">
-                <div class="cell"></div>
+            <td>
+                <table class="inner-table">
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                        </td>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
+                        </td>
+                    </tr>
+                </table>
             </td>
-            <td class="group">
-                <div class="cell"></div>
-            </td>
-            <td class="group">
-                <div class="cell"></div>
+            <td>
+                <table class="inner-table">
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                        </td>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
         <tr>
-            <!-- Terceira linha: imagem ocupando uma célula cada -->
-            <td class="group">
-                <div class="cell">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
-                </div>
+            <td>
+                <table class="inner-table">
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                        </td>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
+                        </td>
+                    </tr>
+                </table>
             </td>
-            <td class="group">
-                <div class="cell">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
-                </div>
+            <td>
+                <table class="inner-table">
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                        </td>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
+                        </td>
+                    </tr>
+                </table>
             </td>
-            <td class="group">
-                <div class="cell"></div>
-            </td>
-            <td class="group">
-                <div class="cell"></div>
-            </td>
-        </tr>
-        <tr>
-            <!-- Quarta linha: uma célula ocupando o espaço de duas colunas -->
-            <td colspan="2" class="group">
-                <div class="cell">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
-                </div>
-            </td>
-            <td class="group">
-                <div class="cell"></div>
-            </td>
-            <td class="group">
-                <div class="cell"></div>
+            <td>
+                <table class="inner-table">
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                        </td>
+                        <td>
+                            <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </tbody>
