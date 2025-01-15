@@ -20,19 +20,26 @@
             background-image: url('https://static.rollercoin.com/static/img/market/racks/662a2ed024d9775f45fd6e9e.png');
             background-size: cover;
             background-repeat: no-repeat;
-            width: 50%;  /* A largura deve ser ajustada para 50% porque cada grupo tem duas colunas */
-            height: 200px;  /* Ajuste a altura conforme necessário */
+            width: 50%;
+            height: 210px; /* Altura da primeira imagem */
+            position: relative; /* Para permitir sobreposição das outras imagens */
         }
         td .cell {
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1px;
         }
         td .cell img {
-            position: absolute;
             width: 100%;
-            height: 100%;
-            object-fit: contain; /* Ajuste para não distorcer a imagem */
+            height: 50px; /* Altura das imagens adicionais */
+            object-fit: contain;
+            padding: 1px; /* Padding de 1px */
         }
     </style>
 </head>
@@ -44,47 +51,21 @@
             <td colspan="2" class="group">
                 <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
-                </div>
-            </td>
-            <td colspan="2" class="group">
-                <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
-                </div>
-            </td>
-            <td colspan="2" class="group">
-                <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
-                </div>
-            </td>
-            <td colspan="2" class="group">
-                <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
                 </div>
             </td>
-        </tr>
-        <tr>
             <td colspan="2" class="group">
                 <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
-                </div>
-            </td>
-            <td colspan="2" class="group">
-                <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
-                </div>
-            </td>
-            <td colspan="2" class="group">
-                <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
-                </div>
-            </td>
-            <td colspan="2" class="group">
-                <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
                 </div>
             </td>
+            <!-- Replicar os grupos para mais linhas -->
         </tr>
-        <!-- Replicar os grupos para mais linhas, conforme necessário -->
     </tbody>
 </table>
 
