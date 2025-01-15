@@ -21,9 +21,8 @@
             background-size: contain; /* Ajusta a imagem para caber na célula sem distorcer */
             background-position: center; /* Centraliza a imagem de fundo */
             background-repeat: no-repeat;
-            width: 50%;
             height: 210px; /* Altura da primeira imagem */
-            position: relative; /* Para permitir sobreposição das outras imagens */
+            position: relative;
         }
         td .cell {
             position: absolute;
@@ -49,23 +48,65 @@
 <table>
     <tbody>
         <tr>
+            <!-- Primeira linha: as duas primeiras imagens ocupam duas colunas -->
             <td colspan="2" class="group">
                 <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
+                </div>
+            </td>
+            <td colspan="2" class="group">
+                <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <!-- Segunda linha: vazia por enquanto -->
+            <td class="group">
+                <div class="cell"></div>
+            </td>
+            <td class="group">
+                <div class="cell"></div>
+            </td>
+            <td class="group">
+                <div class="cell"></div>
+            </td>
+            <td class="group">
+                <div class="cell"></div>
+            </td>
+        </tr>
+        <tr>
+            <!-- Terceira linha: imagem ocupando uma célula cada -->
+            <td class="group">
+                <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
+                </div>
+            </td>
+            <td class="group">
+                <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
                 </div>
             </td>
+            <td class="group">
+                <div class="cell"></div>
+            </td>
+            <td class="group">
+                <div class="cell"></div>
+            </td>
+        </tr>
+        <tr>
+            <!-- Quarta linha: uma célula ocupando o espaço de duas colunas -->
             <td colspan="2" class="group">
                 <div class="cell">
                     <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
                 </div>
             </td>
-            <!-- Replicar os grupos para mais linhas -->
+            <td class="group">
+                <div class="cell"></div>
+            </td>
+            <td class="group">
+                <div class="cell"></div>
+            </td>
         </tr>
     </tbody>
 </table>
