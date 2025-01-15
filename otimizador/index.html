@@ -3,71 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabela Agrupada</title>
+    <title>Layout com Imagens sobrepostas</title>
     <style>
-        table {
+        .container {
             width: 100%;
-            border-collapse: collapse;
+            height: 840px; /* 4 linhas de 210px + 4 imagens de 50px */
+            position: relative;
         }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 0;
-            text-align: center;
-        }
-        td.group {
+        .background {
             background-image: url('https://static.rollercoin.com/static/img/market/racks/662a2ed024d9775f45fd6e9e.png');
             background-size: cover;
             background-repeat: no-repeat;
-            width: 50%;
-            height: 210px; /* Altura da primeira imagem */
-            position: relative; /* Para permitir sobreposição das outras imagens */
-        }
-        td .cell {
+            width: 100%;
+            height: 210px; /* Altura da imagem de fundo */
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 1px;
         }
-        td .cell img {
+        .image {
+            position: absolute;
             width: 100%;
             height: 50px; /* Altura das imagens adicionais */
             object-fit: contain;
-            padding: 1px; /* Padding de 1px */
+            padding: 1px;
+        }
+        .image-1 {
+            top: 0;
+        }
+        .image-2 {
+            top: 51px;
+        }
+        .image-3 {
+            top: 102px;
+        }
+        .image-4 {
+            top: 153px;
+        }
+        .image-5 {
+            top: 204px;
         }
     </style>
 </head>
 <body>
 
-<table>
-    <tbody>
-        <tr>
-            <td colspan="2" class="group">
-                <div class="cell">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" alt="Hamyo JJ P101">
-                </div>
-            </td>
-            <td colspan="2" class="group">
-                <div class="cell">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" alt="Camouflage">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" alt="Radiant Core">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" alt="Roller Admin Gauntlet">
-                    <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" alt="Hual TG 29">
-                </div>
-            </td>
-            <!-- Replicar os grupos para mais linhas -->
-        </tr>
-    </tbody>
-</table>
+<div class="container">
+    <div class="background"></div>
+    <img src="https://static.rollercoin.com/static/img/market/miners/radiant_core.gif" class="image image-1" alt="Radiant Core">
+    <img src="https://static.rollercoin.com/static/img/market/miners/rolleradmingauntlet.gif" class="image image-2" alt="Roller Admin Gauntlet">
+    <img src="https://static.rollercoin.com/static/img/market/miners/hual_tg_29.gif" class="image image-3" alt="Hual TG 29">
+    <img src="https://static.rollercoin.com/static/img/market/miners/hamyo_jj_p101.gif" class="image image-4" alt="Hamyo JJ P101">
+    <img src="https://static.rollercoin.com/static/img/market/miners/camouflage.gif" class="image image-5" alt="Camouflage">
+</div>
 
 </body>
 </html>
