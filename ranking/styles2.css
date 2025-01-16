@@ -57,9 +57,15 @@ body {
 }
 
 .ranking2 {
-    margin-top: 15px;
     width: 540px;
     margin: 0 auto;
+}
+
+.ranking2 table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-weight: bold; /* Fonte mais grossa */
 }
 
 .ranking2 td {
@@ -80,7 +86,6 @@ body {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
     font-weight: bold; /* Fonte mais grossa */
 }
 
