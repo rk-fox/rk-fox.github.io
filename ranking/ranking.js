@@ -103,20 +103,6 @@ async function getInitialPower() {
     }
 }
 
-async function updateProgressWithInitialPower(totalValue) {
-    const initialPower = await getInitialPower();
-    if (initialPower !== null) {
-        updateProgress(totalValue, initialPower);
-    } else {
-        console.error('Não foi possível obter o valor de initialPower para calcular o progresso.');
-    }
-}
-
-// Chamando a função com o totalValue já calculado
-calculateTotalValue().then(totalValue => {
-    updateProgressWithInitialPower(totalValue);
-});
-
 // Função para calcular e preencher a célula 'progresso'
 function updateProgress(totalValue, initialPower) {
     const powerGain = totalValue - initialPower;
@@ -131,7 +117,7 @@ function updateProgress(totalValue, initialPower) {
         positionChangeContent = `▲ ${convertPower(powerGain)}`;
         positionChangeStyle = 'color: green; font-weight: bold;';
     } else if (powerGain < 0) {
-        positionChangeContent = `▼ ${Math.abs(powerGain)}`;
+        positionChangeContent = `▼ ${convertPower(Math.abs(powerGain))}`;
         positionChangeStyle = 'color: red; font-weight: bold;';
     }
 
@@ -153,8 +139,21 @@ function updateProgress(totalValue, initialPower) {
     }
 }
 
-// Chama a função com os valores de totalValue e initialPower
-updateProgress(totalValue, initialPower);
+// Função para integrar o cálculo do progresso com os valores obtidos
+async function updateProgressWithInitialPower(totalValue) {
+    const initialPower = await getInitialPower();
+    if (initialPower !== null) {
+        updateProgress(totalValue, initialPower);
+    } else {
+        console.error('Não foi possível obter o valor de initialPower para calcular o progresso.');
+    }
+}
+
+// Chamando a função com o totalValue já calculado
+calculateTotalValue().then(totalValue => {
+    updateProgressWithInitialPower(totalValue);
+});
+
 
 // Função para buscar dados do usuário
 async function fetchUserData(userId) {
