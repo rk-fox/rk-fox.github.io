@@ -143,7 +143,6 @@ function updateProgress(totalValue, initialPower) {
             <div class="progress-bar-container" style="background-color: #f3f3f3; border-radius: 5px;">
                 <div class="progress-bar ${progressBarClass}" style="width: ${Math.abs(progressPercentage).toFixed(2)}%;"></div>
             </div>
-            <div style="text-align: center; font-size: 0.75rem; ${positionChangeStyle}">${positionChangeContent}</div>
         `;
     }
 }
