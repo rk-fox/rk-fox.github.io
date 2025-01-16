@@ -74,9 +74,6 @@ async function calculateTotalValue() {
   }
 }
 
-// Chamar a função ao carregar a página
-calculateTotalValue();
-
 // Função para obter o valor de initialPower da célula A2 na Planilha 2
 async function getInitialPower() {
     try {
