@@ -204,21 +204,14 @@ async function loadExcelData() {
         const arrayBuffer = await response.arrayBuffer();
         const data = new Uint8Array(arrayBuffer);
         const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-        // Lê a primeira aba (Planilha 1)
-        const sheetName1 = workbook.SheetNames[0];
-        const sheet1 = workbook.Sheets[sheetName1];
-        const jsonData1 = XLSX.utils.sheet_to_json(sheet1);
-
-        // Lê a segunda aba (Planilha 2) e pega a célula A2
-        const sheetName2 = 'Planilha 2';
-        const sheet2 = workbook.Sheets[sheetName2];
-        const cellA2 = sheet2['A2'] ? sheet2['A2'].v : null; // Verifica se a célula A2 existe
-
-        return { jsonData1, cellA2 }; // Retorna os dados da Planilha 1 e o valor da célula A2 da Planilha 2
+        return jsonData;
     } catch (error) {
         console.error('Erro ao carregar dados do Excel:', error);
-        return { jsonData1: [], cellA2: null };
+        return [];
     }
 }
 
