@@ -62,6 +62,10 @@ body {
     margin: 0 auto;
 }
 
+.ranking2 td {
+    width: 150px;
+}
+
 .ranking h1 {
     text-align: center;
     margin-bottom: 5px;
