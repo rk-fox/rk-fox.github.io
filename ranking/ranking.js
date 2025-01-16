@@ -67,6 +67,12 @@ async function calculateTotalValue() {
     const value = await fetchValue(crypto);
     totalValue += value;
   }
+
+  // Preencher a célula com a classe 'poder-total'
+  const poderTotalCell = document.querySelector('.poder-total');
+  if (poderTotalCell) {
+    poderTotalCell.textContent = `${convertPower(totalValue)}`; // Correção aqui
+  }
 }
 
 // Chamar a função ao carregar a página
