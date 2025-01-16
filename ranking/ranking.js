@@ -77,6 +77,84 @@ async function calculateTotalValue() {
 // Chamar a função ao carregar a página
 calculateTotalValue();
 
+// Função para obter o valor de initialPower da célula A2 na Planilha 2
+async function getInitialPower() {
+    try {
+        const response = await fetch('historico.xlsm');
+        if (!response.ok) {
+            throw new Error('Erro ao carregar historico.xlsm: ' + response.statusText);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        const data = new Uint8Array(arrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[1]; // Segunda planilha (índice 1)
+        const sheet = workbook.Sheets[sheetName];
+        
+        // Verifica se a célula A2 existe e retorna o valor
+        const cellA2 = sheet['A2'];
+        if (cellA2 && cellA2.v) {
+            return parseFloat(cellA2.v); // Retorna o valor como número
+        } else {
+            throw new Error('Célula A2 na Planilha 2 não encontrada ou vazia.');
+        }
+    } catch (error) {
+        console.error('Erro ao obter initialPower:', error);
+        return null; // Retorna nulo em caso de erro
+    }
+}
+
+async function updateProgressWithInitialPower(totalValue) {
+    const initialPower = await getInitialPower();
+    if (initialPower !== null) {
+        updateProgress(totalValue, initialPower);
+    } else {
+        console.error('Não foi possível obter o valor de initialPower para calcular o progresso.');
+    }
+}
+
+// Chamando a função com o totalValue já calculado
+calculateTotalValue().then(totalValue => {
+    updateProgressWithInitialPower(totalValue);
+});
+
+// Função para calcular e preencher a célula 'progresso'
+function updateProgress(totalValue, initialPower) {
+    const powerGain = totalValue - initialPower;
+    const progressPercentage = (powerGain / initialPower) * 100;
+
+    let positionChangeContent = '-';
+    let positionChangeStyle = '';
+    let progressBarClass = '';
+
+    // Verifica aumento ou diminuição de poder e ajusta o conteúdo da mudança de posição
+    if (powerGain > 0) {
+        positionChangeContent = `▲ ${convertPower(powerGain)}`;
+        positionChangeStyle = 'color: green; font-weight: bold;';
+    } else if (powerGain < 0) {
+        positionChangeContent = `▼ ${Math.abs(powerGain)}`;
+        positionChangeStyle = 'color: red; font-weight: bold;';
+    }
+
+    // Define a classe da barra de progresso se a porcentagem for negativa
+    if (progressPercentage < 0) {
+        progressBarClass = 'negative';
+    }
+
+    // Preenche a célula de progresso
+    const progressoCell = document.querySelector('.progresso');
+    if (progressoCell) {
+        progressoCell.innerHTML = `
+            <div style="text-align: center; font-size: 0.75rem;">${progressPercentage.toFixed(2)}%</div>
+            <div class="progress-bar-container" style="background-color: #f3f3f3; border-radius: 5px;">
+                <div class="progress-bar ${progressBarClass}" style="width: ${Math.abs(progressPercentage).toFixed(2)}%;"></div>
+            </div>
+            <div style="text-align: center; font-size: 0.75rem; ${positionChangeStyle}">${positionChangeContent}</div>
+        `;
+    }
+}
+
+// Chama a função com os valores de totalValue e initialPower
+updateProgress(totalValue, initialPower);
 
 // Função para buscar dados do usuário
 async function fetchUserData(userId) {
