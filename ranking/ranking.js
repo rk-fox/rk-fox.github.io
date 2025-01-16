@@ -1,4 +1,24 @@
 // Função para converter o poder para a unidade apropriada
+function convertPower2(totalValue) {
+    const absPower = Math.abs(totalValue);
+    let convertedPower2;
+
+    if (absPower >= 1e12) {
+        convertedPower2 = (absPower / 1e12).toFixed(3).replace('.', ',') + ' ZHs';
+    } else if (absPower >= 1e9) {
+        convertedPower2 = (absPower / 1e9).toFixed(3).replace('.', ',') + ' EHs';
+    } else if (absPower >= 1e6) {
+        convertedPower2 = (absPower / 1e6).toFixed(3).replace('.', ',') + ' PHs';
+    } else if (absPower >= 1e3) {
+        convertedPower2 = (absPower / 1e3).toFixed(3).replace('.', ',') + ' THs';
+    } else {
+        convertedPower2 = absPower.toFixed(3) + ' GHs';
+    }
+
+    return power < 0 ? '-' + convertedPower2 : convertedPower2;
+}
+
+// Função para converter o poder para a unidade apropriada
 function convertPower(power) {
     const absPower = Math.abs(power);
     let convertedPower;
@@ -105,18 +125,7 @@ function updateProgress(totalValue, initialPower) {
     const powerGain = totalValue - initialPower;
     const progressPercentage = (powerGain / initialPower) * 100;
 
-    let positionChangeContent = '-';
-    let positionChangeStyle = '';
     let progressBarClass = '';
-
-    // Verifica aumento ou diminuição de poder e ajusta o conteúdo da mudança de posição
-    if (powerGain > 0) {
-        positionChangeContent = `▲ ${convertPower(powerGain)}`;
-        positionChangeStyle = 'color: green; font-weight: bold;';
-    } else if (powerGain < 0) {
-        positionChangeContent = `▼ ${convertPower(Math.abs(powerGain))}`;
-        positionChangeStyle = 'color: red; font-weight: bold;';
-    }
 
     // Define a classe da barra de progresso se a porcentagem for negativa
     if (progressPercentage < 0) {
