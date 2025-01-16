@@ -5,8 +5,7 @@ function convertPower(power) {
 
     if (absPower >= 1e12) {
         convertedPower = (absPower / 1e12).toFixed(3).replace('.', ',') + ' ZHs';
-    }
-    if (absPower >= 1e9) {
+    } else if (absPower >= 1e9) {
         convertedPower = (absPower / 1e9).toFixed(3).replace('.', ',') + ' EHs';
     } else if (absPower >= 1e6) {
         convertedPower = (absPower / 1e6).toFixed(3).replace('.', ',') + ' PHs';
