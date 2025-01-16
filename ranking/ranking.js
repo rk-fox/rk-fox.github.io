@@ -15,7 +15,7 @@ function convertPower2(totalValue) {
         convertedPower2 = absPower.toFixed(3) + ' GHs';
     }
 
-    return power < 0 ? '-' + convertedPower2 : convertedPower2;
+    return totalValue < 0 ? '-' + convertedPower2 : convertedPower2;
 }
 
 // Função para converter o poder para a unidade apropriada
