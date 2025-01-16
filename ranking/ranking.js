@@ -3,6 +3,9 @@ function convertPower(power) {
     const absPower = Math.abs(power);
     let convertedPower;
 
+    if (absPower >= 1e12) {
+        convertedPower = (absPower / 1e12).toFixed(3).replace('.', ',') + ' ZHs';
+    }
     if (absPower >= 1e9) {
         convertedPower = (absPower / 1e9).toFixed(3).replace('.', ',') + ' EHs';
     } else if (absPower >= 1e6) {
@@ -15,6 +18,60 @@ function convertPower(power) {
 
     return power < 0 ? '-' + convertedPower : convertedPower;
 }
+
+// Lista de criptomoedas
+const cryptos = ["RLT", "RST", "XRP_SMALL", "TRX_SMALL", "DOGE_SMALL", "SAT", "ETH_SMALL", "BNB_SMALL", "MATIC_SMALL", "SOL_SMALL", "LTC_SMALL"];
+
+// Base da URL
+const baseUrl = "https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/mining/network-info-by-day";
+
+// Obtém a data atual
+const today = new Date();
+const formattedDate = today.toISOString().split('T')[0];
+
+// Função para obter o valor de uma moeda
+async function fetchValue(crypto) {
+  // Certifique-se de que os parâmetros estão codificados corretamente
+  const params = {
+    from: formattedDate,
+    to: formattedDate,
+    currency: crypto,
+    groupBy: "total_power",
+  };
+
+  // Monta a URL com encodeURIComponent
+  const queryString = Object.entries(params)
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join("&");
+  const url = `${baseUrl}?${queryString}`;
+    
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.success && data.data.length > 0) {
+      return data.data[0].value || 0; // Retorna o valor ou 0 se não existir
+    } else {
+      console.error(`Sem dados para ${crypto}:`, data.error);
+      return 0;
+    }
+  } catch (error) {
+    console.error(`Erro ao acessar o link ${url}:`, error);
+    return 0;
+  }
+}
+
+// Função principal para somar os valores
+async function calculateTotalValue() {
+  let totalValue = 0;
+  for (const crypto of cryptos) {
+    const value = await fetchValue(crypto);
+    totalValue += value;
+  }
+}
+
+// Chamar a função ao carregar a página
+calculateTotalValue();
+
 
 // Função para buscar dados do usuário
 async function fetchUserData(userId) {
@@ -147,16 +204,24 @@ async function loadExcelData() {
         const arrayBuffer = await response.arrayBuffer();
         const data = new Uint8Array(arrayBuffer);
         const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-        return jsonData;
+        // Lê a primeira aba (Planilha 1)
+        const sheetName1 = workbook.SheetNames[0];
+        const sheet1 = workbook.Sheets[sheetName1];
+        const jsonData1 = XLSX.utils.sheet_to_json(sheet1);
+
+        // Lê a segunda aba (Planilha 2) e pega a célula A2
+        const sheetName2 = 'Planilha 2';
+        const sheet2 = workbook.Sheets[sheetName2];
+        const cellA2 = sheet2['A2'] ? sheet2['A2'].v : null; // Verifica se a célula A2 existe
+
+        return { jsonData1, cellA2 }; // Retorna os dados da Planilha 1 e o valor da célula A2 da Planilha 2
     } catch (error) {
         console.error('Erro ao carregar dados do Excel:', error);
-        return [];
+        return { jsonData1: [], cellA2: null };
     }
 }
+
 
 // Função para buscar dados do usuário com tentativas adicionais
 async function fetchUserDataWithRetry(userId, retries = 8, delay = 375) {
