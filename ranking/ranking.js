@@ -92,6 +92,9 @@ async function calculateTotalValue() {
   if (poderTotalCell) {
     poderTotalCell.textContent = `${convertPower2(totalValue)}`; // Correção aqui
   }
+
+    return(totalValue);
+    
 }
 
 // Função para obter o valor de initialPower da célula A2 na Planilha 2
