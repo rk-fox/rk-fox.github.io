@@ -56,6 +56,12 @@ body {
     padding: 15px;
 }
 
+.ranking2 {
+    padding: 15px;
+    width: 450px;
+    margin: 0 auto;
+}
+
 .ranking h1 {
     text-align: center;
     margin-bottom: 5px;
