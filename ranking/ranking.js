@@ -90,7 +90,7 @@ async function calculateTotalValue() {
   // Preencher a célula com a classe 'poder-total'
   const poderTotalCell = document.querySelector('.poder-total');
   if (poderTotalCell) {
-    poderTotalCell.textContent = `${convertPower(totalValue)}`; // Correção aqui
+    poderTotalCell.textContent = `${convertPower2(totalValue)}`; // Correção aqui
   }
 }
 
