@@ -344,6 +344,7 @@ async function fetchAndDisplayAllUsers() {
             alert(`Erro ao carregar dados do usuário ID: ${user.id}. Pressione F5!`);
             return;
         }
+        
     }
 
     if (userDataArray.length < initialPowerData.length) {
@@ -375,6 +376,18 @@ async function fetchAndDisplayAllUsers() {
 
     // Atualiza a tabela com os novos dados e mudanças de posição
     console.log('Dados dos usuários carregados e tabela atualizada.');
+
+    // Atualiza o elemento <h3> com o número de membros e o total de poder
+    const totalPowerSum = userDataArray.reduce((sum, userEntry) => {
+        const totalPower = userEntry.userData.miners + 
+                           (userEntry.userData.miners * userEntry.userData.bonus_percent / 10000) + 
+                           userEntry.userData.racks;
+        return sum + totalPower;
+    }, 0);
+
+    const membersInfoElement = document.querySelector('h3');
+    membersInfoElement.textContent = `${userDataArray.length} Membros - Total de Poder: ${totalPowerSum.toLocaleString()} - Referência: 16/01/2025`;
+    
 }
 
 // Adiciona o event listener para fechar o popup
