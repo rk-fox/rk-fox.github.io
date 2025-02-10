@@ -252,7 +252,7 @@ if (specificMiner) {
     console.log("Mineradores na Sala Inegociáveis:", cannotBeSoldMinerDetails);
     }
 
-   // Verificar e processar o Campo 2
+     // Verificar e processar o Campo 2
 if (field2Value) {
 
     // Processamento do campo field2
@@ -262,24 +262,18 @@ if (field2Value) {
       return;
     }
 
-    // --- Remover cabeçalho e rodapé (suporta inglês, português e espanhol) ---
-    // Remove tudo até (e inclusive) o trecho de cabeçalho
-    fieldContent = fieldContent.replace(
-      /[\s\S]*?(?:Items arranged in your rooms will not appear on this page\.|Os itens organizados em sua sala não aparecerão nesta página\.|Los objetos colocados en tus salas no aparecerán en esta página\.?)\s*/,
-      ''
-    );
-    // Remove tudo a partir (inclusive) do trecho de rodapé
-    fieldContent = fieldContent.replace(
-      /\s*(?:About us|Sobre nós|Sobre nosotros)[\s\S]*/,
-      ''
-    );
-    // --------------------------------------------------------------------------
+    // --- Remover cabeçalho e rodapé ---
+    // Remove tudo até (e incluindo) o trecho "Items arranged in your rooms will not appear on this page."
+    fieldContent = fieldContent.replace(/[\s\S]*?Items arranged in your rooms will not appear on this page\.\s*/, '');
+    // Remove tudo a partir de (inclusive) o trecho "About us"
+    fieldContent = fieldContent.replace(/\s*About us[\s\S]*/, '');
+    // ------------------------------------
 
     // Divida o texto em partes separadas por "open"
     let parts = fieldContent.split(/open\s*/);
     let resultArray = [];
 
-    // Verifica a primeira parte e adiciona o prefixo "Level" (padrão do processamento)
+    // Verifique a primeira parte
     if (parts[0].trim().startsWith("Rating star")) {
         parts[0] = "Level 6 " + parts[0];
     } else if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
@@ -288,17 +282,15 @@ if (field2Value) {
         parts[0] = "Level " + parts[0];
     }
 
-    // Iterar e processar cada parte
+    // Iterar e processar as partes
     for (let i = 0; i < parts.length; i++) {
         let currentPart = parts[i].trim();
         if (!currentPart) continue;
 
         let setCount = (currentPart.match(/Set/g) || []).length;
 
-        // Se houver apenas um "Set", insere o valor 0 para o campo "set"
         if (setCount === 1) {
-            // Aqui, observe que além de "Size:" (inglês) também serão aceitos "Tamanho:" ou "Tamaño:"
-            currentPart = currentPart.replace(/(Set)(.*?)(Size:|Tamanho:|Tamaño:)/, '$1 0 $2 $3');
+            currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, '$1 0 $2 $3');
         }
 
         if (i < parts.length - 1) {
@@ -316,15 +308,11 @@ if (field2Value) {
     }
 
     let cleanedField2 = resultArray.join(" open ");
-    // Remove rótulos indesejados (aqui são retirados os elementos de interface que não fazem parte dos dados)
-    cleanedField2 = cleanedField2.replace(
-      /(Rating star|set badge|Cells|Células|Miner details|Detalhes da máquina|Información del minero|open)/g,
-      ''
-    ).trim();
+    cleanedField2 = cleanedField2.replace(/(Rating star|set badge|Cells|Miner details|open)/g, '').trim();
     cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
 
-    // --- Regex para capturar dados dos miners (suporta inglês, português e espanhol) ---
-    const minerRegex = /Level\s+(?<level>\d+)\s+(?<name>.+?)\s+Set\s+(?<set>.*?)\s+(?:(?:Size:)|(?:Tamanho:)|(?:Tamaño:))\s*(?<size>\d+)\s+(?:(?:Power)|(?:Poder))\s+(?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+)\s+(?:(?:Bonus)|(?:Bônus)|(?:Bonificación))\s+(?<bonus>[\d.,]+)\s*%\s+(?:(?:Quantity:)|(?:Qtd:)|(?:Cant:))\s*(?<quantity>\d+)\s+(?<canBeSold>(?:Can't be sold|Can be sold)|(?:Não pode ser vendido|Pode ser vendido)|(?:No se puede vender|Se puede vender))/g;
+    // Regex para capturar dados dos miners
+    const minerRegex = /Level (?<level>\d+) (?<name>.+?) Set (?<set>.+?) Size: (?<size>\d+) Power (?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+) Bonus (?<bonus>[\d.,]+) % Quantity: (?<quantity>\d+) (?<canBeSold>Can|Can't) be sold/g;
 
     let canBeSoldArray = [];
     let cannotBeSoldArray = [];
@@ -344,7 +332,7 @@ if (field2Value) {
         const field3 = parseFloat(document.getElementById("field3").value) || 1;
         const field4 = parseFloat(document.getElementById("field4").value) || 1;
 
-        // Calcular valores unitário e total
+        // Calcular unitario e total
         const unitario = Math.round((((power / (field3 * 1000)) + (bonus / field4)) * 1000));
         const total = unitario * parseInt(quantity, 10);
 
@@ -355,17 +343,18 @@ if (field2Value) {
             bonus: parseFloat(bonus),
             quantity: parseInt(quantity, 10),
             filename: name.trim()
-                .replace(/'/g, '')         // Remove apóstrofos simples
-                .replace(/’/g, '')          // Remove apóstrofos especiais
-                .replace(/\+/g, 'plus')      // Substitui + por "plus"
-                .replace(/-/g, '_')          // Substitui hífen por underline
-                .replace(/\s+/g, '_')        // Substitui espaços por underline
+                .replace(/'/g, '')         // Remove o apóstrofo simples (')
+                .replace(/’/g, '')         // Remove o apóstrofo (’)
+                .replace(/\+/g, 'plus')     // Substitui o + por "plus"
+                .replace(/-/g, '_')         // Substitui o hífen (-) por underscore (_)
+                .replace(/\s+/g, '_')       // Substitui espaços por underscore (_)
                 .replace(/,/g, '')
                 .replace(/\./g, '')
-                .toLowerCase(),             // Converte para minúsculas
+                .toLowerCase(),             // Converte tudo para minúsculas
             unitario,
             total,
         };
+
 
 
         if (canBeSold === "Can") {
