@@ -253,8 +253,8 @@ if (specificMiner) {
     }
 
      // Verificar e processar o Campo 2
-    if (field2Value) {
-            
+if (field2Value) {
+
     // Processamento do campo field2
     let fieldContent = document.getElementById('field2').value.trim();
     if (!fieldContent) {
@@ -262,48 +262,54 @@ if (specificMiner) {
       return;
     }
 
+    // --- Remover cabeçalho e rodapé ---
+    // Remove tudo até (e incluindo) o trecho "Items arranged in your rooms will not appear on this page."
+    fieldContent = fieldContent.replace(/[\s\S]*?Items arranged in your rooms will not appear on this page\.\s*/, '');
+    // Remove tudo a partir de (inclusive) o trecho "About us"
+    fieldContent = fieldContent.replace(/\s*About us[\s\S]*/, '');
+    // ------------------------------------
+
     // Divida o texto em partes separadas por "open"
     let parts = fieldContent.split(/open\s*/);
     let resultArray = [];
 
     // Verifique a primeira parte
-if (parts[0].trim().startsWith("Rating star")) {
-    parts[0] = "Level 6 " + parts[0];
-} else if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
-    parts[0] = "Level 0 " + parts[0];
-} else {
-    parts[0] = "Level " + parts[0];
-}
-
-// Iterar e processar
-for (let i = 0; i < parts.length; i++) {
-    let currentPart = parts[i].trim();
-    if (!currentPart) continue;
-
-    let setCount = (currentPart.match(/Set/g) || []).length;
-
-    if (setCount === 1) {
-        currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, '$1 0 $2 $3');
+    if (parts[0].trim().startsWith("Rating star")) {
+        parts[0] = "Level 6 " + parts[0];
+    } else if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
+        parts[0] = "Level 0 " + parts[0];
+    } else {
+        parts[0] = "Level " + parts[0];
     }
 
-    if (i < parts.length - 1) {
-        let nextPart = parts[i + 1].trim();
-        if (nextPart.startsWith("Rating star")) {
-            parts[i + 1] = "Level 6 " + nextPart;
-        } else if (nextPart && !/^\d/.test(nextPart)) {
-            parts[i + 1] = "Level 0 " + nextPart;
-        } else if (nextPart) {
-            parts[i + 1] = "Level " + nextPart;
+    // Iterar e processar as partes
+    for (let i = 0; i < parts.length; i++) {
+        let currentPart = parts[i].trim();
+        if (!currentPart) continue;
+
+        let setCount = (currentPart.match(/Set/g) || []).length;
+
+        if (setCount === 1) {
+            currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, '$1 0 $2 $3');
         }
+
+        if (i < parts.length - 1) {
+            let nextPart = parts[i + 1].trim();
+            if (nextPart.startsWith("Rating star")) {
+                parts[i + 1] = "Level 6 " + nextPart;
+            } else if (nextPart && !/^\d/.test(nextPart)) {
+                parts[i + 1] = "Level 0 " + nextPart;
+            } else if (nextPart) {
+                parts[i + 1] = "Level " + nextPart;
+            }
+        }
+
+        resultArray.push(currentPart);
     }
 
-    resultArray.push(currentPart);
-}
-
-let cleanedField2 = resultArray.join(" open ");
-cleanedField2 = cleanedField2.replace(/(Rating star|set badge|Cells|Miner details|open)/g, '').trim();
-cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
-
+    let cleanedField2 = resultArray.join(" open ");
+    cleanedField2 = cleanedField2.replace(/(Rating star|set badge|Cells|Miner details|open)/g, '').trim();
+    cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
 
     // Regex para capturar dados dos miners
     const minerRegex = /Level (?<level>\d+) (?<name>.+?) Set (?<set>.+?) Size: (?<size>\d+) Power (?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+) Bonus (?<bonus>[\d.,]+) % Quantity: (?<quantity>\d+) (?<canBeSold>Can|Can't) be sold/g;
@@ -312,7 +318,7 @@ cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
     let cannotBeSoldArray = [];
     let match;
 
-    // Itera sobre as correspondências
+    // Itera sobre as correspondências encontradas
     while ((match = minerRegex.exec(cleanedField2)) !== null) {
         let { level, name, power, unit, bonus, quantity, canBeSold } = match.groups;
 
@@ -322,32 +328,34 @@ cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
         else if (unit === "Ph/s") power *= 1e6;
         else if (unit === "Th/s") power *= 1e3;
 
-      // Obter os valores dos campos field3 e field4
-        const field3 = parseFloat(document.getElementById("field3").value) || 1; // Valor de field3 (evita NaN)
-        const field4 = parseFloat(document.getElementById("field4").value) || 1; // Valor de field4 (evita NaN)
+        // Obter os valores dos campos field3 e field4 (evitando NaN)
+        const field3 = parseFloat(document.getElementById("field3").value) || 1;
+        const field4 = parseFloat(document.getElementById("field4").value) || 1;
 
         // Calcular unitario e total
         const unitario = Math.round((((power / (field3 * 1000)) + (bonus / field4)) * 1000));
         const total = unitario * parseInt(quantity, 10);
 
         const miner = {
-    level: parseInt(level, 10),
-    name: name.trim(),
-    power: power.toFixed(0),
-    bonus: parseFloat(bonus),
-    quantity: parseInt(quantity, 10),
-    filename: name.trim()
-        .replace(/'/g, '')         // Remove o apóstrofo simples (')
-        .replace(/’/g, '')         // Remove o apóstrofo (’)
-        .replace(/\+/g, 'plus')       // Substitui o + por underscore (_)
-        .replace(/-/g, '_')        // Substitui o hífen (-) por underscore (_)
-        .replace(/\s+/g, '_')      // Substitui o espaço por underscore (_)
-        .replace(/,/g, '')
-        .replace(/\./g, '')
-        .toLowerCase(),             // Converte tudo para minúsculas
-    unitario,
-    total,
-};
+            level: parseInt(level, 10),
+            name: name.trim(),
+            power: power.toFixed(0),
+            bonus: parseFloat(bonus),
+            quantity: parseInt(quantity, 10),
+            filename: name.trim()
+                .replace(/'/g, '')         // Remove o apóstrofo simples (')
+                .replace(/’/g, '')         // Remove o apóstrofo (’)
+                .replace(/\+/g, 'plus')     // Substitui o + por "plus"
+                .replace(/-/g, '_')         // Substitui o hífen (-) por underscore (_)
+                .replace(/\s+/g, '_')       // Substitui espaços por underscore (_)
+                .replace(/,/g, '')
+                .replace(/\./g, '')
+                .toLowerCase(),             // Converte tudo para minúsculas
+            unitario,
+            total,
+        };
+
+
 
         if (canBeSold === "Can") {
             canBeSoldArray.push(miner);
