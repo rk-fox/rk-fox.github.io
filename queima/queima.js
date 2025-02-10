@@ -1,16 +1,15 @@
 function getLevelDescription(level) {
-        switch (level) {
-            case 0: return { text: 'Common', color: '' };
-            case 1: return { text: 'Uncommon', color: '#2bff00' };
-            case 2: return { text: 'Rare', color: '#00eaff' };
-            case 3: return { text: 'Epic', color: '#ff00bb' };
-            case 4: return { text: 'Legendary', color: '#fffb00' };
-            case 5: return { text: 'Unreal', color: '#ff0000' };
-            case 6: return { text: 'Legacy', color: '#ecab4e' };
-            default: return { text: 'Unknown', color: '' };
-        }
+  switch (level) {
+    case 0: return { text: 'Common', color: '' };
+    case 1: return { text: 'Uncommon', color: '#2bff00' };
+    case 2: return { text: 'Rare', color: '#00eaff' };
+    case 3: return { text: 'Epic', color: '#ff00bb' };
+    case 4: return { text: 'Legendary', color: '#fffb00' };
+    case 5: return { text: 'Unreal', color: '#ff0000' };
+    case 6: return { text: 'Legacy', color: '#ecab4e' };
+    default: return { text: 'Unknown', color: '' };
+  }
 }
-
 
 // Função para preencher as tabelas
 function preencherTabela(tableId, minerDetails) {
@@ -23,9 +22,9 @@ function preencherTabela(tableId, minerDetails) {
   // Criar o cabeçalho da tabela com título dinâmico
   const thead = document.createElement('thead');
   const titleRow = document.createElement('tr');
-  
-  let title = '';  // Variável para armazenar o título da tabela
-  
+
+  let title = ''; // Variável para armazenar o título da tabela
+
   // Definir título de acordo com o ID da tabela
   if (tableId === 'salaneg') {
     title = 'Miners NEGOCIÁVEIS da Sala';
@@ -43,7 +42,7 @@ function preencherTabela(tableId, minerDetails) {
   titleCell.textContent = title;
   titleRow.appendChild(titleCell);
   thead.appendChild(titleRow);
-  
+
   // Criar a linha dos cabeçalhos
   const headerRow = document.createElement('tr');
   headers.forEach(header => {
@@ -65,13 +64,16 @@ function preencherTabela(tableId, minerDetails) {
 
     const levelInfo = getLevelDescription(miner.level);
     const levelSpan = `<span style="color: ${levelInfo.color}; font-weight: bold;">${levelInfo.text}</span> ${miner.name}`;
-    
+
     row.innerHTML = `
-        <td><img src="https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1" alt="${miner.filename}" style="width: 50px; height: auto;"><br>${levelSpan}</td>
-        <td>${miner.power}</td>
-        <td>${miner.bonus}</td>
-        <td>${miner.unitario}</td>
-        <td>${miner.total}</td>
+      <td>
+        <img src="https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1" alt="${miner.filename}" style="width: 50px; height: auto;">
+        <br>${levelSpan}
+      </td>
+      <td>${miner.power}</td>
+      <td>${miner.bonus}</td>
+      <td>${miner.unitario}</td>
+      <td>${miner.total}</td>
     `;
 
     // Acumular os valores de Unitário e Total
@@ -81,22 +83,13 @@ function preencherTabela(tableId, minerDetails) {
     table.appendChild(row);
   });
 
-    //Adicionar a linha de totais
- //   const totalRow = document.createElement('tr');
-//    totalRow.innerHTML = `
-//    <td colspan="3">Totais</td>
-//    <td>${totalUnitario}</td>
-//    <td>${totalTotal}</td>
-//  `;
-//  table.appendChild(totalRow);
-
-// Adicionar linha de somatórios
-    const sumRow = document.createElement('tr');
-    sumRow.innerHTML = `
-        <td colspan="4" style="font-weight: bold; text-align: right;">Totais:</td>
-        <td style="font-weight: bold;">${totalTotal}</td>
-    `;
-    table.appendChild(sumRow);
+  // Adicionar linha de somatórios
+  const sumRow = document.createElement('tr');
+  sumRow.innerHTML = `
+    <td colspan="4" style="font-weight: bold; text-align: right;">Totais:</td>
+    <td style="font-weight: bold;">${totalTotal}</td>
+  `;
+  table.appendChild(sumRow);
 }
 
 // Adiciona um único evento keydown para ambos os campos
@@ -130,7 +123,8 @@ async function organizar() {
       return;
     }
 
-    // Verificar e processar o Campo 1
+    // ==============================
+    // Processamento do Campo 1 (Perfil)
     if (field1Value) {
       const profileUrl = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${field1Value}`;
       const profileResponse = await fetch(profileUrl);
@@ -162,224 +156,209 @@ async function organizar() {
         return;
       }
 
-    const minerCounts = miners.reduce((acc, miner) => {
-      const { miner_id, type } = miner;
-      if (!acc[miner_id]) {
-        acc[miner_id] = { type, quantity: 0 };
-      }
-      acc[miner_id].quantity += 1;
-      return acc;
-    }, {});
-
-    const minerDetails = [];
-
-    // Carregar os scripts dinamicamente
-    await Promise.all([
-      loadScript('https://wminerrc.github.io/calculator/data/basic_miners.js'),
-      loadScript('https://wminerrc.github.io/calculator/data/merge_miners.js'),
-      loadScript('https://wminerrc.github.io/calculator/data/old/merge_miners.js')
-    ]);
-
-    // Agora podemos acessar os dados carregados
-    for (const [miner_id, { type, quantity }] of Object.entries(minerCounts)) {
-      let minerInfo;
-
-      if (type === "basic") {
-        minerInfo = window.basic_miners;
-      } else if (type === "merge") {
-        minerInfo = window.merge_miners;
-      } else if (type === "old_merge") {
-        minerInfo = window.old_merge_miners;
-      } else {
-        console.warn(`Tipo desconhecido para miner_id ${miner_id}: ${type}`);
-        continue;
-      }
-
-      const specificMiner = minerInfo.find(miner => miner.miner_id === miner_id);
-if (specificMiner) {
-  const power = specificMiner.power;
-  const bonus = specificMiner.bonus_power / 100;
-  const field3 = parseFloat(document.getElementById('field3').value); // Valor de field3
-  const field4 = parseFloat(document.getElementById('field4').value); // Valor de field4
-
-  // Calculando o unitário
-  const unitario = Math.round((((power / (field3 * 1000)) + (bonus / field4)) * 1000));
-
-  // Calculando o total
-  const total = unitario * quantity;
-
-  const minerData = {
-    miner_id,
-    type,
-    level: type === "old_merge" ? 6 : specificMiner.level, // Condição para ajustar o level
-    name: specificMiner.name.en,
-    power,
-    bonus,
-    canBeSold: specificMiner.is_can_be_sold_on_mp,
-    filename: specificMiner.filename,
-    quantity,
-    unitario, // Adicionando o campo unitario
-    total // Adicionando o campo total
- };
-  minerDetails.push(minerData);
-  } else {
-    console.warn(`Miner com o ID especificado não encontrado: ${miner_id}`);
-  }
-}
-    
-
-    //console.log("Mineradores na Sala:", minerDetails);
-
-    // Dividir os minerDetails em dois arrays
-    const canBeSoldMinerDetails = minerDetails.filter(miner => miner.canBeSold);
-    const cannotBeSoldMinerDetails = minerDetails.filter(miner => !miner.canBeSold);
-
-    // Ordena os arrays pelo atributo 'power' do maior para o menor
-    canBeSoldMinerDetails.sort((a, b) => b.unitario - a.unitario);
-    cannotBeSoldMinerDetails.sort((a, b) => b.unitario - a.unitario);
-
-    // Preencher as tabelas com os dados
-    preencherTabela('salaneg', canBeSoldMinerDetails);
-    preencherTabela('salaineg', cannotBeSoldMinerDetails);
-
-    // Exibir as tabelas
-    document.getElementById('salaneg').style.display = 'table';
-    document.getElementById('salaineg').style.display = 'table';
-
-   
-
-    console.log("Mineradores na Sala Negociáveis:", canBeSoldMinerDetails);
-    console.log("Mineradores na Sala Inegociáveis:", cannotBeSoldMinerDetails);
-    }
-
-     // Verificar e processar o Campo 2
-    if (field2Value) {
-            
-    // Processamento do campo field2
-    let fieldContent = document.getElementById('field2').value.trim();
-    if (!fieldContent) {
-      alert("Por favor, insira um valor no Campo 2.");
-      return;
-    }
-
-    // Divida o texto em partes separadas por "open"
-    let parts = fieldContent.split(/open\s*/);
-    let resultArray = [];
-
-    // Verifique a primeira parte
-if (parts[0].trim().startsWith("Rating star")) {
-    parts[0] = "Level 6 " + parts[0];
-} else if (parts[0].trim() && !/^\d/.test(parts[0].trim())) {
-    parts[0] = "Level 0 " + parts[0];
-} else {
-    parts[0] = "Level " + parts[0];
-}
-
-// Iterar e processar
-for (let i = 0; i < parts.length; i++) {
-    let currentPart = parts[i].trim();
-    if (!currentPart) continue;
-
-    let setCount = (currentPart.match(/Set/g) || []).length;
-
-    if (setCount === 1) {
-        currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, '$1 0 $2 $3');
-    }
-
-    if (i < parts.length - 1) {
-        let nextPart = parts[i + 1].trim();
-        if (nextPart.startsWith("Rating star")) {
-            parts[i + 1] = "Level 6 " + nextPart;
-        } else if (nextPart && !/^\d/.test(nextPart)) {
-            parts[i + 1] = "Level 0 " + nextPart;
-        } else if (nextPart) {
-            parts[i + 1] = "Level " + nextPart;
+      const minerCounts = miners.reduce((acc, miner) => {
+        const { miner_id, type } = miner;
+        if (!acc[miner_id]) {
+          acc[miner_id] = { type, quantity: 0 };
         }
-    }
+        acc[miner_id].quantity += 1;
+        return acc;
+      }, {});
 
-    resultArray.push(currentPart);
-}
+      const minerDetails = [];
 
-let cleanedField2 = resultArray.join(" open ");
-cleanedField2 = cleanedField2.replace(/(Rating star|set badge|Cells|Miner details|open)/g, '').trim();
-cleanedField2 = cleanedField2.replace(/\s+/g, " ").trim();
+      // Carregar os scripts dinamicamente
+      await Promise.all([
+        loadScript('https://wminerrc.github.io/calculator/data/basic_miners.js'),
+        loadScript('https://wminerrc.github.io/calculator/data/merge_miners.js'),
+        loadScript('https://wminerrc.github.io/calculator/data/old/merge_miners.js')
+      ]);
 
+      // Acessa os dados carregados e calcula os valores para cada miner
+      for (const [miner_id, { type, quantity }] of Object.entries(minerCounts)) {
+        let minerInfo;
 
-    // Regex para capturar dados dos miners
-    const minerRegex = /Level (?<level>\d+) (?<name>.+?) Set (?<set>.+?) Size: (?<size>\d+) Power (?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+) Bonus (?<bonus>[\d.,]+) % Quantity: (?<quantity>\d+) (?<canBeSold>Can|Can't) be sold/g;
-
-    let canBeSoldArray = [];
-    let cannotBeSoldArray = [];
-    let match;
-
-    // Itera sobre as correspondências
-    while ((match = minerRegex.exec(cleanedField2)) !== null) {
-        let { level, name, power, unit, bonus, quantity, canBeSold } = match.groups;
-
-        // Converte unidades para Gh/s
-        power = parseFloat(power.replace(/,/g, ''));
-        if (unit === "Eh/s") power *= 1e9;
-        else if (unit === "Ph/s") power *= 1e6;
-        else if (unit === "Th/s") power *= 1e3;
-
-      // Obter os valores dos campos field3 e field4
-        const field3 = parseFloat(document.getElementById("field3").value) || 1; // Valor de field3 (evita NaN)
-        const field4 = parseFloat(document.getElementById("field4").value) || 1; // Valor de field4 (evita NaN)
-
-        // Calcular unitario e total
-        const unitario = Math.round((((power / (field3 * 1000)) + (bonus / field4)) * 1000));
-        const total = unitario * parseInt(quantity, 10);
-
-        const miner = {
-    level: parseInt(level, 10),
-    name: name.trim(),
-    power: power.toFixed(0),
-    bonus: parseFloat(bonus),
-    quantity: parseInt(quantity, 10),
-    filename: name.trim()
-        .replace(/'/g, '')         // Remove o apóstrofo simples (')
-        .replace(/’/g, '')         // Remove o apóstrofo (’)
-        .replace(/\+/g, 'plus')       // Substitui o + por underscore (_)
-        .replace(/-/g, '_')        // Substitui o hífen (-) por underscore (_)
-        .replace(/\s+/g, '_')      // Substitui o espaço por underscore (_)
-        .replace(/,/g, '')
-        .replace(/\./g, '')
-        .toLowerCase(),             // Converte tudo para minúsculas
-    unitario,
-    total,
-};
-
-        if (canBeSold === "Can") {
-            canBeSoldArray.push(miner);
+        if (type === "basic") {
+          minerInfo = window.basic_miners;
+        } else if (type === "merge") {
+          minerInfo = window.merge_miners;
+        } else if (type === "old_merge") {
+          minerInfo = window.old_merge_miners;
         } else {
-            cannotBeSoldArray.push(miner);
+          console.warn(`Tipo desconhecido para miner_id ${miner_id}: ${type}`);
+          continue;
         }
+
+        const specificMiner = minerInfo.find(miner => miner.miner_id === miner_id);
+        if (specificMiner) {
+          const power = specificMiner.power;
+          const bonus = specificMiner.bonus_power / 100;
+          const field3 = parseFloat(document.getElementById('field3').value); // Valor de field3
+          const field4 = parseFloat(document.getElementById('field4').value); // Valor de field4
+
+          // Calcula o unitário
+          const unitario = Math.round((((power / (field3 * 1000)) + (bonus / field4)) * 1000));
+
+          // Calcula o total
+          const total = unitario * quantity;
+
+          const minerData = {
+            miner_id,
+            type,
+            level: type === "old_merge" ? 6 : specificMiner.level, // Ajuste para old_merge
+            name: specificMiner.name.en,
+            power,
+            bonus,
+            canBeSold: specificMiner.is_can_be_sold_on_mp,
+            filename: specificMiner.filename,
+            quantity,
+            unitario,
+            total
+          };
+          minerDetails.push(minerData);
+        } else {
+          console.warn(`Miner com o ID especificado não encontrado: ${miner_id}`);
+        }
+      }
+
+      // Dividir os minerDetails em negociáveis e inegociáveis
+      const canBeSoldMinerDetails = minerDetails.filter(miner => miner.canBeSold);
+      const cannotBeSoldMinerDetails = minerDetails.filter(miner => !miner.canBeSold);
+
+      // Ordenar pelo valor unitário (maior para menor)
+      canBeSoldMinerDetails.sort((a, b) => b.unitario - a.unitario);
+      cannotBeSoldMinerDetails.sort((a, b) => b.unitario - a.unitario);
+
+      // Preencher as tabelas (Sala)
+      preencherTabela('salaneg', canBeSoldMinerDetails);
+      preencherTabela('salaineg', cannotBeSoldMinerDetails);
+
+      // Exibir as tabelas
+      document.getElementById('salaneg').style.display = 'table';
+      document.getElementById('salaineg').style.display = 'table';
+
+      console.log("Mineradores na Sala Negociáveis:", canBeSoldMinerDetails);
+      console.log("Mineradores na Sala Inegociáveis:", cannotBeSoldMinerDetails);
     }
+    // ==============================
 
-    // Ordena os arrays pelo atributo 'power' do maior para o menor
-    canBeSoldArray.sort((a, b) => b.unitario - a.unitario);
-    cannotBeSoldArray.sort((a, b) => b.unitario - a.unitario);
+    // ==============================
+    // Processamento do Campo 2 (Inventário) com o novo regex desejado
+    if (field2Value) {
+      let inventory = document.getElementById('field2').value.trim();
+      if (!inventory) {
+        alert("Por favor, insira um valor no Campo 2.");
+        return;
+      }
 
-    // Preencher as tabelas com os dados
-    preencherTabela('invneg', canBeSoldArray);
-    preencherTabela('invineg', cannotBeSoldArray);
+      // Utilizando os regex desejados:
+      const minerRegex = /(.*\n)(.*)(\n\nSet)/g;
+      const quantitiesRegex = /(Quantity\:|Qtd\:)(\s*)(\d*)/g;
+      const miners = [];
+      let match;
 
-    // Exibir as tabelas
-    document.getElementById('invneg').style.display = 'table';
-    document.getElementById('invineg').style.display = 'table';
+      // Extrair os dados dos miners (linha de "rarity" e nome)
+      while ((match = minerRegex.exec(inventory)) !== null) {
+        let rarity = match[1];
+        let type = '';
+        let level = '';
+        if (rarity.toLowerCase().indexOf('rating star') !== -1) {
+          type = 'old_merge';
+          level = 6; // Define nível 6 para old_merge
+        } else {
+          level = rarity.replace(/\D/g, '').replace('\n', '');
+          level = isNaN(level) || level === '' ? 0 : parseInt(level);
+        }
+        miners.push({
+          level: level,
+          name: match[2].trim(),
+          type: type
+        });
+      }
 
-    console.log("Inventário Negociável:", canBeSoldArray);
-    console.log("Inventário Inegociável:", cannotBeSoldArray);
+      // Extrair as quantidades dos miners
+      let qtdIdx = 0;
+      while ((match = quantitiesRegex.exec(inventory)) !== null) {
+        let quantity = match[3];
+        if (isNaN(quantity) || quantity === '') { continue; }
+        if (miners[qtdIdx]) {
+          miners[qtdIdx].quantity = parseInt(quantity);
+        }
+        qtdIdx++;
+        if (qtdIdx === miners.length) break;
+      }
 
-    if (canBeSoldArray.length === 0 && cannotBeSoldArray.length === 0) {
-      console.warn("Nenhum miner foi capturado. Verifique o texto de entrada e a regex.");
+      // Carregar os scripts dinamicamente (caso não estejam carregados)
+      await Promise.all([
+        loadScript('https://wminerrc.github.io/calculator/data/basic_miners.js'),
+        loadScript('https://wminerrc.github.io/calculator/data/merge_miners.js'),
+        loadScript('https://wminerrc.github.io/calculator/data/old/merge_miners.js')
+      ]);
+
+      // Combinar os dados de todos os miners disponíveis
+      const allMiners = [
+        ...window.basic_miners,
+        ...window.merge_miners,
+        ...window.old_merge_miners
+      ];
+
+      const minerDetails = [];
+      const field3 = parseFloat(document.getElementById("field3").value) || 1;
+      const field4 = parseFloat(document.getElementById("field4").value) || 1;
+
+      miners.forEach(m => {
+        // Buscar o miner correspondente pelo nome (em lowercase) e comparar tipo ou nível
+        let minerInfo = allMiners.find(m2 =>
+          m.name.toLowerCase() === m2.name.en.toLowerCase() &&
+          (m2.type === m.type || m2.level === m.level)
+        );
+        if (minerInfo) {
+          const power = minerInfo.power;
+          const bonus = minerInfo.bonus_power / 100;
+          const unitario = Math.round((((power / (field3 * 1000)) + (bonus / field4)) * 1000));
+          const total = unitario * m.quantity;
+          minerDetails.push({
+            level: m.type === "old_merge" ? 6 : minerInfo.level,
+            name: minerInfo.name.en,
+            power: power,
+            bonus: bonus,
+            canBeSold: minerInfo.is_can_be_sold_on_mp,
+            filename: minerInfo.filename,
+            quantity: m.quantity,
+            unitario: unitario,
+            total: total
+          });
+        } else {
+          console.warn(`Miner com o nome ${m.name} não foi encontrado.`);
+        }
+      });
+
+      // Dividir os miners em negociáveis e inegociáveis
+      const canBeSoldArray = minerDetails.filter(miner => miner.canBeSold);
+      const cannotBeSoldArray = minerDetails.filter(miner => !miner.canBeSold);
+
+      // Ordenar os arrays pelo valor unitário (maior para menor)
+      canBeSoldArray.sort((a, b) => b.unitario - a.unitario);
+      cannotBeSoldArray.sort((a, b) => b.unitario - a.unitario);
+
+      // Preencher as tabelas (Inventário)
+      preencherTabela('invneg', canBeSoldArray);
+      preencherTabela('invineg', cannotBeSoldArray);
+
+      // Exibir as tabelas
+      document.getElementById('invneg').style.display = 'table';
+      document.getElementById('invineg').style.display = 'table';
+
+      console.log("Inventário Negociável:", canBeSoldArray);
+      console.log("Inventário Inegociável:", cannotBeSoldArray);
+
+      if (canBeSoldArray.length === 0 && cannotBeSoldArray.length === 0) {
+        console.warn("Nenhum miner foi capturado. Verifique o texto de entrada e a regex.");
+      }
+
+      return { canBeSoldArray, cannotBeSoldArray };
     }
-
-    return { canBeSoldArray, cannotBeSoldArray };
-
-}
-
-    
+    // ==============================
   } catch (error) {
     console.error("Erro ao processar:", error);
   }
