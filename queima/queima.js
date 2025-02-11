@@ -378,9 +378,6 @@ if (field2Value) {
         }
     }
 
-    // Aqui, você pode utilizar os arrays canBeSoldArray e cannotBeSoldArray conforme necessário.
-}
-
 
     // Ordena os arrays pelo atributo 'power' do maior para o menor
     canBeSoldArray.sort((a, b) => b.unitario - a.unitario);
