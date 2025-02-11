@@ -18,7 +18,7 @@ function preencherTabela(tableId, minerDetails) {
   table.innerHTML = ''; // Limpar conteúdo anterior
 
   // Criar cabeçalhos
-  const headers = ['Miner', 'Power', 'Bonus', 'Unitário', 'Total'];
+  const headers = ['Miner', 'Power', 'Bonus', 'Qtd', 'Unitário', 'Total'];
 
   // Criar o cabeçalho da tabela com título dinâmico
   const thead = document.createElement('thead');
@@ -39,7 +39,7 @@ function preencherTabela(tableId, minerDetails) {
 
   // Adicionar o título como uma célula com colspan="5"
   const titleCell = document.createElement('th');
-  titleCell.colSpan = 5;
+  titleCell.colSpan = 6;
   titleCell.textContent = title;
   titleRow.appendChild(titleCell);
   thead.appendChild(titleRow);
@@ -70,6 +70,7 @@ function preencherTabela(tableId, minerDetails) {
         <td><img src="https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1" alt="${miner.filename}" style="width: 50px; height: auto;"><br>${levelSpan}</td>
         <td>${miner.power}</td>
         <td>${miner.bonus}</td>
+        <td>${miner.quantidade}</td>
         <td>${miner.unitario}</td>
         <td>${miner.total}</td>
     `;
