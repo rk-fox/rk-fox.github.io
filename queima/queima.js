@@ -70,7 +70,7 @@ function preencherTabela(tableId, minerDetails) {
         <td><img src="https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1" alt="${miner.filename}" style="width: 50px; height: auto;"><br>${levelSpan}</td>
         <td>${miner.power}</td>
         <td>${miner.bonus}</td>
-        <td>${miner.quantidade}</td>
+        <td>${miner.quantity}</td>
         <td>${miner.unitario}</td>
         <td>${miner.total}</td>
     `;
