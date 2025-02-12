@@ -144,14 +144,13 @@ let cleanedField2 = resultArray.join(" open ");
 
 // Remova os textos indesejados
 cleanedField2 = cleanedField2.replace(
-  /(Rating star|set badge|Cells|Células|Celdas|Miner details|Detalhes da máquina|Información del minero|open)/gi,
+  /(Rating star|set badge|Cells|Células|Celdas|Miner details|Detalhes da máquina|Información del minero|menu-button|hamster|\[object Object\]|open)/gi,
   ''
 ).trim();
 
 
 // Regex ajustado para capturar as informações de cada entrada
-let minerRegex = /Level\s+(?<level>\d+)\s+(?<name>.+?)\s+Set\s+(?<set>.*?)\s+(?:(?:Size:)|(?:Tamanho:)|(?:Tamaño:))\s*(?<size>\d+)\s+(?:(?:Power)|(?:Poder))\s+(?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+)\s+(?:(?:Bonus)|(?:Bônus)|(?:Bonificación))\s+(?<bonus>[\d.,]+)\s*%\s+(?:(?:Quantity:)|(?:Qtd:)|(?:Cant:))\s*(?<quantity>\d+)\s+(?<canBeSold>(?:(?:Can't be sold)|(?:Can be sold)|(?:Não pode ser vendido)|(?:Pode ser vendido)|(?:No se puede vender)|(?:Se puede vender)))/g;
-
+const minerRegex = /Level\s+(?<level>\d+)\s+(?<name>.+?)\s+Set\s+(?<set>.*?)\s+(?:(?:Size:)|(?:Tamanho:)|(?:Tamaño:))\s*(?<size>\d+)\s+(?:(?:Power)|(?:Poder))\s+(?<power>[\d.,]+)\s?(?<unit>[A-Za-z/]+)\s+(?:(?:Bonus)|(?:Bônus)|(?:Bonificación))\s+(?<bonus>[\d.,]+)\s*%\s+(?:(?:Quantity:)|(?:Qtd:)|(?:Cant:))\s*(?<quantity>\d+)\s+(?<canBeSold>(?:(?:Can't be sold)|(?:Can be sold)|(?:Não pode ser vendido)|(?:Pode ser vendido)|(?:No se puede vender)|(?:Se puede vender)))(?=\s+Level\s+\d+|$)/g;
 
 // Inicializa o array para armazenar as entradas processadas
 let fieldArray = [];
