@@ -129,8 +129,8 @@ for (let i = 0; i < parts.length; i++) {
 
     // Se houver exatamente um "Set", adicionar "0" entre "Set" e "Size"
     if (setCount === 1) {
-        currentPart = currentPart.replace(/(Set)(.*?)(Size:)/, '$1 0 $2 $3');
-    }
+    currentPart = currentPart.replace(/(Set)(.*?)(Size:|Tamanho:|Tamaño:)/, '$1 0 $2 $3');
+}
 
     // Verifique o início da próxima parte
     if (i < parts.length - 1) { // Exceto o último elemento
