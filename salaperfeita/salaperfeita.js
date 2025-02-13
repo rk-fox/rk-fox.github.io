@@ -95,6 +95,15 @@ console.log("Salas:", minerArray);
 // Supondo que `field2` seja o campo de texto
 let fieldContent = document.getElementById('field2').value;
 
+fieldContent = fieldContent.replace(
+  /[\s\S]*?(?:Items arranged in your rooms will not appear on this page\.|Os itens organizados em sua sala não aparecerão nesta página\.|Los objetos colocados en tus salas no aparecerán en esta página\.?)\s*/,
+  ''
+);
+fieldContent = fieldContent.replace(
+  /\s*(?:About us|Sobre nós|Sobre nosotros)[\s\S]*/,
+  ''
+);
+
 // Divida o texto em partes separadas por "open"
 let parts = fieldContent.split(/open\s*/);
 
