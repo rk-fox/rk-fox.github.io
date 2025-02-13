@@ -94,7 +94,7 @@ function preencherTabela(tableId, minerDetails) {
 // Adicionar linha de somatórios
     const sumRow = document.createElement('tr');
     sumRow.innerHTML = `
-        <td colspan="4" style="font-weight: bold; text-align: right;">Totais:</td>
+        <td colspan="5" style="font-weight: bold; text-align: right;">Total:</td>
         <td style="font-weight: bold;">${totalTotal}</td>
     `;
     table.appendChild(sumRow);
