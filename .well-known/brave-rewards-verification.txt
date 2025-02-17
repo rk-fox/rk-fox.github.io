@@ -1,4 +1,0 @@
-This is a Brave Creators publisher verification file.
-
-Domain: rk-fox.github.io
-Token: fdaad913fa8f9ae8cc9b15025555ba768146c490861197d9e04648835c78f763
