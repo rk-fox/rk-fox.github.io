@@ -376,8 +376,7 @@ async function fetchAndDisplayAllUsers() {
     // Atualiza o elemento <h3> com o número de membros e o total de poder
     const totalPowerSum = userDataArray.reduce((sum, userEntry) => {
         const totalPower = userEntry.userData.miners +
-                           (userEntry.userData.miners * userEntry.userData.bonus_percent / 10000) +
-                           userEntry.userData.racks;
+                           (userEntry.userData.miners * userEntry.userData.bonus_percent / 10000);
         return sum + totalPower;
     }, 0);
 
