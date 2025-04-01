@@ -391,7 +391,7 @@ async function fetchAndDisplayAllUsers() {
     const convertedPower = convertPower2(totalPowerSum);
 
     const membersInfoElement = document.querySelector('h3');
-    membersInfoElement.textContent = `${userDataArray.length} Membros - Total de Poder: ${convertedPower} - Crescimento: ${formattedGrowth} - Referência: 01/03/2025`;
+    membersInfoElement.textContent = `${userDataArray.length} Membros - Total de Poder: ${convertedPower} - Crescimento: ${formattedGrowth} - Referência: 31/03/2025`;
 }
 
 // Adiciona o event listener para fechar o popup
