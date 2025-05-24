@@ -664,6 +664,11 @@ main().then(() => {
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
     applyBonusAdjustment(miners, 
+      ["68244844fbb67c190eed4dd7", "6824489bfbb67c190eed5222", "682448fcfbb67c190eed530f", "6824481dfbb67c190eed4d7d","68244872fbb67c190eed4e6f","682448ccfbb67c190eed52bb"], 
+      24, // 10% para todas as 4
+      8   // 5% para 2 ou 3
+    );
+    applyBonusAdjustment(miners, 
       ["67c08778b5e8c2c0f194631d", "67c0879cb5e8c2c0f194636b", "67c087bcb5e8c2c0f19463b9", "67c087e3b5e8c2c0f1946b75"], 
       20, // 10% para todas as 4
       10   // 5% para 2 ou 3
