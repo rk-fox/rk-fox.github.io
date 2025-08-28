@@ -116,7 +116,7 @@ function getLigaInfo(value) {
         const userName = profileData.data.name; 
         const avatarId = profileData.data.avatar_id;
         const urlLiga = profileData.league_id;
-        const nomeLiga = profileData.league.en;
+        const nomeLiga = profileData.league.title.en;
 
           console.log(urlLiga);
           console.log(nomeLiga);
