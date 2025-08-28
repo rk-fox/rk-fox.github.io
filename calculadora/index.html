@@ -44,4 +44,77 @@
       width: 100%;
       padding: 10px;
       margin-bottom: 15px;
-      border
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    input:disabled {
+      background: #eee;
+      cursor: not-allowed;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Calculadora de Farm</h2>
+    <p>Preencha <strong>apenas um</strong> dos campos abaixo:</p>
+    
+    <input type="text" id="linkSala" placeholder="Link da Sala">
+    <input type="text" id="poderConta" placeholder="Poder da Conta">
+
+    <button onclick="calcular()">CALCULAR FARM</button>
+  </div>
+
+  <script>
+    const linkSala = document.getElementById("linkSala");
+    const poderConta = document.getElementById("poderConta");
+
+    // Desativa o outro input quando um é preenchido
+    linkSala.addEventListener("input", () => {
+      if (linkSala.value.trim() !== "") {
+        poderConta.disabled = true;
+      } else {
+        poderConta.disabled = false;
+      }
+    });
+
+    poderConta.addEventListener("input", () => {
+      if (poderConta.value.trim() !== "") {
+        linkSala.disabled = true;
+      } else {
+        linkSala.disabled = false;
+      }
+    });
+
+    function calcular() {
+      if (linkSala.value.trim() === "" && poderConta.value.trim() === "") {
+        alert("Preencha um dos campos antes de calcular!");
+        return;
+      }
+      if (linkSala.value.trim() !== "" && poderConta.value.trim() !== "") {
+        alert("Apenas um campo deve ser preenchido!");
+        return;
+      }
+      alert("Cálculo realizado com sucesso! 🚀");
+    }
+  </script>
+</body>
+</html>
