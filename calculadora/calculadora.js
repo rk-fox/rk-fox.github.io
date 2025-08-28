@@ -49,19 +49,55 @@ async function getCryptoPrices() {
       }
     });
 
-    function calcular() {
-      if (linkSala.value.trim() === "" && poderConta.value.trim() === "") {
+    async function calcular() {
+    const linkSala = document.getElementById("linkInput");
+    const poderConta = document.getElementById("poderConta");
+    const unidadePoder = document.getElementById("unidadePoder");
+
+    // 🔹 Validação inicial
+    if (linkSala.value.trim() === "" && poderConta.value.trim() === "") {
         alert("Preencha um dos campos antes de calcular!");
         return;
-      }
-      if (linkSala.value.trim() !== "" && poderConta.value.trim() !== "") {
+    }
+    if (linkSala.value.trim() !== "" && poderConta.value.trim() !== "") {
         alert("Apenas um campo deve ser preenchido!");
         return;
-      }
-      if (poderConta.value.trim() !== "") {
-        alert(`Poder informado: ${poderConta.value} ${unidadePoder.value}`);
-      } else {
-        alert(`Link informado: ${linkSala.value}`);
-      }
     }
 
+    // 🔹 Caso seja preenchido o poder manualmente
+    if (poderConta.value.trim() !== "") {
+        alert(`Poder informado: ${poderConta.value} ${unidadePoder.value}`);
+        return;
+    }
+
+    // 🔹 Caso seja preenchido o link da sala (faz o fetch na API)
+    try {
+        const userSala = linkSala.value.trim();
+
+        const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userSala}`); 
+        const profileData = await profileResponse.json();
+        const userName = profileData.data.name; 
+        const avatarId = profileData.data.avatar_id;
+
+        if (!avatarId || !userName) {
+            alert('Erro ao obter o avatar_id ou nome.');
+            return;
+        }
+
+        const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
+        document.getElementById('avatar').src = avatarUrl;
+        document.getElementById('avatar').style.display = 'block';
+        document.getElementById('welcomeMessage').innerText = `${userName}!`;
+
+        const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+        const powerData = await powerDataResponse.json();
+        const ligaAtual = powerData.data.max_power;
+        const poderAtual = powerData.data.current_power;
+
+        console.log("Liga Atual:", ligaAtual);
+        console.log("Poder Atual:", poderAtual);
+
+    } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+    }
+}
