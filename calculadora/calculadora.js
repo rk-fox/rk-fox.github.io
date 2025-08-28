@@ -87,7 +87,9 @@ async function getCryptoPrices() {
         const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
         document.getElementById('avatar').src = avatarUrl;
         document.getElementById('avatar').style.display = 'block';
-        document.getElementById('welcomeMessage').innerText = `${userName}!`;
+        document.getElementById('nome').innerText = `${userName}!`;
+        document.getElementById('poderAtual').innerText = `${userName}!`; 
+        document.getElementById('ligaAtual').innerText = `${userName}!`;
 
         const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
         const powerData = await powerDataResponse.json();
