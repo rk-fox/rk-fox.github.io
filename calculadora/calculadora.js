@@ -12,7 +12,7 @@ async function getCryptoPrices() {
         console.log("BTC:", data.bitcoin.usd, "USD /", data.bitcoin.brl, "BRL");
         console.log("LTC:", data.litecoin.usd, "USD /", data.litecoin.brl, "BRL");
         console.log("BNB:", data.binancecoin.usd, "USD /", data.binancecoin.brl, "BRL");
-        console.log("POL:", data.polygon-ecosystem-token.usd, "USD /", data.polygon.brl, "BRL");
+        console.log("POL:", data["polygon-ecosystem-token"].usd, "USD /", data.polygon.brl, "BRL");
         console.log("XRP:", data.ripple.usd, "USD /", data.xrp.brl, "BRL");
         console.log("DOGE:", data.dogecoin.usd, "USD /", data.dogecoin.brl, "BRL");
         console.log("ETH:", data.ethereum.usd, "USD /", data.ethereum.brl, "BRL");
@@ -65,34 +65,3 @@ async function getCryptoPrices() {
       }
     }
 
-document.getElementById('searchButton').addEventListener('click', async () => {
-    const userSala = document.getElementById('linkInput').value;
-
-    try {
-        const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userSala}`); 
-        const profileData = await profileResponse.json();
-        const userName = profileData.data.name; 
-        const avatarId = profileData.data.avatar_id;
-
-        if (!avatarId || !userName) {
-            alert('Erro ao obter o avatar_id ou nome.');
-            return;
-        }
-
-        const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
-        document.getElementById('avatar').src = avatarUrl;
-        document.getElementById('avatar').style.display = 'block';
-        document.getElementById('welcomeMessage').innerText = `${userName}!`;
-
-        const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
-        const powerData = await powerDataResponse.json();
-        const ligaAtual = powerData.data.max_power;
-        const poderAtual = powerData.data.current_power;
-
-        console.log("Liga Atual:", ligaAtual);
-        console.log("Poder Atual:", poderAtual);
-
-    } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-    }
-});
