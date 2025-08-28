@@ -44,23 +44,23 @@ function convertPower(value) {
 }
 
 // 🔹 Função para determinar a liga
-function getLigaInfo(value) {
-    if (value < 5_000_000)  return { nome: "BRONZE 1", link: "68af01ce48490927df92d687" };
-    if (value < 30_000_000) return { nome: "BRONZE 2", link: "68af01ce48490927df92d686" };
-    if (value < 100_000_000) return { nome: "BRONZE 3", link: "68af01ce48490927df92d685" };
-    if (value < 200_000_000) return { nome: "PRATA 1", link: "68af01ce48490927df92d684" };
-    if (value < 500_000_000) return { nome: "PRATA 2", link: "68af01ce48490927df92d683" };
-    if (value < 1_000_000_000) return { nome: "PRATA 3", link: "68af01ce48490927df92d682" };
-    if (value < 2_000_000_000) return { nome: "OURO 1", link: "68af01ce48490927df92d681" };
-    if (value < 5_000_000_000) return { nome: "OURO 2", link: "68af01ce48490927df92d680" };
-    if (value < 15_000_000_000) return { nome: "OURO 3", link: "68af01ce48490927df92d67f" };
-    if (value < 50_000_000_000) return { nome: "PLATINA 1", link: "68af01ce48490927df92d67e" };
-    if (value < 100_000_000_000) return { nome: "PLATINA 2", link: "68af01ce48490927df92d67d" };
-    if (value < 200_000_000_000) return { nome: "PLATINA 3", link: "68af01ce48490927df92d67c" };
-    if (value < 400_000_000_000) return { nome: "DIAMANTE 1", link: "68af01ce48490927df92d67b" };
-    if (value < 10_000_000_000_000) return { nome: "DIAMANTE 2", link: "68af01ce48490927df92d67a" };
-    return { nome: "DIAMANTE 3", link: "68af01ce48490927df92d679" };
-}
+//function getLigaInfo(value) {
+    //if (value < 5_000_000)  return { nome: "BRONZE 1", link: "68af01ce48490927df92d687" };
+    //if (value < 30_000_000) return { nome: "BRONZE 2", link: "68af01ce48490927df92d686" };
+    //if (value < 100_000_000) return { nome: "BRONZE 3", link: "68af01ce48490927df92d685" };
+    //if (value < 200_000_000) return { nome: "PRATA 1", link: "68af01ce48490927df92d684" };
+    //if (value < 500_000_000) return { nome: "PRATA 2", link: "68af01ce48490927df92d683" };
+    //if (value < 1_000_000_000) return { nome: "PRATA 3", link: "68af01ce48490927df92d682" };
+    //if (value < 2_000_000_000) return { nome: "OURO 1", link: "68af01ce48490927df92d681" };
+    //if (value < 5_000_000_000) return { nome: "OURO 2", link: "68af01ce48490927df92d680" };
+    //if (value < 15_000_000_000) return { nome: "OURO 3", link: "68af01ce48490927df92d67f" };
+    //if (value < 50_000_000_000) return { nome: "PLATINA 1", link: "68af01ce48490927df92d67e" };
+    //if (value < 100_000_000_000) return { nome: "PLATINA 2", link: "68af01ce48490927df92d67d" };
+    //if (value < 200_000_000_000) return { nome: "PLATINA 3", link: "68af01ce48490927df92d67c" };
+    //if (value < 400_000_000_000) return { nome: "DIAMANTE 1", link: "68af01ce48490927df92d67b" };
+    //if (value < 10_000_000_000_000) return { nome: "DIAMANTE 2", link: "68af01ce48490927df92d67a" };
+    //return { nome: "DIAMANTE 3", link: "68af01ce48490927df92d679" };
+//}
 
 
     const linkSala = document.getElementById("linkSala");
@@ -116,10 +116,10 @@ function getLigaInfo(value) {
         const userName = profileData.data.name; 
         const avatarId = profileData.data.avatar_id;
         const urlLiga = profileData.data.league_id;
-        const nomeLiga = profileData.data.league.title.en;
+        const ligaAtual = profileData.data.league.title.en;
 
           console.log(urlLiga);
-          console.log(nomeLiga);
+          console.log(ligaAtual);
           
 
         if (!avatarId || !userName) {
@@ -135,23 +135,19 @@ function getLigaInfo(value) {
 
         const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
         const powerData = await powerDataResponse.json();
-        const ligaAtual = powerData.data.max_power;
+        //const ligaAtual = powerData.data.max_power;
         const poderAtual = powerData.data.current_power;
 
         // Converter poder
         const poderConvertido = convertPower(poderAtual);
 
         // Determinar liga
-        const ligaInfo = getLigaInfo(ligaAtual);
+        //const ligaInfo = getLigaInfo(ligaAtual);
 
         // Atualizar na tela
         document.getElementById('poderAtual').innerText = poderConvertido; 
-        document.getElementById('ligaAtual').innerText = ligaInfo.nome;
+        document.getElementById('ligaAtual').innerText = ligaAtual;
 
-        // Se quiser também exibir o link da liga (exemplo, imagem ou texto escondido)
-        document.getElementById('ligaAtual').setAttribute("data-link", ligaInfo.link);
-
-        console.log("Liga Atual:", ligaInfo.nome, ligaInfo.link);
         console.log("Poder Atual:", poderConvertido);
 
     } catch (error) {
