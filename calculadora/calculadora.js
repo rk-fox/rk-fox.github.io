@@ -13,7 +13,7 @@ async function getCryptoPrices() {
         console.log("LTC:", data.litecoin.usd, "USD /", data.litecoin.brl, "BRL");
         console.log("BNB:", data.binancecoin.usd, "USD /", data.binancecoin.brl, "BRL");
         console.log("POL:", data["polygon-ecosystem-token"].usd, "USD /", data["polygon-ecosystem-token"].brl, "BRL");
-        console.log("XRP:", data.ripple.usd, "USD /", data.xrp.brl, "BRL");
+        console.log("XRP:", data.ripple.usd, "USD /", data.ripple.brl, "BRL");
         console.log("DOGE:", data.dogecoin.usd, "USD /", data.dogecoin.brl, "BRL");
         console.log("ETH:", data.ethereum.usd, "USD /", data.ethereum.brl, "BRL");
         console.log("TRX:", data.tron.usd, "USD /", data.tron.brl, "BRL");
