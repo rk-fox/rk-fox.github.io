@@ -1,4 +1,4 @@
-const script_google = 'https://script.google.com/macros/s/AKfycbwjBJ7wYfdGS9qNIMupNY8_QjptCVBoBYDMOiYH0v83P05hWs82Rm4U08SBBooOB5u6/exec';
+const script_google = 'https://script.google.com/macros/s/AKfycbxXE-hJGU4J2b76mButw9dQggLONaWXanf8yMB9Iy2yHyAJwLlGwoZOwwsIiRhNpFYQ/exec';
 
 // Atualizar a célula H2
 function updateCounterH2() {
