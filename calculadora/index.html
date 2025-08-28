@@ -7,82 +7,6 @@
     <link rel="stylesheet" href="styles5.css">
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="contador.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #f4f4f9;
-    }
-
-    .container {
-      background: #fff;
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: center;
-      max-width: 420px;
-      width: 100%;
-    }
-
-    h2 {
-      margin-bottom: 15px;
-      color: #333;
-    }
-
-    p {
-      margin-bottom: 20px;
-      font-size: 14px;
-      color: #555;
-    }
-
-    input, select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-
-    .input-group {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .input-group input {
-      flex: 1;
-    }
-
-    input:disabled, select:disabled {
-      background: #eee;
-      cursor: not-allowed;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #007bff;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-  </style>
 </head>
 <body>
       <div class="container">
@@ -118,16 +42,15 @@
     <div class="input-group">
       <input type="text" id="poderConta" placeholder="Poder da Conta">
       <select id="unidadePoder">
-        <option value="ZHs">ZHs</option>
-        <option value="EHs">EHs</option>
-        <option value="PHs">PHs</option>
-        <option value="THs">THs</option>
-        <option value="GHs">GHs</option>
+        <option value="Zhs">Zhs</option>
+        <option value="Ehs">Ehs</option>
+        <option value="Phs">Phs</option>
+        <option value="Ths">Ths</option>
+        <option value="Ghs">Ghs</option>
       </select>
     </div>
 
     <button onclick="calcular()">CALCULAR FARM</button>
-  </div>
 
   <script>
     const linkSala = document.getElementById("linkSala");
