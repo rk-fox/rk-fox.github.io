@@ -92,5 +92,4 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         console.log("Liga Atual:", ligaAtual);
         console.log("Poder Atual:", poderAtual);
-        
-
+        }
