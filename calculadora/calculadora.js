@@ -115,6 +115,12 @@ function getLigaInfo(value) {
         const profileData = await profileResponse.json();
         const userName = profileData.data.name; 
         const avatarId = profileData.data.avatar_id;
+        const urlLiga = profileData.league_id;
+        const nomeLiga = profileData.league.en;
+
+          console.log(urlLiga);
+          console.log(nomeLiga);
+          
 
         if (!avatarId || !userName) {
             alert('Erro ao obter o avatar_id ou nome.');
