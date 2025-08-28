@@ -43,24 +43,6 @@ function convertPower(value) {
     return numericValue.toFixed(3).replace('.', ',') + ' Ghs';
 }
 
-// 🔹 Função para determinar a liga
-//function getLigaInfo(value) {
-    //if (value < 5_000_000)  return { nome: "BRONZE 1", link: "68af01ce48490927df92d687" };
-    //if (value < 30_000_000) return { nome: "BRONZE 2", link: "68af01ce48490927df92d686" };
-    //if (value < 100_000_000) return { nome: "BRONZE 3", link: "68af01ce48490927df92d685" };
-    //if (value < 200_000_000) return { nome: "PRATA 1", link: "68af01ce48490927df92d684" };
-    //if (value < 500_000_000) return { nome: "PRATA 2", link: "68af01ce48490927df92d683" };
-    //if (value < 1_000_000_000) return { nome: "PRATA 3", link: "68af01ce48490927df92d682" };
-    //if (value < 2_000_000_000) return { nome: "OURO 1", link: "68af01ce48490927df92d681" };
-    //if (value < 5_000_000_000) return { nome: "OURO 2", link: "68af01ce48490927df92d680" };
-    //if (value < 15_000_000_000) return { nome: "OURO 3", link: "68af01ce48490927df92d67f" };
-    //if (value < 50_000_000_000) return { nome: "PLATINA 1", link: "68af01ce48490927df92d67e" };
-    //if (value < 100_000_000_000) return { nome: "PLATINA 2", link: "68af01ce48490927df92d67d" };
-    //if (value < 200_000_000_000) return { nome: "PLATINA 3", link: "68af01ce48490927df92d67c" };
-    //if (value < 400_000_000_000) return { nome: "DIAMANTE 1", link: "68af01ce48490927df92d67b" };
-    //if (value < 10_000_000_000_000) return { nome: "DIAMANTE 2", link: "68af01ce48490927df92d67a" };
-    //return { nome: "DIAMANTE 3", link: "68af01ce48490927df92d679" };
-//}
 
 
     const linkSala = document.getElementById("linkSala");
@@ -141,14 +123,13 @@ function convertPower(value) {
         // Converter poder
         const poderConvertido = convertPower(poderAtual);
 
-        // Determinar liga
-        //const ligaInfo = getLigaInfo(ligaAtual);
 
         // Atualizar na tela
         document.getElementById('poderAtual').innerText = poderConvertido; 
         document.getElementById('ligaAtual').innerText = ligaAtual;
 
         console.log("Poder Atual:", poderConvertido);
+        console.log("Poder Extendido:", poderAtual);
 
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
