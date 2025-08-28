@@ -50,7 +50,7 @@ async function getCryptoPrices() {
     });
 
     async function calcular() {
-    const linkSala = document.getElementById("linkInput");
+    const linkSala = document.getElementById("linkSala");
     const poderConta = document.getElementById("poderConta");
     const unidadePoder = document.getElementById("unidadePoder");
 
