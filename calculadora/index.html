@@ -25,7 +25,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       text-align: center;
-      max-width: 400px;
+      max-width: 420px;
       width: 100%;
     }
 
@@ -40,16 +40,24 @@
       color: #555;
     }
 
-    input {
-      width: 100%;
+    input, select {
       padding: 10px;
-      margin-bottom: 15px;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 14px;
     }
 
-    input:disabled {
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .input-group input {
+      flex: 1;
+    }
+
+    input:disabled, select:disabled {
       background: #eee;
       cursor: not-allowed;
     }
@@ -77,8 +85,20 @@
     <h2>Calculadora de Farm</h2>
     <p>Preencha <strong>apenas um</strong> dos campos abaixo:</p>
     
+    <!-- Input Link da Sala -->
     <input type="text" id="linkSala" placeholder="Link da Sala">
-    <input type="text" id="poderConta" placeholder="Poder da Conta">
+
+    <!-- Input Poder da Conta + Select Unidade -->
+    <div class="input-group">
+      <input type="text" id="poderConta" placeholder="Poder da Conta">
+      <select id="unidadePoder">
+        <option value="ZHs">ZHs</option>
+        <option value="EHs">EHs</option>
+        <option value="PHs">PHs</option>
+        <option value="THs">THs</option>
+        <option value="GHs">GHs</option>
+      </select>
+    </div>
 
     <button onclick="calcular()">CALCULAR FARM</button>
   </div>
@@ -86,13 +106,16 @@
   <script>
     const linkSala = document.getElementById("linkSala");
     const poderConta = document.getElementById("poderConta");
+    const unidadePoder = document.getElementById("unidadePoder");
 
     // Desativa o outro input quando um é preenchido
     linkSala.addEventListener("input", () => {
       if (linkSala.value.trim() !== "") {
         poderConta.disabled = true;
+        unidadePoder.disabled = true;
       } else {
         poderConta.disabled = false;
+        unidadePoder.disabled = false;
       }
     });
 
@@ -113,7 +136,11 @@
         alert("Apenas um campo deve ser preenchido!");
         return;
       }
-      alert("Cálculo realizado com sucesso! 🚀");
+      if (poderConta.value.trim() !== "") {
+        alert(`Poder informado: ${poderConta.value} ${unidadePoder.value}`);
+      } else {
+        alert(`Link informado: ${linkSala.value}`);
+      }
     }
   </script>
 </body>
