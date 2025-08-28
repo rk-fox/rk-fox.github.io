@@ -179,6 +179,15 @@ input.miner-data {
     font-weight: bold;
 }
 
+.form-table input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd; /* Mantém a borda dos inputs visível */
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
 .form-table input[type="number"] {
     width: 100%;
     padding: 8px;
