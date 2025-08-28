@@ -92,6 +92,80 @@
       }
     }
   </script>
+
+          <div class="calc">
+            <h1>Calculadora de Farm</h1><br>
+            
+            <form id="craft-form">
+                <table class="form-table">
+                    <th colspan="2">Dados do Usuário</th>
+                    <tr>
+                    </tr>
+                    <tr>
+                        <p>Preencha <strong>apenas um</strong> dos campos abaixo:</p>
+                    </tr>
+                    <tr>
+                        <td><label for="xp-desejado">Link do Perfil:</label></td>
+                        <td><input type="number" id="xp-desejado" value="0" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="xp-rlt-craft">XP/RLT Craft:</label></td>
+                        <td><input type="number" id="xp-rlt-craft" value="0" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="xp-rlt-market">XP/RLT Market:</label></td>
+                        <td><input type="number" id="xp-rlt-market" value="0" required></td>
+                    </tr>
+                </table>
+                <table class="form-table">    
+                    <th colspan="4">Receita do Craft</th>
+                <tr>
+                    <td><label for="quantidade-miner1">Quantidade de Miners:</label></td>
+                    <td><input type="number" id="quantidade-miner1" value="0" required></td>
+                    <td><label for="preco-miner1">Preço das Miners:</label></td>
+                    <td><input type="number" id="preco-miner1" value="0" required></td>
+                </tr>
+                <tr>
+                    <td><label for="quantidade-craft1">Quantidade de Peças:</label></td>
+                    <td><input type="number" id="quantidade-craft1" value="0" required></td>
+                    <td><label for="preco-peca-craft1">Preço das Peças:</label></td>
+                    <td><input type="number" id="preco-peca-craft1" value="0" required></td>
+                </tr>
+                <tr>
+                    <td><label for="preco-craft1">Preço do Craft:</label></td>
+                    <td><input type="number" id="preco-craft1" value="0" required></td>
+                    <td><label for="preco-speed1">Preço do Speed-Up:</label></td>
+                    <td><input type="number" id="preco-speed1" value="0" required></td>
+                </tr>
+            <!-- Linha final com uma célula mesclada -->
+                <tr>
+                    <td></td>
+                    <td><label for="cash1">Preço de Venda do Craft:</label></td>
+                    <td><input type="number" id="cash1" value="0" required></td>
+                    <td></td>
+                </tr>
+                </table>
+                
+                <button type="button" onclick="calcular()">Calcular</button>
+            </form>
+
+            <div class="result">
+                <table id="resultado-tabela">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Multi</th>
+                            <th style="width: 20%;">Quantidade</th>
+                            <th style="width: 20%;">Custo</th>
+                            <th style="width: 20%;">Venda</th>
+                            <th style="width: 20%;">Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- As linhas da tabela serão geradas aqui pelo JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
   
         <div class="ref">
             <!-- Start rollercoin.com code -->
