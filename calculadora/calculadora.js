@@ -86,10 +86,13 @@ document.getElementById('searchButton').addEventListener('click', async () => {
 
         const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
         const powerData = await powerDataResponse.json();
-        ligaAtual = powerData.data.max_power;
-        poderAtual = powerData.data.current_power;
-
+        const ligaAtual = powerData.data.max_power;
+        const poderAtual = powerData.data.current_power;
 
         console.log("Liga Atual:", ligaAtual);
         console.log("Poder Atual:", poderAtual);
-        }
+
+    } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+    }
+});
