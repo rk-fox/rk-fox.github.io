@@ -32,66 +32,6 @@
             <input type="checkbox" id="toggle-dark-mode">
             <span class="slider"></span>
         </label>
-    <h2>Calculadora de Farm</h2>
-    <p>Preencha <strong>apenas um</strong> dos campos abaixo:</p>
-    
-    <!-- Input Link da Sala -->
-    <input type="text" id="linkSala" placeholder="Link da Sala">
-
-    <!-- Input Poder da Conta + Select Unidade -->
-    <div class="input-group">
-      <input type="text" id="poderConta" placeholder="Poder da Conta">
-      <select id="unidadePoder">
-        <option value="Zhs">Zhs</option>
-        <option value="Ehs">Ehs</option>
-        <option value="Phs">Phs</option>
-        <option value="Ths">Ths</option>
-        <option value="Ghs">Ghs</option>
-      </select>
-    </div>
-
-    <button onclick="calcular()">CALCULAR FARM</button>
-
-  <script>
-    const linkSala = document.getElementById("linkSala");
-    const poderConta = document.getElementById("poderConta");
-    const unidadePoder = document.getElementById("unidadePoder");
-
-    // Desativa o outro input quando um é preenchido
-    linkSala.addEventListener("input", () => {
-      if (linkSala.value.trim() !== "") {
-        poderConta.disabled = true;
-        unidadePoder.disabled = true;
-      } else {
-        poderConta.disabled = false;
-        unidadePoder.disabled = false;
-      }
-    });
-
-    poderConta.addEventListener("input", () => {
-      if (poderConta.value.trim() !== "") {
-        linkSala.disabled = true;
-      } else {
-        linkSala.disabled = false;
-      }
-    });
-
-    function calcular() {
-      if (linkSala.value.trim() === "" && poderConta.value.trim() === "") {
-        alert("Preencha um dos campos antes de calcular!");
-        return;
-      }
-      if (linkSala.value.trim() !== "" && poderConta.value.trim() !== "") {
-        alert("Apenas um campo deve ser preenchido!");
-        return;
-      }
-      if (poderConta.value.trim() !== "") {
-        alert(`Poder informado: ${poderConta.value} ${unidadePoder.value}`);
-      } else {
-        alert(`Link informado: ${linkSala.value}`);
-      }
-    }
-  </script>
 
           <div class="calc">
             <h1>Calculadora de Farm</h1><br>
@@ -105,48 +45,18 @@
                         <p>Preencha <strong>apenas um</strong> dos campos abaixo:</p>
                     </tr>
                     <tr>
-                        <td><label for="xp-desejado">Link do Perfil:</label></td>
-                        <td><input type="number" id="xp-desejado" value="0" required></td>
+                        <td><label for="linkSala">Link do Perfil:</label></td>
+                        <td><input type="text" id="linkSala" placeholder="Link do Perfil"></td>
                     </tr>
                     <tr>
-                        <td><label for="xp-rlt-craft">XP/RLT Craft:</label></td>
-                        <td><input type="number" id="xp-rlt-craft" value="0" required></td>
+                        <td><label for="poderConta">Poder da Conta:</label></td>
+                        <td><input type="number" id="poderConta" placeholder="Poder da Conta"></td>
+                        <td><select id="unidadePoder"><option value="Zhs">Zhs</option><option value="Ehs">Ehs</option><option value="Phs">Phs</option><option value="Ths">Ths</option><option value="Ghs">Ghs</option></select></td>
                     </tr>
-                    <tr>
-                        <td><label for="xp-rlt-market">XP/RLT Market:</label></td>
-                        <td><input type="number" id="xp-rlt-market" value="0" required></td>
-                    </tr>
-                </table>
-                <table class="form-table">    
-                    <th colspan="4">Receita do Craft</th>
-                <tr>
-                    <td><label for="quantidade-miner1">Quantidade de Miners:</label></td>
-                    <td><input type="number" id="quantidade-miner1" value="0" required></td>
-                    <td><label for="preco-miner1">Preço das Miners:</label></td>
-                    <td><input type="number" id="preco-miner1" value="0" required></td>
-                </tr>
-                <tr>
-                    <td><label for="quantidade-craft1">Quantidade de Peças:</label></td>
-                    <td><input type="number" id="quantidade-craft1" value="0" required></td>
-                    <td><label for="preco-peca-craft1">Preço das Peças:</label></td>
-                    <td><input type="number" id="preco-peca-craft1" value="0" required></td>
-                </tr>
-                <tr>
-                    <td><label for="preco-craft1">Preço do Craft:</label></td>
-                    <td><input type="number" id="preco-craft1" value="0" required></td>
-                    <td><label for="preco-speed1">Preço do Speed-Up:</label></td>
-                    <td><input type="number" id="preco-speed1" value="0" required></td>
-                </tr>
-            <!-- Linha final com uma célula mesclada -->
-                <tr>
-                    <td></td>
-                    <td><label for="cash1">Preço de Venda do Craft:</label></td>
-                    <td><input type="number" id="cash1" value="0" required></td>
-                    <td></td>
-                </tr>
                 </table>
                 
-                <button type="button" onclick="calcular()">Calcular</button>
+                <button onclick="calcular()">CALCULAR FARM</button>
+
             </form>
 
             <div class="result">
