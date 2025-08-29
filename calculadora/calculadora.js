@@ -192,6 +192,8 @@ const hojeUTC = new Date().toISOString().slice(0, 10);
 // Função para buscar os dados
 async function buscarTempos() {
   let resultados = {};
+  let resultados2 = {};
+  let resultados3 = {};
 
   // Seleciona o conjunto de moedas de acordo com a liga
   const moedas = ligaMoedasMap[urlLiga] ?? {}; // se não achar, fica objeto vazio
@@ -261,6 +263,7 @@ async function buscarTempos() {
 
   console.log(resultados3); // mostra no console
   return resultados3;
+  }
 }
 
 
