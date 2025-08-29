@@ -338,7 +338,7 @@ function atualizarTabela(poderAtual, cryptoPrices) {
     return;
   }
   const moedasAtivas = ligaMoedasMap[urlLiga] ?? {};
-  const { duration, blockReward, totalPower } = dadosTempos;
+  const { duration, block_reward, total_power } = dadosTempos;
 
   for (const [moeda, balanceKey] of Object.entries(moedasAtivas)) {
     const tempoSec = Number(duration[`${moeda}tempo`]);
