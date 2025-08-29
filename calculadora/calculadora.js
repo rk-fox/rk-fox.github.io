@@ -308,7 +308,7 @@ async function buscarTempos() {
         document.getElementById('ligaAtual').innerText = ligaAtual;
 
         console.log("Poder Atual:", poderConvertido);
-        console.log("Poder Extendido:", poderAtual);
+        console.log("Poder Estendido:", poderAtual);
 
         // Executa
         buscarTempos();
