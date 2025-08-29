@@ -231,17 +231,7 @@ async function buscarTempos() {
 
     // 🔹 Validação inicial
     if (linkSala.value.trim() === "" && poderConta.value.trim() === "") {
-        alert("Preencha um dos campos antes de calcular!");
-        return;
-    }
-    if (linkSala.value.trim() !== "" && poderConta.value.trim() !== "") {
-        alert("Apenas um campo deve ser preenchido!");
-        return;
-    }
-
-    // 🔹 Caso seja preenchido o poder manualmente
-    if (poderConta.value.trim() !== "") {
-        alert(`Poder informado: ${poderConta.value} ${unidadePoder.value}`);
+        alert("Preencha o link da sala!");
         return;
     }
 
