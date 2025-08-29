@@ -68,6 +68,53 @@ function convertPower(value) {
       }
     });
 
+// Dicionário de moedas e tokens correspondentes
+const moedas = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+  ETH: "ETH_SMALL",
+  TRX: "TRX_SMALL",
+  SOL: "SOL_SMALL"
+};
+
+
+// Pegar a data UTC no formato YYYY-MM-DD
+const hojeUTC = new Date().toISOString().slice(0, 10);
+
+// Função para buscar os dados
+async function buscarTempos() {
+  let resultados = {};
+
+  for (let [moeda, token] of Object.entries(moedas)) {
+    const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=duration&leagueId=${urlLiga}`;
+    
+    try {
+      const resp = await fetch(url);
+      const json = await resp.json();
+
+      // Captura data.value
+      const valor = json?.data?.value ?? null;
+      
+      // Cria variável no padrão desejado
+      resultados[`${moeda}tempo`] = valor;
+
+    } catch (err) {
+      console.error(`Erro ao buscar ${moeda}:`, err);
+      resultados[`${moeda}tempo`] = null;
+    }
+  }
+
+  console.log(resultados); // mostra no console
+  return resultados;
+}
+
+
     async function calcular() {
     const linkSala = document.getElementById("linkSala");
     const poderConta = document.getElementById("poderConta");
@@ -102,6 +149,10 @@ function convertPower(value) {
 
           console.log(urlLiga);
           console.log(ligaAtual);
+
+          // Executa
+buscarTempos();
+
           
 
         if (!avatarId || !userName) {
@@ -134,4 +185,6 @@ function convertPower(value) {
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
     }
+
+          
 }
