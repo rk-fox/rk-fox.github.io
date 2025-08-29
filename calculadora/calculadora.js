@@ -196,7 +196,7 @@ async function buscarTempos() {
     try {
       const resp = await fetch(url);
       const json = await resp.json();
-      resultados2[`${moeda}bloco`] = json.data[0]?.value / 1000000 ?? null;
+      resultados2[`${moeda}bloco`] = json.data[0]?.value ?? null;
     } catch (err) {
       console.error(`Erro ao buscar ${moeda} (bloco):`, err);
       resultados2[`${moeda}bloco`] = null;
