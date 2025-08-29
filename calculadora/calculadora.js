@@ -72,7 +72,76 @@ function convertPower(value) {
     });
 
 // Dicionário de moedas e tokens correspondentes
-const moedas = {
+const moedasb1 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+};
+
+const moedasb2 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+};
+
+const moedasb3 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+};
+
+const moedasp1 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+};
+
+const moedasp2 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+};
+
+const moedasp3 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+  ETH: "ETH_SMALL",
+};
+
+const moedaso1 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+  ETH: "ETH_SMALL",
+  TRX: "TRX_SMALL",
+};
+const moedaso2 = {
   RLT: "RLT",
   RST: "RST",
   BTC: "SAT",
@@ -85,7 +154,37 @@ const moedas = {
   TRX: "TRX_SMALL",
   SOL: "SOL_SMALL"
 };
+const moedasd = {
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+  ETH: "ETH_SMALL",
+  TRX: "TRX_SMALL",
+  SOL: "SOL_SMALL"
+};
 
+// 🔹 Mapa que associa liga -> conjunto de moedas
+const ligaMoedasMap = {
+  "68af01ce48490927df92d687": moedasb1,
+  "68af01ce48490927df92d686": moedasb2,
+  "68af01ce48490927df92d685": moedasb3,
+  "68af01ce48490927df92d684": moedasp1,
+  "68af01ce48490927df92d683": moedasp2,
+  "68af01ce48490927df92d682": moedasp3,
+  "68af01ce48490927df92d681": moedaso1,
+  "68af01ce48490927df92d680": moedaso2,
+  "68af01ce48490927df92d67f": moedaso2,
+  "68af01ce48490927df92d67e": moedaso2,
+  "68af01ce48490927df92d67d": moedaso2,
+  "68af01ce48490927df92d67c": moedaso2,
+  "68af01ce48490927df92d67b": moedasd,
+  "68af01ce48490927df92d67a": moedasd,
+  "68af01ce48490927df92d679": moedasd,
+};
 
 // Pegar a data UTC no formato YYYY-MM-DD
 const hojeUTC = new Date().toISOString().slice(0, 10);
@@ -94,6 +193,9 @@ const hojeUTC = new Date().toISOString().slice(0, 10);
 async function buscarTempos() {
   let resultados = {};
 
+  // Seleciona o conjunto de moedas de acordo com a liga
+  const moedas = ligaMoedasMap[urlLiga] ?? {}; // se não achar, fica objeto vazio
+      
   for (let [moeda, token] of Object.entries(moedas)) {
     const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=duration&leagueId=${urlLiga}`;
     
