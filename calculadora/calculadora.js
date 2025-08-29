@@ -112,13 +112,13 @@ async function buscarTempos() {
           .then(resp => resp.json())
           .then(json => {
             let value = json.data[0]?.value ?? null;
-            if (group === 'blockReward' && value !== null) {
+            if (group === 'block_reward' && value !== null) {
               const divisor = divisoresMoedas[moeda];
               if (divisor) {
                 value = value / divisor;
               }
             }
-            dataGroups[group][`${moeda}${group.replace('blockR', 'b').replace('totalP', 'poder').replace('d', 't').replace('uration', 'tempo').replace('eward', 'loco').replace('ower', 'rede')}`] = value;
+            dataGroups[group][`${moeda}${group.replace('block_r', 'b').replace('total_p', 'poder').replace('d', 't').replace('uration', 'tempo').replace('eward', 'loco').replace('ower', 'rede')}`] = value;
           })
           .catch(err => console.error(`Erro ao buscar ${moeda} (${group}):`, err))
       );
