@@ -1,53 +1,54 @@
 let urlLiga = ""; // variável global
-
+let dadosTempos = {}; // Variável global para armazenar os resultados de buscarTempos
+let dadosMinimos = {}; // Variável global para armazenar os resultados de buscarMinimos
 
 async function getCryptoPrices() {
-      const url = "https://summer-night-03c0.rk-foxx-159.workers.dev/?https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,litecoin,binancecoin,polygon-ecosystem-token,ripple,dogecoin,ethereum,tron&vs_currencies=usd,brl";
-      
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Erro na requisição da API");
-        
-        const data = await res.json();
-        
-        // Exibe no console
-        console.log("Cotações em tempo real:");
-        console.log("BTC:", data.bitcoin.usd, "USD /", data.bitcoin.brl, "BRL");
-        console.log("LTC:", data.litecoin.usd, "USD /", data.litecoin.brl, "BRL");
-        console.log("BNB:", data.binancecoin.usd, "USD /", data.binancecoin.brl, "BRL");
-        console.log("POL:", data["polygon-ecosystem-token"].usd, "USD /", data["polygon-ecosystem-token"].brl, "BRL");
-        console.log("XRP:", data.ripple.usd, "USD /", data.ripple.brl, "BRL");
-        console.log("DOGE:", data.dogecoin.usd, "USD /", data.dogecoin.brl, "BRL");
-        console.log("ETH:", data.ethereum.usd, "USD /", data.ethereum.brl, "BRL");
-        console.log("TRX:", data.tron.usd, "USD /", data.tron.brl, "BRL");
-        
-      } catch (err) {
-        console.error("Erro ao buscar preços:", err);
-      }
-    }
+  const url = "https://summer-night-03c0.rk-foxx-159.workers.dev/?https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,litecoin,binancecoin,polygon-ecosystem-token,ripple,dogecoin,ethereum,tron&vs_currencies=usd,brl";
 
-    // Executa assim que o site abre
-    getCryptoPrices();
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Erro na requisição da API");
+
+    const data = await res.json();
+
+    // Exibe no console
+    console.log("Cotações em tempo real:");
+    console.log("BTC:", data.bitcoin.usd, "USD /", data.bitcoin.brl, "BRL");
+    console.log("LTC:", data.litecoin.usd, "USD /", data.litecoin.brl, "BRL");
+    console.log("BNB:", data.binancecoin.usd, "USD /", data.binancecoin.brl, "BRL");
+    console.log("POL:", data["polygon-ecosystem-token"].usd, "USD /", data["polygon-ecosystem-token"].brl, "BRL");
+    console.log("XRP:", data.ripple.usd, "USD /", data.ripple.brl, "BRL");
+    console.log("DOGE:", data.dogecoin.usd, "USD /", data.dogecoin.brl, "BRL");
+    console.log("ETH:", data.ethereum.usd, "USD /", data.ethereum.brl, "BRL");
+    console.log("TRX:", data.tron.usd, "USD /", data.tron.brl, "BRL");
+
+  } catch (err) {
+    console.error("Erro ao buscar preços:", err);
+  }
+}
+
+// Executa assim que o site abre
+getCryptoPrices();
 
 // 🔹 Função para converter poder em Ghs / Ths / Phs / Ehs
 function convertPower(value) {
-    const absValue = Math.abs(value);
-    const numericValue = parseFloat(value);
+  const absValue = Math.abs(value);
+  const numericValue = parseFloat(value);
 
-    if (absValue >= 1e9) {
-        return (numericValue / 1e9).toFixed(3).replace('.', ',') + ' Ehs';
-    }
-    if (absValue >= 1e6) {
-        return (numericValue / 1e6).toFixed(3).replace('.', ',') + ' Phs';
-    }
-    if (absValue >= 1e3) {
-        return (numericValue / 1e3).toFixed(3).replace('.', ',') + ' Ths';
-    }
-    return numericValue.toFixed(3).replace('.', ',') + ' Ghs';
+  if (absValue >= 1e9) {
+    return (numericValue / 1e9).toFixed(3).replace('.', ',') + ' Ehs';
+  }
+  if (absValue >= 1e6) {
+    return (numericValue / 1e6).toFixed(3).replace('.', ',') + ' Phs';
+  }
+  if (absValue >= 1e3) {
+    return (numericValue / 1e3).toFixed(3).replace('.', ',') + ' Ths';
+  }
+  return numericValue.toFixed(3).replace('.', ',') + ' Ghs';
 }
 
 
-    const linkSala = document.getElementById("linkSala");
+const linkSala = document.getElementById("linkSala");
 
 
 // Dicionário de moedas e tokens correspondentes
@@ -220,75 +221,78 @@ async function buscarTempos() {
   console.log("Total Power:", resultados3);
 
   // 🔹 Retorna tudo junto
-  return { duration: resultados, blockReward: resultados2, totalPower: resultados3 };
+  return {
+    duration: resultados,
+    blockReward: resultados2,
+    totalPower: resultados3
+  };
 }
 
 
-    async function calcular() {
-    const linkSala = document.getElementById("linkSala");
-    const poderConta = document.getElementById("poderConta");
-    const unidadePoder = document.getElementById("unidadePoder");
+async function calcular() {
+  const linkSala = document.getElementById("linkSala");
+  const poderConta = document.getElementById("poderConta");
+  const unidadePoder = document.getElementById("unidadePoder");
 
-    // 🔹 Validação inicial
-    if (linkSala.value.trim() === "" && poderConta.value.trim() === "") {
-        alert("Preencha o link da sala!");
-        return;
+  // 🔹 Validação inicial
+  if (linkSala.value.trim() === "" && poderConta.value.trim() === "") {
+    alert("Preencha o link da sala!");
+    return;
+  }
+
+  // 🔹 Caso seja preenchido o link da sala (faz o fetch na API)
+  try {
+    const userSala = linkSala.value.trim();
+
+    const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userSala}`);
+    const profileData = await profileResponse.json();
+    const userName = profileData.data.name;
+    const avatarId = profileData.data.avatar_id;
+    urlLiga = profileData.data.league_id;
+    const ligaAtual = profileData.data.league.title.en;
+
+    console.log(urlLiga);
+    console.log(ligaAtual);
+
+
+    if (!avatarId || !userName) {
+      alert('Erro ao obter o avatar_id ou nome.');
+      return;
     }
 
-    // 🔹 Caso seja preenchido o link da sala (faz o fetch na API)
-    try {
-        const userSala = linkSala.value.trim();
-
-        const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userSala}`); 
-        const profileData = await profileResponse.json();
-        const userName = profileData.data.name; 
-        const avatarId = profileData.data.avatar_id;
-        urlLiga = profileData.data.league_id;
-        const ligaAtual = profileData.data.league.title.en;
-
-          console.log(urlLiga);
-          console.log(ligaAtual);
-
-          
-          
-
-        if (!avatarId || !userName) {
-            alert('Erro ao obter o avatar_id ou nome.');
-            return;
-        }
-
-        const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
-        document.getElementById('avatar').src = avatarUrl;
-        document.getElementById('avatar').style.display = 'block';
-        document.getElementById('nome').innerText = userName;
-        
-
-        const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
-        const powerData = await powerDataResponse.json();
-        //const ligaAtual = powerData.data.max_power;
-        const poderAtual = powerData.data.current_power;
-
-        // Converter poder
-        const poderConvertido = convertPower(poderAtual);
+    const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
+    document.getElementById('avatar').src = avatarUrl;
+    document.getElementById('avatar').style.display = 'block';
+    document.getElementById('nome').innerText = userName;
 
 
-        // Atualizar na tela
-        document.getElementById('poderAtual').innerText = poderConvertido; 
-        document.getElementById('ligaAtual').innerText = ligaAtual;
+    const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+    const powerData = await powerDataResponse.json();
+    const poderAtual = powerData.data.current_power;
 
-        console.log("Poder Atual:", poderConvertido);
-        console.log("Poder Estendido:", poderAtual);
+    // Converter poder
+    const poderConvertido = convertPower(poderAtual);
 
-        // Executa
-        buscarTempos();
 
-          atualizarTabela(poderAtual);
+    // Atualizar na tela
+    document.getElementById('poderAtual').innerText = poderConvertido;
+    document.getElementById('ligaAtual').innerText = ligaAtual;
 
-    } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-    }
+    console.log("Poder Atual:", poderConvertido);
+    console.log("Poder Estendido:", poderAtual);
 
-          
+    // ⭐ CORREÇÃO AQUI: Aguardar as funções assíncronas
+    dadosTempos = await buscarTempos(); // Armazena o resultado na variável global
+    dadosMinimos = await buscarMinimos(); // Armazena o resultado na variável global
+
+    // Agora sim, chame atualizarTabela com os dados já carregados
+    atualizarTabela(poderAtual);
+
+  } catch (error) {
+    console.error("Erro ao buscar dados:", error);
+  }
+
+
 }
 
 // Função para buscar os "min" das moedas desejadas
@@ -326,25 +330,40 @@ async function buscarMinimos() {
   }
 }
 
-// Executar função
-buscarMinimos();
-
-
+// ⭐ REMOVIDO: `buscarMinimos()` não precisa ser executado aqui
+// Ele será executado dentro da função `calcular` após a `urlLiga` ser definida.
 
 
 // ------- helpers de escrita -------
 function setCell(id, value, decimals = 6, suffix = "") {
   const el = document.getElementById(id);
-  if (!el) return;
+  if (!el) {
+    console.warn(`Elemento com id '${id}' não encontrado.`); // Adiciona um aviso
+    return;
+  }
   if (value == null || !isFinite(value)) {
     el.innerText = "-";
   } else {
-    el.innerText = Number(value).toFixed(decimals) + (suffix || "");
+    // Usa toLocaleString para formatação de números, o que é mais robusto para decimais e separadores.
+    // Ajusta o 'minimumFractionDigits' e 'maximumFractionDigits' conforme o 'decimals' desejado.
+    el.innerText = value.toLocaleString('pt-BR', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    }) + (suffix || "");
   }
 }
+
 function setText(id, text) {
   const el = document.getElementById(id);
-  if (el) el.innerText = text;
+  if (!el) {
+    console.warn(`Elemento com id '${id}' não encontrado.`); // Adiciona um aviso
+    return;
+  }
+  if (text == null) {
+    el.innerText = "-";
+  } else {
+    el.innerText = text;
+  }
 }
 
 // ------- atualização da tabela -------
@@ -354,59 +373,71 @@ function atualizarTabela(poderAtual) {
     console.warn("urlLiga não definida ainda.");
     return;
   }
+  // Garante que dadosTempos e dadosMinimos foram carregados
   if (!dadosTempos || !dadosTempos.duration || !dadosTempos.blockReward || !dadosTempos.totalPower) {
     console.warn("dadosTempos ainda não foi preenchido.");
     return;
   }
+  if (!dadosMinimos || Object.keys(dadosMinimos).length === 0) {
+    console.warn("dadosMinimos ainda não foi preenchido ou está vazio.");
+    // Pode ser um caso onde não há mínimos para as moedas da liga
+    // ou a API não retornou nada. Ajuste conforme sua necessidade.
+  }
+
   // conjunto de moedas válidas para a liga atual
   const moedasAtivas = ligaMoedasMap[urlLiga] ?? {};
 
-  const duration = dadosTempos.duration;       // ex.: { RLTtempo: 600, BTCtempo: 900, ... }
+  const duration = dadosTempos.duration; // ex.: { RLTtempo: 600, BTCtempo: 900, ... }
   const blockReward = dadosTempos.blockReward; // ex.: { RLTbloco: 0.1, BTCbloco: 2500, ... }
-  const totalPower = dadosTempos.totalPower;   // ex.: { RLTpoderrede: 1.2e12, ... }
+  const totalPower = dadosTempos.totalPower; // ex.: { RLTpoderrede: 1.2e12, ... }
 
   for (const [moeda, balanceKey] of Object.entries(moedasAtivas)) {
     // ler valores brutos
-    const tempoSec   = Number(duration[`${moeda}tempo`]);       // segundos por bloco
-    const bloco      = Number(blockReward[`${moeda}bloco`]);    // recompensa por bloco (na moeda)
-    const poderRede  = Number(totalPower[`${moeda}poderrede`]); // poder total da rede
+    const tempoSec = Number(duration[`${moeda}tempo`]); // segundos por bloco
+    const bloco = Number(blockReward[`${moeda}bloco`]); // recompensa por bloco (na moeda)
+    const poderRede = Number(totalPower[`${moeda}poderrede`]); // poder total da rede
+
+    // logs para depuração
+    console.log(`--- Moeda: ${moeda} ---`);
+    console.log(`tempoSec: ${tempoSec}, bloco: ${bloco}, poderRede: ${poderRede}, poderAtual: ${poderAtual}`);
 
     // cálculos
-    const tempoMin   = isFinite(tempoSec) && tempoSec > 0 ? (tempoSec / 60) : null; // exibir na coluna TEMPO
-    const fblk       = (isFinite(bloco) && isFinite(poderRede) && isFinite(poderAtual))
-                       ? (poderAtual / (poderRede + poderAtual)) * bloco
-                       : null;
-    const fdia       = (isFinite(tempoSec) && tempoSec > 0 && isFinite(fblk))
-                       ? (86400 / tempoSec) * fblk
-                       : null;
-    const fmes       = isFinite(fdia) ? (fdia * 30) : null;
+    const tempoMin = isFinite(tempoSec) && tempoSec > 0 ? (tempoSec / 60) : null; // exibir na coluna TEMPO
+    const fblk = (isFinite(bloco) && isFinite(poderRede) && poderRede !== 0 && isFinite(poderAtual)) ?
+      (poderAtual / (poderRede + poderAtual)) * bloco :
+      null;
+    const fdia = (isFinite(tempoSec) && tempoSec > 0 && isFinite(fblk)) ?
+      (86400 / tempoSec) * fblk :
+      null;
+    const fmes = isFinite(fdia) ? (fdia * 30) : null;
 
     // Saque: não calcular para RLT, RST, LTC
-    let saqueTexto = "-";
+    let saqueTexto = "X"; // Mudei para 'X' conforme sua tabela HTML
     if (!["RLT", "RST", "LTC"].includes(moeda)) {
       const minimo = Number(dadosMinimos?.[balanceKey]); // ex.: "SAT", "MATIC_SMALL", etc.
+      console.log(`Mínimo para ${moeda} (${balanceKey}): ${minimo}`);
+
       // fórmula pedida: minimo / fblk * (tempoSec / 60)  => minutos
       // para exibir em "dias" como no seu exemplo, dividimos por 1440:
-      const minutosParaSaque = (isFinite(minimo) && isFinite(fblk) && fblk > 0 && isFinite(tempoSec) && tempoSec > 0)
-        ? (minimo / fblk) * (tempoSec / 60)
-        : null;
+      const minutosParaSaque = (isFinite(minimo) && isFinite(fblk) && fblk > 0 && isFinite(tempoSec) && tempoSec > 0) ?
+        (minimo / fblk) * (tempoSec / 60) :
+        null;
 
       if (isFinite(minutosParaSaque)) {
         const dias = minutosParaSaque / 1440;
-        saqueTexto = `${dias.toFixed(2)} dias`;
+        saqueTexto = `${dias.toFixed(2).replace('.', ',')} dias`; // Formatar para vírgula
       } else {
         saqueTexto = "-";
       }
     }
 
     // escrever na tabela
-    setCell(`${moeda}tempo`, tempoMin, 2);   // TEMPO = segundos/60 (min)
-    setCell(`${moeda}bloco`, bloco, 8);      // RECOMPENSA por bloco
-    setCell(`${moeda}fblk`,  fblk, 8);       // FARM por bloco
-    setCell(`${moeda}fdia`,  fdia, 6);       // FARM por dia
-    setCell(`${moeda}fmes`,  fmes, 6);       // FARM por mês
-    setText(`${moeda}saque`, saqueTexto);    // SAQUE (ou "-")
+    setCell(`${moeda}tempo`, tempoMin, 2); // TEMPO = segundos/60 (min)
+    setCell(`${moeda}bloco`, bloco, 8); // RECOMPENSA por bloco
+    setCell(`${moeda}fblk`, fblk, 8); // FARM por bloco
+    setCell(`${moeda}fdia`, fdia, 6); // FARM por dia
+    setCell(`${moeda}fmes`, fmes, 6); // FARM por mês
+    setText(`${moeda}saque`, saqueTexto); // SAQUE (ou "-")
   }
+  console.log("Tabela atualizada!");
 }
-
-
