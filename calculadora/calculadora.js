@@ -342,8 +342,8 @@ function atualizarTabela(poderAtual, cryptoPrices) {
 
   for (const [moeda, balanceKey] of Object.entries(moedasAtivas)) {
     const tempoSec = Number(duration[`${moeda}tempo`]);
-    const bloco = Number(blockReward[`${moeda}bloco`]);
-    const poderRede = Number(totalPower[`${moeda}poderrede`]);
+    const bloco = Number(block_reward[`${moeda}bloco`]);
+    const poderRede = Number(total_power[`${moeda}poderrede`]);
 
     const tempoMin = tempoSec > 0 ? (tempoSec / 60) : null;
     
