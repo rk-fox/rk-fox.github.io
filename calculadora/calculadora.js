@@ -19,6 +19,20 @@ const coinGeckoIds = {
   SOL: 'solana'
 };
 
+/**
+ * Trunca um número para um número específico de casas decimais sem arredondamento.
+ * @param {number} num O número para truncar.
+ * @param {number} places A quantidade de casas decimais a manter.
+ * @returns {number} O número truncado.
+ */
+function truncateNumber(num, places) {
+  if (num == null || !isFinite(num)) {
+    return num;
+  }
+  const factor = Math.pow(10, places);
+  return Math.trunc(num * factor) / factor;
+}
+
 // Mapa que associa cada moeda ao seu divisor específico para o block reward
 const divisoresMoedas = {
   RLT: 1e6,  // 1,000,000
@@ -202,25 +216,29 @@ function convertPower(value) {
 }
 
 /**
- * Define o conteúdo de uma célula da tabela com um valor numérico simples.
+ * Define o conteúdo de uma célula da tabela com um valor numérico simples, sem zeros à direita.
  */
 function setCell(id, value, decimals = 6) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.innerText = (value == null || !isFinite(value)) ? "-" : value.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  
+  if (value == null || !isFinite(value)) {
+    el.innerText = "-";
+    return;
+  }
+
+  // 1. Trunca o número para evitar arredondamento
+  const truncatedValue = truncateNumber(value, decimals);
+  
+  // 2. Formata para exibir no máximo 'decimals' casas, sem forçar zeros
+  el.innerText = truncatedValue.toLocaleString('pt-BR', {
+    maximumFractionDigits: decimals 
+  });
 }
 
-/**
- * Define o conteúdo de uma célula da tabela com um texto.
- */
-function setText(id, text) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.innerText = text ?? "-";
-}
 
 /**
- * Define o conteúdo de uma célula com valores de cripto, USD e BRL em três linhas.
+ * Define o conteúdo de uma célula com valores de cripto, USD e BRL, sem zeros à direita no valor da cripto.
  */
 function setComplexCell(id, cryptoValue, decimals, moeda, cryptoPrices) {
   const el = document.getElementById(id);
@@ -231,7 +249,14 @@ function setComplexCell(id, cryptoValue, decimals, moeda, cryptoPrices) {
     return;
   }
 
-  const cryptoFormatted = cryptoValue.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  // 1. Trunca o valor da cripto para evitar arredondamento
+  const truncatedCryptoValue = truncateNumber(cryptoValue, decimals);
+  
+  // 2. Formata o valor da cripto para exibir sem zeros desnecessários
+  const cryptoFormatted = truncatedCryptoValue.toLocaleString('pt-BR', {
+    maximumFractionDigits: decimals
+  });
+
   const prices = cryptoPrices[moeda];
 
   if (!prices) {
@@ -239,6 +264,7 @@ function setComplexCell(id, cryptoValue, decimals, moeda, cryptoPrices) {
     return;
   }
 
+  // Usa o valor original (mais preciso) para os cálculos de moeda fiduciária
   const usdValue = cryptoValue * prices.usd;
   const brlValue = cryptoValue * prices.brl;
   const usdFormatted = usdValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
