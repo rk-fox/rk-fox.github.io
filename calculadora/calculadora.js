@@ -150,9 +150,7 @@ async function buscarTempos() {
           console.log(urlLiga);
           console.log(ligaAtual);
 
-          // Executa
-buscarTempos();
-
+          
           
 
         if (!avatarId || !userName) {
@@ -181,6 +179,9 @@ buscarTempos();
 
         console.log("Poder Atual:", poderConvertido);
         console.log("Poder Extendido:", poderAtual);
+
+        // Executa
+        buscarTempos();
 
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
