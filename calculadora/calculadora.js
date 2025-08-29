@@ -88,7 +88,7 @@ const moedas = {
 const hojeUTC = new Date().toISOString().slice(0, 10);
 
 // Função para buscar os dados
-async function buscarTempos() {
+async function buscarTempos(urlLiga) {
   let resultados = {};
 
   for (let [moeda, token] of Object.entries(moedas)) {
@@ -144,7 +144,8 @@ async function buscarTempos() {
         const profileData = await profileResponse.json();
         const userName = profileData.data.name; 
         const avatarId = profileData.data.avatar_id;
-        let urlLiga = profileData.data.league_id;
+        const urlLiga = profileData.data.league_id;
+        await buscarTempos(urlLiga);
         const ligaAtual = profileData.data.league.title.en;
 
           console.log(urlLiga);
