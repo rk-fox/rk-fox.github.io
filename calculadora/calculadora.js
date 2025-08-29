@@ -147,6 +147,26 @@ const moedasd = {
   SOL: "SOL_SMALL"
 };
 
+
+
+// Mapa que associa cada moeda ao seu divisor específico
+const divisoresMoedas = {
+  RLT: 1e6,      // 1,000,000
+  RST: 1e6,      // 1,000,000
+  BTC: 1e10,     // 10,000,000,000
+  LTC: 1e8,      // 100,000,000
+  BNB: 1e10,     // 10,000,000,000
+  POL: 1e10,     // 10,000,000,000 (MATIC)
+  XRP: 1e6,      // 1,000,000
+  DOGE: 1e4,     // 10,000
+  ETH: 1e10,     // 10,000,000,000
+  TRX: 1e10,     // 10,000,000,000
+  SOL: 1e9       // 1,000,000,000
+};
+
+
+
+
 // 🔹 Mapa que associa liga -> conjunto de moedas
 const ligaMoedasMap = {
   "68af01ce48490927df92d687": moedasb1,
@@ -191,17 +211,40 @@ async function buscarTempos() {
   }
 
   // 🔹 block_reward
-  for (let [moeda, token] of Object.entries(moedas)) {
-    const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=block_reward&leagueId=${urlLiga}`;
-    try {
-      const resp = await fetch(url);
-      const json = await resp.json();
-      resultados2[`${moeda}bloco`] = json.data[0]?.value ?? null;
-    } catch (err) {
-      console.error(`Erro ao buscar ${moeda} (bloco):`, err);
-      resultados2[`${moeda}bloco`] = null;
+for (let [moeda, token] of Object.entries(moedas)) {
+  const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=block_reward&leagueId=${urlLiga}`;
+  
+  try {
+    const resp = await fetch(url);
+    const json = await resp.json();
+
+    // 1. Pega o valor bruto da API. Se não existir, será null.
+    const valorBruto = json.data[0]?.value ?? null;
+    let valorFinal = null;
+
+    // 2. Verifica se o valor bruto não é nulo antes de calcular.
+    if (valorBruto !== null) {
+      // 3. Procura o divisor correspondente à moeda atual no mapa.
+      const divisor = divisoresMoedas[moeda];
+
+      // 4. Se encontrou um divisor, faz a divisão. Senão, usa o valor bruto.
+      if (divisor) {
+        valorFinal = valorBruto / divisor;
+      } else {
+        // Caso de segurança: se uma moeda não estiver no mapa, usamos o valor original e avisamos.
+        console.warn(`Nenhum divisor encontrado para a moeda: ${moeda}. Usando valor bruto.`);
+        valorFinal = valorBruto;
+      }
     }
+    
+    // 5. Armazena o valor final (calculado ou nulo) no objeto de resultados.
+    resultados2[`${moeda}bloco`] = valorFinal;
+
+  } catch (err) {
+    console.error(`Erro ao buscar ${moeda} (bloco):`, err);
+    resultados2[`${moeda}bloco`] = null;
   }
+}
 
   // 🔹 total_power
   for (let [moeda, token] of Object.entries(moedas)) {
