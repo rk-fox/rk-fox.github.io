@@ -327,34 +327,84 @@ async function buscarMinimos() {
 // Executar função
 buscarMinimos();
 
-function atualizarTabela(moeda, minimoSaque = 0) {
-    // Cálculos baseados nas variáveis globais já definidas
-    let tempo = RLTtempo / 60; 
-    let bloco = RLTbloco;
-    let fblk = (poderAtual / (RLTpoderrede + poderAtual)) * bloco;
-    let fdia = (86400 / RLTtempo) * fblk;
-    let fmes = fdia * 30;
 
-    // Calcular saque apenas para moedas que não sejam RLT, RST ou LTC
-    let saque = "-";
-    if (moeda !== "RLT" && moeda !== "RST" && moeda !== "LTC") {
-        saque = (minimoSaque / SOLfblk) * (SOLtempo / 60);
-        saque = saque.toFixed(4);
-    }
 
-    // Atualiza a tabela dinamicamente
-    let tabela = document.getElementById("tabela");
-    let linhas = tabela.getElementsByTagName("tr");
 
-    for (let i = 0; i < linhas.length; i++) {
-        let celulas = linhas[i].getElementsByTagName("td");
-        if (celulas.length > 0 && celulas[0].innerText === moeda) {
-            celulas[1].innerText = tempo.toFixed(2); // tempo (min)
-            celulas[2].innerText = bloco;            // bloco
-            celulas[3].innerText = fblk.toFixed(6);  // fração bloco
-            celulas[4].innerText = fdia.toFixed(6);  // fração dia
-            celulas[5].innerText = fmes.toFixed(6);  // fração mês
-            celulas[6].innerText = saque;            // saque (ou "-")
-        }
-    }
+// ------- helpers de escrita -------
+function setCell(id, value, decimals = 6, suffix = "") {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (value == null || !isFinite(value)) {
+    el.innerText = "-";
+  } else {
+    el.innerText = Number(value).toFixed(decimals) + (suffix || "");
+  }
 }
+function setText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = text;
+}
+
+// ------- atualização da tabela -------
+function atualizarTabela(poderAtual) {
+  // guardas
+  if (!urlLiga) {
+    console.warn("urlLiga não definida ainda.");
+    return;
+  }
+  if (!dadosTempos || !dadosTempos.duration || !dadosTempos.blockReward || !dadosTempos.totalPower) {
+    console.warn("dadosTempos ainda não foi preenchido.");
+    return;
+  }
+  // conjunto de moedas válidas para a liga atual
+  const moedasAtivas = ligaMoedasMap[urlLiga] ?? {};
+
+  const duration = dadosTempos.duration;       // ex.: { RLTtempo: 600, BTCtempo: 900, ... }
+  const blockReward = dadosTempos.blockReward; // ex.: { RLTbloco: 0.1, BTCbloco: 2500, ... }
+  const totalPower = dadosTempos.totalPower;   // ex.: { RLTpoderrede: 1.2e12, ... }
+
+  for (const [moeda, balanceKey] of Object.entries(moedasAtivas)) {
+    // ler valores brutos
+    const tempoSec   = Number(duration[`${moeda}tempo`]);       // segundos por bloco
+    const bloco      = Number(blockReward[`${moeda}bloco`]);    // recompensa por bloco (na moeda)
+    const poderRede  = Number(totalPower[`${moeda}poderrede`]); // poder total da rede
+
+    // cálculos
+    const tempoMin   = isFinite(tempoSec) && tempoSec > 0 ? (tempoSec / 60) : null; // exibir na coluna TEMPO
+    const fblk       = (isFinite(bloco) && isFinite(poderRede) && isFinite(poderAtual))
+                       ? (poderAtual / (poderRede + poderAtual)) * bloco
+                       : null;
+    const fdia       = (isFinite(tempoSec) && tempoSec > 0 && isFinite(fblk))
+                       ? (86400 / tempoSec) * fblk
+                       : null;
+    const fmes       = isFinite(fdia) ? (fdia * 30) : null;
+
+    // Saque: não calcular para RLT, RST, LTC
+    let saqueTexto = "-";
+    if (!["RLT", "RST", "LTC"].includes(moeda)) {
+      const minimo = Number(dadosMinimos?.[balanceKey]); // ex.: "SAT", "MATIC_SMALL", etc.
+      // fórmula pedida: minimo / fblk * (tempoSec / 60)  => minutos
+      // para exibir em "dias" como no seu exemplo, dividimos por 1440:
+      const minutosParaSaque = (isFinite(minimo) && isFinite(fblk) && fblk > 0 && isFinite(tempoSec) && tempoSec > 0)
+        ? (minimo / fblk) * (tempoSec / 60)
+        : null;
+
+      if (isFinite(minutosParaSaque)) {
+        const dias = minutosParaSaque / 1440;
+        saqueTexto = `${dias.toFixed(2)} dias`;
+      } else {
+        saqueTexto = "-";
+      }
+    }
+
+    // escrever na tabela
+    setCell(`${moeda}tempo`, tempoMin, 2);   // TEMPO = segundos/60 (min)
+    setCell(`${moeda}bloco`, bloco, 8);      // RECOMPENSA por bloco
+    setCell(`${moeda}fblk`,  fblk, 8);       // FARM por bloco
+    setCell(`${moeda}fdia`,  fdia, 6);       // FARM por dia
+    setCell(`${moeda}fmes`,  fmes, 6);       // FARM por mês
+    setText(`${moeda}saque`, saqueTexto);    // SAQUE (ou "-")
+  }
+}
+
+atualizarTabela(poderAtual);
