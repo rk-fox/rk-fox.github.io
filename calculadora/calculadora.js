@@ -358,3 +358,66 @@ async function buscarMinimos() {
 // Executar função
 buscarMinimos();
 
+// 🔹 Lista de moedas que aparecem na tabela
+const moedasTabela = [
+  "RLT", "RST", "BTC", "LTC", "BNB",
+  "POL", "XRP", "DOGE", "ETH", "TRX", "SOL"
+];
+
+// 🔹 Função para atualizar a tabela
+function atualizarTabela(resultados, minimos, poderAtual) {
+  moedasTabela.forEach(moeda => {
+    try {
+      const tempo = resultados[`${moeda}tempo`] ?? null;
+      const bloco = resultados[`${moeda}bloco`] ?? null;   // supondo que vc já tenha capturado o reward/block
+      const poderRede = resultados[`${moeda}poderrede`] ?? null; // supondo que tenha guardado isso também
+
+      if (!tempo || !bloco || !poderRede) {
+        console.warn(`Dados incompletos para ${moeda}`);
+        return;
+      }
+
+      // 🔹 Cálculos
+      const tempoMin = (tempo / 60).toFixed(2); 
+      const fblk = (poderAtual / (poderRede + poderAtual)) * bloco;
+      const fdia = (86400 / tempo) * fblk;
+      const fmes = fdia * 30;
+
+      let saque = "-";
+      if (!["RLT", "RST", "LTC"].includes(moeda)) {
+        const minimo = minimos[moedaMap[moeda]] ?? null;
+        if (minimo) {
+          saque = ((minimo / fblk) * tempo / 60).toFixed(1) + " dias";
+        }
+      }
+
+      // 🔹 Atualizar na tabela
+      document.getElementById(`${moeda}tempo`).innerText = tempoMin;
+      document.getElementById(`${moeda}bloco`).innerText = bloco;
+      document.getElementById(`${moeda}fblk`).innerText = fblk.toFixed(6);
+      document.getElementById(`${moeda}fdia`).innerText = fdia.toFixed(6);
+      document.getElementById(`${moeda}fmes`).innerText = fmes.toFixed(6);
+      document.getElementById(`${moeda}saque`).innerText = saque;
+
+    } catch (err) {
+      console.error(`Erro ao atualizar ${moeda}:`, err);
+    }
+  });
+}
+
+// 🔹 Mapeamento de tokens para balance_key usado no buscarMinimos()
+const moedaMap = {
+  "RLT": "RLT",
+  "RST": "RST",
+  "BTC": "SAT",
+  "LTC": "LTC_SMALL",
+  "BNB": "BNB_SMALL",
+  "POL": "MATIC_SMALL",
+  "XRP": "XRP_SMALL",
+  "DOGE": "DOGE_SMALL",
+  "ETH": "ETH_SMALL",
+  "TRX": "TRX_SMALL",
+  "SOL": "SOL_SMALL"
+};
+
+
