@@ -99,8 +99,8 @@ async function buscarTempos() {
   const moedas = ligaMoedasMap[urlLiga] ?? {};
   const dataGroups = {
     duration: {},
-    blockReward: {},
-    totalPower: {}
+    block_reward: {},
+    total_power: {}
   };
   const promises = [];
 
