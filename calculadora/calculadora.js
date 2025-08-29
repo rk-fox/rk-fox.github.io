@@ -327,19 +327,32 @@ async function buscarMinimos() {
 // Executar função
 buscarMinimos();
 
-// 🔹 Lista de moedas que aparecem na tabela
-const moedasTabela = [
-  "RLT", "RST", "BTC", "LTC", "BNB",
-  "POL", "XRP", "DOGE", "ETH", "TRX", "SOL"
-];
-
 // 🔹 Função para atualizar a tabela
 function atualizarTabela(resultados, minimos, poderAtual) {
+  const moedasTabela = [
+    "RLT", "RST", "BTC", "LTC", "BNB",
+    "POL", "XRP", "DOGE", "ETH", "TRX", "SOL"
+  ];
+
+  const moedaMap = {
+    "RLT": "RLT",
+    "RST": "RST",
+    "BTC": "SAT",
+    "LTC": "LTC_SMALL",
+    "BNB": "BNB_SMALL",
+    "POL": "MATIC_SMALL",
+    "XRP": "XRP_SMALL",
+    "DOGE": "DOGE_SMALL",
+    "ETH": "ETH_SMALL",
+    "TRX": "TRX_SMALL",
+    "SOL": "SOL_SMALL"
+  };
+
   moedasTabela.forEach(moeda => {
     try {
-      const tempo = resultados[`${moeda}tempo`] ?? null;
-      const bloco = resultados[`${moeda}bloco`] ?? null;   // supondo que vc já tenha capturado o reward/block
-      const poderRede = resultados[`${moeda}poderrede`] ?? null; // supondo que tenha guardado isso também
+      const tempo = resultados.duration[`${moeda}tempo`] ?? null;
+      const bloco = resultados.blockReward[`${moeda}bloco`] ?? null;
+      const poderRede = resultados.totalPower[`${moeda}poderrede`] ?? null;
 
       if (!tempo || !bloco || !poderRede) {
         console.warn(`Dados incompletos para ${moeda}`);
@@ -347,7 +360,7 @@ function atualizarTabela(resultados, minimos, poderAtual) {
       }
 
       // 🔹 Cálculos
-      const tempoMin = (tempo / 60).toFixed(2); 
+      const tempoMin = (tempo / 60).toFixed(2);
       const fblk = (poderAtual / (poderRede + poderAtual)) * bloco;
       const fdia = (86400 / tempo) * fblk;
       const fmes = fdia * 30;
@@ -374,19 +387,61 @@ function atualizarTabela(resultados, minimos, poderAtual) {
   });
 }
 
-// 🔹 Mapeamento de tokens para balance_key usado no buscarMinimos()
-const moedaMap = {
-  "RLT": "RLT",
-  "RST": "RST",
-  "BTC": "SAT",
-  "LTC": "LTC_SMALL",
-  "BNB": "BNB_SMALL",
-  "POL": "MATIC_SMALL",
-  "XRP": "XRP_SMALL",
-  "DOGE": "DOGE_SMALL",
-  "ETH": "ETH_SMALL",
-  "TRX": "TRX_SMALL",
-  "SOL": "SOL_SMALL"
-};
+// 🔹 Ajuste no final do calcular()
+async function calcular() {
+  const linkSala = document.getElementById("linkSala");
+  const poderConta = document.getElementById("poderConta");
+  const unidadePoder = document.getElementById("unidadePoder");
 
+  if (linkSala.value.trim() === "" && poderConta.value.trim() === "") {
+    alert("Preencha um dos campos antes de calcular!");
+    return;
+  }
+  if (linkSala.value.trim() !== "" && poderConta.value.trim() !== "") {
+    alert("Apenas um campo deve ser preenchido!");
+    return;
+  }
 
+  if (poderConta.value.trim() !== "") {
+    alert(`Poder informado: ${poderConta.value} ${unidadePoder.value}`);
+    return;
+  }
+
+  try {
+    const userSala = linkSala.value.trim();
+    const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userSala}`); 
+    const profileData = await profileResponse.json();
+    const userName = profileData.data.name; 
+    const avatarId = profileData.data.avatar_id;
+    urlLiga = profileData.data.league_id;
+    const ligaAtual = profileData.data.league.title.en;
+
+    if (!avatarId || !userName) {
+      alert('Erro ao obter o avatar_id ou nome.');
+      return;
+    }
+
+    const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
+    document.getElementById('avatar').src = avatarUrl;
+    document.getElementById('avatar').style.display = 'block';
+    document.getElementById('nome').innerText = userName;
+
+    const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+    const powerData = await powerDataResponse.json();
+    const poderAtual = powerData.data.current_power;
+
+    const poderConvertido = convertPower(poderAtual);
+    document.getElementById('poderAtual').innerText = poderConvertido; 
+    document.getElementById('ligaAtual').innerText = ligaAtual;
+
+    // 🔹 Buscar tempos, blocos, poder da rede
+    const resultados = await buscarTempos();
+    // 🔹 Buscar mínimos de saque
+    const minimos = await buscarMinimos();
+    // 🔹 Atualizar a tabela
+    atualizarTabela(resultados, minimos, poderAtual);
+
+  } catch (error) {
+    console.error("Erro ao buscar dados:", error);
+  }
+}
