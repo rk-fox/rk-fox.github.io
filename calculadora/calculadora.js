@@ -365,7 +365,7 @@ function atualizarTabela(poderAtual, cryptoPrices) {
 
     setCell(`${moeda}tempo`, tempoMin, 2);
     setCell(`${moeda}bloco`, bloco, 8);
-    setText(`${moeda}saque`, saqueTexto);
+    setCell(`${moeda}saque`, saqueTexto);
     
     setComplexCell(`${moeda}fblk`, fblk, 8, moeda, cryptoPrices);
     setComplexCell(`${moeda}fdia`, fdia, 6, moeda, cryptoPrices);
