@@ -144,7 +144,7 @@ async function buscarTempos() {
         const profileData = await profileResponse.json();
         const userName = profileData.data.name; 
         const avatarId = profileData.data.avatar_id;
-        const urlLiga = profileData.data.league_id;
+        let urlLiga = profileData.data.league_id;
         const ligaAtual = profileData.data.league.title.en;
 
           console.log(urlLiga);
