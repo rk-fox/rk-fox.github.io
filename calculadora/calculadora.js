@@ -282,6 +282,8 @@ async function buscarTempos() {
         // Executa
         buscarTempos();
 
+          atualizarTabela(poderAtual);
+
     } catch (error) {
         console.error("Erro ao buscar dados:", error);
     }
@@ -295,7 +297,7 @@ async function buscarMinimos() {
 
   // Lista das moedas que você quer filtrar
   const chavesDesejadas = [
-    "RST", "SAT", "LTC_SMALL", "BNB_SMALL", "MATIC_SMALL",
+    "SAT", "BNB_SMALL", "MATIC_SMALL",
     "XRP_SMALL", "DOGE_SMALL", "ETH_SMALL", "TRX_SMALL", "SOL_SMALL"
   ];
 
@@ -407,4 +409,4 @@ function atualizarTabela(poderAtual) {
   }
 }
 
-atualizarTabela(poderAtual);
+
