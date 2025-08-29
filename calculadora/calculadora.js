@@ -1,3 +1,6 @@
+let urlLiga = ""; // variável global
+
+
 async function getCryptoPrices() {
       const url = "https://summer-night-03c0.rk-foxx-159.workers.dev/?https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,litecoin,binancecoin,polygon-ecosystem-token,ripple,dogecoin,ethereum,tron&vs_currencies=usd,brl";
       
@@ -88,7 +91,7 @@ const moedas = {
 const hojeUTC = new Date().toISOString().slice(0, 10);
 
 // Função para buscar os dados
-async function buscarTempos(urlLiga) {
+async function buscarTempos() {
   let resultados = {};
 
   for (let [moeda, token] of Object.entries(moedas)) {
@@ -144,8 +147,7 @@ async function buscarTempos(urlLiga) {
         const profileData = await profileResponse.json();
         const userName = profileData.data.name; 
         const avatarId = profileData.data.avatar_id;
-        const urlLiga = profileData.data.league_id;
-        await buscarTempos(urlLiga);
+        urlLiga = profileData.data.league_id;
         const ligaAtual = profileData.data.league.title.en;
 
           console.log(urlLiga);
