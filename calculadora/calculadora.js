@@ -217,6 +217,50 @@ async function buscarTempos() {
 
   console.log(resultados); // mostra no console
   return resultados;
+
+  for (let [moeda, token] of Object.entries(moedas)) {
+    const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=block_reward&leagueId=${urlLiga}`;
+    
+    try {
+      const resp = await fetch(url);
+      const json = await resp.json();
+
+      // Captura data.value
+      const valor = json.data[0]?.value ?? null; // usa null se não tiver valor
+      
+      // Cria variável no padrão desejado
+      resultados2[`${moeda}tempo`] = valor;
+
+    } catch (err) {
+      console.error(`Erro ao buscar ${moeda}:`, err);
+      resultados2[`${moeda}tempo`] = null;
+    }
+  }
+
+  console.log(resultados2); // mostra no console
+  return resultados2;
+      
+  for (let [moeda, token] of Object.entries(moedas)) {
+    const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=total_power&leagueId=${urlLiga}`;
+    
+    try {
+      const resp = await fetch(url);
+      const json = await resp.json();
+
+      // Captura data.value
+      const valor = json.data[0]?.value ?? null; // usa null se não tiver valor
+      
+      // Cria variável no padrão desejado
+      resultados3[`${moeda}tempo`] = valor;
+
+    } catch (err) {
+      console.error(`Erro ao buscar ${moeda}:`, err);
+      resultados3[`${moeda}tempo`] = null;
+    }
+  }
+
+  console.log(resultados3); // mostra no console
+  return resultados3;
 }
 
 
