@@ -97,37 +97,64 @@ async function getCryptoPrices() {
  */
 async function buscarTempos() {
   const moedas = ligaMoedasMap[urlLiga] ?? {};
-  const dataGroups = {
+  
+  const resultados = {
     duration: {},
     block_reward: {},
     total_power: {}
   };
+
+  
   const promises = [];
 
-  for (const [moeda, token] of Object.entries(moedas)) {
-    for (const group of Object.keys(dataGroups)) {
-      const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=${group}&leagueId=${urlLiga}`;
-      promises.push(
-        fetch(url)
-          .then(resp => resp.json())
-          .then(json => {
-            let value = json.data[0]?.value ?? null;
-            if (group === 'block_reward' && value !== null) {
-              const divisor = divisoresMoedas[moeda];
-              if (divisor) {
-                value = value / divisor;
-              }
-            }
-            dataGroups[group][`${moeda}${group.replace('block_r', 'b').replace('total_p', 'poder').replace('d', 't').replace('uration', 'tempo').replace('eward', 'loco').replace('ower', 'rede')}`] = value;
-          })
-          .catch(err => console.error(`Erro ao buscar ${moeda} (${group}):`, err))
-      );
-    }
-  }
+  // Mapeamento simples dos grupos da API para nossos sufixos de chave
+    const groupMap = {
+        duration: { key: 'tempo', obj: resultados.duration },
+        block_reward: { key: 'bloco', obj: resultados.block_reward },
+        total_power: { key: 'poderrede', obj: resultados.total_power }
+    };
 
-  await Promise.all(promises);
-  console.log("Dados da Liga:", dataGroups);
-  return dataGroups;
+    for (const [moeda, token] of Object.entries(moedas)) {
+        for (const [apiGroup, { key: suffix, obj: targetObject }] of Object.entries(groupMap)) {
+            const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=${apiGroup}&leagueId=${urlLiga}`;
+            
+            promises.push(
+                fetch(url)
+                    .then(resp => {
+                        if (!resp.ok) return { data: [] }; // Evita erro se a requisição falhar
+                        return resp.json();
+                    })
+                    .then(json => {
+                        let value = json.data[0]?.value ?? null;
+
+                        // Aplica o divisor específico para block_reward
+                        if (apiGroup === 'block_reward' && value !== null) {
+                            const divisor = divisoresMoedas[moeda];
+                            if (divisor) {
+                                value = value / divisor;
+                            } else {
+                                console.warn(`Nenhum divisor encontrado para a moeda: ${moeda}. Usando valor bruto.`);
+                            }
+                        }
+                        
+                        // Constrói a chave correta e armazena no objeto de destino
+                        targetObject[`${moeda}${suffix}`] = value;
+                    })
+                    .catch(err => {
+                        console.error(`Erro ao buscar ${moeda} (${apiGroup}):`, err);
+                        // Garante que a chave exista como nula em caso de erro de rede
+                        const finalKey = `${moeda}${suffix}`;
+                        targetObject[finalKey] = null;
+                    })
+            );
+        }
+    }
+
+    // Espera todas as requisições terminarem
+    await Promise.all(promises);
+    
+    console.log("Dados da Liga (corrigido):", resultados);
+    return resultados;
 }
 
 /**
