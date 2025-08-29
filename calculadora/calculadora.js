@@ -102,7 +102,7 @@ async function buscarTempos() {
       const json = await resp.json();
 
       // Captura data.value
-      const valor = json?.data?.value ?? null;
+      const valor = json.data[0]?.value ?? null; // usa null se não tiver valor
       
       // Cria variável no padrão desejado
       resultados[`${moeda}tempo`] = valor;
