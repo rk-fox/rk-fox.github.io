@@ -1,34 +1,174 @@
 let urlLiga = ""; // variável global
 
-// 🔹 Variáveis globais para guardar os dados
-let dadosPrecos = {};
-let dadosTempos = {};
-let dadosMinimos = {};
 
-// =========================
-// Buscar preços
-// =========================
 async function getCryptoPrices() {
-  const url = "https://summer-night-03c0.rk-foxx-159.workers.dev/?https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,litecoin,binancecoin,polygon-ecosystem-token,ripple,dogecoin,ethereum,tron&vs_currencies=usd,brl";
-  
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Erro na requisição da API");
-    
-    dadosPrecos = await res.json(); // 🔹 salva global
-    
-    console.log("Cotações em tempo real:", dadosPrecos);
+      const url = "https://summer-night-03c0.rk-foxx-159.workers.dev/?https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,litecoin,binancecoin,polygon-ecosystem-token,ripple,dogecoin,ethereum,tron&vs_currencies=usd,brl";
+      
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Erro na requisição da API");
+        
+        const data = await res.json();
+        
+        // Exibe no console
+        console.log("Cotações em tempo real:");
+        console.log("BTC:", data.bitcoin.usd, "USD /", data.bitcoin.brl, "BRL");
+        console.log("LTC:", data.litecoin.usd, "USD /", data.litecoin.brl, "BRL");
+        console.log("BNB:", data.binancecoin.usd, "USD /", data.binancecoin.brl, "BRL");
+        console.log("POL:", data["polygon-ecosystem-token"].usd, "USD /", data["polygon-ecosystem-token"].brl, "BRL");
+        console.log("XRP:", data.ripple.usd, "USD /", data.ripple.brl, "BRL");
+        console.log("DOGE:", data.dogecoin.usd, "USD /", data.dogecoin.brl, "BRL");
+        console.log("ETH:", data.ethereum.usd, "USD /", data.ethereum.brl, "BRL");
+        console.log("TRX:", data.tron.usd, "USD /", data.tron.brl, "BRL");
+        
+      } catch (err) {
+        console.error("Erro ao buscar preços:", err);
+      }
+    }
 
-  } catch (err) {
-    console.error("Erro ao buscar preços:", err);
-  }
+    // Executa assim que o site abre
+    getCryptoPrices();
+
+// 🔹 Função para converter poder em Ghs / Ths / Phs / Ehs
+function convertPower(value) {
+    const absValue = Math.abs(value);
+    const numericValue = parseFloat(value);
+
+    if (absValue >= 1e9) {
+        return (numericValue / 1e9).toFixed(3).replace('.', ',') + ' Ehs';
+    }
+    if (absValue >= 1e6) {
+        return (numericValue / 1e6).toFixed(3).replace('.', ',') + ' Phs';
+    }
+    if (absValue >= 1e3) {
+        return (numericValue / 1e3).toFixed(3).replace('.', ',') + ' Ths';
+    }
+    return numericValue.toFixed(3).replace('.', ',') + ' Ghs';
 }
 
-// =========================
-// Buscar tempos (duration, bloco, poder rede)
-// =========================
+
+    const linkSala = document.getElementById("linkSala");
+
+
+// Dicionário de moedas e tokens correspondentes
+const moedasb1 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+};
+
+const moedasb2 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+};
+
+const moedasb3 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+};
+
+const moedasp1 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+};
+
+const moedasp2 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+};
+
+const moedasp3 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+  ETH: "ETH_SMALL",
+};
+
+const moedaso1 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+  ETH: "ETH_SMALL",
+  TRX: "TRX_SMALL",
+};
+const moedaso2 = {
+  RLT: "RLT",
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+  ETH: "ETH_SMALL",
+  TRX: "TRX_SMALL",
+  SOL: "SOL_SMALL"
+};
+const moedasd = {
+  RST: "RST",
+  BTC: "SAT",
+  LTC: "LTC_SMALL",
+  BNB: "BNB_SMALL",
+  POL: "MATIC_SMALL",
+  XRP: "XRP_SMALL",
+  DOGE: "DOGE_SMALL",
+  ETH: "ETH_SMALL",
+  TRX: "TRX_SMALL",
+  SOL: "SOL_SMALL"
+};
+
+// 🔹 Mapa que associa liga -> conjunto de moedas
+const ligaMoedasMap = {
+  "68af01ce48490927df92d687": moedasb1,
+  "68af01ce48490927df92d686": moedasb2,
+  "68af01ce48490927df92d685": moedasb3,
+  "68af01ce48490927df92d684": moedasp1,
+  "68af01ce48490927df92d683": moedasp2,
+  "68af01ce48490927df92d682": moedasp3,
+  "68af01ce48490927df92d681": moedaso1,
+  "68af01ce48490927df92d680": moedaso2,
+  "68af01ce48490927df92d67f": moedaso2,
+  "68af01ce48490927df92d67e": moedaso2,
+  "68af01ce48490927df92d67d": moedaso2,
+  "68af01ce48490927df92d67c": moedaso2,
+  "68af01ce48490927df92d67b": moedasd,
+  "68af01ce48490927df92d67a": moedasd,
+  "68af01ce48490927df92d679": moedasd,
+};
+
+// Pegar a data UTC no formato YYYY-MM-DD
 const hojeUTC = new Date().toISOString().slice(0, 10);
 
+// Função para buscar os dados
 async function buscarTempos() {
   let resultados = {};
   let resultados2 = {};
@@ -36,38 +176,124 @@ async function buscarTempos() {
 
   const moedas = ligaMoedasMap[urlLiga] ?? {};
 
+  // 🔹 duration
   for (let [moeda, token] of Object.entries(moedas)) {
+    const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=duration&leagueId=${urlLiga}`;
     try {
-      // duration
-      let resp = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=duration&leagueId=${urlLiga}`);
-      let json = await resp.json();
+      const resp = await fetch(url);
+      const json = await resp.json();
       resultados[`${moeda}tempo`] = json.data[0]?.value ?? null;
-
-      // bloco
-      resp = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=block_reward&leagueId=${urlLiga}`);
-      json = await resp.json();
-      resultados2[`${moeda}bloco`] = json.data[0]?.value ?? null;
-
-      // poder rede
-      resp = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=total_power&leagueId=${urlLiga}`);
-      json = await resp.json();
-      resultados3[`${moeda}poderrede`] = json.data[0]?.value ?? null;
-
     } catch (err) {
-      console.error(`Erro ao buscar dados de ${moeda}:`, err);
+      console.error(`Erro ao buscar ${moeda} (duration):`, err);
+      resultados[`${moeda}tempo`] = null;
     }
   }
 
-  dadosTempos = { duration: resultados, blockReward: resultados2, totalPower: resultados3 }; // 🔹 salva global
-  console.log("Dados de tempos:", dadosTempos);
+  // 🔹 block_reward
+  for (let [moeda, token] of Object.entries(moedas)) {
+    const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=block_reward&leagueId=${urlLiga}`;
+    try {
+      const resp = await fetch(url);
+      const json = await resp.json();
+      resultados2[`${moeda}bloco`] = json.data[0]?.value ?? null;
+    } catch (err) {
+      console.error(`Erro ao buscar ${moeda} (bloco):`, err);
+      resultados2[`${moeda}bloco`] = null;
+    }
+  }
+
+  // 🔹 total_power
+  for (let [moeda, token] of Object.entries(moedas)) {
+    const url = `https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/league/network-info-by-day?from=${hojeUTC}&to=${hojeUTC}&currency=${token}&groupBy=total_power&leagueId=${urlLiga}`;
+    try {
+      const resp = await fetch(url);
+      const json = await resp.json();
+      resultados3[`${moeda}poderrede`] = json.data[0]?.value ?? null;
+    } catch (err) {
+      console.error(`Erro ao buscar ${moeda} (poderrede):`, err);
+      resultados3[`${moeda}poderrede`] = null;
+    }
+  }
+
+  console.log("Duration:", resultados);
+  console.log("Block Reward:", resultados2);
+  console.log("Total Power:", resultados3);
+
+  // 🔹 Retorna tudo junto
+  return { duration: resultados, blockReward: resultados2, totalPower: resultados3 };
 }
 
-// =========================
-// Buscar mínimos
-// =========================
+
+    async function calcular() {
+    const linkSala = document.getElementById("linkSala");
+    const poderConta = document.getElementById("poderConta");
+    const unidadePoder = document.getElementById("unidadePoder");
+
+    // 🔹 Validação inicial
+    if (linkSala.value.trim() === "" && poderConta.value.trim() === "") {
+        alert("Preencha o link da sala!");
+        return;
+    }
+
+    // 🔹 Caso seja preenchido o link da sala (faz o fetch na API)
+    try {
+        const userSala = linkSala.value.trim();
+
+        const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userSala}`); 
+        const profileData = await profileResponse.json();
+        const userName = profileData.data.name; 
+        const avatarId = profileData.data.avatar_id;
+        urlLiga = profileData.data.league_id;
+        const ligaAtual = profileData.data.league.title.en;
+
+          console.log(urlLiga);
+          console.log(ligaAtual);
+
+          
+          
+
+        if (!avatarId || !userName) {
+            alert('Erro ao obter o avatar_id ou nome.');
+            return;
+        }
+
+        const avatarUrl = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
+        document.getElementById('avatar').src = avatarUrl;
+        document.getElementById('avatar').style.display = 'block';
+        document.getElementById('nome').innerText = userName;
+        
+
+        const powerDataResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+        const powerData = await powerDataResponse.json();
+        //const ligaAtual = powerData.data.max_power;
+        const poderAtual = powerData.data.current_power;
+
+        // Converter poder
+        const poderConvertido = convertPower(poderAtual);
+
+
+        // Atualizar na tela
+        document.getElementById('poderAtual').innerText = poderConvertido; 
+        document.getElementById('ligaAtual').innerText = ligaAtual;
+
+        console.log("Poder Atual:", poderConvertido);
+        console.log("Poder Estendido:", poderAtual);
+
+        // Executa
+        buscarTempos();
+
+    } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+    }
+
+          
+}
+
+// Função para buscar os "min" das moedas desejadas
 async function buscarMinimos() {
   const url = "https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/wallet/get-currencies-config";
 
+  // Lista das moedas que você quer filtrar
   const chavesDesejadas = [
     "RST", "SAT", "LTC_SMALL", "BNB_SMALL", "MATIC_SMALL",
     "XRP_SMALL", "DOGE_SMALL", "ETH_SMALL", "TRX_SMALL", "SOL_SMALL"
@@ -80,72 +306,55 @@ async function buscarMinimos() {
     const json = await resp.json();
     const moedas = json.data.currencies_config;
 
+    // Filtrar apenas as moedas desejadas
     const resultados = {};
+
     for (let moeda of moedas) {
       if (chavesDesejadas.includes(moeda.balance_key)) {
         resultados[moeda.balance_key] = moeda.min;
       }
     }
 
-    dadosMinimos = resultados; // 🔹 salva global
-    console.log("Mínimos das moedas:", dadosMinimos);
+    console.log("Mínimos das moedas:", resultados);
+    return resultados;
 
   } catch (err) {
     console.error("Erro ao buscar mínimos:", err);
-    dadosMinimos = {};
+    return {};
   }
 }
 
-// =========================
-// Calcular (usar dados já buscados)
-// =========================
-async function calcular() {
-  const linkSala = document.getElementById("linkSala");
-  
-  if (linkSala.value.trim() === "") {
-    alert("Preencha o link da sala!");
-    return;
-  }
+// Executar função
+buscarMinimos();
 
-  try {
-    const userSala = linkSala.value.trim();
+function atualizarTabela(moeda, minimoSaque = 0) {
+    // Cálculos baseados nas variáveis globais já definidas
+    let tempo = RLTtempo / 60; 
+    let bloco = RLTbloco;
+    let fblk = (poderAtual / (RLTpoderrede + poderAtual)) * bloco;
+    let fdia = (86400 / RLTtempo) * fblk;
+    let fmes = fdia * 30;
 
-    const profileResponse = await fetch(`https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/profile/public-user-profile-data/${userSala}`); 
-    const profileData = await profileResponse.json();
-
-    const userName = profileData.data.name; 
-    const avatarId = profileData.data.avatar_id;
-    urlLiga = profileData.data.league_id;
-    const ligaAtual = profileData.data.league.title.en;
-
-    if (!avatarId || !userName) {
-      alert('Erro ao obter o avatar_id ou nome.');
-      return;
+    // Calcular saque apenas para moedas que não sejam RLT, RST ou LTC
+    let saque = "-";
+    if (moeda !== "RLT" && moeda !== "RST" && moeda !== "LTC") {
+        saque = (minimoSaque / SOLfblk) * (SOLtempo / 60);
+        saque = saque.toFixed(4);
     }
 
-    document.getElementById('avatar').src = `https://avatars.rollercoin.com/static/avatars/thumbnails/50/${avatarId}.png`;
-    document.getElementById('avatar').style.display = 'block';
-    document.getElementById('nome').innerText = userName;
+    // Atualiza a tabela dinamicamente
+    let tabela = document.getElementById("tabela");
+    let linhas = tabela.getElementsByTagName("tr");
 
-    document.getElementById('ligaAtual').innerText = ligaAtual;
-
-    // 🔹 Aqui você usa dadosPrecos, dadosTempos e dadosMinimos
-    console.log("Dados para cálculo:");
-    console.log("Preços:", dadosPrecos);
-    console.log("Tempos:", dadosTempos);
-    console.log("Mínimos:", dadosMinimos);
-
-    // 🔹 Agora só falta você aplicar suas fórmulas e atualizar a tabela
-    // exemplo (BTC): reward = (blockReward / totalPower) * poderConta
-    // exemplo: verificar mínimo em dadosMinimos["SAT"]
-
-  } catch (error) {
-    console.error("Erro ao buscar dados:", error);
-  }
+    for (let i = 0; i < linhas.length; i++) {
+        let celulas = linhas[i].getElementsByTagName("td");
+        if (celulas.length > 0 && celulas[0].innerText === moeda) {
+            celulas[1].innerText = tempo.toFixed(2); // tempo (min)
+            celulas[2].innerText = bloco;            // bloco
+            celulas[3].innerText = fblk.toFixed(6);  // fração bloco
+            celulas[4].innerText = fdia.toFixed(6);  // fração dia
+            celulas[5].innerText = fmes.toFixed(6);  // fração mês
+            celulas[6].innerText = saque;            // saque (ou "-")
+        }
+    }
 }
-
-// =========================
-// Executar funções iniciais
-// =========================
-getCryptoPrices();
-buscarMinimos();
