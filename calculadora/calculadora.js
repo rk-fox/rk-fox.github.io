@@ -216,10 +216,10 @@ async function buscarTempos() {
     try {
       const resp = await fetch(url);
       const json = await resp.json();
-      resultados2[`${moeda}reward`] = json.data[0]?.value ?? null;
+      resultados2[`${moeda}bloco`] = json.data[0]?.value ?? null;
     } catch (err) {
-      console.error(`Erro ao buscar ${moeda} (reward):`, err);
-      resultados2[`${moeda}reward`] = null;
+      console.error(`Erro ao buscar ${moeda} (bloco):`, err);
+      resultados2[`${moeda}bloco`] = null;
     }
   }
 
@@ -229,10 +229,10 @@ async function buscarTempos() {
     try {
       const resp = await fetch(url);
       const json = await resp.json();
-      resultados3[`${moeda}power`] = json.data[0]?.value ?? null;
+      resultados3[`${moeda}poderrede`] = json.data[0]?.value ?? null;
     } catch (err) {
-      console.error(`Erro ao buscar ${moeda} (power):`, err);
-      resultados3[`${moeda}power`] = null;
+      console.error(`Erro ao buscar ${moeda} (poderrede):`, err);
+      resultados3[`${moeda}poderrede`] = null;
     }
   }
 
