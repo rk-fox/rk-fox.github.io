@@ -319,3 +319,42 @@ async function buscarTempos() {
 
           
 }
+
+// Função para buscar os "min" das moedas desejadas
+async function buscarMinimos() {
+  const url = "https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/wallet/get-currencies-config";
+
+  // Lista das moedas que você quer filtrar
+  const chavesDesejadas = [
+    "RST", "SAT", "LTC_SMALL", "BNB_SMALL", "MATIC_SMALL",
+    "XRP_SMALL", "DOGE_SMALL", "ETH_SMALL", "TRX_SMALL", "SOL_SMALL"
+  ];
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error("Erro ao buscar dados da API");
+
+    const json = await resp.json();
+    const moedas = json.data.currencies_config;
+
+    // Filtrar apenas as moedas desejadas
+    const resultados = {};
+
+    for (let moeda of moedas) {
+      if (chavesDesejadas.includes(moeda.balance_key)) {
+        resultados[moeda.balance_key] = moeda.min;
+      }
+    }
+
+    console.log("Mínimos das moedas:", resultados);
+    return resultados;
+
+  } catch (err) {
+    console.error("Erro ao buscar mínimos:", err);
+    return {};
+  }
+}
+
+// Executar função
+buscarMinimos();
+
