@@ -286,12 +286,12 @@ function atualizarTabela(poderAtual, cryptoPrices) {
   }
 
   const moedasAtivas = ligaMoedasMap[urlLiga] ?? {};
-  const { duration, blockReward, totalPower } = dadosTempos;
+  const { duration, block_reward, total_power } = dadosTempos;
 
   for (const [moeda, balanceKey] of Object.entries(moedasAtivas)) {
     const tempoSec = Number(duration[`${moeda}tempo`]);
-    const bloco = Number(blockReward[`${moeda}bloco`]);
-    const poderRede = Number(totalPower[`${moeda}poderrede`]);
+    const bloco = Number(block_reward[`${moeda}bloco`]);
+    const poderRede = Number(total_power[`${moeda}poderrede`]);
 
     const tempoMin = tempoSec > 0 ? (tempoSec / 60) : null;
     const fblk = (poderRede > 0) ? (poderAtual / (poderRede + poderAtual)) * bloco : null;
