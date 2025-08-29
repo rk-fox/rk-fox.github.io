@@ -341,31 +341,40 @@ function atualizarTabela(poderAtual, cryptoPrices) {
   const { duration, block_reward, total_power } = dadosTempos;
 
   for (const [moeda, balanceKey] of Object.entries(moedasAtivas)) {
-    const tempoSec = Number(duration[`${moeda}tempo`]);
-    const bloco = Number(block_reward[`${moeda}bloco`]);
-    const poderRede = Number(total_power[`${moeda}poderrede`]);
+    // ler valores brutos
+    const tempoSec = Number(duration[`${moeda}tempo`]); // segundos por bloco
+    const bloco = Number(block_reward[`${moeda}bloco`]); // recompensa por bloco (na moeda)
+    const poderRede = Number(total_power[`${moeda}poderrede`]); // poder total da rede
 
-    const tempoMin = tempoSec > 0 ? (tempoSec / 60) : null;
-    
-    // --- LÓGICA CORRIGIDA AQUI ---
-    // A verificação agora é mais flexível e correta, permitindo que fblk seja 0.
-    let fblk = null;
-    if (bloco != null && poderRede != null && poderAtual != null && (poderRede + poderAtual) > 0) {
-      fblk = (poderAtual / (poderRede + poderAtual)) * bloco;
-    }
+    // logs para depuração
+    console.log(`--- Moeda: ${moeda} ---`);
+    console.log(`tempoSec: ${tempoSec}, bloco: ${bloco}, poderRede: ${poderRede}, poderAtual: ${poderAtual}`);
 
-    const fdia = (tempoSec > 0 && fblk !== null) ? (86400 / tempoSec) * fblk : null;
-    const fmes = fdia !== null ? (fdia * 30) : null;
+    // cálculos
+    const tempoMin = isFinite(tempoSec) && tempoSec > 0 ? (tempoSec / 60) : null; // exibir na coluna TEMPO
+    const fblk = (isFinite(bloco) && isFinite(poderRede) && poderRede !== 0 && isFinite(poderAtual)) ?
+      (poderAtual / (poderRede + poderAtual)) * bloco :
+      null;
+    const fdia = (isFinite(tempoSec) && tempoSec > 0 && isFinite(fblk)) ?
+      (86400 / tempoSec) * fblk :
+      null;
+    const fmes = isFinite(fdia) ? (fdia * 30) : null;
 
-    let saqueTexto = "X";
+    // Saque: não calcular para RLT, RST, LTC
+    let saqueTexto = "X"; // Mudei para 'X' conforme sua tabela HTML
     if (!["RLT", "RST", "LTC"].includes(moeda)) {
-      const minimo = Number(dadosMinimos?.[balanceKey]);
+      const minimo = Number(dadosMinimos?.[balanceKey]); // ex.: "SAT", "MATIC_SMALL", etc.
+      console.log(`Mínimo para ${moeda} (${balanceKey}): ${minimo}`);
 
-      // A condição 'fblk > 0' agora funciona como esperado, pois fblk não será null indevidamente.
-      if (minimo > 0 && fblk > 0 && tempoSec > 0) {
-        const minutosParaSaque = (minimo / fblk) * (tempoSec / 60);
+      // fórmula pedida: minimo / fblk * (tempoSec / 60)  => minutos
+      // para exibir em "dias" como no seu exemplo, dividimos por 1440:
+      const minutosParaSaque = (isFinite(minimo) && isFinite(fblk) && fblk > 0 && isFinite(tempoSec) && tempoSec > 0) ?
+        (minimo / fblk) * (tempoSec / 60) :
+        null;
+
+      if (isFinite(minutosParaSaque)) {
         const dias = minutosParaSaque / 1440;
-        saqueTexto = `${dias.toFixed(2).replace('.', ',')} dias`;
+        saqueTexto = `${dias.toFixed(2).replace('.', ',')} dias`; // Formatar para vírgula
       } else {
         saqueTexto = "-";
       }
