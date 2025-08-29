@@ -328,7 +328,7 @@ async function calcular() {
 }
 
 /**
- * Preenche a tabela de resultados com base nos dados calculados.
+ * ⭐ CORRIGIDO: Preenche a tabela de resultados com base nos dados calculados.
  * @param {number} poderAtual - O poder do usuário.
  * @param {Object} cryptoPrices - O objeto com as cotações das moedas.
  */
@@ -337,23 +337,31 @@ function atualizarTabela(poderAtual, cryptoPrices) {
     console.warn("Dados necessários para atualizar a tabela estão faltando.");
     return;
   }
-
   const moedasAtivas = ligaMoedasMap[urlLiga] ?? {};
-  const { duration, block_reward, total_power } = dadosTempos;
+  const { duration, blockReward, totalPower } = dadosTempos;
 
   for (const [moeda, balanceKey] of Object.entries(moedasAtivas)) {
     const tempoSec = Number(duration[`${moeda}tempo`]);
-    const bloco = Number(block_reward[`${moeda}bloco`]);
-    const poderRede = Number(total_power[`${moeda}poderrede`]);
+    const bloco = Number(blockReward[`${moeda}bloco`]);
+    const poderRede = Number(totalPower[`${moeda}poderrede`]);
 
     const tempoMin = tempoSec > 0 ? (tempoSec / 60) : null;
-    const fblk = (poderRede > 0) ? (poderAtual / (poderRede + poderAtual)) * bloco : null;
+    
+    // --- LÓGICA CORRIGIDA AQUI ---
+    // A verificação agora é mais flexível e correta, permitindo que fblk seja 0.
+    let fblk = null;
+    if (bloco != null && poderRede != null && poderAtual != null && (poderRede + poderAtual) > 0) {
+      fblk = (poderAtual / (poderRede + poderAtual)) * bloco;
+    }
+
     const fdia = (tempoSec > 0 && fblk !== null) ? (86400 / tempoSec) * fblk : null;
     const fmes = fdia !== null ? (fdia * 30) : null;
 
     let saqueTexto = "X";
     if (!["RLT", "RST", "LTC"].includes(moeda)) {
       const minimo = Number(dadosMinimos?.[balanceKey]);
+
+      // A condição 'fblk > 0' agora funciona como esperado, pois fblk não será null indevidamente.
       if (minimo > 0 && fblk > 0 && tempoSec > 0) {
         const minutosParaSaque = (minimo / fblk) * (tempoSec / 60);
         const dias = minutosParaSaque / 1440;
@@ -371,6 +379,5 @@ function atualizarTabela(poderAtual, cryptoPrices) {
     setComplexCell(`${moeda}fdia`, fdia, 6, moeda, cryptoPrices);
     setComplexCell(`${moeda}fmes`, fmes, 6, moeda, cryptoPrices);
   }
-
-  console.log("Tabela atualizada com valores convertidos!");
+  console.log("Tabela atualizada com o cálculo de saque corrigido!");
 }
