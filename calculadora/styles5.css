@@ -366,7 +366,7 @@ input:checked + .slider:before {
     /* Se você deu um ID como 'header-farm', use-o: */
     /* #header-farm { display: none; } */
     /* Caso contrário, selecione-o pelo nth-child na primeira linha */
-    #resultado-tabela thead tr:first-child th:nth-child(4) { /* Seleciona o 'th' com colspan="3" */
+    #resultado-tabela thead tr:first-child { /* Seleciona o 'th' com colspan="3" */
         display: none;
     }
 }
