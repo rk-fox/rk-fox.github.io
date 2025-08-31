@@ -69,15 +69,15 @@ function restoreOriginalTableLayout() {
 }
 
 // Media Query Listener
-const mediaQuery = window.matchMedia('(max-width: 768px)'); // Ajuste o breakpoint conforme necessário
+const mediaQuery = window.matchMedia('(max-width: 998px)'); // Ajuste o breakpoint conforme necessário
 
 function handleTabletChange(e) {
     if (e.matches) {
-        // A tela é menor ou igual a 768px
+        // A tela é menor ou igual a 998px
         console.log("Aplicando layout mobile...");
         applyMobileTableLayout();
     } else {
-        // A tela é maior que 768px
+        // A tela é maior que 998px
         console.log("Restaurando layout original...");
         restoreOriginalTableLayout();
     }
