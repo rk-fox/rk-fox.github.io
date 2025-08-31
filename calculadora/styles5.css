@@ -350,23 +350,35 @@ input:checked + .slider:before {
         overflow-x: auto; /* Permite rolagem horizontal se necessário */
     }
 
-  /* Esconde colunas específicas em telas menores */
+/* Esconde colunas específicas em telas menores */
 @media only screen and (max-width: 998px) {
-    #resultado-tabela th:nth-child(3), /* RECOMPENSA */
-    #resultado-tabela td:nth-child(3),
-    #resultado-tabela th:nth-child(4), /* BLOCO */
-    #resultado-tabela td:nth-child(4),
-    #resultado-tabela th:nth-child(6), /* MÊS */
-    #resultado-tabela td:nth-child(6)
+    /* --- Ocultar Colunas de DADOS (<td>) --- */
+    /* TOKEN (1º) | TEMPO (2º) | RECOMPENSA (3º) | BLOCO (4º) | DIA (5º) | MÊS (6º) | SAQUE (7º) */
+    #resultado-tabela td:nth-child(3), /* RECOMPENSA (coluna 3) */
+    #resultado-tabela td:nth-child(4), /* BLOCO (coluna 4) */
+    #resultado-tabela td:nth-child(6)  /* MÊS (coluna 6) */
     {
         display: none;
     }
 
-    /* Ocultar o cabeçalho 'FARM' principal */
-    /* Se você deu um ID como 'header-farm', use-o: */
-    /* #header-farm { display: none; } */
-    /* Caso contrário, selecione-o pelo nth-child na primeira linha */
-    #resultado-tabela thead tr:first-child { /* Seleciona o 'th' com colspan="3" */
+    /* --- Ocultar Cabeçalhos (<th>) --- */
+
+    /* Primeira linha de cabeçalhos (os que tem rowspan="2") */
+    #resultado-tabela thead tr:first-child th:nth-child(3), /* RECOMPENSA (3º th na primeira linha) */
+    #resultado-tabela thead tr:first-child th:nth-child(4)  /* FARM (4º th na primeira linha - o que tem colspan="3") */
+    {
         display: none;
     }
+
+    /* Segunda linha de cabeçalhos (BLOCO, DIA, MÊS) */
+    #resultado-tabela thead tr:last-child th:nth-child(1), /* BLOCO (1º th na segunda linha) */
+    #resultado-tabela thead tr:last-child th:nth-child(3)  /* MÊS (3º th na segunda linha) */
+    {
+        display: none;
+    }
+
+    /* Ajuste de ordem do "SAQUE" */
+    /* Se a ordem ficou estranha, pode ser que o "SAQUE" se tornou o 3º th visível na primeira linha. */
+    /* Vamos tentar reorganizar visualmente usando flexbox ou grid se necessário, mas por enquanto,
+       o display: none é para ocultar. A ordem natural será TOKEN, TEMPO, DIA, SAQUE. */
 }
