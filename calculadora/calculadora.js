@@ -1,3 +1,94 @@
+// Função para reorganizar a tabela para mobile
+function applyMobileTableLayout() {
+    const table = document.getElementById('resultado-tabela');
+    if (!table) return;
+
+    // Clonar a tabela original para não modificar diretamente a que está no DOM
+    const mobileTable = table.cloneNode(true);
+    const originalBody = table.querySelector('tbody');
+    const mobileBody = mobileTable.querySelector('tbody');
+
+    // Limpar o corpo da tabela mobile para reconstruir
+    mobileBody.innerHTML = '';
+
+    // Array para armazenar a nova ordem de colunas e seus cabeçalhos para mobile
+    // [original_td_index, 'Novo Cabeçalho']
+    const mobileColumns = [
+        { tdIndex: 0, headerText: 'TOKEN' }, // TOKEN
+        { tdIndex: 1, headerText: 'TEMPO' }, // TEMPO
+        { tdIndex: 4, headerText: 'DIA' },   // DIA (índice 4 na tabela original)
+        { tdIndex: 6, headerText: 'SAQUE' }  // SAQUE (índice 6 na tabela original)
+    ];
+
+    // Criar um novo thead para a tabela mobile
+    const newThead = document.createElement('thead');
+    const newTr = document.createElement('tr');
+    mobileColumns.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col.headerText;
+        newTr.appendChild(th);
+    });
+    newThead.appendChild(newTr);
+
+    // Substituir o thead original pelo novo thead mobile
+    mobileTable.querySelector('thead').replaceWith(newThead);
+
+    // Iterar pelas linhas do corpo original para construir as novas linhas mobile
+    Array.from(originalBody.rows).forEach(originalRow => {
+        const newRow = document.createElement('tr');
+        mobileColumns.forEach(col => {
+            // Clonar a célula original para manter o ID e o span
+            const originalCell = originalRow.cells[col.tdIndex];
+            if (originalCell) {
+                const newCell = originalCell.cloneNode(true); // Clonar a célula com conteúdo e IDs
+                newRow.appendChild(newCell);
+            } else {
+                // Adicionar célula vazia se a original não existir (prevenção de erro)
+                const emptyCell = document.createElement('td');
+                emptyCell.textContent = '-';
+                newRow.appendChild(emptyCell);
+            }
+        });
+        mobileBody.appendChild(newRow);
+    });
+
+    // Substituir a tabela original pela tabela mobile modificada
+    table.replaceWith(mobileTable);
+    table.id = 'original-resultado-tabela'; // Mudar ID da original para controle
+    mobileTable.id = 'resultado-tabela'; // Usar o mesmo ID para o CSS existente
+}
+
+// Função para restaurar a tabela original
+function restoreOriginalTableLayout() {
+    const mobileTable = document.getElementById('resultado-tabela');
+    const originalTable = document.getElementById('original-resultado-tabela');
+    if (mobileTable && originalTable) {
+        mobileTable.replaceWith(originalTable);
+        originalTable.id = 'resultado-tabela';
+    }
+}
+
+// Media Query Listener
+const mediaQuery = window.matchMedia('(max-width: 768px)'); // Ajuste o breakpoint conforme necessário
+
+function handleTabletChange(e) {
+    if (e.matches) {
+        // A tela é menor ou igual a 768px
+        console.log("Aplicando layout mobile...");
+        applyMobileTableLayout();
+    } else {
+        // A tela é maior que 768px
+        console.log("Restaurando layout original...");
+        restoreOriginalTableLayout();
+    }
+}
+
+// Adicionar listener
+mediaQuery.addListener(handleTabletChange);
+
+// Executar a função uma vez ao carregar a página para aplicar o layout inicial
+handleTabletChange(mediaQuery);
+
 // ============================================================================
 // CONFIGURAÇÕES GLOBAIS
 // ============================================================================
