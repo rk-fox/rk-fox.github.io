@@ -349,4 +349,22 @@ input:checked + .slider:before {
         font-size: 10px;
         overflow-x: auto; /* Permite rolagem horizontal se necessário */
     }
+
+    /* Esconde colunas específicas em telas menores */
+@media only screen and (max-width: 768px) {
+    #resultado-tabela th:nth-child(3), /* Oculta o cabeçalho "RECOMPENSA" */
+    #resultado-tabela td:nth-child(3), /* Oculta a coluna de dados "RECOMPENSA" */
+    #resultado-tabela th:nth-child(4), /* Oculta o cabeçalho "FARM" (BLOCO) */
+    #resultado-tabela td:nth-child(4), /* Oculta a coluna de dados "FARM" (BLOCO) */
+    #resultado-tabela th:nth-child(6), /* Oculta o cabeçalho "FARM" (MÊS) */
+    #resultado-tabela td:nth-child(6)  /* Oculta a coluna de dados "FARM" (MÊS) */
+    {
+        display: none;
+    }
+
+    /* Ajuste para o cabeçalho "FARM" que abrange 3 colunas */
+    #resultado-tabela thead tr:first-child th:nth-child(4) { /* O 'FARM' original era o 4º th na primeira linha */
+        display: none; /* Oculta o "FARM" pai se todas as sub-colunas forem ocultas */
+    }
+}
 }
