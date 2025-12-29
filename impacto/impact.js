@@ -469,6 +469,69 @@ function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) 
 }
 
 // Função para calcular o bônus extra com base nos IDs específicos
+function applyBonus2Adjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
+  // Filtra as miners do grupo específico
+  const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
+
+  // Define o impacto adicional com base na quantidade de IDs encontrados
+  const bonusAdjustment =
+    matchingMiners.length === 3
+      ? fullSetBonus
+      : matchingMiners.length === 2
+      ? partialSetBonus
+      : 0;
+
+  // Aplica o ajuste no bônus de cada miner correspondente
+  matchingMiners.forEach(miner => {
+    miner.setBonus += bonusAdjustment;
+  });
+}
+
+// Função para calcular o bônus extra com base nos IDs específicos
+function applyBonus3Adjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
+  // Filtra as miners do grupo específico
+  const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
+
+  // Define o impacto adicional com base na quantidade de IDs encontrados
+  const bonusAdjustment =
+    matchingMiners.length === 4
+      ? fullSetBonus
+      : matchingMiners.length === 3
+      ? partialSetBonus2
+      : matchingMiners.length === 2
+      ? partialSetBonus
+      : 0;
+
+  // Aplica o ajuste no bônus de cada miner correspondente
+  matchingMiners.forEach(miner => {
+    miner.setBonus += bonusAdjustment;
+  });
+}
+
+// Função para calcular o bônus extra com base nos IDs específicos
+function applyBonus4Adjustment(miners, targetIds, fullSetBonus, partialSetBonus) {
+  // Filtra as miners do grupo específico
+  const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
+
+  // Define o impacto adicional com base na quantidade de IDs encontrados
+  const bonusAdjustment =
+    matchingMiners.length === 8
+      ? fullSetBonus
+      : matchingMiners.length === 6
+      ? partialSetBonus3
+      : matchingMiners.length === 4
+      ? partialSetBonus2
+      : matchingMiners.length === 2
+      ? partialSetBonus
+      : 0;
+
+  // Aplica o ajuste no bônus de cada miner correspondente
+  matchingMiners.forEach(miner => {
+    miner.setBonus += bonusAdjustment;
+  });
+}
+
+// Função para calcular o bônus extra com base nos IDs específicos
 function applyImpact4Adjustment(miners, targetIds, fullSet4Impact, partialSet4Impact) {
   // Filtra as miners do grupo específico
   const matchingMiners = miners.filter(miner => targetIds.includes(miner.miner_id));
@@ -663,6 +726,31 @@ main().then(() => {
 
             
     // Aplicando ajustes nos bônus para os dois grupos de IDs específicos
+    applyBonus2Adjustment(miners, 
+      ["66e40f32e0dd3530da8bf7da", "674882691745a1e9ed4c3d56", "674882a81745a1e9ed4c3e66", "66e40f06e0dd3530da8bf564","66e40f5de0dd3530da8bfa3a","674882691745a1e9ed4c3d5e","674882a81745a1e9ed4c3e6e"], 
+      10, // 10% para todas as 3
+      5   // 5% para 2
+                          //set imperial
+    );
+    applyBonus3Adjustment(miners, 
+      ["693bd5f1b13b27427ba8a5c2", "693bd7d2b13b27427ba8af47", "693bd585b13b27427ba89ee7", "693bd705b13b27427ba8ac8e"], 
+      90, // para todas as 4
+      60, // para 3                       
+      40  // para 2
+                          //Radio set
+    );
+    applyBonus4Adjustment(miners, 
+      ["684947c1ccf7adb5d76505a6", "68626997411d00ff277d7a18", "686269fb411d00ff277d7b8d", "68626a8e411d00ff277d81cc","68494781ccf7adb5d765052d","68626962411d00ff277d76e9","686269cb411d00ff277d7a80","68626a5c411d00ff277d815a"], 
+      24, // 10% para todas as 4
+      8   // 5% para 2 ou 3
+                          //Designer set
+    );
+    applyBonusAdjustment(miners, 
+      ["6909e357dbb4b86eca7f24fa", "6909e3d4dbb4b86eca7f286c", "6909e466dbb4b86eca7f2928", "6909e329dbb4b86eca7f2489","6909e395dbb4b86eca7f273b","6909e466dbb4b86eca7f2925"], 
+      24, // 10% para todas as 4
+      8   // 5% para 2 ou 3
+                         //Royal set
+    );
     applyBonusAdjustment(miners, 
       ["68244844fbb67c190eed4dd7", "6824489bfbb67c190eed5222", "682448fcfbb67c190eed530f", "6824481dfbb67c190eed4d7d","68244872fbb67c190eed4e6f","682448ccfbb67c190eed52bb"], 
       24, // 10% para todas as 4
