@@ -98,10 +98,10 @@ let dadosTempos = {}; // Cache para os resultados de buscarTempos
 let dadosMinimos = {}; // Cache para os resultados de buscarMinimos
 
 // Mapeia nossas siglas para os IDs da API CoinGecko
-const coinGeckoIds = { BTC: 'bitcoin', LTC: 'litecoin', BNB: 'binancecoin', POL: 'polygon-ecosystem-token', XRP: 'ripple', DOGE: 'dogecoin', ETH: 'ethereum', TRX: 'tron', SOL: 'solana' };
+const coinGeckoIds = { BTC: 'bitcoin', LTC: 'litecoin', BNB: 'binancecoin', POL: 'polygon-ecosystem-token', XRP: 'ripple', DOGE: 'dogecoin', ETH: 'ethereum', TRX: 'tron', SOL: 'solana', ALGO: 'algorand' };
 
 // Mapeia cada moeda ao seu divisor específico para tratar o valor de block_reward
-const divisoresMoedas = { RLT: 1e6, RST: 1e6, HMT: 1e6, BTC: 1e10, LTC: 1e8, BNB: 1e10, POL: 1e10, XRP: 1e6, DOGE: 1e4, ETH: 1e10, TRX: 1e10, SOL: 1e9, ALGO: 1e10 };
+const divisoresMoedas = { RLT: 1e6, RST: 1e6, HMT: 1e6, BTC: 1e10, LTC: 1e8, BNB: 1e10, POL: 1e10, XRP: 1e6, DOGE: 1e4, ETH: 1e10, TRX: 1e10, SOL: 1e9, ALGO: 1e6 };
 
 // Definição dos conjuntos de moedas por liga (usando spread operator para evitar repetição)
 const moedasb1 = { RLT: "RLT", RST: "RST", BTC: "SAT", LTC: "LTC_SMALL" };
