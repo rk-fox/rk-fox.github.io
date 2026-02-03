@@ -189,7 +189,7 @@ async function buscarTempos() {
  */
 async function buscarMinimos() {
   const url = "https://summer-night-03c0.rk-foxx-159.workers.dev/?https://rollercoin.com/api/wallet/get-currencies-config";
-  const chavesDesejadas = ["SAT", "BNB_SMALL", "MATIC_SMALL", "XRP_SMALL", "DOGE_SMALL", "ETH_SMALL", "TRX_SMALL", "SOL_SMALL"];
+  const chavesDesejadas = ["SAT", "LTC_SMALL", "BNB_SMALL", "MATIC_SMALL", "XRP_SMALL", "DOGE_SMALL", "ETH_SMALL", "TRX_SMALL", "SOL_SMALL"];
   const resultados = {};
   try {
     const resp = await fetch(url);
