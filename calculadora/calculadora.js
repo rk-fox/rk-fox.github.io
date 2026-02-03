@@ -101,7 +101,7 @@ let dadosMinimos = {}; // Cache para os resultados de buscarMinimos
 const coinGeckoIds = { BTC: 'bitcoin', LTC: 'litecoin', BNB: 'binancecoin', POL: 'polygon-ecosystem-token', XRP: 'ripple', DOGE: 'dogecoin', ETH: 'ethereum', TRX: 'tron', SOL: 'solana' };
 
 // Mapeia cada moeda ao seu divisor específico para tratar o valor de block_reward
-const divisoresMoedas = { RLT: 1e6, RST: 1e6, BTC: 1e10, LTC: 1e8, BNB: 1e10, POL: 1e10, XRP: 1e6, DOGE: 1e4, ETH: 1e10, TRX: 1e10, SOL: 1e9 };
+const divisoresMoedas = { RLT: 1e6, RST: 1e6, HMT: 1e6, BTC: 1e10, LTC: 1e8, BNB: 1e10, POL: 1e10, XRP: 1e6, DOGE: 1e4, ETH: 1e10, TRX: 1e10, SOL: 1e9, ALGO: 1e10 };
 
 // Definição dos conjuntos de moedas por liga (usando spread operator para evitar repetição)
 const moedasb1 = { RLT: "RLT", RST: "RST", BTC: "SAT", LTC: "LTC_SMALL" };
@@ -111,11 +111,12 @@ const moedasp1 = { ...moedasb3, XRP: "XRP_SMALL" };
 const moedasp2 = { ...moedasp1, DOGE: "DOGE_SMALL" };
 const moedasp3 = { ...moedasp2, ETH: "ETH_SMALL" };
 const moedaso1 = { ...moedasp3, TRX: "TRX_SMALL" };
-const moedaso2 = { ...moedaso1, SOL: "SOL_SMALL" };
-const moedasd = { RST: "RST", BTC: "SAT", LTC: "LTC_SMALL", BNB: "BNB_SMALL", POL: "MATIC_SMALL", XRP: "XRP_SMALL", DOGE: "DOGE_SMALL", ETH: "ETH_SMALL", TRX: "TRX_SMALL", SOL: "SOL_SMALL" };
+const moedaso2 = { ...moedaso1, SOL: "SOL_SMALL", HMT: "HMT" };
+const moedaspl1 = { ...moedaso2, ALGO: "ALGO_SMALL" };
+const moedasd = { RST: "RST", BTC: "SAT", LTC: "LTC_SMALL", BNB: "BNB_SMALL", POL: "MATIC_SMALL", XRP: "XRP_SMALL", DOGE: "DOGE_SMALL", ETH: "ETH_SMALL", TRX: "TRX_SMALL", SOL: "SOL_SMALL", ALGO: "ALGO_SMALL" };
 
 // Mapeia o ID da liga ao seu conjunto de moedas correspondente
-const ligaMoedasMap = { "68af01ce48490927df92d687": moedasb1, "68af01ce48490927df92d686": moedasb2, "68af01ce48490927df92d685": moedasb3, "68af01ce48490927df92d684": moedasp1, "68af01ce48490927df92d683": moedasp2, "68af01ce48490927df92d682": moedasp3, "68af01ce48490927df92d681": moedaso1, "68af01ce48490927df92d680": moedaso2, "68af01ce48490927df92d67f": moedaso2, "68af01ce48490927df92d67e": moedaso2, "68af01ce48490927df92d67d": moedaso2, "68af01ce48490927df92d67c": moedaso2, "68af01ce48490927df92d67b": moedasd, "68af01ce48490927df92d67a": moedasd, "68af01ce48490927df92d679": moedasd };
+const ligaMoedasMap = { "68af01ce48490927df92d687": moedasb1, "68af01ce48490927df92d686": moedasb2, "68af01ce48490927df92d685": moedasb3, "68af01ce48490927df92d684": moedasp1, "68af01ce48490927df92d683": moedasp2, "68af01ce48490927df92d682": moedasp3, "68af01ce48490927df92d681": moedaso1, "68af01ce48490927df92d680": moedaso2, "68af01ce48490927df92d67f": moedaso2, "68af01ce48490927df92d67e": moedaspl1, "68af01ce48490927df92d67d": moedaspl1, "68af01ce48490927df92d67c": moedaspl1, "68af01ce48490927df92d67b": moedasd, "68af01ce48490927df92d67a": moedasd, "68af01ce48490927df92d679": moedasd };
 const hojeUTC = new Date().toISOString().slice(0, 10);
 
 // ============================================================================
@@ -340,7 +341,7 @@ function atualizarTabela(poderAtual, cryptoPrices) {
 
     // 3. Cálculo de saque com validações
     let saqueTexto = "X";
-    if (!["RLT", "RST", "LTC"].includes(moeda)) {
+    if (!["RLT", "RST", "HMT", "ALGO"].includes(moeda)) {
       if (isFinite(minimo) && minimo > 0 && fblk > 0 && isFinite(tempoSec) && tempoSec > 0) {
         const dias = ((minimo / fblk) * (tempoSec / 60)) / 1440;
         saqueTexto = `${dias.toFixed(2).replace('.', ',')} dias`;
