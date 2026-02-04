@@ -458,7 +458,7 @@ function applyBonusAdjustment(miners, targetIds, fullSetBonus, partialSetBonus) 
   const bonusAdjustment =
     matchingMiners.length === 4
       ? fullSetBonus
-      : matchingMiners.length === 2
+      : matchingMiners.length >= 2
       ? partialSetBonus
       : 0;
 
@@ -517,11 +517,11 @@ function applyBonus4Adjustment(miners, targetIds, fullSetBonus, partialSetBonus)
   const bonusAdjustment =
     matchingMiners.length === 8
       ? fullSetBonus
-      : matchingMiners.length === 6
+      : matchingMiners.length >= 6
       ? partialSetBonus3
-      : matchingMiners.length === 4
+      : matchingMiners.length >= 4
       ? partialSetBonus2
-      : matchingMiners.length === 2
+      : matchingMiners.length >= 2
       ? partialSetBonus
       : 0;
 
@@ -540,7 +540,7 @@ function applyImpact4Adjustment(miners, targetIds, fullSet4Impact, partialSet4Im
   const impact4Adjustment =
     matchingMiners.length === 4
       ? fullSet4Impact
-      : matchingMiners.length === 2
+      : matchingMiners.length >= 2
       ? partialSet4Impact
       : 0;
 
