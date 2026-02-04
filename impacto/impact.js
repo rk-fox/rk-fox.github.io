@@ -741,14 +741,16 @@ main().then(() => {
     );
     applyBonus4Adjustment(miners, 
       ["684947c1ccf7adb5d76505a6", "68626997411d00ff277d7a18", "686269fb411d00ff277d7b8d", "68626a8e411d00ff277d81cc","68494781ccf7adb5d765052d","68626962411d00ff277d76e9","686269cb411d00ff277d7a80","68626a5c411d00ff277d815a"], 
-      24, // 10% para todas as 4
-      8   // 5% para 2 ou 3
+      120, // 10% para todas as 4
+      75,
+      40,
+      15  
                           //Designer set
     );
     applyBonusAdjustment(miners, 
       ["6909e357dbb4b86eca7f24fa", "6909e3d4dbb4b86eca7f286c", "6909e466dbb4b86eca7f2928", "6909e329dbb4b86eca7f2489","6909e395dbb4b86eca7f273b","6909e466dbb4b86eca7f2925"], 
-      24, // 10% para todas as 4
-      8   // 5% para 2 ou 3
+      45, // 10% para todas as 4
+      25   // 5% para 2 ou 3
                          //Royal set
     );
     applyBonusAdjustment(miners, 
