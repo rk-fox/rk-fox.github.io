@@ -52,6 +52,8 @@ export const EfficiencyCalc: React.FC = () => {
 
     const convertPower = (value: number) => {
         const absValue = Math.abs(value);
+        if (absValue >= 1e12) return (value / 1e12).toFixed(3).replace('.', ',') + ' ZH/s';
+        if (absValue >= 1e9) return (value / 1e9).toFixed(3).replace('.', ',') + ' EH/s';
         if (absValue >= 1e6) return (value / 1e6).toFixed(3).replace('.', ',') + ' PH/s';
         if (absValue >= 1e3) return (value / 1e3).toFixed(3).replace('.', ',') + ' TH/s';
         return value.toFixed(3).replace('.', ',') + ' GH/s';
@@ -92,9 +94,9 @@ export const EfficiencyCalc: React.FC = () => {
         const { sellPower, sellBonus, buyPower, buyBonus, custoRLT } = inputs;
 
         // Internal units are GH/s for power and decimal for bonus
-        const sP = sellPower * 1000;
+        const sP = sellPower * 1000000; // PH/s to GH/s
         const sB = sellBonus / 100;
-        const bP = buyPower * 1000;
+        const bP = buyPower * 1000000; // PH/s to GH/s
         const bB = buyBonus / 100;
 
         const currentMiners = initialStats.miners - sP + bP;
@@ -191,7 +193,7 @@ export const EfficiencyCalc: React.FC = () => {
                                 </p>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-[10px] font-black uppercase text-slate-400 mb-1">Poder (TH/s)</label>
+                                        <label className="block text-[10px] font-black uppercase text-slate-400 mb-1">Poder (PH/s)</label>
                                         <input
                                             type="number"
                                             value={inputs.sellPower}
@@ -218,7 +220,7 @@ export const EfficiencyCalc: React.FC = () => {
                                 </p>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-[10px] font-black uppercase text-slate-400 mb-1">Poder (TH/s)</label>
+                                        <label className="block text-[10px] font-black uppercase text-slate-400 mb-1">Poder (PH/s)</label>
                                         <input
                                             type="number"
                                             value={inputs.buyPower}

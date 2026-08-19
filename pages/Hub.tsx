@@ -139,11 +139,11 @@ export const Hub: React.FC = () => {
                         <Calculator size={20} className="text-blue-600 group-hover:scale-110 transition-transform" />
                         <span className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-300">Calc Farm</span>
                     </Link>
-                    <Link to="https://minaryganar.com/current-event/" target="_blank" rel="noreferrer" className="bg-white dark:bg-dark-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col items-center gap-2 hover:border-blue-500 transition-colors group">
+                    <Link to="https://minaryganar.com/rollercoin/" target="_blank" rel="noreferrer" className="bg-white dark:bg-dark-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col items-center gap-2 hover:border-blue-500 transition-colors group">
                         <Gift size={20} className="text-blue-600 group-hover:scale-110 transition-transform" />
                         <span className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-300">Recompensas</span>
                     </Link>
-                    <Link to="https://minaryganar.com/miner/cathouse-miner/" target="_blank" rel="noreferrer" className="bg-white dark:bg-dark-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col items-center gap-2 hover:border-blue-500 transition-colors group">
+                    <Link to="https://minaryganar.com/rollercoin/miners/cathouse-miner/" target="_blank" rel="noreferrer" className="bg-white dark:bg-dark-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col items-center gap-2 hover:border-blue-500 transition-colors group">
                         <Combine size={20} className="text-blue-600 group-hover:scale-110 transition-transform" />
                         <span className="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-300">Fusões</span>
                     </Link>

@@ -586,7 +586,12 @@ export const WhalePlanner: React.FC = () => {
                                         <div>
                                             <p className="text-[10px] font-black text-slate-400 uppercase">Simulação Nova</p>
                                             <p className="font-black text-slate-800 dark:text-white leading-tight uppercase text-xs">{selectedNewMiner.item.name}</p>
-                                            <p className="text-[10px] font-black text-emerald-500 uppercase">{selectedNewMiner.level}</p>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <p className="text-[10px] font-black text-emerald-500 uppercase">{selectedNewMiner.level}</p>
+                                                <p className="text-[10px] font-bold text-blue-500">
+                                                    +{((selectedNewMiner.item[selectedNewMiner.level.toLowerCase() as keyof DBItem] as { power: number; bonus: number })?.bonus || 0).toFixed(2)}% Bônus
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">

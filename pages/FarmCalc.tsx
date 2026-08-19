@@ -15,6 +15,9 @@ interface FarmRow {
     month: string;
     withdraw: string;
     isFiat: boolean;
+    usdBlock?: string;
+    usdDay?: string;
+    usdMonth?: string;
     fiatBlock?: string;
     fiatDay?: string;
     fiatMonth?: string;
@@ -82,6 +85,7 @@ export const FarmCalc: React.FC = () => {
         try {
             // 1. Profile & League
             const profileRes = await fetch(`${proxy}https://rollercoin.com/api/profile/public-user-profile-data/${profileLink}`);
+            if (!profileRes.ok) throw new Error(`Erro Perfil API: ${profileRes.status}`);
             const pData = (await profileRes.json()).data;
             setProfileData(pData);
 
@@ -90,22 +94,93 @@ export const FarmCalc: React.FC = () => {
 
             // 2. User Power
             const powerRes = await fetch(`${proxy}https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
+            if (!powerRes.ok) throw new Error(`Erro Poder API: ${powerRes.status}`);
             const powerData = (await powerRes.json()).data;
             const currentPower = powerData.current_power;
             setUserPower(currentPower);
             const userPowerVal = currentPower;
 
-            // 3. Prices
-            const ids = Object.values(coinGeckoIds).join(',');
-            const priceRes = await fetch(`${proxy}https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,brl`);
-            const prices = await priceRes.json();
-            const cryptoPrices: any = {};
-            for (const [symbol, id] of Object.entries(coinGeckoIds)) {
-                if (prices[id as string]) cryptoPrices[symbol] = prices[id as string];
+            // 3. Prices (com cache de 5 minutos e Fallbacks de APIs)
+            let cryptoPrices: any = {};
+            const cachedPricesStr = localStorage.getItem('cryptoPricesCache');
+            let fetchNewPrices = true;
+
+            if (cachedPricesStr) {
+                const cachedData = JSON.parse(cachedPricesStr);
+                const isExpired = Date.now() - cachedData.timestamp > 5 * 60 * 1000; // 5 minutos
+                if (!isExpired) {
+                    cryptoPrices = cachedData.prices;
+                    fetchNewPrices = false;
+                }
+            }
+
+            if (fetchNewPrices) {
+                let success = false;
+                
+                // Camada 1: CoinGecko
+                if (!success) {
+                    try {
+                        const ids = Object.values(coinGeckoIds).join(',');
+                        const priceRes = await fetch(`${proxy}https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,brl`);
+                        if (!priceRes.ok) throw new Error(`CoinGecko HTTP: ${priceRes.status}`);
+                        const prices = await priceRes.json();
+                        for (const [symbol, id] of Object.entries(coinGeckoIds)) {
+                            if (prices[id as string]) cryptoPrices[symbol] = prices[id as string];
+                        }
+                        success = Object.keys(cryptoPrices).length > 0;
+                    } catch (e) { console.warn("Fallback: CoinGecko falhou", e); }
+                }
+
+                // Camada 2: CryptoCompare
+                if (!success) {
+                    try {
+                        const symbols = Object.keys(coinGeckoIds).map(s => s === 'POL' ? 'POL,MATIC' : s).join(',');
+                        const res = await fetch(`${proxy}https://min-api.cryptocompare.com/data/pricemulti?fsyms=${symbols}&tsyms=USD,BRL`);
+                        if (!res.ok) throw new Error(`CryptoCompare HTTP: ${res.status}`);
+                        const data = await res.json();
+                        if (data.Response === 'Error') throw new Error(data.Message);
+                        for (const symbol of Object.keys(coinGeckoIds)) {
+                            let s = symbol === 'POL' && !data['POL'] && data['MATIC'] ? 'MATIC' : symbol;
+                            if (data[s]) cryptoPrices[symbol] = { usd: data[s].USD, brl: data[s].BRL };
+                        }
+                        success = Object.keys(cryptoPrices).length > 0;
+                    } catch (e) { console.warn("Fallback: CryptoCompare falhou", e); }
+                }
+
+                // Camada 3: Binance
+                if (!success) {
+                    try {
+                        const res = await fetch(`${proxy}https://api.binance.com/api/v3/ticker/price`);
+                        if (!res.ok) throw new Error(`Binance HTTP: ${res.status}`);
+                        const data = await res.json();
+                        const pMap: any = {};
+                        for (const item of data) pMap[item.symbol] = parseFloat(item.price);
+                        
+                        const usdToBrl = (pMap['BTCUSDT'] && pMap['BTCBRL']) ? (pMap['BTCBRL'] / pMap['BTCUSDT']) : 5.0;
+                        for (const symbol of Object.keys(coinGeckoIds)) {
+                            let t = symbol + 'USDT';
+                            if (symbol === 'POL' && !pMap[t]) t = 'MATICUSDT';
+                            if (pMap[t]) cryptoPrices[symbol] = { usd: pMap[t], brl: pMap[t] * usdToBrl };
+                        }
+                        success = Object.keys(cryptoPrices).length > 0;
+                    } catch (e) { console.warn("Fallback: Binance falhou", e); }
+                }
+
+                // Salvar no cache se alguma camada funcionou
+                if (success) {
+                    localStorage.setItem('cryptoPricesCache', JSON.stringify({
+                        timestamp: Date.now(),
+                        prices: cryptoPrices
+                    }));
+                } else {
+                    console.warn("Falha em todas as APIs de cotação. Usando cache antigo se existir.");
+                    if (cachedPricesStr) cryptoPrices = JSON.parse(cachedPricesStr).prices;
+                }
             }
 
             // 4. Min Withdrawal
             const minRes = await fetch(`${proxy}https://rollercoin.com/api/wallet/get-currencies-config`);
+            if (!minRes.ok) throw new Error(`Erro Currencies API: ${minRes.status}`);
             const minJson = await minRes.json();
             const minimos: any = {};
             minJson.data.currencies_config.forEach((c: any) => {
@@ -124,6 +199,7 @@ export const FarmCalc: React.FC = () => {
                 await Promise.all(apiGroups.map(async (group) => {
                     const url = `${proxy}https://rollercoin.com/api/league/network-info-by-day?from=${today}&to=${today}&currency=${token}&groupBy=${group}&leagueId=${leagueId}`;
                     const res = await fetch(url);
+                    if (!res.ok) throw new Error(`Erro Network Info API: ${res.status}`);
                     const json = await res.json();
                     let val = json.data?.[0]?.value || 0;
 
@@ -160,6 +236,9 @@ export const FarmCalc: React.FC = () => {
                     month: fmes.toFixed(8),
                     withdraw,
                     isFiat: !!pricesForMoeda,
+                    usdBlock: pricesForMoeda ? (fblk * pricesForMoeda.usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : undefined,
+                    usdDay: pricesForMoeda ? (fdia * pricesForMoeda.usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : undefined,
+                    usdMonth: pricesForMoeda ? (fmes * pricesForMoeda.usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : undefined,
                     fiatBlock: pricesForMoeda ? (fblk * pricesForMoeda.brl).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
                     fiatDay: pricesForMoeda ? (fdia * pricesForMoeda.brl).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
                     fiatMonth: pricesForMoeda ? (fmes * pricesForMoeda.brl).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
@@ -254,15 +333,16 @@ export const FarmCalc: React.FC = () => {
                                 <thead>
                                     <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider">
                                         <th className="px-8 py-4 border-r border-slate-100 dark:border-slate-800" rowSpan={2}>Token</th>
-                                        <th className="px-8 py-4 text-center border-r border-slate-100 dark:border-slate-800" rowSpan={2}>Tempo</th>
-                                        <th className="px-8 py-4 text-center border-r border-slate-100 dark:border-slate-800" rowSpan={2}>Bloco</th>
-                                        <th className="px-8 py-2 text-center border-b border-slate-100 dark:border-slate-800 bg-slate-100/30 dark:bg-slate-800/20" colSpan={3}>Seu Ganho</th>
+                                        <th className="hidden md:table-cell px-8 py-4 text-center border-r border-slate-100 dark:border-slate-800" rowSpan={2}>Tempo</th>
+                                        <th className="hidden md:table-cell px-8 py-4 text-center border-r border-slate-100 dark:border-slate-800" rowSpan={2}>Bloco</th>
+                                        <th className="hidden md:table-cell px-8 py-2 text-center border-b border-slate-100 dark:border-slate-800 bg-slate-100/30 dark:bg-slate-800/20" colSpan={3}>Seu Ganho</th>
+                                        <th className="md:hidden px-8 py-2 text-center border-b border-slate-100 dark:border-slate-800 bg-slate-100/30 dark:bg-slate-800/20" colSpan={1}>Seu Ganho</th>
                                         <th className="px-8 py-4 text-center" rowSpan={2}>Saque em</th>
                                     </tr>
                                     <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 tracking-wider">
-                                        <th className="px-8 py-2 text-center border-r border-slate-100 dark:border-slate-800 min-w-[140px]">Por Bloco</th>
+                                        <th className="hidden md:table-cell px-8 py-2 text-center border-r border-slate-100 dark:border-slate-800 min-w-[140px]">Por Bloco</th>
                                         <th className="px-8 py-2 text-center border-r border-slate-100 dark:border-slate-800 min-w-[140px]">Por Dia</th>
-                                        <th className="px-8 py-2 text-center border-r border-slate-100 dark:border-slate-800 min-w-[140px]">Por Mês</th>
+                                        <th className="hidden md:table-cell px-8 py-2 text-center border-r border-slate-100 dark:border-slate-800 min-w-[140px]">Por Mês</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -275,23 +355,38 @@ export const FarmCalc: React.FC = () => {
                                                 </div>
                                             </td>
 
-                                            <td className="px-8 py-5 text-center font-bold text-slate-400 text-xs border-r border-slate-50 dark:border-slate-800/50">{row.time}</td>
+                                            <td className="hidden md:table-cell px-8 py-5 text-center font-bold text-slate-400 text-xs border-r border-slate-50 dark:border-slate-800/50">{row.time}</td>
 
-                                            <td className="px-8 py-5 text-center font-bold text-slate-500 dark:text-slate-400 text-xs border-r border-slate-50 dark:border-slate-800/50">{row.reward}</td>
+                                            <td className="hidden md:table-cell px-8 py-5 text-center font-bold text-slate-500 dark:text-slate-400 text-xs border-r border-slate-50 dark:border-slate-800/50">{row.reward}</td>
 
-                                            <td className="px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
+                                            <td className="hidden md:table-cell px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
                                                 <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.block}</div>
-                                                {row.isFiat && <div className="text-[10px] font-bold text-slate-400 mt-1">{row.fiatBlock}</div>}
+                                                {row.isFiat && (
+                                                    <div className="mt-1 space-y-0.5">
+                                                        <div className="text-[10px] font-bold text-slate-400">{row.usdBlock}</div>
+                                                        <div className="text-[10px] font-bold text-slate-400">{row.fiatBlock}</div>
+                                                    </div>
+                                                )}
                                             </td>
 
                                             <td className="px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
                                                 <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.day}</div>
-                                                {row.isFiat && <div className="text-[10px] font-bold text-slate-400 mt-1">{row.fiatDay}</div>}
+                                                {row.isFiat && (
+                                                    <div className="mt-1 space-y-0.5">
+                                                        <div className="text-[10px] font-bold text-slate-400">{row.usdDay}</div>
+                                                        <div className="text-[10px] font-bold text-slate-400">{row.fiatDay}</div>
+                                                    </div>
+                                                )}
                                             </td>
 
-                                            <td className="px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
+                                            <td className="hidden md:table-cell px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
                                                 <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.month}</div>
-                                                {row.isFiat && <div className="text-[10px] font-bold text-slate-400 mt-1">{row.fiatMonth}</div>}
+                                                {row.isFiat && (
+                                                    <div className="mt-1 space-y-0.5">
+                                                        <div className="text-[10px] font-bold text-slate-400">{row.usdMonth}</div>
+                                                        <div className="text-[10px] font-bold text-slate-400">{row.fiatMonth}</div>
+                                                    </div>
+                                                )}
                                             </td>
 
                                             <td className="px-8 py-5 text-center">

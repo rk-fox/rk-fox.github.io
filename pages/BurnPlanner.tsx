@@ -374,30 +374,48 @@ export const BurnPlanner: React.FC = () => {
                         else if (type === "old_merge") info = win.old_merge_miners;
 
                         const found = info?.find((m: any) => m.miner_id === miner_id);
+                        
+                        let pwr: number, bns: number, minerName: string, minerLevel: number, minerFilename: string, canBeSold: boolean;
+
                         if (found) {
-                            const pwr = found.power;
-                            const bns = found.bonus_power / 100;
-                            const unitario = Math.round((((pwr / (ptsTHs * 1000)) + (bns / ptsBonus)) * 1000));
-
-                            const minerObj: ParsedMiner = {
-                                id: `room_${miner_id}_${Math.random()}`,
-                                level: type === "old_merge" ? 6 : found.level,
-                                name: found.name.en,
-                                set: "Room",
-                                size: 1, // simplified
-                                power: pwr,
-                                bonus: bns,
-                                quantity: quantity,
-                                unitario,
-                                total: unitario * quantity,
-                                filename: found.filename,
-                                canBeSold: found.is_can_be_sold_on_mp,
-                                source: 'room'
-                            };
-
-                            if (minerObj.canBeSold) newRoomSellable.push(minerObj);
-                            else newRoomUns.push(minerObj);
+                            pwr = found.power;
+                            bns = found.bonus_power / 100;
+                            minerName = found.name.en;
+                            minerLevel = type === "old_merge" ? 6 : found.level;
+                            minerFilename = found.filename;
+                            canBeSold = found.is_can_be_sold_on_mp || false;
+                        } else {
+                            // Fallback: usar dados da API do RollerCoin
+                            const rawMiner = roomMiners.find((m: any) => m.miner_id === miner_id);
+                            if (!rawMiner) continue;
+                            pwr = rawMiner.power;
+                            bns = rawMiner.bonus_percent / 100;
+                            minerName = rawMiner.name;
+                            minerLevel = type === "old_merge" ? 6 : rawMiner.level;
+                            minerFilename = rawMiner.filename;
+                            canBeSold = false; // Sem dados externos, assume inegociável
                         }
+
+                        const unitario = Math.round((((pwr / (ptsTHs * 1000)) + (bns / ptsBonus)) * 1000));
+
+                        const minerObj: ParsedMiner = {
+                            id: `room_${miner_id}_${Math.random()}`,
+                            level: minerLevel,
+                            name: minerName,
+                            set: "Room",
+                            size: 1, // simplified
+                            power: pwr,
+                            bonus: bns,
+                            quantity: quantity,
+                            unitario,
+                            total: unitario * quantity,
+                            filename: minerFilename,
+                            canBeSold,
+                            source: 'room'
+                        };
+
+                        if (minerObj.canBeSold) newRoomSellable.push(minerObj);
+                        else newRoomUns.push(minerObj);
                     }
                 }
             }
