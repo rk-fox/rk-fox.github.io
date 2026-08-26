@@ -23,13 +23,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     const isHome = location.pathname === '/';
 
     return (
-        <div className="min-h-screen flex flex-col font-sans">
+        <div className="min-h-screen flex flex-col font-sans overflow-x-hidden w-full max-w-full">
             {/* Header */}
-            <header className="pt-6 pb-2 px-4 flex flex-col items-center relative">
+            <header className="pt-6 pb-2 px-4 flex flex-col items-center relative w-full max-w-full">
                 {/* Theme Toggle - Absolute Top Right */}
                 <button
                     onClick={() => setDarkMode(!darkMode)}
-                    className="absolute top-6 right-4 md:right-8 p-2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:scale-110 transition-transform shadow-sm"
+                    className="absolute top-6 right-4 md:right-8 p-2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:scale-110 transition-transform shadow-sm z-10"
                 >
                     {darkMode ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
@@ -43,7 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 />
 
                 {/* Logo & Navigation */}
-                <div className="flex flex-col items-center gap-4">
+                <div className="flex flex-col items-center gap-4 w-full max-w-full">
                     <Link to="/" className="group relative">
                         <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-blue-500 to-cyan-400 shadow-lg group-hover:scale-105 transition-transform duration-300">
                             <img
@@ -54,12 +54,12 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                         </div>
                     </Link>
 
-                    <div className="text-center">
-                        <Link to="/" className="group relative">
-                            <img className="h-[250px] rounded-xl" src="/images/header-cover.png" alt="RK FOX Banner" />
+                    <div className="text-center w-full max-w-full flex flex-col items-center">
+                        <Link to="/" className="group relative block w-full max-w-lg">
+                            <img className="w-full h-auto max-h-[250px] object-cover rounded-xl shadow-md" src="/images/header-cover.png" alt="RK FOX Banner" />
                         </Link>
                         {!isHome && (
-                            <Link to="/" className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-blue-500 transition-colors mt-1">
+                            <Link to="/" className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-blue-500 transition-colors mt-2">
                                 <ChevronLeft size={16} /> Voltar para o Início
                             </Link>
                         )}

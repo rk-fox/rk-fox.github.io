@@ -35,6 +35,23 @@
       }
     </script>
     <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+      html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+        width: 100%;
+      }
+      #root {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+      }
       /* Custom Scrollbar for tables */
       .custom-scrollbar::-webkit-scrollbar {
         height: 6px;

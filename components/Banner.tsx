@@ -9,7 +9,7 @@ interface BannerProps {
 
 export const Banner: React.FC<BannerProps> = ({ href, src, alt, className = "" }) => {
     return (
-        <div className={`w-[400px] max-w-2xl mx-auto overflow-hidden rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 ${className}`}>
+        <div className={`w-full max-w-[400px] mx-auto overflow-hidden rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 ${className}`}>
             <a
                 href={href}
                 target="_blank"

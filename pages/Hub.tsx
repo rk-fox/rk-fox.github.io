@@ -216,7 +216,7 @@ export const Hub: React.FC = () => {
                     <h3 className="font-display font-black text-2xl md:text-3xl mb-2">Precisa de arte, mídia ou música?</h3>
                     <p className="text-blue-100 font-medium">Serviços profissionais para criadores e marcas.</p>
                 </div>
-                <a href="https://linktr.ee/GUERDEART" target="_blank" rel="noreferrer" className="bg-white text-blue-600 font-bold py-3 px-6 rounded-lg hover:bg-blue-50 transition-colors shadow-sm whitespace-nowrap">
+                <a href="https://linktr.ee/GUERDEART" target="_blank" rel="noreferrer" className="w-full sm:w-auto text-center bg-white text-blue-600 font-bold py-3 px-6 rounded-lg hover:bg-blue-50 transition-colors shadow-sm sm:whitespace-nowrap">
                     Portfólio e Contato GUERDE
                 </a>
             </div>
