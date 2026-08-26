@@ -106,12 +106,11 @@ export const EfficiencyCalc: React.FC = () => {
         const finalPowerChange = newTotalPower - initialStats.totalPower;
 
         const effMiner = bP > 0 ? custoRLT / ((bP * (1 + bB)) / 1000000) : 0;
-        const effPower = finalPowerChange > 0 ? custoRLT / (finalPowerChange / 1000000) : 0;
+        const effPower = finalPowerChange > 0 ? custoRLT / (finalPowerChange / 1000000000) : 0;
 
         let conclusao = '';
         if (effPower > 0) {
-            if (effPower <= 35) conclusao = 'EXCELENTE';
-            else if (effPower <= 50) conclusao = 'BOM';
+            if (effPower <= 2.10) conclusao = 'EXCELENTE';
             else conclusao = 'CARO';
         }
 
@@ -291,7 +290,7 @@ export const EfficiencyCalc: React.FC = () => {
                                     <div>
                                         <p className="text-[10px] font-black opacity-40 uppercase">Eficiência Real</p>
                                         <p className="text-4xl font-black text-emerald-400">{results.effPower.toFixed(2)}</p>
-                                        <p className="text-[10px] font-bold opacity-60">RLT por cada 1 PH/s de ganho</p>
+                                        <p className="text-[10px] font-bold opacity-60">RLT por cada 1 EH/s de ganho</p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-[10px] font-black opacity-40 uppercase">Status</p>
@@ -309,7 +308,7 @@ export const EfficiencyCalc: React.FC = () => {
                                     <div className="p-4 bg-white/5 rounded-xl flex items-start gap-3">
                                         <Info size={16} className="text-blue-400 mt-0.5" />
                                         <p className="text-[10px] opacity-70 leading-relaxed">
-                                            A eficiência real considera a perda de bônus da venda e o ganho de bônus da compra. A eficiência bruta considera apenas o poder e bônus da miner sem o impacto na conta.
+                                            A eficiência real considera o impacto do poder e do bônus da miner no poder total da conta. A eficiência bruta considera apenas o poder e bônus da miner isoladamente, sem considerar o impacto na conta.
                                         </p>
                                     </div>
                                 </div>
@@ -323,8 +322,8 @@ export const EfficiencyCalc: React.FC = () => {
                             </div>
                             <div className="h-2 w-full bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden">
                                 <div
-                                    className={`h-full transition-all duration-1000 ${results.effPower <= 35 ? 'bg-emerald-500' : 'bg-red-500'}`}
-                                    style={{ width: `${Math.min(100, Math.max(0, (1 - results.effPower / 100) * 100))}%` }}
+                                    className={`h-full transition-all duration-1000 ${results.effPower <= 1.20 ? 'bg-emerald-500' : 'bg-red-500'}`}
+                                    style={{ width: `${Math.min(100, Math.max(0, (1 - results.effPower / 3.0) * 100))}%` }}
                                 />
                             </div>
                         </div>
