@@ -110,8 +110,9 @@ export const EfficiencyCalc: React.FC = () => {
 
         let conclusao = '';
         if (effPower > 0) {
-            if (effPower <= 2.10) conclusao = 'EXCELENTE';
-            else conclusao = 'CARO';
+            if (effPower > 2.10) conclusao = 'CARO';
+            else if (effPower > 1.30) conclusao = 'OK';
+            else conclusao = 'EXCELENTE';
         }
 
         setResults({
@@ -294,7 +295,7 @@ export const EfficiencyCalc: React.FC = () => {
                                     </div>
                                     <div className="text-right">
                                         <p className="text-[10px] font-black opacity-40 uppercase">Status</p>
-                                        <p className={`text-xl font-black ${results.conclusao === 'EXCELENTE' ? 'text-emerald-400' : 'text-red-400'}`}>
+                                        <p className={`text-xl font-black ${results.conclusao === 'EXCELENTE' ? 'text-emerald-400' : results.conclusao === 'OK' ? 'text-yellow-400' : 'text-red-400'}`}>
                                             {results.conclusao || '---'}
                                         </p>
                                     </div>
