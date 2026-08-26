@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, Info, TrendingDown, LayoutGrid, RefreshCw, Trophy } from 'lucide-react';
+import { Search, Info, TrendingDown, LayoutGrid, RefreshCw, Trophy, X } from 'lucide-react';
 
 interface DBItem {
     name: string;
@@ -64,6 +64,7 @@ export const WhalePlanner: React.FC = () => {
     const [slotsFilter, setSlotsFilter] = useState<'1' | '2' | 'both'>('both');
     const [marketFilter, setMarketFilter] = useState<'sellable' | 'not_sellable' | 'both'>('both');
     const [allMiners, setAllMiners] = useState<RoomMiner[]>([]);
+    const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
 
     const proxy = "https://summer-night-03c0.rk-foxx-159.workers.dev/?";
 
@@ -379,6 +380,121 @@ export const WhalePlanner: React.FC = () => {
         m.name.toLowerCase().includes(searchTerm.toLowerCase())
     ).slice(0, 50);
 
+    const renderSimulatorBody = () => {
+        if (!selectedWhale) return null;
+
+        return (
+            <div>
+                <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 mb-6">
+                    <div className="flex items-center gap-4 mb-4">
+                        <img src={`https://static.rollercoin.com/static/img/market/miners/${selectedWhale.filename}.gif?v=1`} className="w-16 h-16 object-contain" alt="" />
+                        <div>
+                            <p className="text-[10px] font-black text-slate-400 uppercase">Miner Atual</p>
+                            <p className="font-black text-slate-800 dark:text-white leading-tight uppercase">{selectedWhale.name}</p>
+                            <p className="text-[10px] font-bold text-blue-500">+{selectedWhale.bonus_percent.toFixed(2)}% Bônus</p>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-white dark:bg-dark-800 p-2 rounded-xl text-center border border-slate-200 dark:border-slate-700">
+                            <p className="text-[8px] font-bold text-slate-400 uppercase">Poder</p>
+                            <p className="text-xs font-black dark:text-white">{convertPower(selectedWhale.power)}</p>
+                        </div>
+                        <div className="bg-white dark:bg-dark-800 p-2 rounded-xl text-center border border-slate-200 dark:border-slate-700">
+                            <p className="text-[8px] font-bold text-slate-400 uppercase">Impacto</p>
+                            <p className="text-xs font-black text-red-500">-{convertPower(Math.abs(selectedWhale.impact))}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {selectedNewMiner && (
+                    <div className="bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl p-4 border border-emerald-100 dark:border-emerald-800 mb-6 animate-fade-in">
+                        <div className="flex items-center gap-4 mb-4">
+                            <img src={`https://static.rollercoin.com/static/img/market/miners/${selectedNewMiner.item.name.toLowerCase().replace(/\s+/g, '_')}.gif?v=1`} className="w-16 h-16 object-contain" alt="" />
+                            <div>
+                                <p className="text-[10px] font-black text-slate-400 uppercase">Simulação Nova</p>
+                                <p className="font-black text-slate-800 dark:text-white leading-tight uppercase text-xs">{selectedNewMiner.item.name}</p>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                    <p className="text-[10px] font-black text-emerald-500 uppercase">{selectedNewMiner.level}</p>
+                                    <p className="text-[10px] font-bold text-blue-500">
+                                        +{((selectedNewMiner.item[selectedNewMiner.level.toLowerCase() as keyof DBItem] as { power: number; bonus: number })?.bonus || 0).toFixed(2)}% Bônus
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-white dark:bg-dark-800 p-2 rounded-xl text-center border border-slate-200 dark:border-slate-700">
+                                <p className="text-[8px] font-bold text-slate-400 uppercase">Poder</p>
+                                <p className="text-xs font-black dark:text-white">{convertPower(selectedNewMiner.item[selectedNewMiner.level.toLowerCase() as keyof DBItem]?.power || 0)}</p>
+                            </div>
+                            <div className="bg-white dark:bg-dark-800 p-2 rounded-xl text-center border border-slate-200 dark:border-slate-700">
+                                <p className="text-[8px] font-bold text-slate-400 uppercase">Impacto Final</p>
+                                <p className={`text-xs font-black ${simulationResult?.impact && simulationResult.impact < 0 ? 'text-red-500' : 'text-emerald-500'}`}>
+                                    {simulationResult?.formatted || '0,000 PH/s'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <div className="space-y-4 relative">
+                    <p className="text-[10px] font-black text-slate-400 uppercase text-center">Simular substituição por:</p>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                setIsDropdownOpen(true);
+                            }}
+                            onFocus={() => setIsDropdownOpen(true)}
+                            className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl outline-none font-bold text-sm dark:text-white focus:ring-2 focus:ring-blue-500"
+                            placeholder="Pesquisar minerador..."
+                        />
+                        <LayoutGrid size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+
+                        {isDropdownOpen && searchTerm.length > 0 && (
+                            <div className="absolute z-50 bottom-full left-0 w-full mb-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
+                                {filteredMiners.map((m, i) => (
+                                    <div key={i} className="p-2 border-b border-white/5 last:border-0">
+                                        <p className="text-[10px] font-black text-slate-500 px-2 pt-1">{m.name}</p>
+                                        <div className="flex flex-wrap gap-1 p-1">
+                                            {['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Unreal', 'Legacy'].map(lvl => {
+                                                const d = m[lvl.toLowerCase() as keyof DBItem] as any;
+                                                if (!d || d.power === 0) return null;
+                                                return (
+                                                    <button
+                                                        key={lvl}
+                                                        onClick={() => {
+                                                            handleSimulateUpdate(m, lvl);
+                                                            setIsDropdownOpen(false);
+                                                            setSearchTerm('');
+                                                        }}
+                                                        className={`px-2 py-1 rounded-md text-[9px] font-black uppercase transition-all ${getLevelInfo(['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Unreal', 'Legacy'].indexOf(lvl), 'basic').color} hover:bg-white/10`}
+                                                    >
+                                                        {lvl}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="p-4 bg-orange-50 dark:bg-orange-900/10 rounded-xl border border-orange-100 dark:border-orange-900/30">
+                        <p className="text-[10px] font-black text-orange-600 uppercase mb-1 flex items-center gap-1">
+                            <Info size={10} /> Dica de Baleia
+                        </p>
+                        <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
+                            Ao remover um minerador com bônus alto, o impacto negativo pode ser maior que o ganho bruto do novo minerador.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="space-y-8 animate-fade-in max-w-7xl mx-auto px-4">
             <div className="text-center mb-12">
@@ -483,6 +599,7 @@ export const WhalePlanner: React.FC = () => {
                                     setSelectedWhale(m);
                                     setSimulationResult(null);
                                     setSelectedNewMiner(null);
+                                    setIsMobileModalOpen(true);
                                 }}
                                 className={`p-6 cursor-pointer transition-all bg-white dark:bg-dark-800 rounded-[2.5rem] border shadow-lg hover:shadow-xl hover:-translate-y-1 ${selectedWhale?.miner_id === m.miner_id ? 'border-blue-500 ring-4 ring-blue-500/20' : 'border-slate-100 dark:border-slate-700'}`}
                             >
@@ -552,118 +669,12 @@ export const WhalePlanner: React.FC = () => {
                     )}
                 </div>
 
-                {/* Simulation Column */}
-                <div className="lg:col-span-1 space-y-6">
+                {/* Simulation Column (Desktop) */}
+                <div className="hidden lg:block lg:col-span-1 space-y-6">
                     {selectedWhale ? (
                         <div className="bg-white dark:bg-dark-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl shadow-blue-500/5 sticky top-8">
                             <h3 className="text-center font-black uppercase text-sm mb-6 dark:text-white">Simulador de Troca</h3>
-
-                            <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 mb-6">
-                                <div className="flex items-center gap-4 mb-4">
-                                    <img src={`https://static.rollercoin.com/static/img/market/miners/${selectedWhale.filename}.gif?v=1`} className="w-16 h-16 object-contain" alt="" />
-                                    <div>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase">Miner Atual</p>
-                                        <p className="font-black text-slate-800 dark:text-white leading-tight uppercase">{selectedWhale.name}</p>
-                                        <p className="text-[10px] font-bold text-blue-500">+{selectedWhale.bonus_percent.toFixed(2)}% Bônus</p>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                    <div className="bg-white dark:bg-dark-800 p-2 rounded-xl text-center border border-slate-200 dark:border-slate-700">
-                                        <p className="text-[8px] font-bold text-slate-400 uppercase">Poder</p>
-                                        <p className="text-xs font-black dark:text-white">{convertPower(selectedWhale.power)}</p>
-                                    </div>
-                                    <div className="bg-white dark:bg-dark-800 p-2 rounded-xl text-center border border-slate-200 dark:border-slate-700">
-                                        <p className="text-[8px] font-bold text-slate-400 uppercase">Impacto</p>
-                                        <p className="text-xs font-black text-red-500">-{convertPower(Math.abs(selectedWhale.impact))}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {selectedNewMiner && (
-                                <div className="bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl p-4 border border-emerald-100 dark:border-emerald-800 mb-6 animate-fade-in">
-                                    <div className="flex items-center gap-4 mb-4">
-                                        <img src={`https://static.rollercoin.com/static/img/market/miners/${selectedNewMiner.item.name.toLowerCase().replace(/\s+/g, '_')}.gif?v=1`} className="w-16 h-16 object-contain" alt="" />
-                                        <div>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase">Simulação Nova</p>
-                                            <p className="font-black text-slate-800 dark:text-white leading-tight uppercase text-xs">{selectedNewMiner.item.name}</p>
-                                            <div className="flex items-center gap-2 mt-0.5">
-                                                <p className="text-[10px] font-black text-emerald-500 uppercase">{selectedNewMiner.level}</p>
-                                                <p className="text-[10px] font-bold text-blue-500">
-                                                    +{((selectedNewMiner.item[selectedNewMiner.level.toLowerCase() as keyof DBItem] as { power: number; bonus: number })?.bonus || 0).toFixed(2)}% Bônus
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div className="bg-white dark:bg-dark-800 p-2 rounded-xl text-center border border-slate-200 dark:border-slate-700">
-                                            <p className="text-[8px] font-bold text-slate-400 uppercase">Poder</p>
-                                            <p className="text-xs font-black dark:text-white">{convertPower(selectedNewMiner.item[selectedNewMiner.level.toLowerCase() as keyof DBItem]?.power || 0)}</p>
-                                        </div>
-                                        <div className="bg-white dark:bg-dark-800 p-2 rounded-xl text-center border border-slate-200 dark:border-slate-700">
-                                            <p className="text-[8px] font-bold text-slate-400 uppercase">Impacto Final</p>
-                                            <p className={`text-xs font-black ${simulationResult?.impact && simulationResult.impact < 0 ? 'text-red-500' : 'text-emerald-500'}`}>
-                                                {simulationResult?.formatted || '0,000 PH/s'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="space-y-4 relative">
-                                <p className="text-[10px] font-black text-slate-400 uppercase text-center">Simular substituição por:</p>
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={searchTerm}
-                                        onChange={(e) => {
-                                            setSearchTerm(e.target.value);
-                                            setIsDropdownOpen(true);
-                                        }}
-                                        onFocus={() => setIsDropdownOpen(true)}
-                                        className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl outline-none font-bold text-sm dark:text-white focus:ring-2 focus:ring-blue-500"
-                                        placeholder="Pesquisar minerador..."
-                                    />
-                                    <LayoutGrid size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-
-                                    {isDropdownOpen && searchTerm.length > 0 && (
-                                        <div className="absolute z-50 bottom-full left-0 w-full mb-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
-                                            {filteredMiners.map((m, i) => (
-                                                <div key={i} className="p-2 border-b border-white/5 last:border-0">
-                                                    <p className="text-[10px] font-black text-slate-500 px-2 pt-1">{m.name}</p>
-                                                    <div className="flex flex-wrap gap-1 p-1">
-                                                        {['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Unreal', 'Legacy'].map(lvl => {
-                                                            const d = m[lvl.toLowerCase() as keyof DBItem] as any;
-                                                            if (!d || d.power === 0) return null;
-                                                            return (
-                                                                <button
-                                                                    key={lvl}
-                                                                    onClick={() => {
-                                                                        handleSimulateUpdate(m, lvl);
-                                                                        setIsDropdownOpen(false);
-                                                                        setSearchTerm('');
-                                                                    }}
-                                                                    className={`px-2 py-1 rounded-md text-[9px] font-black uppercase transition-all ${getLevelInfo(['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Unreal', 'Legacy'].indexOf(lvl), 'basic').color} hover:bg-white/10`}
-                                                                >
-                                                                    {lvl}
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="p-4 bg-orange-50 dark:bg-orange-900/10 rounded-xl border border-orange-100 dark:border-orange-900/30">
-                                    <p className="text-[10px] font-black text-orange-600 uppercase mb-1 flex items-center gap-1">
-                                        <Info size={10} /> Dica de Baleia
-                                    </p>
-                                    <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
-                                        Ao remover um minerador com bônus alto, o impacto negativo pode ser maior que o ganho bruto do novo minerador.
-                                    </p>
-                                </div>
-                            </div>
+                            {renderSimulatorBody()}
                         </div>
                     ) : (
                         <div className="bg-blue-50 dark:bg-blue-900/10 p-8 rounded-3xl border-2 border-dashed border-blue-200 dark:border-blue-900/50 text-center flex flex-col items-center justify-center min-h-[400px]">
@@ -674,6 +685,46 @@ export const WhalePlanner: React.FC = () => {
                     )}
                 </div>
             </div>
+
+            {/* Mobile Simulator Popup / Modal */}
+            {isMobileModalOpen && selectedWhale && (
+                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-sm animate-fade-in lg:hidden">
+                    <div
+                        className="fixed inset-0"
+                        onClick={() => setIsMobileModalOpen(false)}
+                    />
+                    <div className="relative w-full max-w-lg bg-white dark:bg-dark-800 rounded-t-[2.5rem] sm:rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-2xl max-h-[85vh] overflow-y-auto z-10 animate-slide-up">
+                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-700">
+                            <div className="flex items-center gap-2">
+                                <LayoutGrid size={18} className="text-blue-500" />
+                                <h3 className="font-black uppercase text-sm dark:text-white">Simulador de Troca</h3>
+                            </div>
+                            <button
+                                onClick={() => setIsMobileModalOpen(false)}
+                                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                aria-label="Fechar"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+                        {renderSimulatorBody()}
+                    </div>
+                </div>
+            )}
+
+            {/* Floating button on mobile when a miner is selected and modal is closed */}
+            {selectedWhale && !isMobileModalOpen && (
+                <div className="fixed bottom-6 right-6 z-40 lg:hidden">
+                    <button
+                        onClick={() => setIsMobileModalOpen(true)}
+                        className="flex items-center gap-2 px-5 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider rounded-full shadow-2xl shadow-blue-500/50 border-2 border-white/20 active:scale-95 transition-all"
+                    >
+                        <LayoutGrid size={16} />
+                        <span>Simulador</span>
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
