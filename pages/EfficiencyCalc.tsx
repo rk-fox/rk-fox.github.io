@@ -323,8 +323,16 @@ export const EfficiencyCalc: React.FC = () => {
                             </div>
                             <div className="h-2 w-full bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden">
                                 <div
-                                    className={`h-full transition-all duration-1000 ${results.effPower <= 1.20 ? 'bg-emerald-500' : 'bg-red-500'}`}
-                                    style={{ width: `${Math.min(100, Math.max(0, (1 - results.effPower / 3.0) * 100))}%` }}
+                                    className={`h-full transition-all duration-1000 ${
+                                        results.effPower <= 1.3 
+                                            ? 'bg-emerald-500' 
+                                            : results.effPower <= 2.1 
+                                            ? 'bg-amber-400' 
+                                            : 'bg-red-500'
+                                    }`}
+                                    style={{ 
+                                        width: `${Math.min(100, Math.max(0, ((2.5 - results.effPower) / 1.5) * 100))}%` 
+                                    }}
                                 />
                             </div>
                         </div>
