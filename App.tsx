@@ -8,6 +8,7 @@ import { EfficiencyCalc } from './pages/EfficiencyCalc';
 import { BurnPlanner } from './pages/BurnPlanner';
 import { EventPass } from './pages/EventPass';
 import { Ranking } from './pages/Ranking';
+import { RoomOrganizer } from './pages/RoomOrganizer';
 
 const App: React.FC = () => {
   return (
@@ -21,6 +22,8 @@ const App: React.FC = () => {
           <Route path="/burn" element={<BurnPlanner />} />
           <Route path="/event" element={<EventPass />} />
           <Route path="/ranking" element={<Ranking />} />
+          <Route path="/organizer" element={<RoomOrganizer />} />
+          <Route path="/room-organizer" element={<RoomOrganizer />} />
         </Routes>
       </Layout>
     </Router>

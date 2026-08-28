@@ -26,7 +26,8 @@ import {
     Combine,
     Gamepad2,
     Bitcoin,
-    LayoutGrid
+    LayoutGrid,
+    Sparkles
 } from 'lucide-react';
 
 export const Hub: React.FC = () => {
@@ -79,10 +80,26 @@ export const Hub: React.FC = () => {
                 </h3>
 
                 {/* Main Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* Card: Room Organizer (New - Emerald) */}
+                    <Link to="/organizer">
+                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border-2 border-emerald-500/40 dark:border-emerald-500/30 flex flex-col h-full relative hover:shadow-md hover:-translate-y-0.5 transition-all">
+                            <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center mb-4 text-emerald-600 dark:text-emerald-400">
+                                <Sparkles size={20} />
+                            </div>
+                            <h4 className="font-display font-bold text-lg text-slate-800 dark:text-white mb-2">Organizador de Sala</h4>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-grow leading-relaxed">
+                                Importe seu inventário, organize suas salas, simule trocas e veja o Poder Real e bônus atualizados em tempo real!
+                            </p>
+                            <button className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-lg text-center transition-colors flex items-center justify-center gap-2">
+                                Acessar <Grid size={14} />
+                            </button>
+                        </div>
+                    </Link>
+
                     {/* Card 1: Efficiency (Red) */}
                     <Link to="/efficiency">
-                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col h-full hover:shadow-md transition-shadow">
+                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col h-full hover:shadow-md hover:-translate-y-0.5 transition-all">
                             <div className="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center mb-4 text-slate-600 dark:text-slate-300">
                                 <Zap size={20} />
                             </div>
@@ -98,7 +115,7 @@ export const Hub: React.FC = () => {
 
                     {/* Card 2: Room Planner (Orange) */}
                     <Link to="/whale">
-                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border-2 border-orange-400/50 dark:border-orange-500/30 flex flex-col h-full relative hover:shadow-md transition-shadow">
+                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border-2 border-orange-400/50 dark:border-orange-500/30 flex flex-col h-full relative hover:shadow-md hover:-translate-y-0.5 transition-all">
                             <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-4 text-orange-600">
                                 <LayoutGrid size={20} />
                             </div>
@@ -114,7 +131,7 @@ export const Hub: React.FC = () => {
 
                     {/* Card 3: Burn Planner (Blue) */}
                     <Link to="/burn">
-                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col h-full hover:shadow-md transition-shadow">
+                        <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col h-full hover:shadow-md hover:-translate-y-0.5 transition-all">
                             <div className="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center mb-4 text-slate-600 dark:text-slate-300">
                                 <Flame size={20} />
                             </div>
