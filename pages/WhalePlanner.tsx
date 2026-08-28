@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, Info, TrendingDown, LayoutGrid, RefreshCw, Trophy, X } from 'lucide-react';
+import { Search, Info, TrendingDown, TrendingUp, Zap, Award, LayoutGrid, RefreshCw, Trophy, X } from 'lucide-react';
 
 interface DBItem {
     name: string;
@@ -34,6 +34,8 @@ interface RoomMiner {
     formattedImpact: string;
 }
 
+export type CriterionFilter = 'menor_eficiencia' | 'maior_eficiencia' | 'mais_poder_menos_bonus' | 'mais_bonus_menos_poder';
+
 export const WhalePlanner: React.FC = () => {
     const hasRun = useRef(false);
 
@@ -63,6 +65,7 @@ export const WhalePlanner: React.FC = () => {
     const [userStats, setUserStats] = useState({ minersPower: 0, totalBonusPercent: 0, totalOrig: 0 });
     const [slotsFilter, setSlotsFilter] = useState<'1' | '2' | 'both'>('both');
     const [marketFilter, setMarketFilter] = useState<'sellable' | 'not_sellable' | 'both'>('both');
+    const [criterionFilter, setCriterionFilter] = useState<CriterionFilter>('menor_eficiencia');
     const [allMiners, setAllMiners] = useState<RoomMiner[]>([]);
     const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
 
@@ -324,7 +327,7 @@ export const WhalePlanner: React.FC = () => {
 
         const { minersPower, totalBonusPercent, totalOrig } = userStats;
 
-        return filtered.map(m => {
+        const mapped = filtered.map(m => {
             const remainingPower = minersPower - m.power;
             const remainingBonus = totalBonusPercent - m.bonus_percent;
             const newAdjusted = remainingPower * ((100 + remainingBonus - m.setBonus) / 100);
@@ -334,8 +337,59 @@ export const WhalePlanner: React.FC = () => {
                 impact,
                 formattedImpact: convertPower(impact)
             };
-        }).sort((a, b) => b.impact - a.impact).slice(0, 10);
-    }, [allMiners, slotsFilter, marketFilter, userStats]);
+        });
+
+        switch (criterionFilter) {
+            case 'menor_eficiencia':
+                return mapped.sort((a, b) => b.impact - a.impact).slice(0, 10);
+            case 'maior_eficiencia':
+                return mapped.sort((a, b) => a.impact - b.impact).slice(0, 10);
+            case 'mais_poder_menos_bonus':
+                return mapped.sort((a, b) => {
+                    const ratioA = a.power / (a.bonus_percent + 0.001);
+                    const ratioB = b.power / (b.bonus_percent + 0.001);
+                    return ratioB - ratioA;
+                }).slice(0, 10);
+            case 'mais_bonus_menos_poder':
+                return mapped.sort((a, b) => {
+                    const ratioA = a.bonus_percent / (a.power + 1);
+                    const ratioB = b.bonus_percent / (b.power + 1);
+                    return ratioB - ratioA;
+                }).slice(0, 10);
+            default:
+                return mapped.sort((a, b) => b.impact - a.impact).slice(0, 10);
+        }
+    }, [allMiners, slotsFilter, marketFilter, criterionFilter, userStats]);
+
+    const getCriterionHeader = () => {
+        switch (criterionFilter) {
+            case 'menor_eficiencia':
+                return {
+                    title: 'Top 10 Menor Eficiência',
+                    icon: <TrendingDown size={20} className="text-red-500" />
+                };
+            case 'maior_eficiencia':
+                return {
+                    title: 'Top 10 Maior Eficiência',
+                    icon: <TrendingUp size={20} className="text-emerald-500" />
+                };
+            case 'mais_poder_menos_bonus':
+                return {
+                    title: 'Top 10 +Poder / -Bônus',
+                    icon: <Zap size={20} className="text-amber-500" />
+                };
+            case 'mais_bonus_menos_poder':
+                return {
+                    title: 'Top 10 +Bônus / -Poder',
+                    icon: <Award size={20} className="text-blue-500" />
+                };
+            default:
+                return {
+                    title: 'Top 10 Menor Eficiência',
+                    icon: <TrendingDown size={20} className="text-red-500" />
+                };
+        }
+    };
 
     const getLevelInfo = (level: number, type: string) => {
         const levels = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Unreal', 'Legacy'];
@@ -559,6 +613,34 @@ export const WhalePlanner: React.FC = () => {
                             ))}
                         </div>
                     </div>
+
+                    {/* Criterion Filter */}
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Critério</label>
+                        <div className="flex flex-wrap gap-4">
+                            {[
+                                { id: 'menor_eficiencia', label: 'Menor Eficiência' },
+                                { id: 'maior_eficiencia', label: 'Maior Eficiência' },
+                                { id: 'mais_poder_menos_bonus', label: '+Poder / -Bônus' },
+                                { id: 'mais_bonus_menos_poder', label: '+Bônus / -Poder' }
+                            ].map((opt) => (
+                                <label key={opt.id} className="flex items-center gap-2 cursor-pointer group">
+                                    <div className="relative flex items-center justify-center">
+                                        <input
+                                            type="radio"
+                                            name="criterion"
+                                            checked={criterionFilter === opt.id}
+                                            onChange={() => setCriterionFilter(opt.id as CriterionFilter)}
+                                            className="sr-only"
+                                        />
+                                        <div className={`w-4 h-4 rounded-full border-2 transition-all ${criterionFilter === opt.id ? 'border-blue-500 bg-blue-500' : 'border-slate-300 dark:border-slate-600'}`} />
+                                        {criterionFilter === opt.id && <div className="absolute w-1.5 h-1.5 bg-white rounded-full" />}
+                                    </div>
+                                    <span className={`text-[11px] font-bold transition-colors ${criterionFilter === opt.id ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>{opt.label}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-2">
@@ -586,8 +668,8 @@ export const WhalePlanner: React.FC = () => {
                 {/* List Column */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center gap-2 px-2">
-                        <TrendingDown size={20} className="text-red-500" />
-                        <h3 className="text-lg font-black uppercase text-slate-700 dark:text-white">Top 10 Menor Impacto</h3>
+                        {getCriterionHeader().icon}
+                        <h3 className="text-lg font-black uppercase text-slate-700 dark:text-white">{getCriterionHeader().title}</h3>
                     </div>
 
                     {minerImpacts.map((m, idx) => {
