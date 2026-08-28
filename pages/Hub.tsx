@@ -84,8 +84,13 @@ export const Hub: React.FC = () => {
                     {/* Card: Room Organizer (New - Emerald) */}
                     <Link to="/organizer">
                         <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border-2 border-emerald-500/40 dark:border-emerald-500/30 flex flex-col h-full relative hover:shadow-md hover:-translate-y-0.5 transition-all">
-                            <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center mb-4 text-emerald-600 dark:text-emerald-400">
-                                <Sparkles size={20} />
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                                    <Sparkles size={20} />
+                                </div>
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 shadow-xs animate-pulse">
+                                    BETA
+                                </span>
                             </div>
                             <h4 className="font-display font-bold text-lg text-slate-800 dark:text-white mb-2">Organizador de Sala</h4>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-grow leading-relaxed">
