@@ -1001,7 +1001,7 @@ export const RoomOrganizer: React.FC = () => {
                                 onChange={(e) => setCustomSetBonus(parseFloat(e.target.value) || 0)}
                                 placeholder="0.00 %"
                                 className="w-full bg-transparent text-cyan-600 dark:text-cyan-400 font-mono font-black text-sm outline-none placeholder:text-slate-400"
-                                title="Insira seu bônus de Sets para somar diretamente ao Bônus Bruto"
+                                title="Insira seu bônus de Sets para somar diretamente ao Bônus Bruto. Se tiver bônus de exchange ativo, subtraia-o deste valor."
                             />
                         </div>
                     </div>
@@ -1997,6 +1997,19 @@ Miner details
                                     <h4 className="font-bold text-slate-900 dark:text-white">5. Identificação de Itens Negociáveis / Inegociáveis</h4>
                                     <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
                                         Ainda não está sendo possível definir com precisão absoluta quais miners são negociáveis ou inegociáveis. Trate essa indicação como estimativa preliminar.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Point 6: Bônus de Exchange Ativo */}
+                            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
+                                <div className="p-1.5 bg-blue-500 text-white rounded-lg flex-shrink-0 mt-0.5 shadow-xs">
+                                    <ArrowUpDown size={14} />
+                                </div>
+                                <div className="space-y-0.5">
+                                    <h4 className="font-bold text-slate-900 dark:text-white">6. Bônus de Exchange Ativo</h4>
+                                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                                        Caso você esteja com bônus de exchange ativo na sua conta, o valor inicial calculado no <em>"Bônus de Set (%)"</em> aparecerá um pouco superior ao real. Para corrigir, basta <strong>reduzir manualmente o valor do bônus de exchange</strong> do campo de bônus de set no topo da página.
                                     </p>
                                 </div>
                             </div>
