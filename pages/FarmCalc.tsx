@@ -1,9 +1,19 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Calculator, User, Award, Wallet, TrendingUp, Info, RefreshCw, Zap } from 'lucide-react';
 
 interface CryptoPrice {
     usd: number;
     brl: number;
+}
+
+interface RawFarmItem {
+    moeda: string;
+    token: string;
+    durationSec: number;
+    blockReward: number;
+    totalPower: number;
+    minimo: number;
+    price?: CryptoPrice;
 }
 
 interface FarmRow {
@@ -21,6 +31,8 @@ interface FarmRow {
     fiatBlock?: string;
     fiatDay?: string;
     fiatMonth?: string;
+    rawUsdDay?: number;
+    rawWithdrawDays?: number;
 }
 
 export const FarmCalc: React.FC = () => {
@@ -45,7 +57,8 @@ export const FarmCalc: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [profileLink, setProfileLink] = useState('');
     const [profileData, setProfileData] = useState<any>(null);
-    const [farmRows, setFarmRows] = useState<FarmRow[]>([]);
+    const [rawFarmItems, setRawFarmItems] = useState<RawFarmItem[]>([]);
+    const [force10Min, setForce10Min] = useState<boolean>(false);
 
     const [userPower, setUserPower] = useState<number>(0);
 
@@ -190,7 +203,7 @@ export const FarmCalc: React.FC = () => {
             // 5. Network Data & Loop
             const moedas = ligaMoedasMap[leagueId] || moedasd;
             const today = new Date().toISOString().slice(0, 10);
-            const rows: FarmRow[] = [];
+            const rawItems: RawFarmItem[] = [];
 
             const promises = Object.entries(moedas).map(async ([moeda, token]) => {
                 const results: any = {};
@@ -207,46 +220,19 @@ export const FarmCalc: React.FC = () => {
                     results[group] = val;
                 }));
 
-                const tempoSec = results.duration;
-                const bloco = results.block_reward;
-                const poderRede = results.total_power;
-                const minimo = minimos[token as string];
-
-                const fblk = (userPowerVal / (poderRede + userPowerVal)) * bloco;
-                const fdia = tempoSec > 0 ? (86400 / tempoSec) * fblk : 0;
-                const fmes = fdia * 30;
-
-                let withdraw = "X";
-                if (!["RLT", "RST", "HMT", "ALGO"].includes(moeda)) {
-                    if (minimo > 0 && fblk > 0 && tempoSec > 0) {
-                        const dias = ((minimo / fblk) * (tempoSec / 60)) / 1440;
-                        withdraw = `${dias.toFixed(2).replace('.', ',')} dias`;
-                    } else {
-                        withdraw = "-";
-                    }
-                }
-
-                const pricesForMoeda = cryptoPrices[moeda];
-                rows.push({
-                    token: moeda,
-                    time: `${(tempoSec / 60).toFixed(2)} min`,
-                    reward: bloco.toFixed(8),
-                    block: fblk.toFixed(10),
-                    day: fdia.toFixed(8),
-                    month: fmes.toFixed(8),
-                    withdraw,
-                    isFiat: !!pricesForMoeda,
-                    usdBlock: pricesForMoeda ? (fblk * pricesForMoeda.usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : undefined,
-                    usdDay: pricesForMoeda ? (fdia * pricesForMoeda.usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : undefined,
-                    usdMonth: pricesForMoeda ? (fmes * pricesForMoeda.usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : undefined,
-                    fiatBlock: pricesForMoeda ? (fblk * pricesForMoeda.brl).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
-                    fiatDay: pricesForMoeda ? (fdia * pricesForMoeda.brl).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
-                    fiatMonth: pricesForMoeda ? (fmes * pricesForMoeda.brl).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
+                rawItems.push({
+                    moeda,
+                    token: token as string,
+                    durationSec: results.duration || 600,
+                    blockReward: results.block_reward || 0,
+                    totalPower: results.total_power || 0,
+                    minimo: minimos[token as string] || 0,
+                    price: cryptoPrices[moeda],
                 });
             });
 
             await Promise.all(promises);
-            setFarmRows(rows.sort((a, b) => a.token.localeCompare(b.token)));
+            setRawFarmItems(rawItems);
 
         } catch (e) {
             console.error(e);
@@ -255,6 +241,85 @@ export const FarmCalc: React.FC = () => {
             setLoading(false);
         }
     };
+
+    // Construção Reativa das Linhas de Farm (permite alternar Forçar 10 min instantaneamente)
+    const farmRows = useMemo<FarmRow[]>(() => {
+        if (rawFarmItems.length === 0 || userPower <= 0) return [];
+
+        return rawFarmItems.map(item => {
+            const tempoSec = force10Min ? 600 : item.durationSec;
+            const bloco = item.blockReward;
+            const poderRede = item.totalPower;
+            const minimo = item.minimo;
+            const userPowerVal = userPower;
+
+            const fblk = (userPowerVal / (poderRede + userPowerVal)) * bloco;
+            const fdia = tempoSec > 0 ? (86400 / tempoSec) * fblk : 0;
+            const fmes = fdia * 30;
+
+            let withdraw = "X";
+            let rawWithdrawDays = Infinity;
+            if (!["RLT", "RST", "HMT", "ALGO"].includes(item.moeda)) {
+                if (minimo > 0 && fblk > 0 && tempoSec > 0) {
+                    const dias = ((minimo / fblk) * (tempoSec / 60)) / 1440;
+                    withdraw = `${dias.toFixed(2).replace('.', ',')} dias`;
+                    rawWithdrawDays = dias;
+                } else {
+                    withdraw = "-";
+                }
+            }
+
+            const pricesForMoeda = item.price;
+            const rawUsdDay = pricesForMoeda ? (fdia * pricesForMoeda.usd) : 0;
+
+            return {
+                token: item.moeda,
+                time: `${(tempoSec / 60).toFixed(2)} min`,
+                reward: bloco.toFixed(8),
+                block: fblk.toFixed(10),
+                day: fdia.toFixed(8),
+                month: fmes.toFixed(8),
+                withdraw,
+                isFiat: !!pricesForMoeda,
+                usdBlock: pricesForMoeda ? (fblk * pricesForMoeda.usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : undefined,
+                usdDay: pricesForMoeda ? (fdia * pricesForMoeda.usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : undefined,
+                usdMonth: pricesForMoeda ? (fmes * pricesForMoeda.usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : undefined,
+                fiatBlock: pricesForMoeda ? (fblk * pricesForMoeda.brl).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
+                fiatDay: pricesForMoeda ? (fdia * pricesForMoeda.brl).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
+                fiatMonth: pricesForMoeda ? (fmes * pricesForMoeda.brl).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
+                rawUsdDay,
+                rawWithdrawDays,
+            };
+        }).sort((a, b) => a.token.localeCompare(b.token));
+    }, [rawFarmItems, force10Min, userPower]);
+
+    // Formatação Condicional: Maior ganho em USD por dia (geral e com saque) e menor tempo para saque
+    const { maxUsdDay, maxWithdrawableUsdDay } = useMemo(() => {
+        let maxOverall = 0;
+        let maxWithdrawable = 0;
+        let topTokenHasNoWithdraw = false;
+
+        farmRows.forEach(r => {
+            const usd = r.rawUsdDay || 0;
+            if (usd > maxOverall) {
+                maxOverall = usd;
+                topTokenHasNoWithdraw = r.withdraw === 'X';
+            }
+            if (r.withdraw !== 'X' && usd > maxWithdrawable) {
+                maxWithdrawable = usd;
+            }
+        });
+
+        return {
+            maxUsdDay: maxOverall,
+            maxWithdrawableUsdDay: topTokenHasNoWithdraw ? maxWithdrawable : 0,
+        };
+    }, [farmRows]);
+
+    const minWithdrawDays = useMemo(() => {
+        const values = farmRows.map(r => r.rawWithdrawDays || Infinity).filter(v => v > 0 && isFinite(v));
+        return values.length > 0 ? Math.min(...values) : Infinity;
+    }, [farmRows]);
 
     return (
         <div className="space-y-8 animate-fade-in max-w-7xl mx-auto px-4 pb-20">
@@ -322,11 +387,33 @@ export const FarmCalc: React.FC = () => {
 
                     {/* Results Table */}
                     <div className="bg-white dark:bg-dark-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                        <div className="bg-blue-600 px-8 py-5 flex justify-between items-center">
+                        <div className="bg-blue-600 px-6 md:px-8 py-4 flex items-center justify-between gap-4">
                             <h3 className="text-white font-black uppercase tracking-widest text-sm flex items-center gap-2">
                                 <Wallet size={18} className="text-blue-200" /> Rendimentos Estimados
                             </h3>
-                            <span className="text-blue-100 text-[10px] font-bold opacity-80 uppercase tracking-tighter">Dados em tempo real via RollerCoin API</span>
+                            
+                            <div className="flex items-center gap-3">
+                                {/* Toggle Button de Alto Contraste e Posição Fixa */}
+                                <button
+                                    type="button"
+                                    onClick={() => setForce10Min(!force10Min)}
+                                    className={`flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all shadow-sm border ${
+                                        force10Min
+                                            ? 'bg-emerald-500 text-white border-emerald-400 shadow-emerald-950/20'
+                                            : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
+                                    }`}
+                                    title={force10Min ? 'Modo Ativo: Bloco fixado em 10:00 min. Clique para usar tempo real.' : 'Clique para fixar o tempo de bloco em 10:00 min.'}
+                                >
+                                    <div className={`w-7 h-4 rounded-full p-0.5 transition-colors flex items-center ${
+                                        force10Min ? 'bg-white' : 'bg-black/40'
+                                    }`}>
+                                        <div className={`w-3 h-3 rounded-full transition-transform transform shadow-xs ${
+                                            force10Min ? 'translate-x-3 bg-emerald-600' : 'translate-x-0 bg-white'
+                                        }`} />
+                                    </div>
+                                    <span className="whitespace-nowrap">Forçar Bloco em 10 min</span>
+                                </button>
+                            </div>
                         </div>
                         <div className="overflow-x-auto custom-scrollbar">
                             <table className="w-full text-left border-collapse">
@@ -346,56 +433,77 @@ export const FarmCalc: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                                    {farmRows.map((row, idx) => (
-                                        <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                                            <td className="px-8 py-5 font-black text-sm dark:text-white border-r border-slate-50 dark:border-slate-800/50">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                                                    {row.token}
-                                                </div>
-                                            </td>
+                                    {farmRows.map((row, idx) => {
+                                        const isOverallBestUsd = maxUsdDay > 0 && Math.abs((row.rawUsdDay || 0) - maxUsdDay) < 1e-9;
+                                        const isWithdrawableBestUsd = maxWithdrawableUsdDay > 0 && Math.abs((row.rawUsdDay || 0) - maxWithdrawableUsdDay) < 1e-9 && row.withdraw !== 'X';
+                                        const isBestDailyUsd = isOverallBestUsd || isWithdrawableBestUsd;
+                                        const isBestWithdraw = minWithdrawDays < Infinity && Math.abs((row.rawWithdrawDays || Infinity) - minWithdrawDays) < 1e-6;
 
-                                            <td className="hidden md:table-cell px-8 py-5 text-center font-bold text-slate-400 text-xs border-r border-slate-50 dark:border-slate-800/50">{row.time}</td>
-
-                                            <td className="hidden md:table-cell px-8 py-5 text-center font-bold text-slate-500 dark:text-slate-400 text-xs border-r border-slate-50 dark:border-slate-800/50">{row.reward}</td>
-
-                                            <td className="hidden md:table-cell px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
-                                                <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.block}</div>
-                                                {row.isFiat && (
-                                                    <div className="mt-1 space-y-0.5">
-                                                        <div className="text-[10px] font-bold text-slate-400">{row.usdBlock}</div>
-                                                        <div className="text-[10px] font-bold text-slate-400">{row.fiatBlock}</div>
+                                        return (
+                                            <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                                                <td className="px-8 py-5 font-black text-sm dark:text-white border-r border-slate-50 dark:border-slate-800/50">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                                                        {row.token}
                                                     </div>
-                                                )}
-                                            </td>
+                                                </td>
 
-                                            <td className="px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
-                                                <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.day}</div>
-                                                {row.isFiat && (
-                                                    <div className="mt-1 space-y-0.5">
-                                                        <div className="text-[10px] font-bold text-slate-400">{row.usdDay}</div>
-                                                        <div className="text-[10px] font-bold text-slate-400">{row.fiatDay}</div>
-                                                    </div>
-                                                )}
-                                            </td>
+                                                <td className="hidden md:table-cell px-8 py-5 text-center font-bold text-slate-400 text-xs border-r border-slate-50 dark:border-slate-800/50">{row.time}</td>
 
-                                            <td className="hidden md:table-cell px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
-                                                <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.month}</div>
-                                                {row.isFiat && (
-                                                    <div className="mt-1 space-y-0.5">
-                                                        <div className="text-[10px] font-bold text-slate-400">{row.usdMonth}</div>
-                                                        <div className="text-[10px] font-bold text-slate-400">{row.fiatMonth}</div>
-                                                    </div>
-                                                )}
-                                            </td>
+                                                <td className="hidden md:table-cell px-8 py-5 text-center font-bold text-slate-500 dark:text-slate-400 text-xs border-r border-slate-50 dark:border-slate-800/50">{row.reward}</td>
 
-                                            <td className="px-8 py-5 text-center">
-                                                <span className={`text-xs font-black px-3 py-1 rounded-full ${row.withdraw === 'X' ? 'bg-slate-100 text-slate-300 dark:bg-slate-800' : 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'}`}>
-                                                    {row.withdraw}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                                <td className="hidden md:table-cell px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
+                                                    <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.block}</div>
+                                                    {row.isFiat && (
+                                                        <div className="mt-1 space-y-0.5">
+                                                            <div className="text-[10px] font-bold text-slate-400">{row.usdBlock}</div>
+                                                            <div className="text-[10px] font-bold text-slate-400">{row.fiatBlock}</div>
+                                                        </div>
+                                                    )}
+                                                </td>
+
+                                                {/* Ganho Por Dia - Destaque leve se for o maior valor em USD */}
+                                                <td className={`px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50 transition-colors ${
+                                                    isBestDailyUsd ? 'bg-emerald-500/15 dark:bg-emerald-500/20' : ''
+                                                }`}>
+                                                    <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.day}</div>
+                                                    {row.isFiat && (
+                                                        <div className="mt-1 space-y-0.5">
+                                                            <div className={`text-[10px] ${isBestDailyUsd ? 'font-black text-emerald-700 dark:text-emerald-300' : 'font-bold text-slate-400'}`}>
+                                                                {row.usdDay}
+                                                            </div>
+                                                            <div className="text-[10px] font-bold text-slate-400">{row.fiatDay}</div>
+                                                        </div>
+                                                    )}
+                                                </td>
+
+                                                <td className="hidden md:table-cell px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50">
+                                                    <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.month}</div>
+                                                    {row.isFiat && (
+                                                        <div className="mt-1 space-y-0.5">
+                                                            <div className="text-[10px] font-bold text-slate-400">{row.usdMonth}</div>
+                                                            <div className="text-[10px] font-bold text-slate-400">{row.fiatMonth}</div>
+                                                        </div>
+                                                    )}
+                                                </td>
+
+                                                {/* Saque em - Destaque leve se for o menor tempo para saque */}
+                                                <td className={`px-8 py-5 text-center transition-colors ${
+                                                    isBestWithdraw ? 'bg-emerald-500/15 dark:bg-emerald-500/20' : ''
+                                                }`}>
+                                                    <span className={`text-xs font-black px-3 py-1 rounded-full ${
+                                                        row.withdraw === 'X'
+                                                            ? 'bg-slate-100 text-slate-300 dark:bg-slate-800'
+                                                            : isBestWithdraw
+                                                                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                                                                : 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                                                    }`}>
+                                                        {row.withdraw}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
