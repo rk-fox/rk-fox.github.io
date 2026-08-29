@@ -49,6 +49,19 @@ export interface OrganizerMiner {
     hasEstimatedLevel?: boolean; // Flag indicating level was estimated from text parser
 }
 
+export interface SheetMinerTier {
+    level: number; // 0=Common, 1=Uncommon, 2=Rare, 3=Epic, 4=Legendary, 5=Unreal
+    power: number; // in GH/s
+    bonus: number; // in %
+}
+
+export interface SheetMinerData {
+    name: string;
+    status?: string;
+    size?: number;
+    tiers: SheetMinerTier[];
+}
+
 export type SalaSortOption =
     | 'real_power_desc'
     | 'real_power_asc'
@@ -84,6 +97,10 @@ export const RoomOrganizer: React.FC = () => {
     const [inventoryRawText, setInventoryRawText] = useState('');
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
+
+    // Google Sheets Database for Auto Merge Level Detection
+    const [sheetDatabase, setSheetDatabase] = useState<SheetMinerData[]>([]);
+    const sheetDataRef = useRef<SheetMinerData[]>([]);
 
     // 3 Main Column States
     const [salaMiners, setSalaMiners] = useState<OrganizerMiner[]>([]);
@@ -146,6 +163,77 @@ export const RoomOrganizer: React.FC = () => {
         const sign = pct > 0 ? '+' : '';
         return `${sign}${pct.toFixed(2)}%`;
     };
+
+    // Load Google Sheets Database (Web Tab) for exact Merge Level Detection
+    useEffect(() => {
+        const loadSheetDatabase = async () => {
+            const sheetId = "171LSMNAiJ74obfmLzueKtzuyu7Bg9Ql5dBWQ1GkjQTI";
+            const apiKey = "AIzaSyBP12YfPrz9MhCH3J7boeondSm7HYVCUvA";
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Web!A1:AE?key=${apiKey}`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (!data.values || !Array.isArray(data.values)) return;
+
+                const parsePwr = (val: string | undefined): number => {
+                    if (!val) return 0;
+                    const clean = val.replace(/\s+/g, '').replace(/,/g, '');
+                    return (parseFloat(clean) || 0) * 1000; // In sheet, without '.' equals GH/s (TH/s * 1000)
+                };
+
+                const parseBns = (val: string | undefined): number => {
+                    if (!val) return 0;
+                    const clean = val.replace(/%/g, '').replace(/,/g, '.').trim();
+                    return parseFloat(clean) || 0;
+                };
+
+                const parsed: SheetMinerData[] = data.values
+                    .filter((row: any) => row && row[0] && typeof row[0] === 'string' && row[0].trim() !== '')
+                    .map((row: any) => {
+                        const name = String(row[0]).trim();
+                        const status = row[1] || '';
+                        const size = parseInt(row[2], 10) || 2;
+
+                        const tiers: SheetMinerTier[] = [];
+
+                        // Col D (idx 3) & Col E (idx 4): Comum (Lvl 0)
+                        if (row[3] !== undefined && row[3] !== '') {
+                            tiers.push({ level: 0, power: parsePwr(row[3]), bonus: parseBns(row[4]) });
+                        }
+                        // Col F (idx 5) & Col G (idx 6): Incomum (Lvl 1)
+                        if (row[5] !== undefined && row[5] !== '') {
+                            tiers.push({ level: 1, power: parsePwr(row[5]), bonus: parseBns(row[6]) });
+                        }
+                        // Col L (idx 11) & Col M (idx 12): Rara (Lvl 2)
+                        if (row[11] !== undefined && row[11] !== '') {
+                            tiers.push({ level: 2, power: parsePwr(row[11]), bonus: parseBns(row[12]) });
+                        }
+                        // Col R (idx 17) & Col S (idx 18): Épica (Lvl 3)
+                        if (row[17] !== undefined && row[17] !== '') {
+                            tiers.push({ level: 3, power: parsePwr(row[17]), bonus: parseBns(row[18]) });
+                        }
+                        // Col X (idx 23) & Col Y (idx 24): Lendária (Lvl 4)
+                        if (row[23] !== undefined && row[23] !== '') {
+                            tiers.push({ level: 4, power: parsePwr(row[23]), bonus: parseBns(row[24]) });
+                        }
+                        // Col AD (idx 29) & Col AE (idx 30): Unreal (Lvl 5)
+                        if (row[29] !== undefined && row[29] !== '') {
+                            tiers.push({ level: 5, power: parsePwr(row[29]), bonus: parseBns(row[30]) });
+                        }
+
+                        return { name, status, size, tiers };
+                    });
+
+                setSheetDatabase(parsed);
+                sheetDataRef.current = parsed;
+            } catch (e) {
+                console.error("Failed to load sheet database in RoomOrganizer", e);
+            }
+        };
+
+        loadSheetDatabase();
+    }, []);
 
     // Load external miner metadata scripts for sellable identification
     const loadScript = (src: string) => {
@@ -415,6 +503,67 @@ export const RoomOrganizer: React.FC = () => {
         };
     };
 
+    // Helper: Detect exact merge level and metadata from Google Sheets database
+    const detectMinerLevelAndMeta = (
+        name: string,
+        power: number,
+        bonus_percent: number,
+        currentDb: SheetMinerData[]
+    ): { level: number; isSellable?: boolean; detectedFromDb: boolean } => {
+        if (!currentDb || currentDb.length === 0) {
+            return { level: 0, detectedFromDb: false };
+        }
+
+        const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const cleanTargetName = norm(name);
+
+        // Find matching miner in sheet database
+        let matched = currentDb.find(m => norm(m.name) === cleanTargetName);
+        if (!matched) {
+            matched = currentDb.find(m => {
+                const normDb = norm(m.name);
+                return normDb.includes(cleanTargetName) || cleanTargetName.includes(normDb);
+            });
+        }
+
+        if (!matched || !matched.tiers || matched.tiers.length === 0) {
+            return { level: 0, detectedFromDb: false };
+        }
+
+        const isSellable = /sellable|pode ser vendido|can be sold/i.test(matched.status || '');
+
+        // 1. Check exact match: bonus diff <= 0.05 AND power diff <= 1%
+        for (const tier of matched.tiers) {
+            const bonusDiff = Math.abs(tier.bonus - bonus_percent);
+            const powerDiffRatio = tier.power > 0 ? Math.abs(tier.power - power) / tier.power : 1;
+
+            if (bonusDiff <= 0.05 && powerDiffRatio <= 0.01) {
+                return { level: tier.level, isSellable, detectedFromDb: true };
+            }
+        }
+
+        // 2. Proximity match if slight formatting variance
+        let bestTier: SheetMinerTier | null = null;
+        let minScore = Infinity;
+
+        for (const tier of matched.tiers) {
+            const bonusDiff = Math.abs(tier.bonus - bonus_percent);
+            const powerDiffRatio = tier.power > 0 ? Math.abs(tier.power - power) / tier.power : 1;
+
+            const score = (bonusDiff * 100) + (powerDiffRatio * 10);
+            if (score < minScore) {
+                minScore = score;
+                bestTier = tier;
+            }
+        }
+
+        if (bestTier && minScore < 20) {
+            return { level: bestTier.level, isSellable, detectedFromDb: true };
+        }
+
+        return { level: bestTier ? bestTier.level : 0, isSellable, detectedFromDb: bestTier !== null };
+    };
+
     // Robust Parser for Inventory Text (Supports both structured multi-line and single-line / token formats)
     const parseInventoryText = (raw: string): OrganizerMiner[] => {
         if (!raw.trim()) return [];
@@ -423,6 +572,8 @@ export const RoomOrganizer: React.FC = () => {
         // Clean leading banners and links
         cleaned = cleaned.replace(/[\s\S]*?(?:Items arranged in your rooms will not appear on this page\.|Os itens organizados em sua sala não aparecerão nesta página\.|Los objetos colocados en tus salas no aparecerán en esta página\.?)\s*/i, '');
         cleaned = cleaned.replace(/\s*(?:About us|Sobre nós|Sobre nosotros)[\s\S]*/i, '');
+
+        const db = sheetDataRef.current.length > 0 ? sheetDataRef.current : sheetDatabase;
 
         // Strategy 1: Multi-line / newline delimited blocks
         const regexMulti = /(?:^|\n)(?<name>[^\n]+?)\s*\n+(?:Set\s*\n+)?(?:Size:|Tamanho:|Tamaño:)\s*\n*(?<size>\d+)\s*(?:Cells?|Células|Celdas)\s*\n*(?:Power|Poder)\s*\n*(?<power>[\d.,]+)\s*(?<unit>[A-Za-z/]+)\s*\n*(?:Bonus|Bônus|Bonificación)\s*\n*(?<bonus>[\d.,]+)\s*%\s*\n*(?:Quantity:|Qtd:|Cant:)\s*\n*(?<quantity>\d+)\s*\n*(?<canBeSold>Can't be sold|Can be sold|Não pode ser vendido|Pode ser vendido|No se pode vender|No se puede vender|Se puede vender)/gim;
@@ -444,17 +595,22 @@ export const RoomOrganizer: React.FC = () => {
             const isSellable = /(Can be sold|Pode ser vendido|Se puede vender)/i.test(canBeSold);
             const filename = generateFilename(cleanName);
 
+            const detected = detectMinerLevelAndMeta(cleanName, pwr, bns, db);
+            const finalLevel = detected.level;
+            const finalCanBeSold = detected.isSellable !== undefined ? detected.isSellable : isSellable;
+
             parsedList.push({
-                id: `inv_${filename}_${Date.now()}_${Math.random().toString(36).substr(2, 7)}`,
+                id: `inv_${filename}_lvl${finalLevel}_${Date.now()}_${Math.random().toString(36).substr(2, 7)}`,
                 name: cleanName,
-                level: 0,
+                level: finalLevel,
                 size: sz,
                 power: pwr,
                 bonus_percent: bns,
                 filename,
-                canBeSold: isSellable,
+                canBeSold: finalCanBeSold,
                 quantity: qty,
-                source: 'inventory'
+                source: 'inventory',
+                hasEstimatedLevel: detected.detectedFromDb
             });
         }
 
@@ -475,17 +631,22 @@ export const RoomOrganizer: React.FC = () => {
                 const isSellable = /(Can be sold|Pode ser vendido|Se puede vender)/i.test(canBeSold);
                 const filename = generateFilename(cleanName);
 
+                const detected = detectMinerLevelAndMeta(cleanName, pwr, bns, db);
+                const finalLevel = detected.level;
+                const finalCanBeSold = detected.isSellable !== undefined ? detected.isSellable : isSellable;
+
                 parsedList.push({
-                    id: `inv_${filename}_${Date.now()}_${Math.random().toString(36).substr(2, 7)}`,
+                    id: `inv_${filename}_lvl${finalLevel}_${Date.now()}_${Math.random().toString(36).substr(2, 7)}`,
                     name: cleanName,
-                    level: 0,
+                    level: finalLevel,
                     size: sz,
                     power: pwr,
                     bonus_percent: bns,
                     filename,
-                    canBeSold: isSellable,
+                    canBeSold: finalCanBeSold,
                     quantity: qty,
-                    source: 'inventory'
+                    source: 'inventory',
+                    hasEstimatedLevel: detected.detectedFromDb
                 });
             }
         }
@@ -510,10 +671,10 @@ export const RoomOrganizer: React.FC = () => {
         }
 
         setInventoryMiners(prev => {
-            // Merge with existing inventory items if duplicates exist
+            // Merge with existing inventory items if duplicates exist with same level
             const merged = [...prev];
             items.forEach(newItem => {
-                const existing = merged.find(m => m.name.toLowerCase() === newItem.name.toLowerCase() && m.power === newItem.power && m.bonus_percent === newItem.bonus_percent && m.size === newItem.size);
+                const existing = merged.find(m => m.name.toLowerCase() === newItem.name.toLowerCase() && m.level === newItem.level && m.power === newItem.power && m.bonus_percent === newItem.bonus_percent && m.size === newItem.size);
                 if (existing) {
                     existing.quantity = (existing.quantity || 1) + (newItem.quantity || 1);
                 } else {
@@ -523,7 +684,7 @@ export const RoomOrganizer: React.FC = () => {
             return merged;
         });
 
-        setStatusMessage({ text: `${items.length} tipo(s) de mineradores importados com sucesso para o Inventário!`, type: 'success' });
+        setStatusMessage({ text: `${items.length} tipo(s) de mineradores importados com sucesso para o Inventário! Níveis identificados automaticamente.`, type: 'success' });
         setShowTextModal(false);
     };
 
@@ -656,7 +817,7 @@ export const RoomOrganizer: React.FC = () => {
 
         setSalaMiners(prev => prev.filter(m => m.id !== minerId));
         setInventoryMiners(prev => {
-            const existing = prev.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
+            const existing = prev.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
             if (existing) {
                 return prev.map(m => m.id === existing.id ? { ...m, quantity: (m.quantity || 1) + 1 } : m);
             } else {
@@ -739,7 +900,7 @@ export const RoomOrganizer: React.FC = () => {
 
         setDiscardMiners(prev => prev.filter(m => m.id !== minerId));
         setInventoryMiners(prev => {
-            const existing = prev.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
+            const existing = prev.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
             if (existing) {
                 return prev.map(m => m.id === existing.id ? { ...m, quantity: (m.quantity || 1) + 1 } : m);
             } else {
@@ -765,7 +926,7 @@ export const RoomOrganizer: React.FC = () => {
         setInventoryMiners(prev => {
             const merged = [...prev];
             toMove.forEach(item => {
-                const existing = merged.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
+                const existing = merged.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
                 if (existing) {
                     existing.quantity = (existing.quantity || 1) + 1;
                 } else {
@@ -1461,8 +1622,20 @@ export const RoomOrganizer: React.FC = () => {
                                                     </span>
 
                                                     {miner.level > 0 && (
-                                                        <span className="text-[7px] font-black px-1 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300">
-                                                            Lvl {miner.level}
+                                                        <span
+                                                            className={`text-[8px] font-black px-1.5 py-0.5 rounded ${miner.level === 1
+                                                                ? 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                                                                : miner.level === 2
+                                                                    ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+                                                                    : miner.level === 3
+                                                                        ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                                                                        : miner.level === 4
+                                                                            ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+                                                                            : 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700'
+                                                                }`}
+                                                            title={`Nível ${miner.level} (${miner.level === 1 ? 'Incomum' : miner.level === 2 ? 'Rara' : miner.level === 3 ? 'Épica' : miner.level === 4 ? 'Lendária' : 'Unreal'})`}
+                                                        >
+                                                            {miner.level === 1 ? 'Lvl I' : miner.level === 2 ? 'Lvl II' : miner.level === 3 ? 'Lvl III' : miner.level === 4 ? 'Lvl IV' : 'Lvl V'}
                                                         </span>
                                                     )}
 
@@ -1696,12 +1869,24 @@ export const RoomOrganizer: React.FC = () => {
                                                             {miner.size}C
                                                         </span>
                                                         {miner.level > 0 ? (
-                                                            <span className="text-[7px] font-black px-1 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300">
-                                                                Lvl {miner.level}
+                                                            <span
+                                                                className={`text-[8px] font-black px-1.5 py-0.5 rounded ${miner.level === 1
+                                                                    ? 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                                                                    : miner.level === 2
+                                                                        ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+                                                                        : miner.level === 3
+                                                                            ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                                                                            : miner.level === 4
+                                                                                ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+                                                                                : 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700'
+                                                                    }`}
+                                                                title={`Nível ${miner.level} (${miner.level === 1 ? 'Incomum' : miner.level === 2 ? 'Rara' : miner.level === 3 ? 'Épica' : miner.level === 4 ? 'Lendária' : 'Unreal'})`}
+                                                            >
+                                                                {miner.level === 1 ? 'Lvl I' : miner.level === 2 ? 'Lvl II' : miner.level === 3 ? 'Lvl III' : miner.level === 4 ? 'Lvl IV' : 'Lvl V'}
                                                             </span>
                                                         ) : miner.hasEstimatedLevel ? (
-                                                            <span className="text-[7px] font-black px-1 rounded bg-amber-100 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400" title="Nível estimado">
-                                                                Nvl Est.
+                                                            <span className="text-[7px] font-black px-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-500" title="Item Básico (Comum)">
+                                                                Comum
                                                             </span>
                                                         ) : null}
                                                         {miner.canBeSold ? (
@@ -1796,8 +1981,20 @@ export const RoomOrganizer: React.FC = () => {
                                                             {miner.name}
                                                         </span>
                                                         {miner.level > 0 && (
-                                                            <span className="text-[7px] font-black px-1 rounded bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300">
-                                                                Lvl {miner.level}
+                                                            <span
+                                                                className={`text-[8px] font-black px-1.5 py-0.5 rounded ${miner.level === 1
+                                                                    ? 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                                                                    : miner.level === 2
+                                                                        ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+                                                                        : miner.level === 3
+                                                                            ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                                                                            : miner.level === 4
+                                                                                ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+                                                                                : 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700'
+                                                                    }`}
+                                                                title={`Nível ${miner.level} (${miner.level === 1 ? 'Incomum' : miner.level === 2 ? 'Rara' : miner.level === 3 ? 'Épica' : miner.level === 4 ? 'Lendária' : 'Unreal'})`}
+                                                            >
+                                                                {miner.level === 1 ? 'Lvl I' : miner.level === 2 ? 'Lvl II' : miner.level === 3 ? 'Lvl III' : miner.level === 4 ? 'Lvl IV' : 'Lvl V'}
                                                             </span>
                                                         )}
                                                         {miner.canBeSold ? (
@@ -1968,15 +2165,15 @@ Miner details
                                 </div>
                             </div>
 
-                            {/* Point 2: Inventário e Repetidas */}
+                            {/* Point 2: Inventário e Detecção de Merge */}
                             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
                                 <div className="p-1.5 bg-emerald-500 text-white rounded-lg flex-shrink-0 mt-0.5 shadow-xs">
                                     <Package size={14} />
                                 </div>
                                 <div className="space-y-0.5">
-                                    <h4 className="font-bold text-slate-900 dark:text-white">2. Inventário & Miners Repetidas</h4>
+                                    <h4 className="font-bold text-slate-900 dark:text-white">2. Inventário & Detecção Automática de Merge</h4>
                                     <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                                        O texto copiado do inventário do jogo não informa o nível de merge. Portanto, o inventário <strong>não consegue ignorar o bônus de miners, caso sejam repetidas</strong>.
+                                        Ao colar o texto do inventário, o sistema compara automaticamente o Nome, Poder e Bônus com a nossa base de dados oficial para <strong>identificar o nível de merge</strong> (Comum, Incomum, Rara, Épica, Lendária ou Unreal), garantindo precisão ao simular repetições na sala.
                                     </p>
                                 </div>
                             </div>
