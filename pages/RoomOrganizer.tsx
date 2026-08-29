@@ -164,6 +164,33 @@ export const RoomOrganizer: React.FC = () => {
         return `${sign}${pct.toFixed(2)}%`;
     };
 
+    // Badge formatter for Miner Level (I, II, III, IV, V, VI, etc.)
+    const renderLevelBadge = (level: number = 0) => {
+        const lvl = typeof level === 'number' && !isNaN(level) ? Math.max(0, level) : 0;
+        const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+        const label = romanNumerals[lvl] || `${lvl + 1}`;
+
+        const colorClasses = [
+            'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700', // I (0 / Comum)
+            'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800', // II (1 / Incomum)
+            'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800', // III (2 / Rara)
+            'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800', // IV (3 / Épica)
+            'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800', // V (4 / Lendária)
+            'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700', // VI (5 / Unreal)
+        ];
+
+        const currentStyle = colorClasses[lvl] || colorClasses[0];
+
+        return (
+            <span
+                className={`text-[8px] font-black px-1.5 py-0.5 rounded ${currentStyle}`}
+                title={`Nível ${lvl + 1}`}
+            >
+                {label}
+            </span>
+        );
+    };
+
     // Load Google Sheets Database (Web Tab) for exact Merge Level Detection
     useEffect(() => {
         const loadSheetDatabase = async () => {
@@ -1621,23 +1648,7 @@ export const RoomOrganizer: React.FC = () => {
                                                         {miner.name}
                                                     </span>
 
-                                                    {miner.level > 0 && (
-                                                        <span
-                                                            className={`text-[8px] font-black px-1.5 py-0.5 rounded ${miner.level === 1
-                                                                ? 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                                                                : miner.level === 2
-                                                                    ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
-                                                                    : miner.level === 3
-                                                                        ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
-                                                                        : miner.level === 4
-                                                                            ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
-                                                                            : 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700'
-                                                                }`}
-                                                            title={`Nível ${miner.level} (${miner.level === 1 ? 'Incomum' : miner.level === 2 ? 'Rara' : miner.level === 3 ? 'Épica' : miner.level === 4 ? 'Lendária' : 'Unreal'})`}
-                                                        >
-                                                            {miner.level === 1 ? 'Lvl I' : miner.level === 2 ? 'Lvl II' : miner.level === 3 ? 'Lvl III' : miner.level === 4 ? 'Lvl IV' : 'Lvl V'}
-                                                        </span>
-                                                    )}
+                                                    {renderLevelBadge(miner.level)}
 
                                                     {/* Market Status Badge */}
                                                     {miner.canBeSold ? (
@@ -1868,27 +1879,7 @@ export const RoomOrganizer: React.FC = () => {
                                                         <span className={`text-[7px] font-black px-1 py-0.2 rounded ${miner.size === 1 ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-300'}`}>
                                                             {miner.size}C
                                                         </span>
-                                                        {miner.level > 0 ? (
-                                                            <span
-                                                                className={`text-[8px] font-black px-1.5 py-0.5 rounded ${miner.level === 1
-                                                                    ? 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                                                                    : miner.level === 2
-                                                                        ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
-                                                                        : miner.level === 3
-                                                                            ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
-                                                                            : miner.level === 4
-                                                                                ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
-                                                                                : 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700'
-                                                                    }`}
-                                                                title={`Nível ${miner.level} (${miner.level === 1 ? 'Incomum' : miner.level === 2 ? 'Rara' : miner.level === 3 ? 'Épica' : miner.level === 4 ? 'Lendária' : 'Unreal'})`}
-                                                            >
-                                                                {miner.level === 1 ? 'Lvl I' : miner.level === 2 ? 'Lvl II' : miner.level === 3 ? 'Lvl III' : miner.level === 4 ? 'Lvl IV' : 'Lvl V'}
-                                                            </span>
-                                                        ) : miner.hasEstimatedLevel ? (
-                                                            <span className="text-[7px] font-black px-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-500" title="Item Básico (Comum)">
-                                                                Comum
-                                                            </span>
-                                                        ) : null}
+                                                        {renderLevelBadge(miner.level)}
                                                         {miner.canBeSold ? (
                                                             <span className="text-[7px] font-black px-1 rounded bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400">
                                                                 Vendível
@@ -1980,23 +1971,7 @@ export const RoomOrganizer: React.FC = () => {
                                                         <span className="font-bold text-xs text-slate-800 dark:text-white truncate" title={miner.name}>
                                                             {miner.name}
                                                         </span>
-                                                        {miner.level > 0 && (
-                                                            <span
-                                                                className={`text-[8px] font-black px-1.5 py-0.5 rounded ${miner.level === 1
-                                                                    ? 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                                                                    : miner.level === 2
-                                                                        ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
-                                                                        : miner.level === 3
-                                                                            ? 'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
-                                                                            : miner.level === 4
-                                                                                ? 'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
-                                                                                : 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700'
-                                                                    }`}
-                                                                title={`Nível ${miner.level} (${miner.level === 1 ? 'Incomum' : miner.level === 2 ? 'Rara' : miner.level === 3 ? 'Épica' : miner.level === 4 ? 'Lendária' : 'Unreal'})`}
-                                                            >
-                                                                {miner.level === 1 ? 'Lvl I' : miner.level === 2 ? 'Lvl II' : miner.level === 3 ? 'Lvl III' : miner.level === 4 ? 'Lvl IV' : 'Lvl V'}
-                                                            </span>
-                                                        )}
+                                                        {renderLevelBadge(miner.level)}
                                                         {miner.canBeSold ? (
                                                             <span className="text-[7px] font-black px-1 rounded bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400">
                                                                 Vendível
