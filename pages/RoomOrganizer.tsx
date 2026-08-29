@@ -2173,7 +2173,7 @@ Miner details
                                 <div className="space-y-0.5">
                                     <h4 className="font-bold text-slate-900 dark:text-white">2. Inventário & Detecção Automática de Merge</h4>
                                     <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                                        Ao colar o texto do inventário, o sistema compara automaticamente o Nome, Poder e Bônus com a nossa base de dados oficial para <strong>identificar o nível de merge</strong> (Comum, Incomum, Rara, Épica, Lendária ou Unreal), garantindo precisão ao simular repetições na sala.
+                                        Ao colar o texto do inventário, o sistema compara automaticamente o Nome, Poder e Bônus com a nossa base de dados oficial para <strong>identificar o nível de merge</strong> (Comum, Incomum, Rara, Épica, Lendária ou Unreal), garantindo precisão ao simular repetições na sala. (Miners mais recentes podem não estar na base de dados ainda.)
                                     </p>
                                 </div>
                             </div>
