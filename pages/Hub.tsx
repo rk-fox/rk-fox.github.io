@@ -102,17 +102,17 @@ export const Hub: React.FC = () => {
                         </div>
                     </Link>
 
-                    {/* Card 1: Efficiency (Red) */}
-                    <Link to="/efficiency">
+                    {/* Card 1: Burn Planner (Blue) */}
+                    <Link to="/burn">
                         <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col h-full hover:shadow-md hover:-translate-y-0.5 transition-all">
                             <div className="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center mb-4 text-slate-600 dark:text-slate-300">
-                                <Zap size={20} />
+                                <Flame size={20} />
                             </div>
-                            <h4 className="font-display font-bold text-lg text-slate-800 dark:text-white mb-2">Calculadora de Eficiência</h4>
+                            <h4 className="font-display font-bold text-lg text-slate-800 dark:text-white mb-2">Planejador de Queima</h4>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-grow leading-relaxed">
-                                Otimize seus ganhos analisando a eficiência energética e retorno de seus mineradores.
+                                Calcule o melhor momento e valor para queimar seus itens por recompensas.
                             </p>
-                            <button className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg text-center transition-colors flex items-center justify-center gap-2">
+                            <button className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-lg text-center transition-colors flex items-center justify-center gap-2">
                                 Acessar <ExternalLink size={14} />
                             </button>
                         </div>
@@ -134,17 +134,17 @@ export const Hub: React.FC = () => {
                         </div>
                     </Link>
 
-                    {/* Card 3: Burn Planner (Blue) */}
-                    <Link to="/burn">
+                    {/* Card 3: Efficiency (Red) */}
+                    <Link to="/efficiency">
                         <div className="bg-white dark:bg-dark-800 rounded-2xl p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col h-full hover:shadow-md hover:-translate-y-0.5 transition-all">
                             <div className="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center mb-4 text-slate-600 dark:text-slate-300">
-                                <Flame size={20} />
+                                <Zap size={20} />
                             </div>
-                            <h4 className="font-display font-bold text-lg text-slate-800 dark:text-white mb-2">Planejador de Queima</h4>
+                            <h4 className="font-display font-bold text-lg text-slate-800 dark:text-white mb-2">Calculadora de Eficiência</h4>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 flex-grow leading-relaxed">
-                                Calcule o melhor momento e valor para queimar seus itens por recompensas.
+                                Otimize seus ganhos analisando a eficiência energética e retorno de seus mineradores.
                             </p>
-                            <button className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-lg text-center transition-colors flex items-center justify-center gap-2">
+                            <button className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg text-center transition-colors flex items-center justify-center gap-2">
                                 Acessar <ExternalLink size={14} />
                             </button>
                         </div>
