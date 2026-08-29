@@ -171,12 +171,12 @@ export const RoomOrganizer: React.FC = () => {
         const label = romanNumerals[lvl] || `${lvl + 1}`;
 
         const colorClasses = [
-            'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700', // I (0 / Comum)
-            'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800', // II (1 / Incomum)
-            'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800', // III (2 / Rara)
-            'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800', // IV (3 / Épica)
-            'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800', // V (4 / Lendária)
-            'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-300 dark:border-yellow-700', // VI (5 / Unreal)
+            'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700', // I (0 / Comum - Cinza)
+            'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800', // II (1 / Incomum - Verde)
+            'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800', // III (2 / Rara - Azul)
+            'bg-purple-100 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-800', // IV (3 / Épica - Lilás/Roxo)
+            'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700', // V (4 / Lendária - Amarelo Dourado)
+            'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800', // VI (5 / Unreal - Rosa/Vermelho)
         ];
 
         const currentStyle = colorClasses[lvl] || colorClasses[0];
