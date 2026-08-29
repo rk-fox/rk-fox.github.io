@@ -97,6 +97,7 @@ export const RoomOrganizer: React.FC = () => {
         totalBonusPercent: number;
         totalRealPower: number;
         initialTotalCells: number;
+        maxCellsCapacity: number;
     } | null>(null);
 
     // Selection sets for bulk actions
@@ -219,6 +220,7 @@ export const RoomOrganizer: React.FC = () => {
     const currentRoomStats = useMemo(() => {
         const manualBonus = Number(customSetBonus) || 0;
         if (salaMiners.length === 0) {
+            const maxCap = initialRoomState?.maxCellsCapacity || 528;
             return {
                 poderBruto: 0,
                 baseBonusBruto: 0,
@@ -232,8 +234,8 @@ export const RoomOrganizer: React.FC = () => {
                 count2C: 0,
                 cells1C: 0,
                 cells2C: 0,
-                maxCellsCapacity: initialRoomState?.initialTotalCells || 0,
-                availableCells: initialRoomState?.initialTotalCells || 0,
+                maxCellsCapacity: maxCap,
+                availableCells: maxCap,
                 occupationPct: 0,
                 uniqueMinersCount: 0,
                 duplicateCount: 0,
@@ -310,7 +312,7 @@ export const RoomOrganizer: React.FC = () => {
         });
 
         const totalCells = cells1C + cells2C;
-        const maxCellsCapacity = initialRoomState?.initialTotalCells || totalCells;
+        const maxCellsCapacity = initialRoomState?.maxCellsCapacity || 528;
         const availableCells = maxCellsCapacity - totalCells; // > 0 means liberated/free slots, < 0 means overflow
         const occupationPct = maxCellsCapacity > 0 ? (totalCells / maxCellsCapacity) * 100 : 0;
         const totalBonusBruto = baseBonusBruto + manualBonus;
@@ -595,17 +597,34 @@ export const RoomOrganizer: React.FC = () => {
             const autoDetectedSetBonus = Math.max(0, parseFloat((totalBonusPercent - initialBaseBonus).toFixed(2)));
             setCustomSetBonus(autoDetectedSetBonus);
 
+            // Calculate total rack capacity from user's installed racks
+            // In RollerCoin: Standard 4 full rooms has 66 racks (12 + 18 + 18 + 18) x 8 cells = 528 cells total.
+            let totalRackCellsCapacity = 0;
+            if (Array.isArray(rawRacks) && rawRacks.length > 0) {
+                rawRacks.forEach((r: any) => {
+                    const rackCap = r.capacity || r.cells || (r.shelves ? r.shelves * 2 : (r.height ? r.height * (r.width || 2) : 8));
+                    totalRackCellsCapacity += rackCap;
+                });
+            }
+
+            // Total room capacity: If player has 66 racks or 4 rooms, standard is 528 cells.
+            const totalRoomCapacity = totalRackCellsCapacity > 0
+                ? (rawRacks.length >= 66 ? 528 : Math.max(totalRackCellsCapacity, initialCellsCount, 528))
+                : 528;
+
             setSalaMiners(processed);
             setInitialRoomState({
                 miners: JSON.parse(JSON.stringify(processed)),
                 minersPower,
                 totalBonusPercent,
                 totalRealPower: totalOrig,
-                initialTotalCells: initialCellsCount
+                initialTotalCells: initialCellsCount,
+                maxCellsCapacity: totalRoomCapacity
             });
 
+            const freeSlots = Math.max(0, totalRoomCapacity - initialCellsCount);
             setStatusMessage({
-                text: `Sala carregada com sucesso! ${processed.length} mineradores e ${initialCellsCount} células (100% de capacidade).`,
+                text: `Sala carregada com sucesso! ${processed.length} mineradores e ${initialCellsCount} células ocupadas de ${totalRoomCapacity} células totais (${freeSlots > 0 ? `${freeSlots} livres` : '100% ocupada'}).`,
                 type: 'success'
             });
         } catch (e: any) {
