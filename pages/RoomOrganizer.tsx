@@ -65,6 +65,8 @@ export interface SheetMinerData {
 export type SalaSortOption =
     | 'real_power_desc'
     | 'real_power_asc'
+    | 'mais_poder_menos_bonus'
+    | 'mais_bonus_menos_poder'
     | 'power_desc'
     | 'power_asc'
     | 'bonus_desc'
@@ -75,6 +77,12 @@ export type SalaSortOption =
     | 'repeated_first'
     | 'sellable_first'
     | 'not_sellable_first';
+
+export type InvSortOption =
+    | 'maior_eficiencia'
+    | 'menor_eficiencia'
+    | 'mais_poder_menos_bonus'
+    | 'mais_bonus_menos_poder';
 
 export const RoomOrganizer: React.FC = () => {
     const hasRun = useRef(false);
@@ -128,6 +136,7 @@ export const RoomOrganizer: React.FC = () => {
     const [salaDuplicateFilter, setSalaDuplicateFilter] = useState<'all' | 'duplicates' | 'unique' | 'dup_unsellable' | 'dup_sellable'>('all');
 
     const [invSearch, setInvSearch] = useState('');
+    const [invSort, setInvSort] = useState<InvSortOption>('maior_eficiencia');
     const [invMarketFilter, setInvMarketFilter] = useState<'all' | 'sellable' | 'not_sellable'>('all');
     const [invSizeFilter, setInvSizeFilter] = useState<'all' | '1' | '2'>('all');
 
@@ -1065,6 +1074,16 @@ export const RoomOrganizer: React.FC = () => {
                     return (b.marginalImpact ?? b.realPower ?? 0) - (a.marginalImpact ?? a.realPower ?? 0);
                 case 'real_power_asc':
                     return (a.marginalImpact ?? a.realPower ?? 0) - (b.marginalImpact ?? b.realPower ?? 0);
+                case 'mais_poder_menos_bonus': {
+                    const ratioA = a.power / (a.bonus_percent + 0.001);
+                    const ratioB = b.power / (b.bonus_percent + 0.001);
+                    return ratioB - ratioA;
+                }
+                case 'mais_bonus_menos_poder': {
+                    const ratioA = a.bonus_percent / (a.power + 1);
+                    const ratioB = b.bonus_percent / (b.power + 1);
+                    return ratioB - ratioA;
+                }
                 case 'power_desc':
                     return b.power - a.power;
                 case 'power_asc':
@@ -1111,9 +1130,28 @@ export const RoomOrganizer: React.FC = () => {
         if (invSizeFilter !== 'all') {
             list = list.filter(m => m.size === parseInt(invSizeFilter, 10));
         }
-        list.sort((a, b) => getInsertionImpact(b).impact - getInsertionImpact(a).impact);
+        list.sort((a, b) => {
+            switch (invSort) {
+                case 'maior_eficiencia':
+                    return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
+                case 'menor_eficiencia':
+                    return getInsertionImpact(a).impact - getInsertionImpact(b).impact;
+                case 'mais_poder_menos_bonus': {
+                    const ratioA = a.power / (a.bonus_percent + 0.001);
+                    const ratioB = b.power / (b.bonus_percent + 0.001);
+                    return ratioB - ratioA;
+                }
+                case 'mais_bonus_menos_poder': {
+                    const ratioA = a.bonus_percent / (a.power + 1);
+                    const ratioB = b.bonus_percent / (b.power + 1);
+                    return ratioB - ratioA;
+                }
+                default:
+                    return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
+            }
+        });
         return list;
-    }, [inventoryMiners, invSearch, invMarketFilter, invSizeFilter, currentRoomStats]);
+    }, [inventoryMiners, invSearch, invMarketFilter, invSizeFilter, invSort, currentRoomStats]);
 
     // Filtered Discard Miners (Sorted by marginal insertion impact on Total Real Power)
     const displayedDiscardMiners = useMemo(() => {
@@ -1546,6 +1584,8 @@ export const RoomOrganizer: React.FC = () => {
                             >
                                 <option value="real_power_desc">Maior Poder Real (Efetivo)</option>
                                 <option value="real_power_asc">Menor Poder Real</option>
+                                <option value="mais_poder_menos_bonus">+Poder / -Bônus</option>
+                                <option value="mais_bonus_menos_poder">-Poder / +Bônus</option>
                                 <option value="power_desc">Maior Poder Bruto</option>
                                 <option value="power_asc">Menor Poder Bruto</option>
                                 <option value="bonus_desc">Maior Bônus %</option>
@@ -1788,11 +1828,23 @@ export const RoomOrganizer: React.FC = () => {
                                     <Search className="absolute left-2.5 top-2.5 text-slate-400" size={14} />
                                 </div>
 
-                                <div className="flex gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <select
+                                        value={invSort}
+                                        onChange={(e) => setInvSort(e.target.value as InvSortOption)}
+                                        className="px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px] outline-none focus:ring-1 focus:ring-emerald-500"
+                                        title="Critério de Ordenação do Inventário"
+                                    >
+                                        <option value="maior_eficiencia">Maior Eficiência</option>
+                                        <option value="menor_eficiencia">Menor Eficiência</option>
+                                        <option value="mais_poder_menos_bonus">+Poder / -Bônus</option>
+                                        <option value="mais_bonus_menos_poder">-Poder / +Bônus</option>
+                                    </select>
+
                                     <select
                                         value={invMarketFilter}
                                         onChange={(e) => setInvMarketFilter(e.target.value as any)}
-                                        className="w-1/2 px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px] outline-none"
+                                        className="px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px] outline-none"
                                     >
                                         <option value="all">Todas as Miners</option>
                                         <option value="sellable">Apenas Vendíveis</option>
@@ -1802,7 +1854,7 @@ export const RoomOrganizer: React.FC = () => {
                                     <select
                                         value={invSizeFilter}
                                         onChange={(e) => setInvSizeFilter(e.target.value as any)}
-                                        className="w-1/2 px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px] outline-none"
+                                        className="px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px] outline-none"
                                     >
                                         <option value="all">Qualquer Tamanho</option>
                                         <option value="1">1 Célula</option>

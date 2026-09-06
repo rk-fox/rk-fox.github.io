@@ -63,19 +63,19 @@ export const FarmCalc: React.FC = () => {
     const [userPower, setUserPower] = useState<number>(0);
 
     const proxy = "https://summer-night-03c0.rk-foxx-159.workers.dev/?";
-    const coinGeckoIds: any = { BTC: 'bitcoin', LTC: 'litecoin', BNB: 'binancecoin', POL: 'polygon-ecosystem-token', XRP: 'ripple', DOGE: 'dogecoin', ETH: 'ethereum', TRX: 'tron', SOL: 'solana', ALGO: 'algorand' };
-    const divisoresMoedas: any = { RLT: 1e6, RST: 1e6, HMT: 1e6, BTC: 1e10, LTC: 1e8, BNB: 1e10, POL: 1e10, XRP: 1e6, DOGE: 1e4, ETH: 1e10, TRX: 1e10, SOL: 1e9, ALGO: 1e6 };
+    const coinGeckoIds: any = { BTC: 'bitcoin', LTC: 'litecoin', BNB: 'binancecoin', POL: 'polygon-ecosystem-token', XRP: 'ripple', DOGE: 'dogecoin', ETH: 'ethereum', TRX: 'tron', SOL: 'solana', ALGO: 'algorand', USDT: 'tether' };
+    const divisoresMoedas: any = { RLT: 1e6, RST: 1e6, HMT: 1e6, BTC: 1e10, LTC: 1e8, BNB: 1e10, POL: 1e10, XRP: 1e6, DOGE: 1e4, ETH: 1e10, TRX: 1e10, SOL: 1e9, ALGO: 1e6, USDT: 1e6 };
 
     const moedasb1 = { RLT: "RLT", RST: "RST", BTC: "SAT", LTC: "LTC_SMALL" };
     const moedasb2 = { ...moedasb1, BNB: "BNB_SMALL" };
     const moedasb3 = { ...moedasb2, POL: "MATIC_SMALL" };
-    const moedasp1 = { ...moedasb3, XRP: "XRP_SMALL" };
+    const moedasp1 = { ...moedasb3, XRP: "XRP_SMALL", USDT: "USDT_SMALL" };
     const moedasp2 = { ...moedasp1, DOGE: "DOGE_SMALL" };
     const moedasp3 = { ...moedasp2, ETH: "ETH_SMALL" };
     const moedaso1 = { ...moedasp3, TRX: "TRX_SMALL" };
     const moedaso2 = { ...moedaso1, SOL: "SOL_SMALL", HMT: "HMT" };
     const moedaspl1 = { ...moedaso2, ALGO: "ALGO_SMALL" };
-    const moedasd = { RST: "RST", BTC: "SAT", LTC: "LTC_SMALL", BNB: "BNB_SMALL", POL: "MATIC_SMALL", XRP: "XRP_SMALL", DOGE: "DOGE_SMALL", ETH: "ETH_SMALL", TRX: "TRX_SMALL", SOL: "SOL_SMALL", ALGO: "ALGO_SMALL" };
+    const moedasd = { USDT: "USDT_SMALL", RST: "RST", BTC: "SAT", LTC: "LTC_SMALL", BNB: "BNB_SMALL", POL: "MATIC_SMALL", XRP: "XRP_SMALL", DOGE: "DOGE_SMALL", ETH: "ETH_SMALL", TRX: "TRX_SMALL", SOL: "SOL_SMALL", ALGO: "ALGO_SMALL" };
 
     const ligaMoedasMap: any = { "68af01ce48490927df92d687": moedasb1, "68af01ce48490927df92d686": moedasb2, "68af01ce48490927df92d685": moedasb3, "68af01ce48490927df92d684": moedasp1, "68af01ce48490927df92d683": moedasp2, "68af01ce48490927df92d682": moedasp3, "68af01ce48490927df92d681": moedaso1, "68af01ce48490927df92d680": moedaso2, "68af01ce48490927df92d67f": moedaso2, "68af01ce48490927df92d67e": moedaspl1, "68af01ce48490927df92d67d": moedaspl1, "68af01ce48490927df92d67c": moedaspl1, "68af01ce48490927df92d67b": moedasd, "68af01ce48490927df92d67a": moedasd, "68af01ce48490927df92d679": moedasd };
 
@@ -129,7 +129,7 @@ export const FarmCalc: React.FC = () => {
 
             if (fetchNewPrices) {
                 let success = false;
-                
+
                 // Camada 1: CoinGecko
                 if (!success) {
                     try {
@@ -168,9 +168,13 @@ export const FarmCalc: React.FC = () => {
                         const data = await res.json();
                         const pMap: any = {};
                         for (const item of data) pMap[item.symbol] = parseFloat(item.price);
-                        
+
                         const usdToBrl = (pMap['BTCUSDT'] && pMap['BTCBRL']) ? (pMap['BTCBRL'] / pMap['BTCUSDT']) : 5.0;
                         for (const symbol of Object.keys(coinGeckoIds)) {
+                            if (symbol === 'USDT') {
+                                cryptoPrices[symbol] = { usd: 1.0, brl: usdToBrl };
+                                continue;
+                            }
                             let t = symbol + 'USDT';
                             if (symbol === 'POL' && !pMap[t]) t = 'MATICUSDT';
                             if (pMap[t]) cryptoPrices[symbol] = { usd: pMap[t], brl: pMap[t] * usdToBrl };
@@ -259,7 +263,7 @@ export const FarmCalc: React.FC = () => {
 
             let withdraw = "X";
             let rawWithdrawDays = Infinity;
-            if (!["RLT", "RST", "HMT", "ALGO"].includes(item.moeda)) {
+            if (!["RLT", "RST", "HMT", "ALGO", "USDT"].includes(item.moeda)) {
                 if (minimo > 0 && fblk > 0 && tempoSec > 0) {
                     const dias = ((minimo / fblk) * (tempoSec / 60)) / 1440;
                     withdraw = `${dias.toFixed(2).replace('.', ',')} dias`;
@@ -391,25 +395,22 @@ export const FarmCalc: React.FC = () => {
                             <h3 className="text-white font-black uppercase tracking-widest text-sm flex items-center gap-2">
                                 <Wallet size={18} className="text-blue-200" /> Rendimentos Estimados
                             </h3>
-                            
+
                             <div className="flex items-center gap-3">
                                 {/* Toggle Button de Alto Contraste e Posição Fixa */}
                                 <button
                                     type="button"
                                     onClick={() => setForce10Min(!force10Min)}
-                                    className={`flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all shadow-sm border ${
-                                        force10Min
+                                    className={`flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all shadow-sm border ${force10Min
                                             ? 'bg-emerald-500 text-white border-emerald-400 shadow-emerald-950/20'
                                             : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
-                                    }`}
+                                        }`}
                                     title={force10Min ? 'Modo Ativo: Bloco fixado em 10:00 min. Clique para usar tempo real.' : 'Clique para fixar o tempo de bloco em 10:00 min.'}
                                 >
-                                    <div className={`w-7 h-4 rounded-full p-0.5 transition-colors flex items-center ${
-                                        force10Min ? 'bg-white' : 'bg-black/40'
-                                    }`}>
-                                        <div className={`w-3 h-3 rounded-full transition-transform transform shadow-xs ${
-                                            force10Min ? 'translate-x-3 bg-emerald-600' : 'translate-x-0 bg-white'
-                                        }`} />
+                                    <div className={`w-7 h-4 rounded-full p-0.5 transition-colors flex items-center ${force10Min ? 'bg-white' : 'bg-black/40'
+                                        }`}>
+                                        <div className={`w-3 h-3 rounded-full transition-transform transform shadow-xs ${force10Min ? 'translate-x-3 bg-emerald-600' : 'translate-x-0 bg-white'
+                                            }`} />
                                     </div>
                                     <span className="whitespace-nowrap">Forçar Bloco em 10 min</span>
                                 </button>
@@ -463,9 +464,8 @@ export const FarmCalc: React.FC = () => {
                                                 </td>
 
                                                 {/* Ganho Por Dia - Destaque leve se for o maior valor em USD */}
-                                                <td className={`px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50 transition-colors ${
-                                                    isBestDailyUsd ? 'bg-emerald-500/15 dark:bg-emerald-500/20' : ''
-                                                }`}>
+                                                <td className={`px-8 py-5 text-center border-r border-slate-50 dark:border-slate-800/50 transition-colors ${isBestDailyUsd ? 'bg-emerald-500/15 dark:bg-emerald-500/20' : ''
+                                                    }`}>
                                                     <div className="font-mono font-black text-emerald-500 dark:text-emerald-400 text-sm tracking-tight">{row.day}</div>
                                                     {row.isFiat && (
                                                         <div className="mt-1 space-y-0.5">
@@ -488,16 +488,14 @@ export const FarmCalc: React.FC = () => {
                                                 </td>
 
                                                 {/* Saque em - Destaque leve se for o menor tempo para saque */}
-                                                <td className={`px-8 py-5 text-center transition-colors ${
-                                                    isBestWithdraw ? 'bg-emerald-500/15 dark:bg-emerald-500/20' : ''
-                                                }`}>
-                                                    <span className={`text-xs font-black px-3 py-1 rounded-full ${
-                                                        row.withdraw === 'X'
+                                                <td className={`px-8 py-5 text-center transition-colors ${isBestWithdraw ? 'bg-emerald-500/15 dark:bg-emerald-500/20' : ''
+                                                    }`}>
+                                                    <span className={`text-xs font-black px-3 py-1 rounded-full ${row.withdraw === 'X'
                                                             ? 'bg-slate-100 text-slate-300 dark:bg-slate-800'
                                                             : isBestWithdraw
                                                                 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
                                                                 : 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
-                                                    }`}>
+                                                        }`}>
                                                         {row.withdraw}
                                                     </span>
                                                 </td>
