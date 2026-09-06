@@ -78,11 +78,7 @@ export type SalaSortOption =
     | 'sellable_first'
     | 'not_sellable_first';
 
-export type InvSortOption =
-    | 'maior_eficiencia'
-    | 'menor_eficiencia'
-    | 'mais_poder_menos_bonus'
-    | 'mais_bonus_menos_poder';
+export type InvSortOption = SalaSortOption;
 
 export const RoomOrganizer: React.FC = () => {
     const hasRun = useRef(false);
@@ -136,7 +132,8 @@ export const RoomOrganizer: React.FC = () => {
     const [salaDuplicateFilter, setSalaDuplicateFilter] = useState<'all' | 'duplicates' | 'unique' | 'dup_unsellable' | 'dup_sellable'>('all');
 
     const [invSearch, setInvSearch] = useState('');
-    const [invSort, setInvSort] = useState<InvSortOption>('maior_eficiencia');
+    const [invSort, setInvSort] = useState<InvSortOption>('real_power_desc');
+    const [invPresenceFilter, setInvPresenceFilter] = useState<'all' | 'in_room' | 'new_to_room'>('all');
     const [invMarketFilter, setInvMarketFilter] = useState<'all' | 'sellable' | 'not_sellable'>('all');
     const [invSizeFilter, setInvSizeFilter] = useState<'all' | '1' | '2'>('all');
 
@@ -1130,11 +1127,25 @@ export const RoomOrganizer: React.FC = () => {
         if (invSizeFilter !== 'all') {
             list = list.filter(m => m.size === parseInt(invSizeFilter, 10));
         }
+
+        // Filtro de Presença na Sala: 'new_to_room' (Novidade), 'in_room' (Tem na sala) ou 'all' (Todos)
+        if (invPresenceFilter === 'new_to_room') {
+            list = list.filter(m => {
+                const key = `${m.name.trim().toLowerCase()}_lvl_${m.level ?? 0}`;
+                return (currentRoomStats.keyCounts?.get(key) || 0) === 0;
+            });
+        } else if (invPresenceFilter === 'in_room') {
+            list = list.filter(m => {
+                const key = `${m.name.trim().toLowerCase()}_lvl_${m.level ?? 0}`;
+                return (currentRoomStats.keyCounts?.get(key) || 0) > 0;
+            });
+        }
+
         list.sort((a, b) => {
             switch (invSort) {
-                case 'maior_eficiencia':
+                case 'real_power_desc':
                     return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
-                case 'menor_eficiencia':
+                case 'real_power_asc':
                     return getInsertionImpact(a).impact - getInsertionImpact(b).impact;
                 case 'mais_poder_menos_bonus': {
                     const ratioA = a.power / (a.bonus_percent + 0.001);
@@ -1146,12 +1157,42 @@ export const RoomOrganizer: React.FC = () => {
                     const ratioB = b.bonus_percent / (b.power + 1);
                     return ratioB - ratioA;
                 }
+                case 'power_desc':
+                    return b.power - a.power;
+                case 'power_asc':
+                    return a.power - b.power;
+                case 'bonus_desc':
+                    return b.bonus_percent - a.bonus_percent;
+                case 'bonus_asc':
+                    return a.bonus_percent - b.bonus_percent;
+                case 'repeated_first': {
+                    const keyA = `${a.name.trim().toLowerCase()}_lvl_${a.level ?? 0}`;
+                    const keyB = `${b.name.trim().toLowerCase()}_lvl_${b.level ?? 0}`;
+                    const aInRoom = (currentRoomStats.keyCounts?.get(keyA) || 0) > 0;
+                    const bInRoom = (currentRoomStats.keyCounts?.get(keyB) || 0) > 0;
+                    if (aInRoom === bInRoom) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
+                    return aInRoom ? -1 : 1;
+                }
+                case 'sellable_first':
+                    if (a.canBeSold === b.canBeSold) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
+                    return a.canBeSold ? -1 : 1;
+                case 'not_sellable_first':
+                    if (a.canBeSold === b.canBeSold) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
+                    return !a.canBeSold ? -1 : 1;
+                case 'size_desc':
+                    if (a.size === b.size) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
+                    return b.size - a.size;
+                case 'size_asc':
+                    if (a.size === b.size) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
+                    return a.size - b.size;
+                case 'name_asc':
+                    return a.name.localeCompare(b.name);
                 default:
                     return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
             }
         });
         return list;
-    }, [inventoryMiners, invSearch, invMarketFilter, invSizeFilter, invSort, currentRoomStats]);
+    }, [inventoryMiners, invSearch, invMarketFilter, invSizeFilter, invPresenceFilter, invSort, currentRoomStats]);
 
     // Filtered Discard Miners (Sorted by marginal insertion impact on Total Real Power)
     const displayedDiscardMiners = useMemo(() => {
@@ -1828,17 +1869,45 @@ export const RoomOrganizer: React.FC = () => {
                                     <Search className="absolute left-2.5 top-2.5 text-slate-400" size={14} />
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                {/* Linha 1 de Filtros: Ordenação (mesmos 14 padrões da Sala) */}
+                                <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 text-slate-500 font-bold text-[11px] flex-shrink-0">
+                                        <ArrowUpDown size={12} />
+                                        <span>Ordenar:</span>
+                                    </div>
                                     <select
                                         value={invSort}
                                         onChange={(e) => setInvSort(e.target.value as InvSortOption)}
-                                        className="px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px] outline-none focus:ring-1 focus:ring-emerald-500"
-                                        title="Critério de Ordenação do Inventário"
+                                        className="w-full px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs outline-none focus:ring-1 focus:ring-emerald-500"
                                     >
-                                        <option value="maior_eficiencia">Maior Eficiência</option>
-                                        <option value="menor_eficiencia">Menor Eficiência</option>
+                                        <option value="real_power_desc">Maior Poder Real (Efetivo)</option>
+                                        <option value="real_power_asc">Menor Poder Real</option>
                                         <option value="mais_poder_menos_bonus">+Poder / -Bônus</option>
                                         <option value="mais_bonus_menos_poder">-Poder / +Bônus</option>
+                                        <option value="power_desc">Maior Poder Bruto</option>
+                                        <option value="power_asc">Menor Poder Bruto</option>
+                                        <option value="bonus_desc">Maior Bônus %</option>
+                                        <option value="bonus_asc">Menor Bônus %</option>
+                                        <option value="repeated_first">Repetidos Primeiro (0% Bônus)</option>
+                                        <option value="not_sellable_first">Inegociáveis Primeiro</option>
+                                        <option value="sellable_first">Vendíveis Primeiro</option>
+                                        <option value="size_desc">2 Células Primeiro</option>
+                                        <option value="size_asc">1 Célula Primeiro</option>
+                                        <option value="name_asc">Nome (A - Z)</option>
+                                    </select>
+                                </div>
+
+                                {/* Linha 2 de Filtros: Presença na Sala (Novidade / Tem na Sala / Todos), Negociabilidade e Tamanho */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <select
+                                        value={invPresenceFilter}
+                                        onChange={(e) => setInvPresenceFilter(e.target.value as any)}
+                                        className="px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px] outline-none focus:ring-1 focus:ring-emerald-500"
+                                        title="Filtrar por presença na Sala"
+                                    >
+                                        <option value="all">Presença: Todos</option>
+                                        <option value="new_to_room">Novidade</option>
+                                        <option value="in_room">Tem na sala</option>
                                     </select>
 
                                     <select
