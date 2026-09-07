@@ -96,7 +96,7 @@ export const RoomOrganizer: React.FC = () => {
         if (hasRun.current) return;
         hasRun.current = true;
 
-        const script_google = 'https://script.google.com/macros/s/AKfycbw9TfgggqeY_ByvmDb15Vgi6DfOaPjc5FyIb_yCjkMBIXE7toViYYj1UerBJw6KUcWP/exec';
+        const script_google = 'https://script.google.com/macros/s/AKfycbw7dMd8qM7ArT1znPJMnyTIWf3G0etT4eszMdNfcRimrCJ35Ww8iwCXgC5rhUMxrTI3/exec';
         fetch(script_google, {
             method: 'POST',
             mode: 'no-cors'
