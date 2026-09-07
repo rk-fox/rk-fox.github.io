@@ -26,7 +26,11 @@ import {
     AlertCircle,
     CheckCircle2,
     AlertTriangle,
-    ShieldAlert
+    ShieldAlert,
+    FileSpreadsheet,
+    FileText,
+    MapPin,
+    X
 } from 'lucide-react';
 
 export interface OrganizerMiner {
@@ -47,6 +51,10 @@ export interface OrganizerMiner {
     marginalImpact?: number; // Real Power impact on total account if removed/added (in GH/s)
     rack_info?: string;
     hasEstimatedLevel?: boolean; // Flag indicating level was estimated from text parser
+    room_level?: number;
+    rack_x?: number;
+    rack_y?: number;
+    location_label?: string;
 }
 
 export interface SheetMinerTier {
@@ -116,10 +124,16 @@ export const RoomOrganizer: React.FC = () => {
         miners: OrganizerMiner[];
         minersPower: number;
         totalBonusPercent: number;
+        initialBaseBonus?: number;
+        initialSetBonus?: number;
         totalRealPower: number;
         initialTotalCells: number;
         maxCellsCapacity: number;
     } | null>(null);
+
+    // Profile Data for user card & reports
+    const [profileData, setProfileData] = useState<any>(null);
+    const [showExportModal, setShowExportModal] = useState(false);
 
     // Selection sets for bulk actions
     const [selectedSalaIds, setSelectedSalaIds] = useState<Set<string>>(new Set());
@@ -643,6 +657,7 @@ export const RoomOrganizer: React.FC = () => {
                 canBeSold: finalCanBeSold,
                 quantity: qty,
                 source: 'inventory',
+                location_label: 'Inventário',
                 hasEstimatedLevel: detected.detectedFromDb
             });
         }
@@ -679,6 +694,7 @@ export const RoomOrganizer: React.FC = () => {
                     canBeSold: finalCanBeSold,
                     quantity: qty,
                     source: 'inventory',
+                    location_label: 'Inventário',
                     hasEstimatedLevel: detected.detectedFromDb
                 });
             }
@@ -734,12 +750,14 @@ export const RoomOrganizer: React.FC = () => {
         try {
             // 1. Profile Data
             const profileRes = await fetch(`${proxy}https://rollercoin.com/api/profile/public-user-profile-data/${userLink.trim()}`);
-            const profileData = await profileRes.json();
-            const avatarId = profileData?.data?.avatar_id;
+            const profileJson = await profileRes.json();
+            const pData = profileJson?.data;
+            const avatarId = pData?.avatar_id;
 
             if (!avatarId) {
                 throw new Error("Perfil não encontrado ou inválido.");
             }
+            setProfileData(pData);
 
             // 2. Power Data
             const powerRes = await fetch(`${proxy}https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
@@ -761,6 +779,13 @@ export const RoomOrganizer: React.FC = () => {
                 const sz = m.width === 1 ? 1 : 2;
                 initialCellsCount += sz;
 
+                const room_level = rack?.placement?.room_level !== undefined ? rack.placement.room_level : undefined;
+                const rack_x = rack?.placement?.x !== undefined ? rack.placement.x : undefined;
+                const rack_y = rack?.placement?.y !== undefined ? rack.placement.y : undefined;
+                const location_label = (room_level !== undefined && rack_y !== undefined && rack_x !== undefined)
+                    ? `Sala ${room_level + 1} • Linha ${rack_y + 1} • Rack ${rack_x + 1}`
+                    : 'Sala';
+
                 return {
                     id: `room_${m.miner_id}_${m.level}_${index}_${Math.random().toString(36).substr(2, 6)}`,
                     miner_id: m.miner_id,
@@ -772,7 +797,11 @@ export const RoomOrganizer: React.FC = () => {
                     filename: m.filename || generateFilename(m.name),
                     canBeSold: checkSellable(m.miner_id),
                     source: 'room',
-                    rack_info: rack ? `R${rack.placement?.room_level || 1} X:${rack.placement?.x || 0} Y:${rack.placement?.y || 0}` : undefined
+                    room_level,
+                    rack_x,
+                    rack_y,
+                    location_label,
+                    rack_info: location_label
                 };
             });
 
@@ -811,6 +840,8 @@ export const RoomOrganizer: React.FC = () => {
                 miners: JSON.parse(JSON.stringify(processed)),
                 minersPower,
                 totalBonusPercent,
+                initialBaseBonus,
+                initialSetBonus: autoDetectedSetBonus,
                 totalRealPower: totalOrig,
                 initialTotalCells: initialCellsCount,
                 maxCellsCapacity: totalRoomCapacity
@@ -854,7 +885,7 @@ export const RoomOrganizer: React.FC = () => {
             if (existing) {
                 return prev.map(m => m.id === existing.id ? { ...m, quantity: (m.quantity || 1) + 1 } : m);
             } else {
-                return [{ ...item, id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory' }, ...prev];
+                return [{ ...item, id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory', location_label: item.location_label || 'Inventário' }, ...prev];
             }
         });
         setSelectedSalaIds(prev => {
@@ -878,7 +909,8 @@ export const RoomOrganizer: React.FC = () => {
                 ...item,
                 id: `room_from_inv_${item.filename}_${Date.now()}_${i}_${Math.random().toString(36).substr(2, 6)}`,
                 quantity: undefined,
-                source: 'room'
+                source: 'room',
+                location_label: item.location_label || 'Inventário'
             });
         }
 
@@ -1210,10 +1242,213 @@ export const RoomOrganizer: React.FC = () => {
         return list;
     }, [discardMiners, discardSearch, discardMarketFilter, currentRoomStats]);
 
-    // Export room as JSON
-    const handleExportRoom = () => {
+    // Helper: Formatar localização amigável da máquina
+    const getMinerLocationLabel = (m: OrganizerMiner): string => {
+        if (m.location_label) return m.location_label;
+        if (m.room_level !== undefined && m.rack_y !== undefined && m.rack_x !== undefined) {
+            return `Sala ${m.room_level + 1} • Linha ${m.rack_y + 1} • Rack ${m.rack_x + 1}`;
+        }
+        return 'Inventário';
+    };
+
+    // Helper: Extrair miners removidas e inseridas em relação ao estado original
+    const getModificationsData = () => {
+        const initialMiners = initialRoomState?.miners || [];
+        const currentMiners = salaMiners;
+
+        // Miners que estavam na sala inicial mas não estão na sala atual
+        const removed = initialMiners.filter(initM => !currentMiners.some(s => s.id === initM.id));
+        // Miners que estão na sala atual mas não estavam na sala inicial
+        const added = currentMiners.filter(s => !initialMiners.some(initM => initM.id === s.id));
+
+        return { removed, added };
+    };
+
+    // Helper de download de arquivos
+    const downloadFile = (content: string, filename: string, mimeType: string) => {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    // Gerador de CSV / Excel (Colunas lado a lado e resumo de poder)
+    const generateModificationsCSV = (): string => {
+        const { removed, added } = getModificationsData();
+        const userName = profileData?.name || 'Jogador';
+        const userLeague = profileData?.league?.title?.en || profileData?.league?.title?.pt || 'N/A';
+        const dateStr = new Date().toLocaleString('pt-BR');
+
+        const lines: string[] = [];
+        lines.push('RELATÓRIO DE MODIFICAÇÕES DA SALA - ROLLERCOIN');
+        lines.push(`Jogador:;${userName};Data:;${dateStr}`);
+        lines.push(`Liga Atual:;${userLeague}`);
+        lines.push('');
+        lines.push('RESUMO DO PODER DO USUÁRIO');
+        lines.push('Métrica;Inicial;Final;Variação (Delta);Variação (%)');
+
+        const initPoder = initialRoomState ? formatPower(initialRoomState.minersPower) : '0 GH/s';
+        const finalPoder = formatPower(currentRoomStats.poderBruto);
+        const deltaPoderStr = formatPower(liveDeltas.deltaPoder, true);
+        const deltaPoderPctStr = formatPctChange(liveDeltas.deltaPoderPct);
+        lines.push(`Poder Bruto (Miners);${initPoder};${finalPoder};${deltaPoderStr};${deltaPoderPctStr}`);
+
+        const initBonus = initialRoomState ? initialRoomState.totalBonusPercent.toFixed(2) + '%' : '0.00%';
+        const finalBonus = (currentRoomStats.bonusBruto || 0).toFixed(2) + '%';
+        const deltaBonusStr = formatBonusDelta(liveDeltas.deltaBonus);
+        const deltaBonusPctStr = formatPctChange(liveDeltas.deltaBonusPct);
+        lines.push(`Bônus Bruto Total;${initBonus};${finalBonus};${deltaBonusStr};${deltaBonusPctStr}`);
+
+        const initSetBonus = initialRoomState ? ((initialRoomState.initialSetBonus ?? 0).toFixed(2) + '%') : '0.00%';
+        const finalSetBonus = (Number(customSetBonus) || 0).toFixed(2) + '%';
+        const deltaSetBonus = ((Number(customSetBonus) || 0) - (initialRoomState?.initialSetBonus || 0));
+        const deltaSetBonusStr = (deltaSetBonus > 0 ? '+' : '') + deltaSetBonus.toFixed(2) + '%';
+        lines.push(`Bônus de Máquinas Únicas;${(initialRoomState?.initialBaseBonus || 0).toFixed(2)}%;${(currentRoomStats.baseBonusBruto || 0).toFixed(2)}%;${((currentRoomStats.baseBonusBruto || 0) - (initialRoomState?.initialBaseBonus || 0) > 0 ? '+' : '') + ((currentRoomStats.baseBonusBruto || 0) - (initialRoomState?.initialBaseBonus || 0)).toFixed(2)}%;-`);
+        lines.push(`Bônus de Sets;${initSetBonus};${finalSetBonus};${deltaSetBonusStr};-`);
+
+        const initReal = initialRoomState ? formatPower(initialRoomState.totalRealPower) : '0 GH/s';
+        const finalReal = formatPower(currentRoomStats.poderReal);
+        const deltaRealStr = formatPower(liveDeltas.deltaRealPower, true);
+        const deltaRealPctStr = formatPctChange(liveDeltas.deltaRealPowerPct);
+        lines.push(`Poder Real Efetivo;${initReal};${finalReal};${deltaRealStr};${deltaRealPctStr}`);
+
+        const initCells = initialRoomState ? `${initialRoomState.initialTotalCells} cél.` : '0 cél.';
+        const finalCells = `${currentRoomStats.totalCells} / ${currentRoomStats.maxCellsCapacity} cél. (${currentRoomStats.availableCells} livres)`;
+        const deltaCellsStr = (liveDeltas.deltaCells > 0 ? '+' : '') + liveDeltas.deltaCells + ' cél.';
+        lines.push(`Células da Sala;${initCells};${finalCells};${deltaCellsStr};${currentRoomStats.occupationPct.toFixed(1)}% ocup.`);
+
+        lines.push('');
+        lines.push(`MODIFICAÇÕES DETALHADAS (${removed.length} removidas; ${added.length} inseridas)`);
+        lines.push('MINERADORES REMOVIDOS DA SALA (SAÍRAM);;;;;;;;MINERADORES INSERIDOS NA SALA (ENTRARAM);;;;;;');
+        lines.push('Nome;Nível;Tamanho;Poder;Bônus;Localização Original;Status;;Nome;Nível;Tamanho;Poder;Bônus;Origem;Status');
+
+        const maxRows = Math.max(removed.length, added.length);
+        const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
+        for (let i = 0; i < maxRows; i++) {
+            const rem = removed[i];
+            const add = added[i];
+
+            let leftCol = ';;;;;;';
+            if (rem) {
+                const lvl = romanNumerals[rem.level] || `${rem.level + 1}`;
+                const sizeStr = rem.size === 1 ? '1 Célula' : '2 Células';
+                const pwrStr = formatPower(rem.power);
+                const bnsStr = `+${rem.bonus_percent}%`;
+                const locStr = getMinerLocationLabel(rem);
+                const statusStr = rem.canBeSold ? 'Vendível' : 'Inegociável';
+                leftCol = `"${rem.name.replace(/"/g, '""')}";${lvl};${sizeStr};"${pwrStr}";"${bnsStr}";"${locStr}";${statusStr}`;
+            }
+
+            let rightCol = ';;;;;;';
+            if (add) {
+                const lvl = romanNumerals[add.level] || `${add.level + 1}`;
+                const sizeStr = add.size === 1 ? '1 Célula' : '2 Células';
+                const pwrStr = formatPower(add.power);
+                const bnsStr = `+${add.bonus_percent}%`;
+                const origStr = add.location_label || 'Inventário';
+                const statusStr = add.canBeSold ? 'Vendível' : 'Inegociável';
+                rightCol = `"${add.name.replace(/"/g, '""')}";${lvl};${sizeStr};"${pwrStr}";"${bnsStr}";"${origStr}";${statusStr}`;
+            }
+
+            lines.push(`${leftCol};;${rightCol}`);
+        }
+
+        return lines.join('\r\n');
+    };
+
+    // Gerador de Relatório TXT (Topo o que sai, embaixo o que entra)
+    const generateModificationsTXT = (): string => {
+        const { removed, added } = getModificationsData();
+        const userName = profileData?.name || 'Jogador';
+        const userLeague = profileData?.league?.title?.en || profileData?.league?.title?.pt || 'N/A';
+        const dateStr = new Date().toLocaleString('pt-BR');
+        const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
+        const lines: string[] = [];
+        lines.push('========================================================================================');
+        lines.push('                    RELATÓRIO DE MODIFICAÇÕES DA SALA - ROLLERCOIN');
+        lines.push('========================================================================================');
+        lines.push(`Jogador: ${userName}  |  Liga: ${userLeague}  |  Data: ${dateStr}`);
+        lines.push('');
+        lines.push('--- RESUMO DO PODER DO USUÁRIO ---');
+
+        const initPoder = initialRoomState ? formatPower(initialRoomState.minersPower) : '0 GH/s';
+        const finalPoder = formatPower(currentRoomStats.poderBruto);
+        const deltaPoderStr = formatPower(liveDeltas.deltaPoder, true);
+        const deltaPoderPctStr = formatPctChange(liveDeltas.deltaPoderPct);
+        lines.push(`• Poder Bruto (Miners):        ${initPoder} -> ${finalPoder} (Δ ${deltaPoderStr} / ${deltaPoderPctStr})`);
+
+        const initBonus = initialRoomState ? initialRoomState.totalBonusPercent.toFixed(2) + '%' : '0.00%';
+        const finalBonus = (currentRoomStats.bonusBruto || 0).toFixed(2) + '%';
+        const deltaBonusStr = formatBonusDelta(liveDeltas.deltaBonus);
+        const deltaBonusPctStr = formatPctChange(liveDeltas.deltaBonusPct);
+        lines.push(`• Bônus Bruto Total:           ${initBonus} -> ${finalBonus} (Δ ${deltaBonusStr} / ${deltaBonusPctStr})`);
+
+        const initSetBonus = initialRoomState ? ((initialRoomState.initialSetBonus ?? 0).toFixed(2) + '%') : '0.00%';
+        const finalSetBonus = (Number(customSetBonus) || 0).toFixed(2) + '%';
+        const deltaSetBonus = ((Number(customSetBonus) || 0) - (initialRoomState?.initialSetBonus || 0));
+        const deltaSetBonusStr = (deltaSetBonus > 0 ? '+' : '') + deltaSetBonus.toFixed(2) + '%';
+        lines.push(`   - Bônus de Únicas:          ${(initialRoomState?.initialBaseBonus || 0).toFixed(2)}% -> ${(currentRoomStats.baseBonusBruto || 0).toFixed(2)}%`);
+        lines.push(`   - Bônus de Sets:            ${initSetBonus} -> ${finalSetBonus} (Δ ${deltaSetBonusStr})`);
+
+        const initReal = initialRoomState ? formatPower(initialRoomState.totalRealPower) : '0 GH/s';
+        const finalReal = formatPower(currentRoomStats.poderReal);
+        const deltaRealStr = formatPower(liveDeltas.deltaRealPower, true);
+        const deltaRealPctStr = formatPctChange(liveDeltas.deltaRealPowerPct);
+        lines.push(`• Poder Real Efetivo:          ${initReal} -> ${finalReal} (Δ ${deltaRealStr} / ${deltaRealPctStr})`);
+
+        lines.push(`• Células da Sala:             ${currentRoomStats.totalCells} / ${currentRoomStats.maxCellsCapacity} cél. (${currentRoomStats.availableCells} livres)`);
+        lines.push(`                               Composição: ${currentRoomStats.count1C}x 1C (${currentRoomStats.cells1C}c) • ${currentRoomStats.count2C}x 2C (${currentRoomStats.cells2C}c) • ${currentRoomStats.sellableCount} Vendíveis`);
+        lines.push('');
+
+        lines.push('========================================================================================');
+        lines.push(`            MINERADORES REMOVIDOS DA SALA (SAÍRAM: ${removed.length})`);
+        lines.push('========================================================================================');
+        if (removed.length === 0) {
+            lines.push('Nenhum minerador foi removido da sala.');
+        } else {
+            removed.forEach((rem, idx) => {
+                const lvl = romanNumerals[rem.level] || `${rem.level + 1}`;
+                const sizeStr = rem.size === 1 ? '1C' : '2C';
+                const statusStr = rem.canBeSold ? 'Vendível' : 'Inegociável';
+                const locStr = getMinerLocationLabel(rem);
+                lines.push(`${idx + 1}. ${rem.name} [Nível ${lvl} • ${sizeStr}]`);
+                lines.push(`   Poder: ${formatPower(rem.power)} | Bônus: +${rem.bonus_percent}% | Localização: ${locStr} | Status: ${statusStr}`);
+            });
+        }
+        lines.push('');
+
+        lines.push('========================================================================================');
+        lines.push(`            MINERADORES INSERIDOS NA SALA (ENTRARAM: ${added.length})`);
+        lines.push('========================================================================================');
+        if (added.length === 0) {
+            lines.push('Nenhum minerador novo foi inserido na sala.');
+        } else {
+            added.forEach((add, idx) => {
+                const lvl = romanNumerals[add.level] || `${add.level + 1}`;
+                const sizeStr = add.size === 1 ? '1C' : '2C';
+                const statusStr = add.canBeSold ? 'Vendível' : 'Inegociável';
+                const origStr = add.location_label || 'Inventário';
+                lines.push(`${idx + 1}. ${add.name} [Nível ${lvl} • ${sizeStr}]`);
+                lines.push(`   Poder: ${formatPower(add.power)} | Bônus: +${add.bonus_percent}% | Origem: ${origStr} | Status: ${statusStr}`);
+            });
+        }
+        lines.push('========================================================================================');
+
+        return lines.join('\r\n');
+    };
+
+    // Export room as JSON (backup legado)
+    const handleExportRoomJSON = () => {
         const data = {
             exportDate: new Date().toISOString(),
+            profile: profileData ? { name: profileData.name, league: profileData.league?.title?.en } : null,
             stats: {
                 minersCount: currentRoomStats.minersCount,
                 totalCells: currentRoomStats.totalCells,
@@ -1310,12 +1545,18 @@ export const RoomOrganizer: React.FC = () => {
                             </button>
                         )}
                         <button
-                            onClick={handleExportRoom}
-                            className="px-3 py-3 bg-slate-800 dark:bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
-                            title="Copiar dados da sala atual em JSON"
+                            onClick={() => {
+                                if (!initialRoomState) {
+                                    setStatusMessage({ text: "Carregue o perfil e sala inicial antes de exportar modificações.", type: 'error' });
+                                    return;
+                                }
+                                setShowExportModal(true);
+                            }}
+                            className="px-3.5 py-3 bg-slate-800 dark:bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
+                            title="Exportar relatório de modificações da sala (Excel / Texto)"
                         >
-                            {copiedAlert ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
-                            {copiedAlert ? 'Copiado!' : 'Exportar'}
+                            <FileSpreadsheet size={15} className="text-emerald-400" />
+                            <span>Exportar</span>
                         </button>
                         <button
                             onClick={() => setShowWelcomeAlert(true)}
@@ -1342,27 +1583,51 @@ export const RoomOrganizer: React.FC = () => {
 
             {/* Formula Banner & Real-time Live Stats Dashboard */}
             <div className="space-y-4">
-                {/* Equation Card */}
-                <div className="bg-gradient-to-r from-blue-900/90 via-slate-900 to-slate-900 text-white p-5 rounded-2xl border border-blue-500/30 shadow-xl relative overflow-hidden">
-                    <div className="absolute -right-8 -top-8 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                {/* User Profile Cards (Substitui a Equação Fundamental) */}
+                {profileData ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="bg-white dark:bg-dark-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4">
+                            <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 rounded-2xl overflow-hidden border border-blue-100 dark:border-blue-800 flex-shrink-0 flex items-center justify-center">
+                                <img
+                                    src={`https://avatars.rollercoin.com/static/avatars/thumbnails/50/${profileData.avatar_id}.png`}
+                                    className="w-full h-full object-cover"
+                                    alt=""
+                                    onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                                />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Jogador</p>
+                                <p className="font-display font-black text-xl dark:text-white uppercase leading-tight">{profileData.name}</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-white dark:bg-dark-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4">
+                            <div className="p-3.5 bg-purple-50 dark:bg-purple-900/30 text-purple-600 rounded-2xl flex-shrink-0">
+                                <Award size={24} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-slate-400 uppercase font-black tracking-wider">Liga Atual</p>
+                                <p className="font-display font-black text-xl dark:text-white uppercase leading-tight">
+                                    {profileData.league?.title?.en || profileData.league?.title?.pt || 'N/A'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="bg-gradient-to-r from-blue-900/90 via-slate-900 to-slate-900 text-white p-5 rounded-2xl border border-blue-500/30 shadow-xl flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-blue-500/20 text-blue-400 rounded-xl border border-blue-400/20">
                                 <Calculator size={24} />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black uppercase text-blue-400 tracking-wider">Equação Fundamental do Jogo</p>
-                                <h2 className="text-xl md:text-2xl font-black font-mono text-white tracking-wide">
-                                    Poder Real = Poder Bruto × (1 + Bônus)
+                                <p className="text-[10px] font-black uppercase text-blue-400 tracking-wider">Organizador de Sala</p>
+                                <h2 className="text-lg md:text-xl font-black text-white tracking-tight">
+                                    Carregue seu link de perfil ou ID RollerCoin acima para iniciar
                                 </h2>
                             </div>
                         </div>
-                        <div className="text-xs text-slate-300 bg-black/40 px-4 py-2 rounded-xl border border-white/10 text-center md:text-right">
-                            <span className="text-slate-400 block text-[10px] uppercase font-bold">Fórmula matemática:</span>
-                            <span className="font-mono text-cyan-300 font-bold">Poder Real = Poder(GH/s) × (1 + Bônus% / 100)</span>
-                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Real-time Metric Cards with Live Deltas */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1766,6 +2031,12 @@ export const RoomOrganizer: React.FC = () => {
                                                         Impacto: -{formatPower(miner.marginalImpact || 0)}
                                                     </span>
                                                 </div>
+
+                                                {/* Localização da Miner (Sala, Linha, Rack ou Inventário) */}
+                                                <div className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 flex items-center gap-1.5">
+                                                    <MapPin size={10} className="text-slate-400 flex-shrink-0" />
+                                                    <span>{getMinerLocationLabel(miner)}</span>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -2026,6 +2297,12 @@ export const RoomOrganizer: React.FC = () => {
                                                             Impacto: +{formatPower(impact)}
                                                         </span>
                                                     </div>
+
+                                                    {/* Localização / Origem */}
+                                                    <div className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 flex items-center gap-1.5">
+                                                        <MapPin size={10} className="text-slate-400 flex-shrink-0" />
+                                                        <span>{getMinerLocationLabel(miner)}</span>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -2116,6 +2393,12 @@ export const RoomOrganizer: React.FC = () => {
                                                         >
                                                             Impacto: +{formatPower(impact)}
                                                         </span>
+                                                    </div>
+
+                                                    {/* Localização / Origem */}
+                                                    <div className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 flex items-center gap-1.5">
+                                                        <MapPin size={10} className="text-slate-400 flex-shrink-0" />
+                                                        <span>{getMinerLocationLabel(miner)}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2334,6 +2617,146 @@ Miner details
                                 className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-amber-500/25 transition-all active:scale-98 flex items-center justify-center gap-2"
                             >
                                 <Check size={16} /> Entendi e Quero Continuar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Modal de Exportação de Modificações */}
+            {showExportModal && (
+                <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+                    <div className="bg-white dark:bg-dark-800 rounded-3xl max-w-xl w-full p-6 space-y-5 border border-slate-200 dark:border-slate-700 shadow-2xl animate-scale-up">
+                        {/* Header */}
+                        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-2xl">
+                                    <FileSpreadsheet size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="font-display font-black text-slate-900 dark:text-white uppercase tracking-tight text-base sm:text-lg">
+                                        Exportar Modificações
+                                    </h3>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                        {getModificationsData().removed.length} removida(s) • {getModificationsData().added.length} inserida(s) na sala
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setShowExportModal(false)}
+                                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Power Delta Summary */}
+                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs">
+                            <div className="font-bold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wider mb-1 flex items-center justify-between">
+                                <span>Impacto das Alterações na Conta</span>
+                                <span className="text-emerald-500 font-black">
+                                    {liveDeltas.deltaRealPower > 0 ? `+${formatPower(liveDeltas.deltaRealPower)}` : formatPower(liveDeltas.deltaRealPower)}
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                                <div className="p-2 bg-white dark:bg-dark-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-400 text-[9px] uppercase font-sans font-bold block">Poder Bruto</span>
+                                    <span className="font-black text-slate-700 dark:text-slate-200">{formatPower(liveDeltas.deltaPoder, true)}</span>
+                                </div>
+                                <div className="p-2 bg-white dark:bg-dark-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-400 text-[9px] uppercase font-sans font-bold block">Bônus Bruto</span>
+                                    <span className="font-black text-cyan-600 dark:text-cyan-400">{formatBonusDelta(liveDeltas.deltaBonus)}</span>
+                                </div>
+                                <div className="p-2 bg-white dark:bg-dark-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-400 text-[9px] uppercase font-sans font-bold block">Bônus de Sets</span>
+                                    <span className="font-black text-cyan-600 dark:text-cyan-400">
+                                        {(Number(customSetBonus) - (initialRoomState?.initialSetBonus || 0)) > 0 ? '+' : ''}
+                                        {(Number(customSetBonus) - (initialRoomState?.initialSetBonus || 0)).toFixed(2)}%
+                                    </span>
+                                </div>
+                                <div className="p-2 bg-white dark:bg-dark-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                                    <span className="text-slate-400 text-[9px] uppercase font-sans font-bold block">Células</span>
+                                    <span className="font-black text-slate-700 dark:text-slate-200">
+                                        {currentRoomStats.totalCells} / {currentRoomStats.maxCellsCapacity} cél.
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Export Action Buttons */}
+                        <div className="space-y-2.5">
+                            {/* Option 1: Excel CSV */}
+                            <button
+                                onClick={() => {
+                                    const csv = generateModificationsCSV();
+                                    const filename = `modificacoes_sala_${profileData?.name || 'rollercoin'}.csv`;
+                                    downloadFile('\uFEFF' + csv, filename, 'text/csv;charset=utf-8;');
+                                    setShowExportModal(false);
+                                    setStatusMessage({ text: "Arquivo Excel (.csv) baixado com sucesso!", type: 'success' });
+                                }}
+                                className="w-full p-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-xs uppercase tracking-wider flex items-center justify-between shadow-lg shadow-emerald-600/20 transition-all active:scale-98"
+                            >
+                                <div className="flex items-center gap-3 text-left">
+                                    <div className="p-2 bg-white/20 rounded-xl">
+                                        <FileSpreadsheet size={18} />
+                                    </div>
+                                    <div>
+                                        <p className="font-black">Baixar Excel (.csv)</p>
+                                        <p className="text-[10px] font-medium opacity-90 lowercase font-sans">Colunas lado a lado: removidas à esquerda, inseridas à direita</p>
+                                    </div>
+                                </div>
+                                <Download size={18} />
+                            </button>
+
+                            {/* Option 2: TXT File */}
+                            <button
+                                onClick={() => {
+                                    const txt = generateModificationsTXT();
+                                    const filename = `modificacoes_sala_${profileData?.name || 'rollercoin'}.txt`;
+                                    downloadFile(txt, filename, 'text/plain;charset=utf-8;');
+                                    setShowExportModal(false);
+                                    setStatusMessage({ text: "Arquivo Texto (.txt) baixado com sucesso!", type: 'success' });
+                                }}
+                                className="w-full p-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xs uppercase tracking-wider flex items-center justify-between shadow-lg shadow-blue-600/20 transition-all active:scale-98"
+                            >
+                                <div className="flex items-center gap-3 text-left">
+                                    <div className="p-2 bg-white/20 rounded-xl">
+                                        <FileText size={18} />
+                                    </div>
+                                    <div>
+                                        <p className="font-black">Baixar Texto (.txt)</p>
+                                        <p className="text-[10px] font-medium opacity-90 lowercase font-sans">Relatório formatado: topo o que sai, embaixo o que entra</p>
+                                    </div>
+                                </div>
+                                <Download size={18} />
+                            </button>
+
+                            {/* Option 3: Copy to clipboard */}
+                            <button
+                                onClick={() => {
+                                    const txt = generateModificationsTXT();
+                                    navigator.clipboard.writeText(txt);
+                                    setCopiedAlert(true);
+                                    setTimeout(() => setCopiedAlert(false), 2500);
+                                    setStatusMessage({ text: "Relatório de modificações copiado para a área de transferência!", type: 'success' });
+                                }}
+                                className="w-full p-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-98"
+                            >
+                                {copiedAlert ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+                                <span>{copiedAlert ? "Copiado com sucesso!" : "Copiar Relatório em Texto"}</span>
+                            </button>
+                        </div>
+
+                        {/* Footer Link: JSON backup */}
+                        <div className="text-center pt-1 border-t border-slate-100 dark:border-slate-700">
+                            <button
+                                onClick={() => {
+                                    handleExportRoomJSON();
+                                    setShowExportModal(false);
+                                    setStatusMessage({ text: "JSON da sala copiado!", type: 'info' });
+                                }}
+                                className="text-[10px] font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 underline"
+                            >
+                                Ou copiar sala inteira em formato JSON (Backup)
                             </button>
                         </div>
                     </div>
