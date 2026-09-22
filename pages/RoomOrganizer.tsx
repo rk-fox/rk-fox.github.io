@@ -1103,10 +1103,10 @@ export const RoomOrganizer: React.FC = () => {
                     return (b.marginalImpact ?? b.realPower ?? 0) - (a.marginalImpact ?? a.realPower ?? 0);
                 case 'real_power_asc':
                     return (a.marginalImpact ?? a.realPower ?? 0) - (b.marginalImpact ?? b.realPower ?? 0);
-                                case 'mais_poder_menos_bonus': {
-                    const diffPower = b.power - a.power;
-                    if (diffPower !== 0) return diffPower;
-                    return a.bonus_percent - b.bonus_percent;
+case 'mais_poder_menos_bonus': {
+                    const ratioA = a.power / (a.bonus_percent + 0.001);
+                    const ratioB = b.power / (b.bonus_percent + 0.001);
+                    return ratioB - ratioA;
                 }
                 case 'mais_bonus_menos_poder': {
                     const diffBonus = b.bonus_percent - a.bonus_percent;
