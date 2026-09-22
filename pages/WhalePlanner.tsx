@@ -340,25 +340,36 @@ export const WhalePlanner: React.FC = () => {
         });
 
         switch (criterionFilter) {
-            case 'menor_eficiencia':
-                return mapped.sort((a, b) => b.impact - a.impact).slice(0, 10);
-            case 'maior_eficiencia':
-                return mapped.sort((a, b) => a.impact - b.impact).slice(0, 10);
-            case 'mais_poder_menos_bonus':
-                return mapped.sort((a, b) => {
-                    const ratioA = a.power / (a.bonus_percent + 0.001);
-                    const ratioB = b.power / (b.bonus_percent + 0.001);
-                    return ratioB - ratioA;
-                }).slice(0, 10);
-            case 'mais_bonus_menos_poder':
-                return mapped.sort((a, b) => {
-                    const ratioA = a.bonus_percent / (a.power + 1);
-                    const ratioB = b.bonus_percent / (b.power + 1);
-                    return ratioB - ratioA;
-                }).slice(0, 10);
-            default:
-                return mapped.sort((a, b) => b.impact - a.impact).slice(0, 10);
-        }
+    case 'menor_eficiencia':
+        return mapped.sort((a, b) => b.impact - a.impact).slice(0, 10);
+
+    case 'maior_eficiencia':
+        return mapped.sort((a, b) => a.impact - b.impact).slice(0, 10);
+
+    case 'mais_poder_menos_bonus':
+        return mapped.sort((a, b) => {
+            // 1º Critério: Maior poder primeiro
+            const diffPower = b.power - a.power;
+            if (diffPower !== 0) return diffPower;
+
+            // 2º Critério (desempate): Menor bônus primeiro
+            return a.bonus_percent - b.bonus_percent;
+        }).slice(0, 10);
+
+    case 'mais_bonus_menos_poder':
+        return mapped.sort((a, b) => {
+            // 1º Critério: Maior bônus primeiro
+            const diffBonus = b.bonus_percent - a.bonus_percent;
+            if (diffBonus !== 0) return diffBonus;
+
+            // 2º Critério (desempate): Menor poder primeiro
+            return a.power - b.power;
+        }).slice(0, 10);
+
+    default:
+        return mapped.sort((a, b) => b.impact - a.impact).slice(0, 10);
+}
+
     }, [allMiners, slotsFilter, marketFilter, criterionFilter, userStats]);
 
     const getCriterionHeader = () => {
