@@ -26,31 +26,31 @@ import {
     AlertCircle,
     CheckCircle2,
     AlertTriangle,
-    ShieldAlert,
     FileSpreadsheet,
     FileText,
     MapPin,
-    X
+    X,
+    Wand2
 } from 'lucide-react';
 
 export interface OrganizerMiner {
-    id: string; // Unique instance ID
-    miner_id?: string; // RollerCoin database ID if available
+    id: string; // ID único da instância
+    miner_id?: string; // ID RollerCoin se disponível
     name: string;
-    level: number; // Merge level (0 = basic, 1 = uncommon/I, 2 = rare/II, etc.)
-    size: number; // 1 or 2 cells
-    power: number; // In GH/s
-    bonus_percent: number; // Individual miner bonus % (e.g. 2.5)
+    level: number; // 0 = básico/comum, 1 = incomum/I, 2 = raro/II, 3 = épico/III, etc.
+    size: number; // 1 ou 2 células
+    power: number; // Em GH/s
+    bonus_percent: number; // Bônus individual %
     filename: string;
     canBeSold?: boolean;
     source: 'room' | 'inventory' | 'custom';
-    quantity?: number; // Used mainly for inventory aggregation
-    isFirstInRoom?: boolean; // If this copy provides bonus in room (only 1st copy of identical name + level)
-    activeBonus?: number; // The actual bonus it gives to the room (0 if duplicate of identical name + level)
-    realPower?: number; // Power * (1 + activeBonus/100)
-    marginalImpact?: number; // Real Power impact on total account if removed/added (in GH/s)
+    quantity?: number;
+    isFirstInRoom?: boolean; // Se fornece bônus ativo na sala
+    activeBonus?: number;
+    realPower?: number;
+    marginalImpact?: number; // Impacto real na conta (GH/s)
     rack_info?: string;
-    hasEstimatedLevel?: boolean; // Flag indicating level was estimated from text parser
+    hasEstimatedLevel?: boolean; // Nível estimado via parser (não catalogado na planilha)
     room_level?: number;
     rack_x?: number;
     rack_y?: number;
@@ -58,9 +58,9 @@ export interface OrganizerMiner {
 }
 
 export interface SheetMinerTier {
-    level: number; // 0=Common, 1=Uncommon, 2=Rare, 3=Epic, 4=Legendary, 5=Unreal
-    power: number; // in GH/s
-    bonus: number; // in %
+    level: number;
+    power: number;
+    bonus: number;
 }
 
 export interface SheetMinerData {
@@ -79,19 +79,16 @@ export type SalaSortOption =
     | 'power_asc'
     | 'bonus_desc'
     | 'bonus_asc'
-    | 'name_asc'
-    | 'size_desc'
-    | 'size_asc'
-    | 'repeated_first'
-    | 'sellable_first'
-    | 'not_sellable_first';
+    | 'name_asc';
 
 export type InvSortOption = SalaSortOption;
+
+export type AutoOptimizationTarget = 'power' | 'bonus' | 'real_power';
 
 export const RoomOrganizer: React.FC = () => {
     const hasRun = useRef(false);
 
-    // Google Script Counter for Room Organizer (optional tracking)
+    // Google Script Counter para rastreio operacional
     useEffect(() => {
         if (hasRun.current) return;
         hasRun.current = true;
@@ -103,23 +100,23 @@ export const RoomOrganizer: React.FC = () => {
         }).catch(e => console.error("Error updating counter:", e));
     }, []);
 
-    // API & Input states
+    // Estados de API e inputs
     const [userLink, setUserLink] = useState('');
     const [customSetBonus, setCustomSetBonus] = useState<number>(0);
     const [inventoryRawText, setInventoryRawText] = useState('');
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-    // Google Sheets Database for Auto Merge Level Detection
+    // Base do Google Sheets para detecção de níveis oficiais
     const [sheetDatabase, setSheetDatabase] = useState<SheetMinerData[]>([]);
     const sheetDataRef = useRef<SheetMinerData[]>([]);
 
-    // 3 Main Column States
+    // Estados das colunas de mineradores
     const [salaMiners, setSalaMiners] = useState<OrganizerMiner[]>([]);
     const [inventoryMiners, setInventoryMiners] = useState<OrganizerMiner[]>([]);
     const [discardMiners, setDiscardMiners] = useState<OrganizerMiner[]>([]);
 
-    // Initial Snapshot for Delta calculations & 100% capacity calculation
+    // Snapshot inicial para deltas
     const [initialRoomState, setInitialRoomState] = useState<{
         miners: OrganizerMiner[];
         minersPower: number;
@@ -131,26 +128,26 @@ export const RoomOrganizer: React.FC = () => {
         maxCellsCapacity: number;
     } | null>(null);
 
-    // Profile Data for user card & reports
+    // Dados do perfil
     const [profileData, setProfileData] = useState<any>(null);
     const [showExportModal, setShowExportModal] = useState(false);
-
-    // Selection sets for bulk actions
     const [selectedSalaIds, setSelectedSalaIds] = useState<Set<string>>(new Set());
 
-    // Search and Filters
+    // Filtros e ordenação da Sala
     const [salaSearch, setSalaSearch] = useState('');
     const [salaSort, setSalaSort] = useState<SalaSortOption>('real_power_desc');
     const [salaSizeFilter, setSalaSizeFilter] = useState<'all' | '1' | '2'>('all');
     const [salaSellableFilter, setSalaSellableFilter] = useState<'all' | 'sellable' | 'not_sellable'>('all');
     const [salaDuplicateFilter, setSalaDuplicateFilter] = useState<'all' | 'duplicates' | 'unique' | 'dup_unsellable' | 'dup_sellable'>('all');
 
+    // Filtros e ordenação do Inventário
     const [invSearch, setInvSearch] = useState('');
     const [invSort, setInvSort] = useState<InvSortOption>('real_power_desc');
-    const [invPresenceFilter, setInvPresenceFilter] = useState<'all' | 'in_room' | 'new_to_room'>('all');
+    const [invPresenceFilter, setInvPresenceFilter] = useState<'all' | 'in_room' | 'new_to_room' | 'dup_inventory'>('all');
     const [invMarketFilter, setInvMarketFilter] = useState<'all' | 'sellable' | 'not_sellable'>('all');
     const [invSizeFilter, setInvSizeFilter] = useState<'all' | '1' | '2'>('all');
 
+    // Filtros do Descarte
     const [discardSearch, setDiscardSearch] = useState('');
     const [discardMarketFilter, setDiscardMarketFilter] = useState<'all' | 'sellable' | 'not_sellable'>('all');
     const [rightPanelTab, setRightPanelTab] = useState<'inventory' | 'discard'>('inventory');
@@ -161,7 +158,7 @@ export const RoomOrganizer: React.FC = () => {
 
     const proxy = "https://summer-night-03c0.rk-foxx-159.workers.dev/?";
 
-    // Power formatter
+    // Formatadores numéricos
     const formatPower = (ghs: number, showSign = false) => {
         const sign = ghs > 0 && showSign ? '+' : ghs < 0 ? '-' : '';
         const absVal = Math.abs(ghs);
@@ -172,46 +169,63 @@ export const RoomOrganizer: React.FC = () => {
         return `${sign}${absVal.toFixed(3).replace('.', ',')} GH/s`;
     };
 
-    // Formatter for Bonus delta
     const formatBonusDelta = (val: number) => {
         const sign = val > 0 ? '+' : '';
         return `${sign}${val.toFixed(2)}%`;
     };
 
-    // Formatter for % difference
     const formatPctChange = (pct: number) => {
         const sign = pct > 0 ? '+' : '';
         return `${sign}${pct.toFixed(2)}%`;
     };
 
-    // Badge formatter for Miner Level (I, II, III, IV, V, VI, etc.)
-    const renderLevelBadge = (level: number = 0) => {
+    // Chave única para duplicadas (separa instâncias por patamar de força quando o nível é estimado)
+    const getMinerKey = (m: OrganizerMiner): string => {
+        const cleanName = m.name.replace(/\s*\(!\)\s*$/, '').trim().toLowerCase();
+        if (m.level !== undefined && m.level > 0 && !m.hasEstimatedLevel) {
+            return `${cleanName}_lvl_${m.level}`;
+        }
+        return `${cleanName}_lvl_${m.level ?? 0}_pwr_${Math.round(m.power)}`;
+    };
+
+    // Badge visual para o nível da mineradora
+    const renderLevelBadge = (level: number = 0, isEstimated?: boolean) => {
         const lvl = typeof level === 'number' && !isNaN(level) ? Math.max(0, level) : 0;
         const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
         const label = romanNumerals[lvl] || `${lvl + 1}`;
 
         const colorClasses = [
-            'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700', // I (0 / Comum - Cinza)
-            'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800', // II (1 / Incomum - Verde)
-            'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800', // III (2 / Rara - Azul)
-            'bg-purple-100 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-800', // IV (3 / Épica - Lilás/Roxo)
-            'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700', // V (4 / Lendária - Amarelo Dourado)
-            'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800', // VI (5 / Unreal - Rosa/Vermelho)
+            'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700', // I (Comum)
+            'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800', // II (Incomum)
+            'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800', // III (Rara)
+            'bg-purple-100 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-800', // IV (Épica)
+            'bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700', // V (Lendária)
+            'bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800', // VI (Unreal)
         ];
 
         const currentStyle = colorClasses[lvl] || colorClasses[0];
 
         return (
-            <span
-                className={`text-[8px] font-black px-1.5 py-0.5 rounded ${currentStyle}`}
-                title={`Nível ${lvl + 1}`}
-            >
-                {label}
+            <span className="inline-flex items-center gap-1">
+                <span
+                    className={`text-[8px] font-black px-1.5 py-0.5 rounded ${currentStyle}`}
+                    title={`Nível ${lvl + 1}${isEstimated ? ' (Nível extraído diretamente do texto)' : ''}`}
+                >
+                    {label}
+                </span>
+                {isEstimated && (
+                    <span
+                        className="text-[8px] font-black px-1 py-0.5 rounded bg-amber-500 text-white shadow-xs"
+                        title="Aviso: Máquina não catalogada na planilha oficial. Nível identificado pelo texto e bônus preservado."
+                    >
+                        !
+                    </span>
+                )}
             </span>
         );
     };
 
-    // Load Google Sheets Database (Web Tab) for exact Merge Level Detection
+    // Carregamento da planilha Google Sheets
     useEffect(() => {
         const loadSheetDatabase = async () => {
             const sheetId = "171LSMNAiJ74obfmLzueKtzuyu7Bg9Ql5dBWQ1GkjQTI";
@@ -226,7 +240,7 @@ export const RoomOrganizer: React.FC = () => {
                 const parsePwr = (val: string | undefined): number => {
                     if (!val) return 0;
                     const clean = val.replace(/\s+/g, '').replace(/,/g, '');
-                    return (parseFloat(clean) || 0) * 1000; // In sheet, without '.' equals GH/s (TH/s * 1000)
+                    return (parseFloat(clean) || 0) * 1000;
                 };
 
                 const parseBns = (val: string | undefined): number => {
@@ -241,33 +255,14 @@ export const RoomOrganizer: React.FC = () => {
                         const name = String(row[0]).trim();
                         const status = row[1] || '';
                         const size = parseInt(row[2], 10) || 2;
-
                         const tiers: SheetMinerTier[] = [];
 
-                        // Col D (idx 3) & Col E (idx 4): Comum (Lvl 0)
-                        if (row[3] !== undefined && row[3] !== '') {
-                            tiers.push({ level: 0, power: parsePwr(row[3]), bonus: parseBns(row[4]) });
-                        }
-                        // Col F (idx 5) & Col G (idx 6): Incomum (Lvl 1)
-                        if (row[5] !== undefined && row[5] !== '') {
-                            tiers.push({ level: 1, power: parsePwr(row[5]), bonus: parseBns(row[6]) });
-                        }
-                        // Col L (idx 11) & Col M (idx 12): Rara (Lvl 2)
-                        if (row[11] !== undefined && row[11] !== '') {
-                            tiers.push({ level: 2, power: parsePwr(row[11]), bonus: parseBns(row[12]) });
-                        }
-                        // Col R (idx 17) & Col S (idx 18): Épica (Lvl 3)
-                        if (row[17] !== undefined && row[17] !== '') {
-                            tiers.push({ level: 3, power: parsePwr(row[17]), bonus: parseBns(row[18]) });
-                        }
-                        // Col X (idx 23) & Col Y (idx 24): Lendária (Lvl 4)
-                        if (row[23] !== undefined && row[23] !== '') {
-                            tiers.push({ level: 4, power: parsePwr(row[23]), bonus: parseBns(row[24]) });
-                        }
-                        // Col AD (idx 29) & Col AE (idx 30): Unreal (Lvl 5)
-                        if (row[29] !== undefined && row[29] !== '') {
-                            tiers.push({ level: 5, power: parsePwr(row[29]), bonus: parseBns(row[30]) });
-                        }
+                        if (row[3] !== undefined && row[3] !== '') tiers.push({ level: 0, power: parsePwr(row[3]), bonus: parseBns(row[4]) });
+                        if (row[5] !== undefined && row[5] !== '') tiers.push({ level: 1, power: parsePwr(row[5]), bonus: parseBns(row[6]) });
+                        if (row[11] !== undefined && row[11] !== '') tiers.push({ level: 2, power: parsePwr(row[11]), bonus: parseBns(row[12]) });
+                        if (row[17] !== undefined && row[17] !== '') tiers.push({ level: 3, power: parsePwr(row[17]), bonus: parseBns(row[18]) });
+                        if (row[23] !== undefined && row[23] !== '') tiers.push({ level: 4, power: parsePwr(row[23]), bonus: parseBns(row[24]) });
+                        if (row[29] !== undefined && row[29] !== '') tiers.push({ level: 5, power: parsePwr(row[29]), bonus: parseBns(row[30]) });
 
                         return { name, status, size, tiers };
                     });
@@ -282,7 +277,7 @@ export const RoomOrganizer: React.FC = () => {
         loadSheetDatabase();
     }, []);
 
-    // Load external miner metadata scripts for sellable identification
+    // Scripts externos de negociabilidade
     const loadScript = (src: string) => {
         return new Promise((resolve, reject) => {
             if (document.querySelector(`script[src="${src}"]`)) {
@@ -319,16 +314,14 @@ export const RoomOrganizer: React.FC = () => {
         for (const dataset of datasets) {
             if (!dataset) continue;
             const miner = dataset.find((m: any) => m.miner_id === minerId);
-            if (miner) {
-                return miner.is_can_be_sold_on_mp || false;
-            }
+            if (miner) return miner.is_can_be_sold_on_mp || false;
         }
         return false;
     };
 
-    // Helper: Filename sanitization for RollerCoin static images
     const generateFilename = (name: string): string => {
         return name.trim()
+            .replace(/\s*\(!\)\s*$/, '')
             .replace(/'/g, '')
             .replace(/’/g, '')
             .replace(/\+/g, 'plus')
@@ -339,7 +332,6 @@ export const RoomOrganizer: React.FC = () => {
             .toLowerCase();
     };
 
-    // Power unit parser to GH/s
     const parsePowerStringToGhs = (valStr: string, unitStr: string): number => {
         const cleanVal = parseFloat(valStr.replace(/,/g, ''));
         if (isNaN(cleanVal)) return 0;
@@ -348,10 +340,10 @@ export const RoomOrganizer: React.FC = () => {
         if (unit.startsWith('EH')) return cleanVal * 1e9;
         if (unit.startsWith('PH')) return cleanVal * 1e6;
         if (unit.startsWith('TH')) return cleanVal * 1e3;
-        return cleanVal; // GH/s
+        return cleanVal;
     };
 
-    // Calculate live room metrics (Poder Bruto, Bônus Bruto, Poder Real, Células)
+    // Métricas em tempo real da sala
     const currentRoomStats = useMemo(() => {
         const manualBonus = Number(customSetBonus) || 0;
         if (salaMiners.length === 0) {
@@ -378,7 +370,8 @@ export const RoomOrganizer: React.FC = () => {
                 notSellableCount: 0,
                 dupUnsellableCount: 0,
                 dupSellableCount: 0,
-                enrichedMiners: [] as OrganizerMiner[]
+                enrichedMiners: [] as OrganizerMiner[],
+                keyCounts: new Map<string, number>()
             };
         }
 
@@ -398,11 +391,10 @@ export const RoomOrganizer: React.FC = () => {
 
         const keyCounts = new Map<string, number>();
         salaMiners.forEach(m => {
-            const key = `${m.name.trim().toLowerCase()}_lvl_${m.level ?? 0}`;
+            const key = getMinerKey(m);
             keyCounts.set(key, (keyCounts.get(key) || 0) + 1);
         });
 
-        // 1st pass: Calculate base power, uniqueness, cells, and active bonus per miner
         salaMiners.forEach(m => {
             totalPoderBruto += m.power;
             const sz = m.size === 1 ? 1 : 2;
@@ -417,12 +409,7 @@ export const RoomOrganizer: React.FC = () => {
             if (m.canBeSold) sellableCount++;
             else notSellableCount++;
 
-            // Unique key to distinguish miner types: SAME MODEL / NAME AND SAME MERGE LEVEL = DUPLICATE
-            // In RollerCoin:
-            // - Same Name + Same Level -> Duplicate (Only 1st copy contributes bonus, others contribute +0%)
-            // - Same Name + Different Level (e.g. Normal Lvl 0 vs Merge Lvl 1) -> NOT duplicate, BOTH give bonus!
-            const uniqueKey = `${m.name.trim().toLowerCase()}_lvl_${m.level ?? 0}`;
-
+            const uniqueKey = getMinerKey(m);
             const isFirst = !seenKeys.has(uniqueKey);
             if (isFirst) {
                 seenKeys.add(uniqueKey);
@@ -434,7 +421,6 @@ export const RoomOrganizer: React.FC = () => {
             }
 
             const activeBonus = isFirst ? m.bonus_percent : 0;
-            // Real power contribution = base power * (1 + activeBonus/100)
             const realPower = m.power * (1 + activeBonus / 100);
 
             enrichedMiners.push({
@@ -448,16 +434,14 @@ export const RoomOrganizer: React.FC = () => {
 
         const totalCells = cells1C + cells2C;
         const maxCellsCapacity = initialRoomState?.maxCellsCapacity || 528;
-        const availableCells = maxCellsCapacity - totalCells; // > 0 means liberated/free slots, < 0 means overflow
+        const availableCells = maxCellsCapacity - totalCells;
         const occupationPct = maxCellsCapacity > 0 ? (totalCells / maxCellsCapacity) * 100 : 0;
         const totalBonusBruto = baseBonusBruto + manualBonus;
         const totalPoderReal = totalPoderBruto * (1 + totalBonusBruto / 100);
 
-        // 2nd pass: Compute dynamic marginal removal impact on Total Real Power
         enrichedMiners.forEach(m => {
-            const uniqueKey = `${m.name.trim().toLowerCase()}_lvl_${m.level ?? 0}`;
+            const uniqueKey = getMinerKey(m);
             const countInRoom = keyCounts.get(uniqueKey) || 1;
-            // If only 1 copy in room, removing it removes its bonus %
             const lostBonus = countInRoom === 1 ? m.bonus_percent : 0;
             const newPoderBruto = Math.max(0, totalPoderBruto - m.power);
             const newBonusBruto = Math.max(0, totalBonusBruto - lostBonus);
@@ -491,7 +475,7 @@ export const RoomOrganizer: React.FC = () => {
         };
     }, [salaMiners, initialRoomState, customSetBonus]);
 
-    // Live Deltas vs Initial State
+    // Deltas em relação ao snapshot inicial
     const liveDeltas = useMemo(() => {
         if (!initialRoomState) {
             return {
@@ -533,9 +517,8 @@ export const RoomOrganizer: React.FC = () => {
         };
     }, [currentRoomStats, initialRoomState]);
 
-    // Marginal impact of adding a miner to the room (used in Inventory & Discard)
     const getInsertionImpact = (miner: OrganizerMiner): { impact: number; givesBonus: boolean } => {
-        const key = `${miner.name.trim().toLowerCase()}_lvl_${miner.level ?? 0}`;
+        const key = getMinerKey(miner);
         const isAlreadyInRoom = (currentRoomStats.keyCounts?.get(key) || 0) > 0;
         const gainedBonus = isAlreadyInRoom ? 0 : miner.bonus_percent;
 
@@ -550,7 +533,7 @@ export const RoomOrganizer: React.FC = () => {
         };
     };
 
-    // Helper: Detect exact merge level and metadata from Google Sheets database
+    // Identificação de nível oficial via Google Sheets
     const detectMinerLevelAndMeta = (
         name: string,
         power: number,
@@ -564,7 +547,6 @@ export const RoomOrganizer: React.FC = () => {
         const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
         const cleanTargetName = norm(name);
 
-        // Find matching miner in sheet database
         let matched = currentDb.find(m => norm(m.name) === cleanTargetName);
         if (!matched) {
             matched = currentDb.find(m => {
@@ -579,24 +561,20 @@ export const RoomOrganizer: React.FC = () => {
 
         const isSellable = /sellable|pode ser vendido|can be sold/i.test(matched.status || '');
 
-        // 1. Check exact match: bonus diff <= 0.05 AND power diff <= 1%
         for (const tier of matched.tiers) {
             const bonusDiff = Math.abs(tier.bonus - bonus_percent);
             const powerDiffRatio = tier.power > 0 ? Math.abs(tier.power - power) / tier.power : 1;
-
             if (bonusDiff <= 0.05 && powerDiffRatio <= 0.01) {
                 return { level: tier.level, isSellable, detectedFromDb: true };
             }
         }
 
-        // 2. Proximity match if slight formatting variance
         let bestTier: SheetMinerTier | null = null;
         let minScore = Infinity;
 
         for (const tier of matched.tiers) {
             const bonusDiff = Math.abs(tier.bonus - bonus_percent);
             const powerDiffRatio = tier.power > 0 ? Math.abs(tier.power - power) / tier.power : 1;
-
             const score = (bonusDiff * 100) + (powerDiffRatio * 10);
             if (score < minScore) {
                 minScore = score;
@@ -611,40 +589,93 @@ export const RoomOrganizer: React.FC = () => {
         return { level: bestTier ? bestTier.level : 0, isSellable, detectedFromDb: bestTier !== null };
     };
 
-    // Robust Parser for Inventory Text (Supports both structured multi-line and single-line / token formats)
+    // Parser robusto com suporte a descarte de Sets e regra de Nível 0 imediato após "open"
     const parseInventoryText = (raw: string): OrganizerMiner[] => {
         if (!raw.trim()) return [];
 
         let cleaned = raw;
-        // Clean leading banners and links
         cleaned = cleaned.replace(/[\s\S]*?(?:Items arranged in your rooms will not appear on this page\.|Os itens organizados em sua sala não aparecerão nesta página\.|Los objetos colocados en tus salas no aparecerán en esta página\.?)\s*/i, '');
         cleaned = cleaned.replace(/\s*(?:About us|Sobre nós|Sobre nosotros)[\s\S]*/i, '');
 
         const db = sheetDataRef.current.length > 0 ? sheetDataRef.current : sheetDatabase;
 
-        // Strategy 1: Multi-line / newline delimited blocks
-        const regexMulti = /(?:^|\n)(?<name>[^\n]+?)\s*\n+(?:Set\s*\n+)?(?:Size:|Tamanho:|Tamaño:)\s*\n*(?<size>\d+)\s*(?:Cells?|Células|Celdas)\s*\n*(?:Power|Poder)\s*\n*(?<power>[\d.,]+)\s*(?<unit>[A-Za-z/]+)\s*\n*(?:Bonus|Bônus|Bonificación)\s*\n*(?<bonus>[\d.,]+)\s*%\s*\n*(?:Quantity:|Qtd:|Cant:)\s*\n*(?<quantity>\d+)\s*\n*(?<canBeSold>Can't be sold|Can be sold|Não pode ser vendido|Pode ser vendido|No se pode vender|No se puede vender|Se puede vender)/gim;
+        const blockRegex = /(?<header>[\s\S]*?)(?:Size:|Tamanho:|Tamaño:)\s*\n*\s*(?<size>\d+)\s*(?:Cells?|Células|Celdas)\s*\n*\s*(?:Power|Poder)\s*\n*\s*(?<power>[\d.,]+)\s*(?<unit>[A-Za-z/]+)\s*\n*\s*(?:Bonus|Bônus|Bonificación)\s*\n*\s*(?<bonus>[\d.,]+)\s*%\s*\n*\s*(?:Quantity:|Qtd:|Cant:)\s*\n*\s*(?<quantity>\d+)\s*\n*\s*(?<canBeSold>Can't be sold|Can be sold|Não pode ser vendido|Pode ser vendido|No se puede vender|Se pode vender|Se puede vender)/gim;
 
         const parsedList: OrganizerMiner[] = [];
         let match: RegExpExecArray | null;
 
-        while ((match = regexMulti.exec(cleaned)) !== null) {
+        while ((match = blockRegex.exec(cleaned)) !== null) {
             if (!match.groups) continue;
-            const { name, size, power, unit, bonus, quantity, canBeSold } = match.groups;
+            const { header, size, power, unit, bonus, quantity, canBeSold } = match.groups;
 
-            const cleanName = name.trim();
-            if (cleanName.toLowerCase().includes('quantity: high') || cleanName.toLowerCase().includes('storage')) continue;
+            const rawLines = header.split('\n').map(l => l.trim()).filter(Boolean);
+
+            const lastOpenIdx = rawLines.map(l => l.toLowerCase()).lastIndexOf('open');
+            const linesAfterOpen = lastOpenIdx !== -1 ? rawLines.slice(lastOpenIdx + 1) : rawLines;
+
+            const cleanLines = linesAfterOpen.filter(l => {
+                const lower = l.toLowerCase();
+                if (lower === 'open' || lower === 'miner details') return false;
+                if (lower === 'set badge' || lower === 'badge') return false;
+                if (lower === 'storage') return false;
+                if (lower.startsWith('quantity: high') || lower.startsWith('quantity: low')) return false;
+                if (lower.startsWith('items arranged in your rooms') || lower.startsWith('os itens organizados')) return false;
+                return true;
+            });
+
+            // Descarte de Set: ignora 'Set' e nomes de conjunto posteriores (ex: 'Royal Set')
+            const setIdx = cleanLines.findIndex(l => /^(?:Set|Set:|Conjunto|Coleção)$/i.test(l));
+            const nameAndLevelLines = setIdx !== -1 ? cleanLines.slice(0, setIdx) : cleanLines;
+
+            let textLevel = 0;
+            let cleanName = '';
+
+            if (nameAndLevelLines.length > 0) {
+                const firstLine = nameAndLevelLines[0];
+                const numMatch = firstLine.match(/^([1-9]|10)$/);
+                const romanMatch = firstLine.match(/^(I|II|III|IV|V|VI|VII|VIII|IX|X)$/i);
+                const wordMatch = firstLine.match(/^(?:level|lvl|nível|tier)\s*([1-9]|10|[ivx]+)$/i);
+
+                if (numMatch) {
+                    textLevel = parseInt(numMatch[1], 10);
+                    cleanName = nameAndLevelLines.slice(1).join(' ').trim();
+                } else if (romanMatch) {
+                    const rMap: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10 };
+                    textLevel = rMap[romanMatch[1].toUpperCase()] ?? 1;
+                    cleanName = nameAndLevelLines.slice(1).join(' ').trim();
+                } else if (wordMatch) {
+                    const val = wordMatch[1];
+                    const rMap: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10 };
+                    textLevel = parseInt(val, 10) || (rMap[val.toUpperCase()] ?? 1);
+                    cleanName = nameAndLevelLines.slice(1).join(' ').trim();
+                } else {
+                    // Se após open vier diretamente o nome, é Nível 0 garantido
+                    textLevel = 0;
+                    cleanName = nameAndLevelLines.join(' ').trim();
+                }
+            }
+
+            if (!cleanName || cleanName.toLowerCase().includes('quantity: high')) continue;
 
             const pwr = parsePowerStringToGhs(power, unit);
             const bns = parseFloat(bonus.replace(/,/g, '.')) || 0;
             const qty = parseInt(quantity, 10) || 1;
             const sz = parseInt(size, 10) || 2;
-            const isSellable = /(Can be sold|Pode ser vendido|Se puede vender)/i.test(canBeSold);
+            const isSellable = /(Can be sold|Pode ser vendido|Se puede vender|Se pode vender)/i.test(canBeSold);
             const filename = generateFilename(cleanName);
 
             const detected = detectMinerLevelAndMeta(cleanName, pwr, bns, db);
-            const finalLevel = detected.level;
-            const finalCanBeSold = detected.isSellable !== undefined ? detected.isSellable : isSellable;
+            let finalLevel = 0;
+            let hasEstimatedLevel = false;
+            let finalCanBeSold = isSellable;
+
+            if (detected.detectedFromDb) {
+                finalLevel = detected.level;
+                if (detected.isSellable !== undefined) finalCanBeSold = detected.isSellable;
+            } else {
+                finalLevel = textLevel;
+                hasEstimatedLevel = true;
+            }
 
             parsedList.push({
                 id: `inv_${filename}_lvl${finalLevel}_${Date.now()}_${Math.random().toString(36).substr(2, 7)}`,
@@ -658,52 +689,215 @@ export const RoomOrganizer: React.FC = () => {
                 quantity: qty,
                 source: 'inventory',
                 location_label: 'Inventário',
-                hasEstimatedLevel: detected.detectedFromDb
+                hasEstimatedLevel
             });
         }
 
-        // Strategy 2: If strategy 1 didn't find items (e.g. copied horizontally or with 'open' tokens), try tokenized regex
-        if (parsedList.length === 0) {
-            const regexInline = /(?<name>[A-Za-z0-9\s'’\-–+()#&/.]+?)\s+(?:Set\s+)?(?:Size:|Tamanho:|Tamaño:)\s*(?<size>\d+)\s*(?:Cells?|Células|Celdas)\s+(?:Power|Poder)\s+(?<power>[\d.,]+)\s*(?<unit>[A-Za-z/]+)\s+(?:Bonus|Bônus|Bonificación)\s+(?<bonus>[\d.,]+)\s*%\s+(?:Quantity:|Qtd:|Cant:)\s*(?<quantity>\d+)\s+(?<canBeSold>Can't be sold|Can be sold|Não pode ser vendido|Pode ser vendido|No se puede vender|Se puede vender)/gim;
-            while ((match = regexInline.exec(cleaned)) !== null) {
-                if (!match.groups) continue;
-                const { name, size, power, unit, bonus, quantity, canBeSold } = match.groups;
+        // Prevenção de falso duplicado para itens não catalogados com forças distintas
+        const nameGroups = new Map<string, OrganizerMiner[]>();
+        parsedList.forEach(m => {
+            const key = m.name.toLowerCase();
+            if (!nameGroups.has(key)) nameGroups.set(key, []);
+            nameGroups.get(key)!.push(m);
+        });
 
-                const cleanName = name.trim().replace(/^.*?(?:Miner details|open)\s+/i, '');
-                if (cleanName.toLowerCase().includes('quantity: high') || cleanName.toLowerCase().includes('storage')) continue;
-
-                const pwr = parsePowerStringToGhs(power, unit);
-                const bns = parseFloat(bonus.replace(/,/g, '.')) || 0;
-                const qty = parseInt(quantity, 10) || 1;
-                const sz = parseInt(size, 10) || 2;
-                const isSellable = /(Can be sold|Pode ser vendido|Se puede vender)/i.test(canBeSold);
-                const filename = generateFilename(cleanName);
-
-                const detected = detectMinerLevelAndMeta(cleanName, pwr, bns, db);
-                const finalLevel = detected.level;
-                const finalCanBeSold = detected.isSellable !== undefined ? detected.isSellable : isSellable;
-
-                parsedList.push({
-                    id: `inv_${filename}_lvl${finalLevel}_${Date.now()}_${Math.random().toString(36).substr(2, 7)}`,
-                    name: cleanName,
-                    level: finalLevel,
-                    size: sz,
-                    power: pwr,
-                    bonus_percent: bns,
-                    filename,
-                    canBeSold: finalCanBeSold,
-                    quantity: qty,
-                    source: 'inventory',
-                    location_label: 'Inventário',
-                    hasEstimatedLevel: detected.detectedFromDb
+        nameGroups.forEach(group => {
+            const distinctPowers = new Set(group.map(m => Math.round(m.power)));
+            if (distinctPowers.size > 1) {
+                group.sort((a, b) => a.power - b.power);
+                group.forEach((m, idx) => {
+                    if (m.level === 0 && m.hasEstimatedLevel) {
+                        m.level = idx;
+                    }
+                    if (!m.name.includes('(!)')) {
+                        m.name = `${m.name} (!)`;
+                    }
                 });
             }
-        }
+        });
 
         return parsedList;
     };
 
-    // Action: Process Inventory Text Input
+    // Ação: Otimizador Automático de Montagem de Sala
+    const handleAutoOptimize = (target: AutoOptimizationTarget) => {
+        const maxCapacity = initialRoomState?.maxCellsCapacity || 528;
+
+        // 1. Unificar todas as máquinas disponíveis (Sala + Inventário)
+        const pool: OrganizerMiner[] = [];
+
+        salaMiners.forEach(m => {
+            pool.push({ ...m, quantity: 1, source: 'room' });
+        });
+
+        inventoryMiners.forEach(m => {
+            const qty = m.quantity || 1;
+            for (let i = 0; i < qty; i++) {
+                pool.push({
+                    ...m,
+                    id: `opt_${m.filename}_lvl${m.level}_${Date.now()}_${i}_${Math.random().toString(36).substr(2, 5)}`,
+                    quantity: 1,
+                    source: 'inventory'
+                });
+            }
+        });
+
+        if (pool.length === 0) {
+            setStatusMessage({ text: "Nenhum minerador disponível para otimizar.", type: 'error' });
+            return;
+        }
+
+        let finalRoom: OrganizerMiner[] = [];
+        let remainingPool = [...pool];
+
+        // MODO 1: FOCO EM PODER BRUTO (Densidade de força por célula)
+        if (target === 'power') {
+            remainingPool.sort((a, b) => {
+                const densityA = a.power / a.size;
+                const densityB = b.power / b.size;
+                if (densityB !== densityA) return densityB - densityA;
+                return a.bonus_percent - b.bonus_percent;
+            });
+
+            let occupiedCells = 0;
+            const newRoom: OrganizerMiner[] = [];
+            const newInv: OrganizerMiner[] = [];
+
+            for (const miner of remainingPool) {
+                if (occupiedCells + miner.size <= maxCapacity) {
+                    newRoom.push(miner);
+                    occupiedCells += miner.size;
+                } else {
+                    newInv.push(miner);
+                }
+            }
+            finalRoom = newRoom;
+            remainingPool = newInv;
+        }
+
+        // MODO 2: FOCO EM BÔNUS MÁXIMO (Máquinas únicas com bônus por célula)
+        else if (target === 'bonus') {
+            const seenKeys = new Set<string>();
+            const uniqueBonusMiners: OrganizerMiner[] = [];
+            const duplicatesOrZeroBonus: OrganizerMiner[] = [];
+
+            remainingPool.forEach(m => {
+                const key = getMinerKey(m);
+                if (!seenKeys.has(key) && m.bonus_percent > 0) {
+                    seenKeys.add(key);
+                    uniqueBonusMiners.push(m);
+                } else {
+                    duplicatesOrZeroBonus.push(m);
+                }
+            });
+
+            uniqueBonusMiners.sort((a, b) => (b.bonus_percent / b.size) - (a.bonus_percent / a.size));
+            duplicatesOrZeroBonus.sort((a, b) => (b.power / b.size) - (a.power / a.size));
+
+            const prioritizedList = [...uniqueBonusMiners, ...duplicatesOrZeroBonus];
+
+            let occupiedCells = 0;
+            const newRoom: OrganizerMiner[] = [];
+            const newInv: OrganizerMiner[] = [];
+
+            for (const miner of prioritizedList) {
+                if (occupiedCells + miner.size <= maxCapacity) {
+                    newRoom.push(miner);
+                    occupiedCells += miner.size;
+                } else {
+                    newInv.push(miner);
+                }
+            }
+            finalRoom = newRoom;
+            remainingPool = newInv;
+        }
+
+        // MODO 3: FOCO EM PODER REAL TOTAL (Maximiza Poder Bruto * [1 + Bônus Total])
+        else if (target === 'real_power') {
+            let currentRoomMiners: OrganizerMiner[] = [];
+            let occupiedCells = 0;
+            let candidates = [...remainingPool];
+            const manualBonus = Number(customSetBonus) || 0;
+
+            while (candidates.length > 0) {
+                const currentPoderBruto = currentRoomMiners.reduce((acc, m) => acc + m.power, 0);
+                const tempSet = new Set<string>();
+                let currentBaseBonus = 0;
+                currentRoomMiners.forEach(m => {
+                    const k = getMinerKey(m);
+                    if (!tempSet.has(k)) {
+                        tempSet.add(k);
+                        currentBaseBonus += m.bonus_percent;
+                    }
+                });
+
+                const currentTotalReal = currentPoderBruto * (1 + (currentBaseBonus + manualBonus) / 100);
+
+                let bestCandidateIdx = -1;
+                let bestImpactPerCell = -Infinity;
+
+                for (let i = 0; i < candidates.length; i++) {
+                    const cand = candidates[i];
+                    if (occupiedCells + cand.size > maxCapacity) continue;
+
+                    const givesNewBonus = !tempSet.has(getMinerKey(cand));
+                    const nextPoder = currentPoderBruto + cand.power;
+                    const nextBonus = currentBaseBonus + (givesNewBonus ? cand.bonus_percent : 0) + manualBonus;
+                    const nextReal = nextPoder * (1 + nextBonus / 100);
+                    const impact = nextReal - currentTotalReal;
+                    const impactPerCell = impact / cand.size;
+
+                    if (impactPerCell > bestImpactPerCell) {
+                        bestImpactPerCell = impactPerCell;
+                        bestCandidateIdx = i;
+                    }
+                }
+
+                if (bestCandidateIdx === -1) break;
+
+                const chosen = candidates.splice(bestCandidateIdx, 1)[0];
+                currentRoomMiners.push(chosen);
+                occupiedCells += chosen.size;
+            }
+
+            finalRoom = currentRoomMiners;
+            remainingPool = candidates;
+        }
+
+        // 2. Consolidar os mineradores excedentes de volta para o Inventário com quantidade
+        const consolidatedInv: OrganizerMiner[] = [];
+        remainingPool.forEach(item => {
+            const existing = consolidatedInv.find(m =>
+                m.name.toLowerCase() === item.name.toLowerCase() &&
+                m.level === item.level &&
+                m.power === item.power &&
+                m.bonus_percent === item.bonus_percent &&
+                m.size === item.size
+            );
+            if (existing) {
+                existing.quantity = (existing.quantity || 1) + 1;
+            } else {
+                consolidatedInv.push({ ...item, quantity: 1, source: 'inventory', location_label: 'Inventário' });
+            }
+        });
+
+        // 3. Atualizar estados
+        setSalaMiners(finalRoom);
+        setInventoryMiners(consolidatedInv);
+        setSelectedSalaIds(new Set());
+
+        const targetLabels: Record<AutoOptimizationTarget, string> = {
+            power: 'Foco em Poder Bruto',
+            bonus: 'Foco em Bônus Máximo',
+            real_power: 'Foco em Poder Real Total'
+        };
+
+        setStatusMessage({
+            text: `Otimização concluída! Modo: ${targetLabels[target]}. ${finalRoom.length} máquinas instaladas na sala.`,
+            type: 'success'
+        });
+    };
+
     const handleProcessInventory = () => {
         if (!inventoryRawText.trim()) {
             setStatusMessage({ text: "Insira o texto do inventário para processar.", type: 'error' });
@@ -720,7 +914,6 @@ export const RoomOrganizer: React.FC = () => {
         }
 
         setInventoryMiners(prev => {
-            // Merge with existing inventory items if duplicates exist with same level
             const merged = [...prev];
             items.forEach(newItem => {
                 const existing = merged.find(m => m.name.toLowerCase() === newItem.name.toLowerCase() && m.level === newItem.level && m.power === newItem.power && m.bonus_percent === newItem.bonus_percent && m.size === newItem.size);
@@ -733,11 +926,10 @@ export const RoomOrganizer: React.FC = () => {
             return merged;
         });
 
-        setStatusMessage({ text: `${items.length} tipo(s) de mineradores importados com sucesso para o Inventário! Níveis identificados automaticamente.`, type: 'success' });
+        setStatusMessage({ text: `${items.length} tipo(s) de mineradores importados com sucesso! Níveis identificados e bônus preservados.`, type: 'success' });
         setShowTextModal(false);
     };
 
-    // Action: Fetch User Room from RollerCoin API
     const handleLoadRoom = async () => {
         if (!userLink.trim()) {
             setStatusMessage({ text: "Insira o link do perfil ou ID do jogador.", type: 'error' });
@@ -748,25 +940,20 @@ export const RoomOrganizer: React.FC = () => {
         setStatusMessage(null);
 
         try {
-            // 1. Profile Data
             const profileRes = await fetch(`${proxy}https://rollercoin.com/api/profile/public-user-profile-data/${userLink.trim()}`);
             const profileJson = await profileRes.json();
             const pData = profileJson?.data;
             const avatarId = pData?.avatar_id;
 
-            if (!avatarId) {
-                throw new Error("Perfil não encontrado ou inválido.");
-            }
+            if (!avatarId) throw new Error("Perfil não encontrado ou inválido.");
             setProfileData(pData);
 
-            // 2. Power Data
             const powerRes = await fetch(`${proxy}https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
             const powerData = await powerRes.json();
             const minersPower = powerData?.data?.miners || 0;
             const totalBonusPercent = parseFloat(((powerData?.data?.bonus_percent || 0) / 100).toFixed(2));
             const totalOrig = minersPower * (1 + totalBonusPercent / 100);
 
-            // 3. Room Config
             const roomRes = await fetch(`${proxy}https://rollercoin.com/api/game/room-config/${avatarId}`);
             const roomData = await roomRes.json();
             const rawMiners = roomData?.data?.miners || [];
@@ -805,23 +992,19 @@ export const RoomOrganizer: React.FC = () => {
                 };
             });
 
-            // Calculate base unique bonus to auto-fill the user's exact Set Bonus from the profile
             const seenKeys = new Set<string>();
             let initialBaseBonus = 0;
             processed.forEach(m => {
-                const key = `${m.name.trim().toLowerCase()}_lvl_${m.level ?? 0}`;
+                const key = getMinerKey(m);
                 if (!seenKeys.has(key)) {
                     seenKeys.add(key);
                     initialBaseBonus += m.bonus_percent;
                 }
             });
 
-            // The difference between total profile bonus and unique miners is the user's exact real Set Bonus!
             const autoDetectedSetBonus = Math.max(0, parseFloat((totalBonusPercent - initialBaseBonus).toFixed(2)));
             setCustomSetBonus(autoDetectedSetBonus);
 
-            // Calculate total rack capacity from user's installed racks
-            // In RollerCoin: Standard 4 full rooms has 66 racks (12 + 18 + 18 + 18) x 8 cells = 528 cells total.
             let totalRackCellsCapacity = 0;
             if (Array.isArray(rawRacks) && rawRacks.length > 0) {
                 rawRacks.forEach((r: any) => {
@@ -830,7 +1013,6 @@ export const RoomOrganizer: React.FC = () => {
                 });
             }
 
-            // Total room capacity: If player has 66 racks or 4 rooms, standard is 528 cells.
             const totalRoomCapacity = totalRackCellsCapacity > 0
                 ? (rawRacks.length >= 66 ? 528 : Math.max(totalRackCellsCapacity, initialCellsCount, 528))
                 : 528;
@@ -860,11 +1042,10 @@ export const RoomOrganizer: React.FC = () => {
         }
     };
 
-    // Movement: Move from Sala to Discard
+    // Movimentações entre colunas
     const handleMoveSalaToDiscard = (minerId: string) => {
         const item = salaMiners.find(m => m.id === minerId);
         if (!item) return;
-
         setSalaMiners(prev => prev.filter(m => m.id !== minerId));
         setDiscardMiners(prev => [item, ...prev]);
         setSelectedSalaIds(prev => {
@@ -874,11 +1055,9 @@ export const RoomOrganizer: React.FC = () => {
         });
     };
 
-    // Movement: Move from Sala to Inventory
     const handleMoveSalaToInventory = (minerId: string) => {
         const item = salaMiners.find(m => m.id === minerId);
         if (!item) return;
-
         setSalaMiners(prev => prev.filter(m => m.id !== minerId));
         setInventoryMiners(prev => {
             const existing = prev.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
@@ -895,7 +1074,6 @@ export const RoomOrganizer: React.FC = () => {
         });
     };
 
-    // Movement: Move from Inventory to Sala (1 copy or All)
     const handleMoveInventoryToSala = (invId: string, count: number = 1) => {
         const item = inventoryMiners.find(m => m.id === invId);
         if (!item) return;
@@ -923,7 +1101,6 @@ export const RoomOrganizer: React.FC = () => {
         }
     };
 
-    // Movement: Move from Inventory to Discard
     const handleMoveInventoryToDiscard = (invId: string, count: number = 1) => {
         const item = inventoryMiners.find(m => m.id === invId);
         if (!item) return;
@@ -949,20 +1126,16 @@ export const RoomOrganizer: React.FC = () => {
         }
     };
 
-    // Movement: Move from Discard to Sala
     const handleMoveDiscardToSala = (minerId: string) => {
         const item = discardMiners.find(m => m.id === minerId);
         if (!item) return;
-
         setDiscardMiners(prev => prev.filter(m => m.id !== minerId));
         setSalaMiners(prev => [{ ...item, source: 'room' }, ...prev]);
     };
 
-    // Movement: Move from Discard to Inventory
     const handleMoveDiscardToInventory = (minerId: string) => {
         const item = discardMiners.find(m => m.id === minerId);
         if (!item) return;
-
         setDiscardMiners(prev => prev.filter(m => m.id !== minerId));
         setInventoryMiners(prev => {
             const existing = prev.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
@@ -974,7 +1147,6 @@ export const RoomOrganizer: React.FC = () => {
         });
     };
 
-    // Bulk actions
     const handleBulkMoveSalaToDiscard = () => {
         if (selectedSalaIds.size === 0) return;
         const toMove = salaMiners.filter(m => selectedSalaIds.has(m.id));
@@ -1003,7 +1175,6 @@ export const RoomOrganizer: React.FC = () => {
         setSelectedSalaIds(new Set());
     };
 
-    // Quick helper: Discard all Unsellable Duplicates
     const handleDiscardUnsellableDuplicates = () => {
         const enriched = currentRoomStats.enrichedMiners;
         const target = enriched.filter(m => !m.isFirstInRoom && !m.canBeSold);
@@ -1018,7 +1189,6 @@ export const RoomOrganizer: React.FC = () => {
         setStatusMessage({ text: `${target.length} minerador(es) repetido(s) inegociáveis movidos para o Descarte!`, type: 'success' });
     };
 
-    // Quick helper: Move all Sellable Duplicates to Inventory to sell
     const handleMoveSellableDuplicatesToInventory = () => {
         const enriched = currentRoomStats.enrichedMiners;
         const target = enriched.filter(m => !m.isFirstInRoom && m.canBeSold);
@@ -1051,11 +1221,10 @@ export const RoomOrganizer: React.FC = () => {
         setSalaMiners(JSON.parse(JSON.stringify(initialRoomState.miners)));
         setSelectedSalaIds(new Set());
 
-        // Restore exact set bonus
         const seenKeys = new Set<string>();
         let initialBaseBonus = 0;
         initialRoomState.miners.forEach(m => {
-            const key = `${m.name.trim().toLowerCase()}_lvl_${m.level ?? 0}`;
+            const key = getMinerKey(m);
             if (!seenKeys.has(key)) {
                 seenKeys.add(key);
                 initialBaseBonus += m.bonus_percent;
@@ -1067,7 +1236,7 @@ export const RoomOrganizer: React.FC = () => {
         setStatusMessage({ text: "Sala restaurada para o estado original!", type: 'info' });
     };
 
-    // Filtered & Sorted Sala Miners
+    // Ordenação e filtros limpos da Sala (9 opções estratégicas)
     const displayedSalaMiners = useMemo(() => {
         let list = [...currentRoomStats.enrichedMiners];
 
@@ -1096,47 +1265,41 @@ export const RoomOrganizer: React.FC = () => {
             list = list.filter(m => !m.isFirstInRoom && m.canBeSold);
         }
 
-        // Sorting
         list.sort((a, b) => {
             switch (salaSort) {
                 case 'real_power_desc':
                     return (b.marginalImpact ?? b.realPower ?? 0) - (a.marginalImpact ?? a.realPower ?? 0);
                 case 'real_power_asc':
                     return (a.marginalImpact ?? a.realPower ?? 0) - (b.marginalImpact ?? b.realPower ?? 0);
-case 'mais_poder_menos_bonus': {
-                    const ratioA = a.power / (a.bonus_percent + 0.001);
-                    const ratioB = b.power / (b.bonus_percent + 0.001);
+
+                case 'mais_poder_menos_bonus': {
+                    const ratioA = a.power / Math.max(a.bonus_percent, 0.05);
+                    const ratioB = b.power / Math.max(b.bonus_percent, 0.05);
                     return ratioB - ratioA;
                 }
                 case 'mais_bonus_menos_poder': {
-                    const diffBonus = b.bonus_percent - a.bonus_percent;
-                    if (diffBonus !== 0) return diffBonus;
-                    return a.power - b.power;
+                    const ratioA = a.bonus_percent / (a.power / 1000 + 1);
+                    const ratioB = b.bonus_percent / (b.power / 1000 + 1);
+                    return ratioB - ratioA;
                 }
 
                 case 'power_desc':
+                    if (b.power === a.power) return b.bonus_percent - a.bonus_percent;
                     return b.power - a.power;
                 case 'power_asc':
+                    if (a.power === b.power) return a.bonus_percent - b.bonus_percent;
                     return a.power - b.power;
+
                 case 'bonus_desc':
+                    if (b.bonus_percent === a.bonus_percent) return (b.marginalImpact ?? b.power) - (a.marginalImpact ?? a.power);
                     return b.bonus_percent - a.bonus_percent;
                 case 'bonus_asc':
+                    if (a.bonus_percent === b.bonus_percent) return (a.marginalImpact ?? a.power) - (b.marginalImpact ?? b.power);
                     return a.bonus_percent - b.bonus_percent;
+
                 case 'name_asc':
                     return a.name.localeCompare(b.name);
-                case 'size_desc':
-                    return b.size - a.size;
-                case 'size_asc':
-                    return a.size - b.size;
-                case 'repeated_first':
-                    if (a.isFirstInRoom === b.isFirstInRoom) return (b.marginalImpact ?? b.power) - (a.marginalImpact ?? a.power);
-                    return a.isFirstInRoom ? 1 : -1;
-                case 'sellable_first':
-                    if (a.canBeSold === b.canBeSold) return (b.marginalImpact ?? b.power) - (a.marginalImpact ?? a.power);
-                    return a.canBeSold ? -1 : 1;
-                case 'not_sellable_first':
-                    if (a.canBeSold === b.canBeSold) return (b.marginalImpact ?? b.power) - (a.marginalImpact ?? a.power);
-                    return !a.canBeSold ? -1 : 1;
+
                 default:
                     return (b.marginalImpact ?? b.realPower ?? 0) - (a.marginalImpact ?? a.realPower ?? 0);
             }
@@ -1145,7 +1308,17 @@ case 'mais_poder_menos_bonus': {
         return list;
     }, [currentRoomStats.enrichedMiners, salaSearch, salaSizeFilter, salaSellableFilter, salaDuplicateFilter, salaSort]);
 
-    // Filtered Inventory Miners (Sorted by marginal insertion impact on Total Real Power)
+    // Mapeamento de contagem no inventário para filtro de repetidas internas
+    const inventoryCounts = useMemo(() => {
+        const map = new Map<string, number>();
+        inventoryMiners.forEach(m => {
+            const key = getMinerKey(m);
+            map.set(key, (map.get(key) || 0) + (m.quantity || 1));
+        });
+        return map;
+    }, [inventoryMiners]);
+
+    // Ordenação e filtros do Inventário
     const displayedInvMiners = useMemo(() => {
         let list = [...inventoryMiners];
         if (invSearch.trim()) {
@@ -1161,16 +1334,21 @@ case 'mais_poder_menos_bonus': {
             list = list.filter(m => m.size === parseInt(invSizeFilter, 10));
         }
 
-        // Filtro de Presença na Sala: 'new_to_room' (Novidade), 'in_room' (Tem na sala) ou 'all' (Todos)
         if (invPresenceFilter === 'new_to_room') {
             list = list.filter(m => {
-                const key = `${m.name.trim().toLowerCase()}_lvl_${m.level ?? 0}`;
+                const key = getMinerKey(m);
                 return (currentRoomStats.keyCounts?.get(key) || 0) === 0;
             });
         } else if (invPresenceFilter === 'in_room') {
             list = list.filter(m => {
-                const key = `${m.name.trim().toLowerCase()}_lvl_${m.level ?? 0}`;
+                const key = getMinerKey(m);
                 return (currentRoomStats.keyCounts?.get(key) || 0) > 0;
+            });
+        } else if (invPresenceFilter === 'dup_inventory') {
+            list = list.filter(m => {
+                const key = getMinerKey(m);
+                const totalInInv = inventoryCounts.get(key) || 0;
+                return totalInInv > 1 || (m.quantity || 1) > 1;
             });
         }
 
@@ -1180,49 +1358,43 @@ case 'mais_poder_menos_bonus': {
                     return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
                 case 'real_power_asc':
                     return getInsertionImpact(a).impact - getInsertionImpact(b).impact;
-case 'mais_poder_menos_bonus': {
-                    const ratioA = a.power / (a.bonus_percent + 0.001);
-                    const ratioB = b.power / (b.bonus_percent + 0.001);
+
+                case 'mais_poder_menos_bonus': {
+                    const ratioA = a.power / Math.max(a.bonus_percent, 0.05);
+                    const ratioB = b.power / Math.max(b.bonus_percent, 0.05);
                     return ratioB - ratioA;
-}
+                }
+                case 'mais_bonus_menos_poder': {
+                    const ratioA = a.bonus_percent / (a.power / 1000 + 1);
+                    const ratioB = b.bonus_percent / (b.power / 1000 + 1);
+                    return ratioB - ratioA;
+                }
+
                 case 'power_desc':
+                    if (b.power === a.power) return b.bonus_percent - a.bonus_percent;
                     return b.power - a.power;
                 case 'power_asc':
+                    if (a.power === b.power) return a.bonus_percent - b.bonus_percent;
                     return a.power - b.power;
+
                 case 'bonus_desc':
+                    if (b.bonus_percent === a.bonus_percent) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
                     return b.bonus_percent - a.bonus_percent;
                 case 'bonus_asc':
+                    if (a.bonus_percent === b.bonus_percent) return getInsertionImpact(a).impact - getInsertionImpact(b).impact;
                     return a.bonus_percent - b.bonus_percent;
-                case 'repeated_first': {
-                    const keyA = `${a.name.trim().toLowerCase()}_lvl_${a.level ?? 0}`;
-                    const keyB = `${b.name.trim().toLowerCase()}_lvl_${b.level ?? 0}`;
-                    const aInRoom = (currentRoomStats.keyCounts?.get(keyA) || 0) > 0;
-                    const bInRoom = (currentRoomStats.keyCounts?.get(keyB) || 0) > 0;
-                    if (aInRoom === bInRoom) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
-                    return aInRoom ? -1 : 1;
-                }
-                case 'sellable_first':
-                    if (a.canBeSold === b.canBeSold) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
-                    return a.canBeSold ? -1 : 1;
-                case 'not_sellable_first':
-                    if (a.canBeSold === b.canBeSold) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
-                    return !a.canBeSold ? -1 : 1;
-                case 'size_desc':
-                    if (a.size === b.size) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
-                    return b.size - a.size;
-                case 'size_asc':
-                    if (a.size === b.size) return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
-                    return a.size - b.size;
+
                 case 'name_asc':
                     return a.name.localeCompare(b.name);
+
                 default:
                     return getInsertionImpact(b).impact - getInsertionImpact(a).impact;
             }
         });
         return list;
-    }, [inventoryMiners, invSearch, invMarketFilter, invSizeFilter, invPresenceFilter, invSort, currentRoomStats]);
+    }, [inventoryMiners, invSearch, invMarketFilter, invSizeFilter, invPresenceFilter, invSort, currentRoomStats, inventoryCounts]);
 
-    // Filtered Discard Miners (Sorted by marginal insertion impact on Total Real Power)
+    // Ordenação do Descarte
     const displayedDiscardMiners = useMemo(() => {
         let list = [...discardMiners];
         if (discardSearch.trim()) {
@@ -1238,7 +1410,6 @@ case 'mais_poder_menos_bonus': {
         return list;
     }, [discardMiners, discardSearch, discardMarketFilter, currentRoomStats]);
 
-    // Helper: Formatar localização amigável da máquina
     const getMinerLocationLabel = (m: OrganizerMiner): string => {
         if (m.location_label) return m.location_label;
         if (m.room_level !== undefined && m.rack_y !== undefined && m.rack_x !== undefined) {
@@ -1247,20 +1418,14 @@ case 'mais_poder_menos_bonus': {
         return 'Inventário';
     };
 
-    // Helper: Extrair miners removidas e inseridas em relação ao estado original
     const getModificationsData = () => {
         const initialMiners = initialRoomState?.miners || [];
         const currentMiners = salaMiners;
-
-        // Miners que estavam na sala inicial mas não estão na sala atual
         const removed = initialMiners.filter(initM => !currentMiners.some(s => s.id === initM.id));
-        // Miners que estão na sala atual mas não estavam na sala inicial
         const added = currentMiners.filter(s => !initialMiners.some(initM => initM.id === s.id));
-
         return { removed, added };
     };
 
-    // Helper de download de arquivos
     const downloadFile = (content: string, filename: string, mimeType: string) => {
         const blob = new Blob([content], { type: mimeType });
         const url = URL.createObjectURL(blob);
@@ -1273,7 +1438,6 @@ case 'mais_poder_menos_bonus': {
         URL.revokeObjectURL(url);
     };
 
-    // Gerador de CSV / Excel (Colunas lado a lado e resumo de poder)
     const generateModificationsCSV = (): string => {
         const { removed, added } = getModificationsData();
         const userName = profileData?.name || 'Jogador';
@@ -1358,7 +1522,6 @@ case 'mais_poder_menos_bonus': {
         return lines.join('\r\n');
     };
 
-    // Gerador de Relatório TXT (Topo o que sai, embaixo o que entra)
     const generateModificationsTXT = (): string => {
         const { removed, added } = getModificationsData();
         const userName = profileData?.name || 'Jogador';
@@ -1440,7 +1603,6 @@ case 'mais_poder_menos_bonus': {
         return lines.join('\r\n');
     };
 
-    // Export room as JSON (backup legado)
     const handleExportRoomJSON = () => {
         const data = {
             exportDate: new Date().toISOString(),
@@ -1465,7 +1627,6 @@ case 'mais_poder_menos_bonus': {
 
     return (
         <div className="space-y-8 animate-fade-in max-w-[1700px] w-full mx-auto px-2 sm:px-4 md:px-6 pb-24 font-sans">
-            {/* Header */}
             <div className="text-center space-y-2">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 font-black text-xs uppercase tracking-widest">
                     <Sparkles size={14} /> Ferramenta de Otimização
@@ -1478,10 +1639,8 @@ case 'mais_poder_menos_bonus': {
                 </p>
             </div>
 
-            {/* Input Controls Bar */}
             <div className="bg-white dark:bg-dark-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                    {/* User Link Input */}
                     <div className="md:col-span-5 flex gap-2">
                         <div className="relative flex-grow">
                             <input
@@ -1503,7 +1662,6 @@ case 'mais_poder_menos_bonus': {
                         </button>
                     </div>
 
-                    {/* Custom Set Bonus Input Field */}
                     <div className="md:col-span-3 flex items-center gap-2 bg-slate-50 dark:bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner">
                         <Award size={18} className="text-cyan-500 flex-shrink-0" />
                         <div className="flex-grow min-w-0">
@@ -1518,26 +1676,50 @@ case 'mais_poder_menos_bonus': {
                                 onChange={(e) => setCustomSetBonus(parseFloat(e.target.value) || 0)}
                                 placeholder="0.00 %"
                                 className="w-full bg-transparent text-cyan-600 dark:text-cyan-400 font-mono font-black text-sm outline-none placeholder:text-slate-400"
-                                title="Insira seu bônus de Sets para somar diretamente ao Bônus Bruto. Se tiver bônus de exchange ativo, subtraia-o deste valor."
+                                title="Insira seu bônus de Sets para somar diretamente ao Bônus Bruto."
                             />
                         </div>
                     </div>
 
-                    {/* Quick Action Buttons */}
                     <div className="md:col-span-4 flex flex-wrap items-center justify-end gap-2">
+                        {/* Botões do Otimizador Automático de Montagem */}
+                        <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+                            <button
+                                onClick={() => handleAutoOptimize('real_power')}
+                                className="px-2.5 py-1.5 text-xs font-black uppercase tracking-wider rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-sm flex items-center gap-1 active:scale-95"
+                                title="Preenche a sala maximizando o Poder Real total (Equilíbrio ideal de Força e Bônus)"
+                            >
+                                <Wand2 size={13} /> Auto Real
+                            </button>
+                            <button
+                                onClick={() => handleAutoOptimize('power')}
+                                className="px-2 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-blue-500 rounded-lg transition-all flex items-center gap-1"
+                                title="Preenche a sala com o máximo de poder bruto possível"
+                            >
+                                <Zap size={13} /> Força
+                            </button>
+                            <button
+                                onClick={() => handleAutoOptimize('bonus')}
+                                className="px-2 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-cyan-500 rounded-lg transition-all flex items-center gap-1"
+                                title="Preenche a sala com o máximo de bônus único possível"
+                            >
+                                <Award size={13} /> Bônus
+                            </button>
+                        </div>
+
                         <button
                             onClick={() => setShowTextModal(true)}
-                            className="px-3.5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
+                            className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
                         >
-                            <Upload size={15} /> Importar Inv.
+                            <Upload size={14} /> + Inv.
                         </button>
                         {initialRoomState && (
                             <button
                                 onClick={handleRestoreInitialRoom}
-                                className="px-3 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 active:scale-95"
+                                className="px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 active:scale-95"
                                 title="Restaura a lista original da sala"
                             >
-                                <RotateCcw size={15} /> Original
+                                <RotateCcw size={14} /> Original
                             </button>
                         )}
                         <button
@@ -1548,18 +1730,18 @@ case 'mais_poder_menos_bonus': {
                                 }
                                 setShowExportModal(true);
                             }}
-                            className="px-3.5 py-3 bg-slate-800 dark:bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
+                            className="px-3 py-2 bg-slate-800 dark:bg-slate-900 hover:bg-black text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
                             title="Exportar relatório de modificações da sala (Excel / Texto)"
                         >
-                            <FileSpreadsheet size={15} className="text-emerald-400" />
+                            <FileSpreadsheet size={14} className="text-emerald-400" />
                             <span>Exportar</span>
                         </button>
                         <button
                             onClick={() => setShowWelcomeAlert(true)}
-                            className="px-3 py-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 active:scale-95 shadow-xs"
+                            className="px-2.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1 active:scale-95 shadow-xs"
                             title="Ver avisos e limitações da ferramenta"
                         >
-                            <AlertTriangle size={15} /> Avisos
+                            <AlertTriangle size={14} />
                         </button>
                     </div>
                 </div>
@@ -1577,9 +1759,7 @@ case 'mais_poder_menos_bonus': {
                 )}
             </div>
 
-            {/* Formula Banner & Real-time Live Stats Dashboard */}
             <div className="space-y-4">
-                {/* User Profile Cards (Substitui a Equação Fundamental) */}
                 {profileData ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="bg-white dark:bg-dark-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4">
@@ -1625,9 +1805,7 @@ case 'mais_poder_menos_bonus': {
                     </div>
                 )}
 
-                {/* Real-time Metric Cards with Live Deltas */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* Card 1: Poder Bruto */}
                     <div className="bg-white dark:bg-dark-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Poder Bruto (Miners)</span>
@@ -1655,7 +1833,6 @@ case 'mais_poder_menos_bonus': {
                         </div>
                     </div>
 
-                    {/* Card 2: Bônus Bruto */}
                     <div className="bg-white dark:bg-dark-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden flex flex-col justify-between">
                         <div>
                             <div className="flex items-center justify-between mb-2">
@@ -1689,7 +1866,6 @@ case 'mais_poder_menos_bonus': {
                         </div>
                     </div>
 
-                    {/* Card 3: Poder Real (DESTAQUE) */}
                     <div className="bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent bg-white dark:bg-dark-800 p-5 rounded-2xl border-2 border-emerald-500/40 shadow-md relative overflow-hidden">
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Poder Real Efetivo</span>
@@ -1717,7 +1893,6 @@ case 'mais_poder_menos_bonus': {
                         </div>
                     </div>
 
-                    {/* Card 4: Ocupação e Células da Sala */}
                     <div className="bg-white dark:bg-dark-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
                         <div className="flex items-center justify-between mb-1">
                             <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Células da Sala (Tempo Real)</span>
@@ -1726,7 +1901,6 @@ case 'mais_poder_menos_bonus': {
                             </div>
                         </div>
 
-                        {/* Cells Progress & Count */}
                         <div className="space-y-1.5">
                             <div className="flex items-baseline justify-between">
                                 <div>
@@ -1750,7 +1924,6 @@ case 'mais_poder_menos_bonus': {
                                 </div>
                             </div>
 
-                            {/* Progress bar */}
                             <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
                                 <div
                                     className={`h-full transition-all duration-300 ${currentRoomStats.totalCells <= currentRoomStats.maxCellsCapacity
@@ -1762,7 +1935,6 @@ case 'mais_poder_menos_bonus': {
                             </div>
                         </div>
 
-                        {/* Breakdown: 1C vs 2C & Negotiable */}
                         <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap justify-between items-center text-[10px] font-bold text-slate-500">
                             <span>{currentRoomStats.count1C}x 1C ({currentRoomStats.cells1C}c)</span>
                             <span>•</span>
@@ -1774,14 +1946,10 @@ case 'mais_poder_menos_bonus': {
                 </div>
             </div>
 
-            {/* 2-COLUMN MAIN WORKSPACE: SALA (50%) | INVENTÁRIO & DESCARTE (50%) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-                {/* ========================================================================= */}
-                {/* COLUMN 1: SALA (6 cols = 50% on desktop) */}
-                {/* ========================================================================= */}
+                {/* COLUNA 1: SALA */}
                 <div className="col-span-12 lg:col-span-6 bg-white dark:bg-dark-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col min-h-[650px]">
-                    {/* Header */}
                     <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 space-y-3">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -1801,7 +1969,6 @@ case 'mais_poder_menos_bonus': {
                                 </div>
                             </div>
 
-                            {/* Batch Actions for Sala */}
                             {selectedSalaIds.size > 0 && (
                                 <div className="flex items-center gap-1.5 animate-fade-in">
                                     <button
@@ -1822,7 +1989,6 @@ case 'mais_poder_menos_bonus': {
                             )}
                         </div>
 
-                        {/* Search & Selection Bar */}
                         <div className="flex gap-2">
                             <div className="relative flex-grow">
                                 <input
@@ -1849,7 +2015,6 @@ case 'mais_poder_menos_bonus': {
                             </button>
                         </div>
 
-                        {/* Quick Smart Buttons for Duplicates */}
                         {(currentRoomStats.dupUnsellableCount > 0 || currentRoomStats.dupSellableCount > 0) && (
                             <div className="flex flex-wrap gap-1.5 pt-0.5">
                                 {currentRoomStats.dupUnsellableCount > 0 && (
@@ -1873,7 +2038,6 @@ case 'mais_poder_menos_bonus': {
                             </div>
                         )}
 
-                        {/* Sort Dropdown and Quick Filters */}
                         <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
                             <div className="flex items-center gap-1 text-slate-500 font-bold">
                                 <ArrowUpDown size={12} />
@@ -1884,23 +2048,17 @@ case 'mais_poder_menos_bonus': {
                                 onChange={(e) => setSalaSort(e.target.value as SalaSortOption)}
                                 className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs outline-none focus:ring-1 focus:ring-blue-500"
                             >
-                                <option value="real_power_desc">Maior Poder Real (Efetivo)</option>
-                                <option value="real_power_asc">Menor Poder Real</option>
+                                <option value="real_power_desc">Maior Impacto no Poder</option>
+                                <option value="real_power_asc">Menor Impacto no Poder</option>
                                 <option value="mais_poder_menos_bonus">+Poder / -Bônus</option>
-                                <option value="mais_bonus_menos_poder">-Poder / +Bônus</option>
+                                <option value="mais_bonus_menos_poder">+Bônus / -Poder</option>
                                 <option value="power_desc">Maior Poder Bruto</option>
                                 <option value="power_asc">Menor Poder Bruto</option>
                                 <option value="bonus_desc">Maior Bônus %</option>
                                 <option value="bonus_asc">Menor Bônus %</option>
-                                <option value="repeated_first">Repetidos Primeiro (0% Bônus)</option>
-                                <option value="not_sellable_first">Inegociáveis Primeiro</option>
-                                <option value="sellable_first">Vendíveis Primeiro</option>
-                                <option value="size_desc">2 Células Primeiro</option>
-                                <option value="size_asc">1 Célula Primeiro</option>
                                 <option value="name_asc">Nome (A - Z)</option>
                             </select>
 
-                            {/* Size filter */}
                             <select
                                 value={salaSizeFilter}
                                 onChange={(e) => setSalaSizeFilter(e.target.value as any)}
@@ -1911,7 +2069,6 @@ case 'mais_poder_menos_bonus': {
                                 <option value="2">Apenas 2 Células</option>
                             </select>
 
-                            {/* Market filter */}
                             <select
                                 value={salaSellableFilter}
                                 onChange={(e) => setSalaSellableFilter(e.target.value as any)}
@@ -1922,7 +2079,6 @@ case 'mais_poder_menos_bonus': {
                                 <option value="not_sellable">Apenas Inegociáveis</option>
                             </select>
 
-                            {/* Duplicates filter */}
                             <select
                                 value={salaDuplicateFilter}
                                 onChange={(e) => setSalaDuplicateFilter(e.target.value as any)}
@@ -1937,7 +2093,6 @@ case 'mais_poder_menos_bonus': {
                         </div>
                     </div>
 
-                    {/* Miners List in Sala */}
                     <div className="flex-grow overflow-y-auto max-h-[750px] divide-y divide-slate-100 dark:divide-slate-800/50 p-2">
                         {displayedSalaMiners.length === 0 ? (
                             <div className="py-24 text-center text-slate-400 space-y-3">
@@ -1955,7 +2110,6 @@ case 'mais_poder_menos_bonus': {
                                             }`}
                                     >
                                         <div className="flex items-center gap-3 min-w-0">
-                                            {/* Checkbox */}
                                             <button
                                                 onClick={() => {
                                                     const next = new Set(selectedSalaIds);
@@ -1968,7 +2122,6 @@ case 'mais_poder_menos_bonus': {
                                                 {isSelected ? <CheckSquare size={16} className="text-blue-500" /> : <Square size={16} />}
                                             </button>
 
-                                            {/* Image */}
                                             <div className="w-11 h-11 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 flex-shrink-0 flex items-center justify-center relative">
                                                 <img
                                                     src={`https://static.rollercoin.com/static/img/market/miners/${miner.filename}.gif?v=1`}
@@ -1983,16 +2136,14 @@ case 'mais_poder_menos_bonus': {
                                                 </span>
                                             </div>
 
-                                            {/* Info */}
                                             <div className="min-w-0 flex-1">
                                                 <div className="flex items-center gap-1.5 flex-wrap">
                                                     <span className="font-bold text-xs text-slate-800 dark:text-white truncate" title={miner.name}>
                                                         {miner.name}
                                                     </span>
 
-                                                    {renderLevelBadge(miner.level)}
+                                                    {renderLevelBadge(miner.level, miner.hasEstimatedLevel)}
 
-                                                    {/* Market Status Badge */}
                                                     {miner.canBeSold ? (
                                                         <span className="inline-flex items-center gap-0.5 text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400" title="Item negociável no Marketplace">
                                                             <ShoppingBag size={9} /> Vendível
@@ -2003,7 +2154,6 @@ case 'mais_poder_menos_bonus': {
                                                         </span>
                                                     )}
 
-                                                    {/* Duplicate Status Badge */}
                                                     {!miner.isFirstInRoom && (
                                                         <span className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400" title="Item repetido não gera bônus na sala">
                                                             Repetido (+0%)
@@ -2028,7 +2178,6 @@ case 'mais_poder_menos_bonus': {
                                                     </span>
                                                 </div>
 
-                                                {/* Localização da Miner (Sala, Linha, Rack ou Inventário) */}
                                                 <div className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 flex items-center gap-1.5">
                                                     <MapPin size={10} className="text-slate-400 flex-shrink-0" />
                                                     <span>{getMinerLocationLabel(miner)}</span>
@@ -2036,7 +2185,6 @@ case 'mais_poder_menos_bonus': {
                                             </div>
                                         </div>
 
-                                        {/* Action buttons */}
                                         <div className="flex items-center gap-1 opacity-90 group-hover:opacity-100 flex-shrink-0">
                                             <button
                                                 onClick={() => handleMoveSalaToInventory(miner.id)}
@@ -2060,14 +2208,10 @@ case 'mais_poder_menos_bonus': {
                     </div>
                 </div>
 
-                {/* ========================================================================= */}
-                {/* COLUMN 2: INVENTÁRIO / DESCARTE (6 cols = 50% on desktop) */}
-                {/* ========================================================================= */}
+                {/* COLUNA 2: INVENTÁRIO / DESCARTE */}
                 <div className="col-span-12 lg:col-span-6 bg-white dark:bg-dark-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col min-h-[650px]">
-                    {/* Header with Segmented Tab Switcher */}
                     <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 space-y-3">
                         <div className="flex items-center justify-between gap-3 flex-wrap">
-                            {/* Segmented Pills */}
                             <div className="p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl flex items-center gap-1">
                                 <button
                                     onClick={() => setRightPanelTab('inventory')}
@@ -2100,7 +2244,6 @@ case 'mais_poder_menos_bonus': {
                                 </button>
                             </div>
 
-                            {/* Right Action Button */}
                             {rightPanelTab === 'inventory' ? (
                                 <button
                                     onClick={() => setShowTextModal(true)}
@@ -2122,7 +2265,6 @@ case 'mais_poder_menos_bonus': {
                             )}
                         </div>
 
-                        {/* Search & Filters based on selected tab */}
                         {rightPanelTab === 'inventory' ? (
                             <div className="space-y-2">
                                 <div className="relative">
@@ -2136,7 +2278,6 @@ case 'mais_poder_menos_bonus': {
                                     <Search className="absolute left-2.5 top-2.5 text-slate-400" size={14} />
                                 </div>
 
-                                {/* Linha 1 de Filtros: Ordenação (mesmos 14 padrões da Sala) */}
                                 <div className="flex items-center gap-2">
                                     <div className="flex items-center gap-1 text-slate-500 font-bold text-[11px] flex-shrink-0">
                                         <ArrowUpDown size={12} />
@@ -2147,34 +2288,29 @@ case 'mais_poder_menos_bonus': {
                                         onChange={(e) => setInvSort(e.target.value as InvSortOption)}
                                         className="w-full px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs outline-none focus:ring-1 focus:ring-emerald-500"
                                     >
-                                        <option value="real_power_desc">Maior Poder Real (Efetivo)</option>
-                                        <option value="real_power_asc">Menor Poder Real</option>
+                                        <option value="real_power_desc">Maior Impacto no Poder</option>
+                                        <option value="real_power_asc">Menor Impacto no Poder</option>
                                         <option value="mais_poder_menos_bonus">+Poder / -Bônus</option>
-                                        <option value="mais_bonus_menos_poder">-Poder / +Bônus</option>
+                                        <option value="mais_bonus_menos_poder">+Bônus / -Poder</option>
                                         <option value="power_desc">Maior Poder Bruto</option>
                                         <option value="power_asc">Menor Poder Bruto</option>
                                         <option value="bonus_desc">Maior Bônus %</option>
                                         <option value="bonus_asc">Menor Bônus %</option>
-                                        <option value="repeated_first">Repetidos Primeiro (0% Bônus)</option>
-                                        <option value="not_sellable_first">Inegociáveis Primeiro</option>
-                                        <option value="sellable_first">Vendíveis Primeiro</option>
-                                        <option value="size_desc">2 Células Primeiro</option>
-                                        <option value="size_asc">1 Célula Primeiro</option>
                                         <option value="name_asc">Nome (A - Z)</option>
                                     </select>
                                 </div>
 
-                                {/* Linha 2 de Filtros: Presença na Sala (Novidade / Tem na Sala / Todos), Negociabilidade e Tamanho */}
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                     <select
                                         value={invPresenceFilter}
                                         onChange={(e) => setInvPresenceFilter(e.target.value as any)}
                                         className="px-2 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px] outline-none focus:ring-1 focus:ring-emerald-500"
-                                        title="Filtrar por presença na Sala"
+                                        title="Filtrar por presença na Sala ou repetição"
                                     >
                                         <option value="all">Presença: Todos</option>
-                                        <option value="new_to_room">Novidade</option>
-                                        <option value="in_room">Tem na sala</option>
+                                        <option value="new_to_room">Novidade (Bônus Ativo)</option>
+                                        <option value="in_room">Tem na Sala</option>
+                                        <option value="dup_inventory">Repetidas no Inventário</option>
                                     </select>
 
                                     <select
@@ -2224,7 +2360,6 @@ case 'mais_poder_menos_bonus': {
                         )}
                     </div>
 
-                    {/* Miners List Content */}
                     <div className="flex-grow overflow-y-auto max-h-[750px] divide-y divide-slate-100 dark:divide-slate-800/50 p-2">
                         {rightPanelTab === 'inventory' ? (
                             displayedInvMiners.length === 0 ? (
@@ -2267,7 +2402,7 @@ case 'mais_poder_menos_bonus': {
                                                         <span className={`text-[7px] font-black px-1 py-0.2 rounded ${miner.size === 1 ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-300'}`}>
                                                             {miner.size}C
                                                         </span>
-                                                        {renderLevelBadge(miner.level)}
+                                                        {renderLevelBadge(miner.level, miner.hasEstimatedLevel)}
                                                         {miner.canBeSold ? (
                                                             <span className="text-[7px] font-black px-1 rounded bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400">
                                                                 Vendível
@@ -2294,7 +2429,6 @@ case 'mais_poder_menos_bonus': {
                                                         </span>
                                                     </div>
 
-                                                    {/* Localização / Origem */}
                                                     <div className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 flex items-center gap-1.5">
                                                         <MapPin size={10} className="text-slate-400 flex-shrink-0" />
                                                         <span>{getMinerLocationLabel(miner)}</span>
@@ -2302,7 +2436,6 @@ case 'mais_poder_menos_bonus': {
                                                 </div>
                                             </div>
 
-                                            {/* Action buttons */}
                                             <div className="flex items-center gap-1 flex-shrink-0">
                                                 <button
                                                     onClick={() => handleMoveInventoryToSala(miner.id, 1)}
@@ -2365,7 +2498,7 @@ case 'mais_poder_menos_bonus': {
                                                         <span className="font-bold text-xs text-slate-800 dark:text-white truncate" title={miner.name}>
                                                             {miner.name}
                                                         </span>
-                                                        {renderLevelBadge(miner.level)}
+                                                        {renderLevelBadge(miner.level, miner.hasEstimatedLevel)}
                                                         {miner.canBeSold ? (
                                                             <span className="text-[7px] font-black px-1 rounded bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400">
                                                                 Vendível
@@ -2391,7 +2524,6 @@ case 'mais_poder_menos_bonus': {
                                                         </span>
                                                     </div>
 
-                                                    {/* Localização / Origem */}
                                                     <div className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-0.5 flex items-center gap-1.5">
                                                         <MapPin size={10} className="text-slate-400 flex-shrink-0" />
                                                         <span>{getMinerLocationLabel(miner)}</span>
@@ -2399,7 +2531,6 @@ case 'mais_poder_menos_bonus': {
                                                 </div>
                                             </div>
 
-                                            {/* Action buttons */}
                                             <div className="flex items-center gap-1 flex-shrink-0">
                                                 <button
                                                     onClick={() => handleMoveDiscardToSala(miner.id)}
@@ -2425,7 +2556,7 @@ case 'mais_poder_menos_bonus': {
                 </div>
             </div>
 
-            {/* MODAL: Import Inventory Text */}
+            {/* MODAL DE IMPORTAÇÃO */}
             {showTextModal && (
                 <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
                     <div className="bg-white dark:bg-dark-800 rounded-2xl max-w-2xl w-full p-6 space-y-4 border border-slate-200 dark:border-slate-700 shadow-2xl animate-scale-up">
@@ -2445,27 +2576,14 @@ case 'mais_poder_menos_bonus': {
                         </div>
 
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Abra sua página de armazenamento/inventário no RollerCoin (<span className="font-mono text-blue-500">Storage &gt; Inventory &gt; Miners</span>), selecione o texto da lista (<kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-700 rounded text-[10px]">Ctrl + A</kbd> ou selecione os mineradores), copie e cole no campo abaixo:
+                            Abra seu armazenamento no RollerCoin (<span className="font-mono text-blue-500">Storage &gt; Inventory &gt; Miners</span>), selecione o texto (<kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-700 rounded text-[10px]">Ctrl + A</kbd>), copie e cole no campo abaixo:
                         </p>
 
                         <textarea
                             rows={10}
                             value={inventoryRawText}
                             onChange={(e) => setInventoryRawText(e.target.value)}
-                            placeholder="Cole o texto do inventário aqui... Exemplo:
-Shamaniac
-Set
-Size:
-2 Cells
-Power
-820.240 Th/s
-Bonus
-1 %
-Quantity:
-1
-Can't be sold
-Miner details
-..."
+                            placeholder="Cole o texto do inventário aqui..."
                             className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-mono text-xs outline-none focus:ring-2 focus:ring-emerald-500 resize-none custom-scrollbar"
                         />
 
@@ -2495,11 +2613,10 @@ Miner details
                 </div>
             )}
 
-            {/* MODAL: Welcome & Important Warnings */}
+            {/* MODAL DE AVISOS */}
             {showWelcomeAlert && (
                 <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
                     <div className="bg-white dark:bg-dark-800 rounded-3xl max-w-xl w-full p-6 space-y-5 border border-amber-500/40 dark:border-amber-500/30 shadow-2xl animate-scale-up">
-                        {/* Header */}
                         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
                             <div className="flex items-center gap-3">
                                 <div className="p-2.5 bg-amber-500/10 text-amber-500 rounded-2xl">
@@ -2525,9 +2642,7 @@ Miner details
                             </button>
                         </div>
 
-                        {/* Warning Points Grid */}
                         <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar text-xs">
-                            {/* Point 1: Ferramenta Experimental */}
                             <div className="p-3.5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-900/40 flex items-start gap-3">
                                 <div className="p-1.5 bg-amber-500 text-white rounded-lg flex-shrink-0 mt-0.5 shadow-xs">
                                     <Sparkles size={14} />
@@ -2540,20 +2655,18 @@ Miner details
                                 </div>
                             </div>
 
-                            {/* Point 2: Inventário e Detecção de Merge */}
                             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
                                 <div className="p-1.5 bg-emerald-500 text-white rounded-lg flex-shrink-0 mt-0.5 shadow-xs">
                                     <Package size={14} />
                                 </div>
                                 <div className="space-y-0.5">
-                                    <h4 className="font-bold text-slate-900 dark:text-white">2. Inventário & Detecção Automática de Merge</h4>
+                                    <h4 className="font-bold text-slate-900 dark:text-white">2. Inventário & Detecção Automática de Nível</h4>
                                     <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                                        Ao colar o texto do inventário, o sistema compara automaticamente o Nome, Poder e Bônus com a nossa base de dados oficial para <strong>identificar o nível de merge</strong> (Comum, Incomum, Rara, Épica, Lendária ou Unreal), garantindo precisão ao simular repetições na sala. (Miners mais recentes podem não estar na base de dados ainda.)
+                                        Ao colar o texto do inventário, o sistema identifica automaticamente o nível de merge a partir do formato oficial (Nível 0 quando vier sem número, ou Níveis 1 a 5 quando indicado), preservando o bônus de cada máquina.
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Point 3: Bônus de Racks */}
                             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
                                 <div className="p-1.5 bg-indigo-500 text-white rounded-lg flex-shrink-0 mt-0.5 shadow-xs">
                                     <Grid3X3 size={14} />
@@ -2566,7 +2679,6 @@ Miner details
                                 </div>
                             </div>
 
-                            {/* Point 4: Bônus de Set */}
                             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
                                 <div className="p-1.5 bg-cyan-500 text-white rounded-lg flex-shrink-0 mt-0.5 shadow-xs">
                                     <Award size={14} />
@@ -2578,35 +2690,8 @@ Miner details
                                     </p>
                                 </div>
                             </div>
-
-                            {/* Point 5: Negociabilidade de Miners */}
-                            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
-                                <div className="p-1.5 bg-rose-500 text-white rounded-lg flex-shrink-0 mt-0.5 shadow-xs">
-                                    <ShoppingBag size={14} />
-                                </div>
-                                <div className="space-y-0.5">
-                                    <h4 className="font-bold text-slate-900 dark:text-white">5. Identificação de Itens Negociáveis / Inegociáveis</h4>
-                                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                                        Ainda não está sendo possível definir com precisão absoluta quais miners são negociáveis ou inegociáveis. Trate essa indicação como estimativa preliminar.
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Point 6: Bônus de Exchange Ativo */}
-                            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
-                                <div className="p-1.5 bg-blue-500 text-white rounded-lg flex-shrink-0 mt-0.5 shadow-xs">
-                                    <ArrowUpDown size={14} />
-                                </div>
-                                <div className="space-y-0.5">
-                                    <h4 className="font-bold text-slate-900 dark:text-white">6. Bônus de Exchange Ativo</h4>
-                                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                                        Caso você esteja com bônus de exchange ativo na sua conta, o valor inicial calculado no <em>"Bônus de Set (%)"</em> aparecerá um pouco superior ao real. Para corrigir, basta <strong>reduzir manualmente o valor do bônus de exchange</strong> do campo de bônus de set no topo da página.
-                                    </p>
-                                </div>
-                            </div>
                         </div>
 
-                        {/* Footer Button */}
                         <div className="pt-2">
                             <button
                                 onClick={() => setShowWelcomeAlert(false)}
@@ -2618,11 +2703,11 @@ Miner details
                     </div>
                 </div>
             )}
-            {/* Modal de Exportação de Modificações */}
+
+            {/* MODAL DE EXPORTAÇÃO */}
             {showExportModal && (
                 <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
                     <div className="bg-white dark:bg-dark-800 rounded-3xl max-w-xl w-full p-6 space-y-5 border border-slate-200 dark:border-slate-700 shadow-2xl animate-scale-up">
-                        {/* Header */}
                         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
                             <div className="flex items-center gap-3">
                                 <div className="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-2xl">
@@ -2645,7 +2730,6 @@ Miner details
                             </button>
                         </div>
 
-                        {/* Power Delta Summary */}
                         <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2 text-xs">
                             <div className="font-bold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wider mb-1 flex items-center justify-between">
                                 <span>Impacto das Alterações na Conta</span>
@@ -2678,9 +2762,7 @@ Miner details
                             </div>
                         </div>
 
-                        {/* Export Action Buttons */}
                         <div className="space-y-2.5">
-                            {/* Option 1: Excel CSV */}
                             <button
                                 onClick={() => {
                                     const csv = generateModificationsCSV();
@@ -2703,7 +2785,6 @@ Miner details
                                 <Download size={18} />
                             </button>
 
-                            {/* Option 2: TXT File */}
                             <button
                                 onClick={() => {
                                     const txt = generateModificationsTXT();
@@ -2726,7 +2807,6 @@ Miner details
                                 <Download size={18} />
                             </button>
 
-                            {/* Option 3: Copy to clipboard */}
                             <button
                                 onClick={() => {
                                     const txt = generateModificationsTXT();
@@ -2742,7 +2822,6 @@ Miner details
                             </button>
                         </div>
 
-                        {/* Footer Link: JSON backup */}
                         <div className="text-center pt-1 border-t border-slate-100 dark:border-slate-700">
                             <button
                                 onClick={() => {
