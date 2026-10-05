@@ -1184,7 +1184,7 @@ case 'mais_poder_menos_bonus': {
                     const ratioA = a.power / (a.bonus_percent + 0.001);
                     const ratioB = b.power / (b.bonus_percent + 0.001);
                     return ratioB - ratioA;
-
+}
                 case 'power_desc':
                     return b.power - a.power;
                 case 'power_asc':
