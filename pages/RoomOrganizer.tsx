@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
+    SheetMinerTier,
+    SheetMinerData,
+    useSheetDatabase,
+    isMinerSellable,
+    findSheetMiner,
+    isSellableStatus
+} from '../utils/sheetDatabase';
+
+export type { SheetMinerTier, SheetMinerData };
+import {
     LayoutGrid,
     Package,
     Trash2,
@@ -57,18 +67,7 @@ export interface OrganizerMiner {
     location_label?: string;
 }
 
-export interface SheetMinerTier {
-    level: number;
-    power: number;
-    bonus: number;
-}
-
-export interface SheetMinerData {
-    name: string;
-    status?: string;
-    size?: number;
-    tiers: SheetMinerTier[];
-}
+// SheetMinerTier & SheetMinerData imported from utils/sheetDatabase
 
 export type SalaSortOption =
     | 'real_power_desc'
@@ -107,9 +106,18 @@ export const RoomOrganizer: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-    // Base do Google Sheets para detecção de níveis oficiais
-    const [sheetDatabase, setSheetDatabase] = useState<SheetMinerData[]>([]);
-    const sheetDataRef = useRef<SheetMinerData[]>([]);
+    // Base do Google Sheets para detecção de níveis oficiais e status de venda
+    const { sheetDb: sheetDatabase } = useSheetDatabase();
+    const sheetDataRef = useRef<SheetMinerData[]>(sheetDatabase);
+
+    useEffect(() => {
+        sheetDataRef.current = sheetDatabase;
+        if (sheetDatabase.length > 0) {
+            setSalaMiners(prev => prev.map(m => ({ ...m, canBeSold: isMinerSellable(m.name, sheetDatabase) })));
+            setInventoryMiners(prev => prev.map(m => ({ ...m, canBeSold: isMinerSellable(m.name, sheetDatabase) })));
+            setDiscardMiners(prev => prev.map(m => ({ ...m, canBeSold: isMinerSellable(m.name, sheetDatabase) })));
+        }
+    }, [sheetDatabase]);
 
     // Estados das colunas de mineradores
     const [salaMiners, setSalaMiners] = useState<OrganizerMiner[]>([]);
@@ -225,98 +233,10 @@ export const RoomOrganizer: React.FC = () => {
         );
     };
 
-    // Carregamento da planilha Google Sheets
-    useEffect(() => {
-        const loadSheetDatabase = async () => {
-            const sheetId = "171LSMNAiJ74obfmLzueKtzuyu7Bg9Ql5dBWQ1GkjQTI";
-            const apiKey = "AIzaSyBP12YfPrz9MhCH3J7boeondSm7HYVCUvA";
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Web!A1:AE?key=${apiKey}`;
-
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                if (!data.values || !Array.isArray(data.values)) return;
-
-                const parsePwr = (val: string | undefined): number => {
-                    if (!val) return 0;
-                    const clean = val.replace(/\s+/g, '').replace(/,/g, '');
-                    return (parseFloat(clean) || 0) * 1000;
-                };
-
-                const parseBns = (val: string | undefined): number => {
-                    if (!val) return 0;
-                    const clean = val.replace(/%/g, '').replace(/,/g, '.').trim();
-                    return parseFloat(clean) || 0;
-                };
-
-                const parsed: SheetMinerData[] = data.values
-                    .filter((row: any) => row && row[0] && typeof row[0] === 'string' && row[0].trim() !== '')
-                    .map((row: any) => {
-                        const name = String(row[0]).trim();
-                        const status = row[1] || '';
-                        const size = parseInt(row[2], 10) || 2;
-                        const tiers: SheetMinerTier[] = [];
-
-                        if (row[3] !== undefined && row[3] !== '') tiers.push({ level: 0, power: parsePwr(row[3]), bonus: parseBns(row[4]) });
-                        if (row[5] !== undefined && row[5] !== '') tiers.push({ level: 1, power: parsePwr(row[5]), bonus: parseBns(row[6]) });
-                        if (row[11] !== undefined && row[11] !== '') tiers.push({ level: 2, power: parsePwr(row[11]), bonus: parseBns(row[12]) });
-                        if (row[17] !== undefined && row[17] !== '') tiers.push({ level: 3, power: parsePwr(row[17]), bonus: parseBns(row[18]) });
-                        if (row[23] !== undefined && row[23] !== '') tiers.push({ level: 4, power: parsePwr(row[23]), bonus: parseBns(row[24]) });
-                        if (row[29] !== undefined && row[29] !== '') tiers.push({ level: 5, power: parsePwr(row[29]), bonus: parseBns(row[30]) });
-
-                        return { name, status, size, tiers };
-                    });
-
-                setSheetDatabase(parsed);
-                sheetDataRef.current = parsed;
-            } catch (e) {
-                console.error("Failed to load sheet database in RoomOrganizer", e);
-            }
-        };
-
-        loadSheetDatabase();
-    }, []);
-
-    // Scripts externos de negociabilidade
-    const loadScript = (src: string) => {
-        return new Promise((resolve, reject) => {
-            if (document.querySelector(`script[src="${src}"]`)) {
-                resolve(true);
-                return;
-            }
-            const script = document.createElement('script');
-            script.src = src;
-            script.onload = () => resolve(true);
-            script.onerror = () => reject(new Error(`Failed to load script ${src}`));
-            document.body.appendChild(script);
-        });
-    };
-
-    useEffect(() => {
-        const loadMinerData = async () => {
-            try {
-                const scripts = [
-                    'https://wminerrc.github.io/calculator/data/basic_miners.js',
-                    'https://wminerrc.github.io/calculator/data/merge_miners.js',
-                    'https://wminerrc.github.io/calculator/data/old/merge_miners.js',
-                ];
-                await Promise.all(scripts.map(loadScript));
-            } catch (e) {
-                console.error("Failed to load miner data scripts", e);
-            }
-        };
-        loadMinerData();
-    }, []);
-
-    const checkSellable = (minerId: string) => {
-        const win = window as any;
-        const datasets = [win.basic_miners, win.merge_miners, win.old_merge_miners];
-        for (const dataset of datasets) {
-            if (!dataset) continue;
-            const miner = dataset.find((m: any) => m.miner_id === minerId);
-            if (miner) return miner.is_can_be_sold_on_mp || false;
-        }
-        return false;
+        // Status de venda determinado exclusivamente pela planilha Google Sheets
+    const checkSellable = (minerName: string, minerId?: string): boolean => {
+        const db = sheetDataRef.current.length > 0 ? sheetDataRef.current : sheetDatabase;
+        return isMinerSellable(minerName, db);
     };
 
     const generateFilename = (name: string): string => {
@@ -406,7 +326,9 @@ export const RoomOrganizer: React.FC = () => {
                 cells2C += 2;
             }
 
-            if (m.canBeSold) sellableCount++;
+            const canBeSold = checkSellable(m.name, m.miner_id);
+
+            if (canBeSold) sellableCount++;
             else notSellableCount++;
 
             const uniqueKey = getMinerKey(m);
@@ -416,7 +338,7 @@ export const RoomOrganizer: React.FC = () => {
                 baseBonusBruto += m.bonus_percent;
             } else {
                 duplicateCount++;
-                if (m.canBeSold) dupSellableCount++;
+                if (canBeSold) dupSellableCount++;
                 else dupUnsellableCount++;
             }
 
@@ -425,6 +347,7 @@ export const RoomOrganizer: React.FC = () => {
 
             enrichedMiners.push({
                 ...m,
+                canBeSold,
                 size: sz,
                 isFirstInRoom: isFirst,
                 activeBonus,
@@ -547,19 +470,12 @@ export const RoomOrganizer: React.FC = () => {
         const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
         const cleanTargetName = norm(name);
 
-        let matched = currentDb.find(m => norm(m.name) === cleanTargetName);
-        if (!matched) {
-            matched = currentDb.find(m => {
-                const normDb = norm(m.name);
-                return normDb.includes(cleanTargetName) || cleanTargetName.includes(normDb);
-            });
-        }
-
+        const matched = findSheetMiner(name, currentDb);
         if (!matched || !matched.tiers || matched.tiers.length === 0) {
-            return { level: 0, detectedFromDb: false };
+            return { level: 0, isSellable: matched ? matched.isSellable : isMinerSellable(name, currentDb), detectedFromDb: false };
         }
 
-        const isSellable = /sellable|pode ser vendido|can be sold/i.test(matched.status || '');
+        const isSellable = matched.isSellable;
 
         for (const tier of matched.tiers) {
             const bonusDiff = Math.abs(tier.bonus - bonus_percent);
@@ -661,7 +577,7 @@ export const RoomOrganizer: React.FC = () => {
             const bns = parseFloat(bonus.replace(/,/g, '.')) || 0;
             const qty = parseInt(quantity, 10) || 1;
             const sz = parseInt(size, 10) || 2;
-            const isSellable = /(Can be sold|Pode ser vendido|Se puede vender|Se pode vender)/i.test(canBeSold);
+            const isSellable = isSellableStatus(canBeSold);
             const filename = generateFilename(cleanName);
 
             const detected = detectMinerLevelAndMeta(cleanName, pwr, bns, db);
@@ -982,7 +898,7 @@ export const RoomOrganizer: React.FC = () => {
                     power: m.power || 0,
                     bonus_percent: parseFloat(((m.bonus_percent || 0) / 100).toFixed(2)),
                     filename: m.filename || generateFilename(m.name),
-                    canBeSold: checkSellable(m.miner_id),
+                    canBeSold: checkSellable(m.name, m.miner_id),
                     source: 'room',
                     room_level,
                     rack_x,
@@ -1647,6 +1563,12 @@ export const RoomOrganizer: React.FC = () => {
                                 type="text"
                                 value={userLink}
                                 onChange={(e) => setUserLink(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        handleLoadRoom();
+                                    }
+                                }}
                                 placeholder="Link do Perfil ou ID RollerCoin (ex: RKFox)"
                                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                             />
@@ -1676,7 +1598,7 @@ export const RoomOrganizer: React.FC = () => {
                                 onChange={(e) => setCustomSetBonus(parseFloat(e.target.value) || 0)}
                                 placeholder="0.00 %"
                                 className="w-full bg-transparent text-cyan-600 dark:text-cyan-400 font-mono font-black text-sm outline-none placeholder:text-slate-400"
-                                title="Insira seu bônus de Sets para somar diretamente ao Bônus Bruto."
+                                title="Insira seu bônus de Sets/Freon/Ratos/Exchange para somar diretamente ao Bônus Bruto. Subtraia os bônus de rato/freon/exchange para poder organizar a sala com precisão."
                             />
                         </div>
                     </div>
@@ -2674,7 +2596,7 @@ export const RoomOrganizer: React.FC = () => {
                                 <div className="space-y-0.5">
                                     <h4 className="font-bold text-slate-900 dark:text-white">3. Cuidado com o Bônus de Racks</h4>
                                     <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                                        Os bônus específicos concedidos individualmente pelas estantes (racks) <strong>não são considerados no cálculo</strong> desta ferramenta. Leve em conta onde cada miner será instalada.
+                                        Os bônus específicos concedidos individualmente pelas estantes (racks) <strong>não são considerados no cálculo</strong> desta ferramenta. Leve em conta onde cada miner será instalada. O ideal é <strong>REMOVER</strong> racks com bônus se estiver buscando a estratégia de topo de liga.
                                     </p>
                                 </div>
                             </div>
@@ -2687,6 +2609,19 @@ export const RoomOrganizer: React.FC = () => {
                                     <h4 className="font-bold text-slate-900 dark:text-white">4. Remoção de Miner Pertencente a Set</h4>
                                     <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
                                         Se você remover da sala uma miner que faça parte de um Set ativo e for quebrar o conjunto, lembre-se de <strong>reduzir manualmente o valor</strong> no campo <em>"Bônus de Set (%)"</em> no topo da página.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Point 6: Bônus de Freon/Rato/Exchange Ativo */}
+                            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 flex items-start gap-3">
+                                <div className="p-1.5 bg-blue-500 text-white rounded-lg flex-shrink-0 mt-0.5 shadow-xs">
+                                    <ArrowUpDown size={14} />
+                                </div>
+                                <div className="space-y-0.5">
+                                    <h4 className="font-bold text-slate-900 dark:text-white">6. Bônus de Freon/Rato/Exchange Ativo</h4>
+                                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                                        Caso você esteja com bônus de rato/freon/exchange ativo na sua conta, o valor inicial calculado no <em>"Bônus de Set (%)"</em> aparecerá um pouco superior ao real. Para corrigir, basta <strong>reduzir manualmente o valor dos bônus</strong> do campo de bônus de set no topo da página.
                                     </p>
                                 </div>
                             </div>

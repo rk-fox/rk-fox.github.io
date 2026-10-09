@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link2, LayoutList, RefreshCcw, Calculator, Flame, Info, ChevronDown, ChevronUp, CheckSquare, Square, Search } from 'lucide-react';
+import { useSheetDatabase, isMinerSellable, isSellableStatus } from '../utils/sheetDatabase';
 
 interface ParsedMiner {
     id: string; // Unique ID for selection (e.g., source_name_level)
@@ -175,6 +176,7 @@ const CollapsibleTable = ({
 
 export const BurnPlanner: React.FC = () => {
     const hasRun = useRef(false);
+    const { sheetDb } = useSheetDatabase();
 
     useEffect(() => {
         if (hasRun.current) return;
@@ -317,7 +319,7 @@ export const BurnPlanner: React.FC = () => {
                 unitario,
                 total,
                 filename,
-                canBeSold: /(Can be sold|Pode ser vendido|Se puede vender)/.test(canBeSold),
+                canBeSold: isSellableStatus(canBeSold) || isMinerSellable(name.trim(), sheetDb),
                 source
             });
         }
@@ -383,7 +385,7 @@ export const BurnPlanner: React.FC = () => {
                             minerName = found.name.en;
                             minerLevel = type === "old_merge" ? 6 : found.level;
                             minerFilename = found.filename;
-                            canBeSold = found.is_can_be_sold_on_mp || false;
+                            canBeSold = isMinerSellable(minerName, sheetDb) || (found.is_can_be_sold_on_mp || false);
                         } else {
                             // Fallback: usar dados da API do RollerCoin
                             const rawMiner = roomMiners.find((m: any) => m.miner_id === miner_id);
@@ -393,7 +395,7 @@ export const BurnPlanner: React.FC = () => {
                             minerName = rawMiner.name;
                             minerLevel = type === "old_merge" ? 6 : rawMiner.level;
                             minerFilename = rawMiner.filename;
-                            canBeSold = false; // Sem dados externos, assume inegociável
+                            canBeSold = isMinerSellable(minerName, sheetDb);
                         }
 
                         const unitario = Math.round((((pwr / (ptsTHs * 1000)) + (bns / ptsBonus)) * 1000));
@@ -523,6 +525,7 @@ export const BurnPlanner: React.FC = () => {
                                 <input
                                     value={userLink}
                                     onChange={(e) => setUserLink(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleOrganize()}
                                     className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                                     placeholder="Ex: RKFox ou Link Completo"
                                 />

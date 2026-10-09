@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Search, Info, TrendingDown, TrendingUp, Zap, Award, LayoutGrid, RefreshCw, Trophy, X } from 'lucide-react';
+import { useSheetDatabase, isMinerSellable } from '../utils/sheetDatabase';
 
 interface DBItem {
     name: string;
@@ -38,6 +39,7 @@ export type CriterionFilter = 'menor_eficiencia' | 'maior_eficiencia' | 'mais_po
 
 export const WhalePlanner: React.FC = () => {
     const hasRun = useRef(false);
+    const { sheetDb } = useSheetDatabase();
 
     useEffect(() => {
         if (hasRun.current) return;
@@ -112,18 +114,15 @@ export const WhalePlanner: React.FC = () => {
         loadMinerData();
     }, []);
 
-    const checkSellable = (minerId: string) => {
-        const win = window as any;
-        const datasets = [win.basic_miners, win.merge_miners, win.old_merge_miners];
-        for (const dataset of datasets) {
-            if (!dataset) continue;
-            const miner = dataset.find((m: any) => m.miner_id === minerId);
-            if (miner) {
-                return miner.is_can_be_sold_on_mp || false;
-            }
-        }
-        return false;
+    const checkSellable = (minerName: string, minerId?: string): boolean => {
+        return isMinerSellable(minerName, sheetDb);
     };
+
+    useEffect(() => {
+        if (sheetDb.length > 0 && allMiners.length > 0) {
+            setAllMiners(prev => prev.map(m => ({ ...m, sellable: isMinerSellable(m.name, sheetDb) })));
+        }
+    }, [sheetDb]);
 
     const loadDatabase = useCallback(async () => {
         const sheetId = "171LSMNAiJ74obfmLzueKtzuyu7Bg9Ql5dBWQ1GkjQTI";
@@ -209,7 +208,7 @@ export const WhalePlanner: React.FC = () => {
                     setImpact: 0,
                     setBonus: 0,
                     type: m.type,
-                    sellable: checkSellable(m.miner_id),
+                    sellable: checkSellable(m.name, m.miner_id),
                     room_level: rack?.placement?.room_level || 0,
                     rack_x: rack?.placement?.x || 0,
                     rack_y: rack?.placement?.y || 0,
