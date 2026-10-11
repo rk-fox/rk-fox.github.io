@@ -84,6 +84,36 @@ export type InvSortOption = SalaSortOption;
 
 export type AutoOptimizationTarget = 'power' | 'bonus' | 'real_power';
 
+export const LEAGUE_CAP_PRESETS: Array<{
+    unit: 'PH' | 'EH' | 'ZH';
+    label: string;
+    badgeBg: string;
+    activeBtn: string;
+    values: string[];
+}> = [
+    {
+        unit: 'PH',
+        label: 'PH/s',
+        badgeBg: 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+        activeBtn: 'bg-amber-500 text-white shadow-xs',
+        values: ['24,999', '49,999', '99,999', '149,999', '249,999', '649,999']
+    },
+    {
+        unit: 'EH',
+        label: 'EH/s',
+        badgeBg: 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
+        activeBtn: 'bg-indigo-500 text-white shadow-xs',
+        values: ['1,499', '3,499', '15,999', '49,999', '99,999', '199,999', '374,999', '649,999']
+    },
+    {
+        unit: 'ZH',
+        label: 'ZH/s',
+        badgeBg: 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+        activeBtn: 'bg-emerald-500 text-white shadow-xs',
+        values: ['1,149', '2,159', '3,999', '12,999', '24,999', '69,999', '99,999']
+    }
+];
+
 export const RoomOrganizer: React.FC = () => {
     const hasRun = useRef(false);
 
@@ -724,51 +754,79 @@ export const RoomOrganizer: React.FC = () => {
 
         // MODO 1: FOCO EM PODER BRUTO (Densidade de força por célula)
         if (target === 'power') {
-            remainingPool.sort((a, b) => {
-                const densityA = a.power / a.size;
-                const densityB = b.power / b.size;
-                if (densityB !== densityA) return densityB - densityA;
-                return a.bonus_percent - b.bonus_percent;
-            });
+            if (maxRealPowerGhs) {
+                let currentRoomMiners: OrganizerMiner[] = [];
+                let occupiedCells = 0;
+                let candidates = [...remainingPool];
+                let currentPoderBruto = 0;
+                const tempSet = new Set<string>();
+                let currentBaseBonus = 0;
 
-            let occupiedCells = 0;
-            const newRoom: OrganizerMiner[] = [];
-            const newInv: OrganizerMiner[] = [];
+                while (candidates.length > 0) {
+                    let bestIdx = -1;
+                    let bestScore = -Infinity;
 
-            let currentPoderBruto = 0;
-            const tempSet = new Set<string>();
-            let currentBaseBonus = 0;
+                    for (let i = 0; i < candidates.length; i++) {
+                        const cand = candidates[i];
+                        if (occupiedCells + cand.size > maxCapacity) continue;
 
-            for (const miner of remainingPool) {
-                if (occupiedCells + miner.size > maxCapacity) {
-                    newInv.push(miner);
-                    continue;
+                        const givesNewBonus = !tempSet.has(getMinerKey(cand));
+                        const nextPoder = currentPoderBruto + cand.power;
+                        const nextBonus = currentBaseBonus + (givesNewBonus ? cand.bonus_percent : 0) + manualBonus;
+                        const nextReal = nextPoder * (1 + nextBonus / 100);
+
+                        // Teto Rígido: se ultrapassar o teto estipulado, ignora este candidato e busca outro
+                        if (nextReal > maxRealPowerGhs) continue;
+
+                        const effectiveBonus = givesNewBonus ? cand.bonus_percent : 0;
+                        const density = cand.power / cand.size;
+                        // Score de Custo-Benefício: valoriza densidade de poder bruto e prioriza máquinas com 0% ou pouco bônus
+                        // Evita que máquinas repetidas fracas tomem vagas de mineradoras únicas gigantescas
+                        const score = density / (1 + (effectiveBonus / 5));
+
+                        if (score > bestScore || (score === bestScore && cand.power > (candidates[bestIdx]?.power || 0))) {
+                            bestScore = score;
+                            bestIdx = i;
+                        }
+                    }
+
+                    if (bestIdx === -1) break;
+
+                    const chosen = candidates.splice(bestIdx, 1)[0];
+                    currentRoomMiners.push(chosen);
+                    occupiedCells += chosen.size;
+                    currentPoderBruto += chosen.power;
+                    if (!tempSet.has(getMinerKey(chosen))) {
+                        tempSet.add(getMinerKey(chosen));
+                        currentBaseBonus += chosen.bonus_percent;
+                    }
                 }
 
-                if (maxRealPowerGhs) {
-                    const givesNewBonus = !tempSet.has(getMinerKey(miner));
-                    const nextPoder = currentPoderBruto + miner.power;
-                    const nextBonus = currentBaseBonus + (givesNewBonus ? miner.bonus_percent : 0) + manualBonus;
-                    const nextReal = nextPoder * (1 + nextBonus / 100);
+                finalRoom = currentRoomMiners;
+                remainingPool = candidates;
+            } else {
+                remainingPool.sort((a, b) => {
+                    const densityA = a.power / a.size;
+                    const densityB = b.power / b.size;
+                    if (densityB !== densityA) return densityB - densityA;
+                    return a.bonus_percent - b.bonus_percent;
+                });
 
-                    // Teto Rígido: se ultrapassar o teto estipulado, não insere e avalia as próximas máquinas
-                    if (nextReal > maxRealPowerGhs) {
+                let occupiedCells = 0;
+                const newRoom: OrganizerMiner[] = [];
+                const newInv: OrganizerMiner[] = [];
+
+                for (const miner of remainingPool) {
+                    if (occupiedCells + miner.size > maxCapacity) {
                         newInv.push(miner);
                         continue;
                     }
-
-                    currentPoderBruto = nextPoder;
-                    if (givesNewBonus) {
-                        tempSet.add(getMinerKey(miner));
-                        currentBaseBonus += miner.bonus_percent;
-                    }
+                    newRoom.push(miner);
+                    occupiedCells += miner.size;
                 }
-
-                newRoom.push(miner);
-                occupiedCells += miner.size;
+                finalRoom = newRoom;
+                remainingPool = newInv;
             }
-            finalRoom = newRoom;
-            remainingPool = newInv;
         }
 
         // MODO 2: FOCO EM BÔNUS MÁXIMO (Máquinas únicas com bônus por célula)
@@ -3121,21 +3179,56 @@ export const RoomOrganizer: React.FC = () => {
                                     </select>
                                 </div>
 
-                                <div className="flex items-center gap-2 mt-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setCeilingInput('')}
-                                        className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                                    >
-                                        Limpar (Sem Teto)
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => { setCeilingInput('3.999'); setCeilingUnit('EH'); }}
-                                        className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                                    >
-                                        3,999 EH/s
-                                    </button>
+                                <div className="space-y-2 mt-3">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                                            <span>Atalhos de Ligas (Tetos Rápidos):</span>
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setCeilingInput('')}
+                                            className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-all ${
+                                                !ceilingInput.trim()
+                                                    ? 'bg-blue-500 text-white border-blue-500 shadow-xs'
+                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 border-slate-200 dark:border-slate-700'
+                                            }`}
+                                        >
+                                            Limpar (Sem Teto)
+                                        </button>
+                                    </div>
+
+                                    <div className="space-y-2 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80">
+                                        {LEAGUE_CAP_PRESETS.map(group => (
+                                            <div key={group.unit} className="flex items-start gap-1.5 sm:gap-2">
+                                                <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md border flex-shrink-0 mt-0.5 w-11 text-center ${group.badgeBg}`}>
+                                                    {group.label}
+                                                </span>
+                                                <div className="flex flex-wrap gap-1 items-center flex-grow">
+                                                    {group.values.map(val => {
+                                                        const cleanInput = ceilingInput.trim().replace('.', ',');
+                                                        const isActive = cleanInput === val && ceilingUnit === group.unit;
+                                                        return (
+                                                            <button
+                                                                key={`${group.unit}_${val}`}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setCeilingInput(val);
+                                                                    setCeilingUnit(group.unit);
+                                                                }}
+                                                                className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-all ${
+                                                                    isActive
+                                                                        ? group.activeBtn
+                                                                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 active:scale-95'
+                                                                }`}
+                                                            >
+                                                                {val}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
 
