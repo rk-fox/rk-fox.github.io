@@ -164,6 +164,12 @@ export const RoomOrganizer: React.FC = () => {
     const [showWelcomeAlert, setShowWelcomeAlert] = useState(true);
     const [copiedAlert, setCopiedAlert] = useState(false);
 
+    // Modal de Otimização com Teto de Poder Real
+    const [showOptimizeModal, setShowOptimizeModal] = useState(false);
+    const [pendingOptimizeTarget, setPendingOptimizeTarget] = useState<AutoOptimizationTarget>('real_power');
+    const [ceilingInput, setCeilingInput] = useState('');
+    const [ceilingUnit, setCeilingUnit] = useState<'GH' | 'TH' | 'PH' | 'EH' | 'ZH'>('EH');
+
     const proxy = "https://summer-night-03c0.rk-foxx-159.workers.dev/?";
 
     // Formatadores numéricos
@@ -635,9 +641,59 @@ export const RoomOrganizer: React.FC = () => {
         return parsedList;
     };
 
-    // Ação: Otimizador Automático de Montagem de Sala
-    const handleAutoOptimize = (target: AutoOptimizationTarget) => {
+    // Helpers para Teto de Poder Real no Otimizador
+    const parseCeilingValueToGhs = (inputStr: string, defaultUnit: 'GH' | 'TH' | 'PH' | 'EH' | 'ZH'): number | null => {
+        const raw = inputStr.trim();
+        if (!raw) return null;
+
+        const match = raw.match(/^([\d.,]+)\s*([a-zA-Z/]*)$/);
+        if (!match) return null;
+
+        let numStr = match[1];
+        const unitFound = match[2].toUpperCase().replace(/\/S/g, '').trim();
+
+        if (numStr.includes(',') && !numStr.includes('.')) {
+            numStr = numStr.replace(',', '.');
+        } else {
+            numStr = numStr.replace(/,/g, '');
+        }
+
+        const val = parseFloat(numStr);
+        if (isNaN(val) || val <= 0) return null;
+
+        let unit = defaultUnit;
+        if (unitFound.startsWith('ZH') || unitFound.startsWith('Z')) unit = 'ZH';
+        else if (unitFound.startsWith('EH') || unitFound.startsWith('E')) unit = 'EH';
+        else if (unitFound.startsWith('PH') || unitFound.startsWith('P')) unit = 'PH';
+        else if (unitFound.startsWith('TH') || unitFound.startsWith('T')) unit = 'TH';
+        else if (unitFound.startsWith('GH') || unitFound.startsWith('G')) unit = 'GH';
+
+        const multipliers: Record<string, number> = {
+            GH: 1,
+            TH: 1e3,
+            PH: 1e6,
+            EH: 1e9,
+            ZH: 1e12
+        };
+
+        return val * (multipliers[unit] || 1e9);
+    };
+
+    const openOptimizeModal = (target: AutoOptimizationTarget) => {
+        setPendingOptimizeTarget(target);
+        setShowOptimizeModal(true);
+    };
+
+    const handleConfirmOptimize = () => {
+        const parsedCeiling = parseCeilingValueToGhs(ceilingInput, ceilingUnit);
+        setShowOptimizeModal(false);
+        handleAutoOptimize(pendingOptimizeTarget, parsedCeiling ?? undefined);
+    };
+
+    // Ação: Otimizador Automático de Montagem de Sala (suporta teto máximo de poder real opcional)
+    const handleAutoOptimize = (target: AutoOptimizationTarget, maxRealPowerGhs?: number) => {
         const maxCapacity = initialRoomState?.maxCellsCapacity || 528;
+        const manualBonus = Number(customSetBonus) || 0;
 
         // 1. Unificar todas as máquinas disponíveis (Sala + Inventário)
         const pool: OrganizerMiner[] = [];
@@ -679,13 +735,37 @@ export const RoomOrganizer: React.FC = () => {
             const newRoom: OrganizerMiner[] = [];
             const newInv: OrganizerMiner[] = [];
 
+            let currentPoderBruto = 0;
+            const tempSet = new Set<string>();
+            let currentBaseBonus = 0;
+
             for (const miner of remainingPool) {
-                if (occupiedCells + miner.size <= maxCapacity) {
-                    newRoom.push(miner);
-                    occupiedCells += miner.size;
-                } else {
+                if (occupiedCells + miner.size > maxCapacity) {
                     newInv.push(miner);
+                    continue;
                 }
+
+                if (maxRealPowerGhs) {
+                    const givesNewBonus = !tempSet.has(getMinerKey(miner));
+                    const nextPoder = currentPoderBruto + miner.power;
+                    const nextBonus = currentBaseBonus + (givesNewBonus ? miner.bonus_percent : 0) + manualBonus;
+                    const nextReal = nextPoder * (1 + nextBonus / 100);
+
+                    // Teto Rígido: se ultrapassar o teto estipulado, não insere e avalia as próximas máquinas
+                    if (nextReal > maxRealPowerGhs) {
+                        newInv.push(miner);
+                        continue;
+                    }
+
+                    currentPoderBruto = nextPoder;
+                    if (givesNewBonus) {
+                        tempSet.add(getMinerKey(miner));
+                        currentBaseBonus += miner.bonus_percent;
+                    }
+                }
+
+                newRoom.push(miner);
+                occupiedCells += miner.size;
             }
             finalRoom = newRoom;
             remainingPool = newInv;
@@ -716,13 +796,37 @@ export const RoomOrganizer: React.FC = () => {
             const newRoom: OrganizerMiner[] = [];
             const newInv: OrganizerMiner[] = [];
 
+            let currentPoderBruto = 0;
+            const tempSet = new Set<string>();
+            let currentBaseBonus = 0;
+
             for (const miner of prioritizedList) {
-                if (occupiedCells + miner.size <= maxCapacity) {
-                    newRoom.push(miner);
-                    occupiedCells += miner.size;
-                } else {
+                if (occupiedCells + miner.size > maxCapacity) {
                     newInv.push(miner);
+                    continue;
                 }
+
+                if (maxRealPowerGhs) {
+                    const givesNewBonus = !tempSet.has(getMinerKey(miner));
+                    const nextPoder = currentPoderBruto + miner.power;
+                    const nextBonus = currentBaseBonus + (givesNewBonus ? miner.bonus_percent : 0) + manualBonus;
+                    const nextReal = nextPoder * (1 + nextBonus / 100);
+
+                    // Teto Rígido: se ultrapassar o teto estipulado, não insere e avalia as próximas máquinas
+                    if (nextReal > maxRealPowerGhs) {
+                        newInv.push(miner);
+                        continue;
+                    }
+
+                    currentPoderBruto = nextPoder;
+                    if (givesNewBonus) {
+                        tempSet.add(getMinerKey(miner));
+                        currentBaseBonus += miner.bonus_percent;
+                    }
+                }
+
+                newRoom.push(miner);
+                occupiedCells += miner.size;
             }
             finalRoom = newRoom;
             remainingPool = newInv;
@@ -733,7 +837,6 @@ export const RoomOrganizer: React.FC = () => {
             let currentRoomMiners: OrganizerMiner[] = [];
             let occupiedCells = 0;
             let candidates = [...remainingPool];
-            const manualBonus = Number(customSetBonus) || 0;
 
             while (candidates.length > 0) {
                 const currentPoderBruto = currentRoomMiners.reduce((acc, m) => acc + m.power, 0);
@@ -760,6 +863,10 @@ export const RoomOrganizer: React.FC = () => {
                     const nextPoder = currentPoderBruto + cand.power;
                     const nextBonus = currentBaseBonus + (givesNewBonus ? cand.bonus_percent : 0) + manualBonus;
                     const nextReal = nextPoder * (1 + nextBonus / 100);
+
+                    // Teto Rígido: se ultrapassar o teto estipulado, ignora este candidato e busca outro
+                    if (maxRealPowerGhs && nextReal > maxRealPowerGhs) continue;
+
                     const impact = nextReal - currentTotalReal;
                     const impactPerCell = impact / cand.size;
 
@@ -808,8 +915,27 @@ export const RoomOrganizer: React.FC = () => {
             real_power: 'Foco em Poder Real Total'
         };
 
+        const finalRoomReal = (() => {
+            let pb = 0;
+            const s = new Set<string>();
+            let bb = 0;
+            finalRoom.forEach(m => {
+                pb += m.power;
+                const k = getMinerKey(m);
+                if (!s.has(k)) {
+                    s.add(k);
+                    bb += m.bonus_percent;
+                }
+            });
+            return pb * (1 + (bb + manualBonus) / 100);
+        })();
+
+        const ceilingMsg = maxRealPowerGhs
+            ? ` (Teto máx: ${formatPower(maxRealPowerGhs)} | Atingido: ${formatPower(finalRoomReal)})`
+            : '';
+
         setStatusMessage({
-            text: `Otimização concluída! Modo: ${targetLabels[target]}. ${finalRoom.length} máquinas instaladas na sala.`,
+            text: `Otimização concluída! Modo: ${targetLabels[target]}${ceilingMsg}. ${finalRoom.length} máquinas instaladas na sala.`,
             type: 'success'
         });
     };
@@ -1189,14 +1315,20 @@ export const RoomOrganizer: React.FC = () => {
                     return (a.marginalImpact ?? a.realPower ?? 0) - (b.marginalImpact ?? b.realPower ?? 0);
 
                 case 'mais_poder_menos_bonus': {
-                    const ratioA = a.power / Math.max(a.bonus_percent, 0.05);
-                    const ratioB = b.power / Math.max(b.bonus_percent, 0.05);
-                    return ratioB - ratioA;
+                    const bonusA = a.isFirstInRoom ? a.bonus_percent : 0;
+                    const bonusB = b.isFirstInRoom ? b.bonus_percent : 0;
+                    const ratioA = a.power / Math.max(bonusA, 0.05);
+                    const ratioB = b.power / Math.max(bonusB, 0.05);
+                    if (ratioB !== ratioA) return ratioB - ratioA;
+                    return b.power - a.power;
                 }
                 case 'mais_bonus_menos_poder': {
-                    const ratioA = a.bonus_percent / (a.power / 1000 + 1);
-                    const ratioB = b.bonus_percent / (b.power / 1000 + 1);
-                    return ratioB - ratioA;
+                    const bonusA = a.isFirstInRoom ? a.bonus_percent : 0;
+                    const bonusB = b.isFirstInRoom ? b.bonus_percent : 0;
+                    const ratioA = bonusA / (a.power / 1000 + 1);
+                    const ratioB = bonusB / (b.power / 1000 + 1);
+                    if (ratioB !== ratioA) return ratioB - ratioA;
+                    return a.power - b.power;
                 }
 
                 case 'power_desc':
@@ -1276,14 +1408,24 @@ export const RoomOrganizer: React.FC = () => {
                     return getInsertionImpact(a).impact - getInsertionImpact(b).impact;
 
                 case 'mais_poder_menos_bonus': {
-                    const ratioA = a.power / Math.max(a.bonus_percent, 0.05);
-                    const ratioB = b.power / Math.max(b.bonus_percent, 0.05);
-                    return ratioB - ratioA;
+                    const inRoomA = (currentRoomStats.keyCounts?.get(getMinerKey(a)) || 0) > 0;
+                    const inRoomB = (currentRoomStats.keyCounts?.get(getMinerKey(b)) || 0) > 0;
+                    const bonusA = inRoomA ? 0 : a.bonus_percent;
+                    const bonusB = inRoomB ? 0 : b.bonus_percent;
+                    const ratioA = a.power / Math.max(bonusA, 0.05);
+                    const ratioB = b.power / Math.max(bonusB, 0.05);
+                    if (ratioB !== ratioA) return ratioB - ratioA;
+                    return b.power - a.power;
                 }
                 case 'mais_bonus_menos_poder': {
-                    const ratioA = a.bonus_percent / (a.power / 1000 + 1);
-                    const ratioB = b.bonus_percent / (b.power / 1000 + 1);
-                    return ratioB - ratioA;
+                    const inRoomA = (currentRoomStats.keyCounts?.get(getMinerKey(a)) || 0) > 0;
+                    const inRoomB = (currentRoomStats.keyCounts?.get(getMinerKey(b)) || 0) > 0;
+                    const bonusA = inRoomA ? 0 : a.bonus_percent;
+                    const bonusB = inRoomB ? 0 : b.bonus_percent;
+                    const ratioA = bonusA / (a.power / 1000 + 1);
+                    const ratioB = bonusB / (b.power / 1000 + 1);
+                    if (ratioB !== ratioA) return ratioB - ratioA;
+                    return a.power - b.power;
                 }
 
                 case 'power_desc':
@@ -1339,7 +1481,20 @@ export const RoomOrganizer: React.FC = () => {
         const currentMiners = salaMiners;
         const removed = initialMiners.filter(initM => !currentMiners.some(s => s.id === initM.id));
         const added = currentMiners.filter(s => !initialMiners.some(initM => initM.id === s.id));
-        return { removed, added };
+        const intermediate = initialMiners.filter(initM => currentMiners.some(s => s.id === initM.id));
+        return { removed, added, intermediate };
+    };
+
+    const toStrikethrough = (text: string): string => {
+        return text.split('').map(char => char + '\u0336').join('');
+    };
+
+    const formatExportBonus = (bonusPercent: number, isDuplicate: boolean): string => {
+        const rawBonus = `+${bonusPercent}%`;
+        if (isDuplicate && bonusPercent > 0) {
+            return `${toStrikethrough(rawBonus)} [Repetido: +0%]`;
+        }
+        return rawBonus;
     };
 
     const downloadFile = (content: string, filename: string, mimeType: string) => {
@@ -1355,10 +1510,30 @@ export const RoomOrganizer: React.FC = () => {
     };
 
     const generateModificationsCSV = (): string => {
-        const { removed, added } = getModificationsData();
+        const { removed, added, intermediate } = getModificationsData();
         const userName = profileData?.name || 'Jogador';
         const userLeague = profileData?.league?.title?.en || profileData?.league?.title?.pt || 'N/A';
         const dateStr = new Date().toLocaleString('pt-BR');
+
+        // Métricas Intermediárias (após as remoções e antes das inserções)
+        let interMinersPower = 0;
+        let interCells = 0;
+        const interSeenKeys = new Set<string>();
+        let interBaseBonus = 0;
+
+        intermediate.forEach(m => {
+            interMinersPower += m.power;
+            interCells += (m.size === 1 ? 1 : 2);
+            const key = getMinerKey(m);
+            if (!interSeenKeys.has(key)) {
+                interSeenKeys.add(key);
+                interBaseBonus += m.bonus_percent;
+            }
+        });
+
+        const interSetBonus = Number(customSetBonus) || (initialRoomState?.initialSetBonus || 0);
+        const interTotalBonus = interBaseBonus + interSetBonus;
+        const interTotalRealPower = interMinersPower * (1 + interTotalBonus / 100);
 
         const lines: string[] = [];
         lines.push('RELATÓRIO DE MODIFICAÇÕES DA SALA - ROLLERCOIN');
@@ -1366,42 +1541,55 @@ export const RoomOrganizer: React.FC = () => {
         lines.push(`Liga Atual:;${userLeague}`);
         lines.push('');
         lines.push('RESUMO DO PODER DO USUÁRIO');
-        lines.push('Métrica;Inicial;Final;Variação (Delta);Variação (%)');
+        lines.push('Métrica;Inicial;Intermediário (Pós-Remoção);Final;Variação (Delta);Variação (%)');
 
         const initPoder = initialRoomState ? formatPower(initialRoomState.minersPower) : '0 GH/s';
         const finalPoder = formatPower(currentRoomStats.poderBruto);
         const deltaPoderStr = formatPower(liveDeltas.deltaPoder, true);
         const deltaPoderPctStr = formatPctChange(liveDeltas.deltaPoderPct);
-        lines.push(`Poder Bruto (Miners);${initPoder};${finalPoder};${deltaPoderStr};${deltaPoderPctStr}`);
+        lines.push(`Poder Bruto (Miners);${initPoder};${formatPower(interMinersPower)};${finalPoder};${deltaPoderStr};${deltaPoderPctStr}`);
 
         const initBonus = initialRoomState ? initialRoomState.totalBonusPercent.toFixed(2) + '%' : '0.00%';
         const finalBonus = (currentRoomStats.bonusBruto || 0).toFixed(2) + '%';
         const deltaBonusStr = formatBonusDelta(liveDeltas.deltaBonus);
         const deltaBonusPctStr = formatPctChange(liveDeltas.deltaBonusPct);
-        lines.push(`Bônus Bruto Total;${initBonus};${finalBonus};${deltaBonusStr};${deltaBonusPctStr}`);
+        lines.push(`Bônus Bruto Total;${initBonus};${interTotalBonus.toFixed(2)}%;${finalBonus};${deltaBonusStr};${deltaBonusPctStr}`);
 
         const initSetBonus = initialRoomState ? ((initialRoomState.initialSetBonus ?? 0).toFixed(2) + '%') : '0.00%';
         const finalSetBonus = (Number(customSetBonus) || 0).toFixed(2) + '%';
         const deltaSetBonus = ((Number(customSetBonus) || 0) - (initialRoomState?.initialSetBonus || 0));
         const deltaSetBonusStr = (deltaSetBonus > 0 ? '+' : '') + deltaSetBonus.toFixed(2) + '%';
-        lines.push(`Bônus de Máquinas Únicas;${(initialRoomState?.initialBaseBonus || 0).toFixed(2)}%;${(currentRoomStats.baseBonusBruto || 0).toFixed(2)}%;${((currentRoomStats.baseBonusBruto || 0) - (initialRoomState?.initialBaseBonus || 0) > 0 ? '+' : '') + ((currentRoomStats.baseBonusBruto || 0) - (initialRoomState?.initialBaseBonus || 0)).toFixed(2)}%;-`);
-        lines.push(`Bônus de Sets;${initSetBonus};${finalSetBonus};${deltaSetBonusStr};-`);
+        lines.push(`Bônus de Máquinas Únicas;${(initialRoomState?.initialBaseBonus || 0).toFixed(2)}%;${interBaseBonus.toFixed(2)}%;${(currentRoomStats.baseBonusBruto || 0).toFixed(2)}%;${((currentRoomStats.baseBonusBruto || 0) - (initialRoomState?.initialBaseBonus || 0) > 0 ? '+' : '') + ((currentRoomStats.baseBonusBruto || 0) - (initialRoomState?.initialBaseBonus || 0)).toFixed(2)}%;-`);
+        lines.push(`Bônus de Sets;${initSetBonus};${interSetBonus.toFixed(2)}%;${finalSetBonus};${deltaSetBonusStr};-`);
 
         const initReal = initialRoomState ? formatPower(initialRoomState.totalRealPower) : '0 GH/s';
         const finalReal = formatPower(currentRoomStats.poderReal);
         const deltaRealStr = formatPower(liveDeltas.deltaRealPower, true);
         const deltaRealPctStr = formatPctChange(liveDeltas.deltaRealPowerPct);
-        lines.push(`Poder Real Efetivo;${initReal};${finalReal};${deltaRealStr};${deltaRealPctStr}`);
+        lines.push(`Poder Real Efetivo;${initReal};${formatPower(interTotalRealPower)};${finalReal};${deltaRealStr};${deltaRealPctStr}`);
 
         const initCells = initialRoomState ? `${initialRoomState.initialTotalCells} cél.` : '0 cél.';
         const finalCells = `${currentRoomStats.totalCells} / ${currentRoomStats.maxCellsCapacity} cél. (${currentRoomStats.availableCells} livres)`;
         const deltaCellsStr = (liveDeltas.deltaCells > 0 ? '+' : '') + liveDeltas.deltaCells + ' cél.';
-        lines.push(`Células da Sala;${initCells};${finalCells};${deltaCellsStr};${currentRoomStats.occupationPct.toFixed(1)}% ocup.`);
+        lines.push(`Células da Sala;${initCells};${interCells} cél.;${finalCells};${deltaCellsStr};${currentRoomStats.occupationPct.toFixed(1)}% ocup.`);
 
         lines.push('');
         lines.push(`MODIFICAÇÕES DETALHADAS (${removed.length} removidas; ${added.length} inseridas)`);
         lines.push('MINERADORES REMOVIDOS DA SALA (SAÍRAM);;;;;;;;MINERADORES INSERIDOS NA SALA (ENTRARAM);;;;;;');
         lines.push('Nome;Nível;Tamanho;Poder;Bônus;Localização Original;Status;;Nome;Nível;Tamanho;Poder;Bônus;Origem;Status');
+
+        // Mapeamentos para identificar duplicatas com precisão
+        const interKeysCount = new Map<string, number>();
+        intermediate.forEach(m => {
+            const k = getMinerKey(m);
+            interKeysCount.set(k, (interKeysCount.get(k) || 0) + 1);
+        });
+        const remBonusProvidedKeys = new Set<string>();
+
+        const enrichedMap = new Map<string, OrganizerMiner>();
+        currentRoomStats.enrichedMiners.forEach(m => {
+            enrichedMap.set(m.id, m);
+        });
 
         const maxRows = Math.max(removed.length, added.length);
         const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
@@ -1415,7 +1603,22 @@ export const RoomOrganizer: React.FC = () => {
                 const lvl = romanNumerals[rem.level] || `${rem.level + 1}`;
                 const sizeStr = rem.size === 1 ? '1 Célula' : '2 Células';
                 const pwrStr = formatPower(rem.power);
-                const bnsStr = `+${rem.bonus_percent}%`;
+
+                const key = getMinerKey(rem);
+                const hasInIntermediate = (interKeysCount.get(key) || 0) > 0;
+                let isRemDuplicate = false;
+                if (hasInIntermediate) {
+                    isRemDuplicate = true;
+                } else {
+                    if (remBonusProvidedKeys.has(key)) {
+                        isRemDuplicate = true;
+                    } else {
+                        remBonusProvidedKeys.add(key);
+                        isRemDuplicate = false;
+                    }
+                }
+
+                const bnsStr = formatExportBonus(rem.bonus_percent, isRemDuplicate);
                 const locStr = getMinerLocationLabel(rem);
                 const statusStr = rem.canBeSold ? 'Vendível' : 'Inegociável';
                 leftCol = `"${rem.name.replace(/"/g, '""')}";${lvl};${sizeStr};"${pwrStr}";"${bnsStr}";"${locStr}";${statusStr}`;
@@ -1426,7 +1629,11 @@ export const RoomOrganizer: React.FC = () => {
                 const lvl = romanNumerals[add.level] || `${add.level + 1}`;
                 const sizeStr = add.size === 1 ? '1 Célula' : '2 Células';
                 const pwrStr = formatPower(add.power);
-                const bnsStr = `+${add.bonus_percent}%`;
+
+                const enrichedAdd = enrichedMap.get(add.id);
+                const isAddDuplicate = enrichedAdd ? !enrichedAdd.isFirstInRoom : false;
+                const bnsStr = formatExportBonus(add.bonus_percent, isAddDuplicate);
+
                 const origStr = add.location_label || 'Inventário';
                 const statusStr = add.canBeSold ? 'Vendível' : 'Inegociável';
                 rightCol = `"${add.name.replace(/"/g, '""')}";${lvl};${sizeStr};"${pwrStr}";"${bnsStr}";"${origStr}";${statusStr}`;
@@ -1439,11 +1646,31 @@ export const RoomOrganizer: React.FC = () => {
     };
 
     const generateModificationsTXT = (): string => {
-        const { removed, added } = getModificationsData();
+        const { removed, added, intermediate } = getModificationsData();
         const userName = profileData?.name || 'Jogador';
         const userLeague = profileData?.league?.title?.en || profileData?.league?.title?.pt || 'N/A';
         const dateStr = new Date().toLocaleString('pt-BR');
         const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+
+        // Métricas Intermediárias (após as remoções e antes das inserções)
+        let interMinersPower = 0;
+        let interCells = 0;
+        const interSeenKeys = new Set<string>();
+        let interBaseBonus = 0;
+
+        intermediate.forEach(m => {
+            interMinersPower += m.power;
+            interCells += (m.size === 1 ? 1 : 2);
+            const key = getMinerKey(m);
+            if (!interSeenKeys.has(key)) {
+                interSeenKeys.add(key);
+                interBaseBonus += m.bonus_percent;
+            }
+        });
+
+        const interSetBonus = Number(customSetBonus) || (initialRoomState?.initialSetBonus || 0);
+        const interTotalBonus = interBaseBonus + interSetBonus;
+        const interTotalRealPower = interMinersPower * (1 + interTotalBonus / 100);
 
         const lines: string[] = [];
         lines.push('========================================================================================');
@@ -1457,29 +1684,32 @@ export const RoomOrganizer: React.FC = () => {
         const finalPoder = formatPower(currentRoomStats.poderBruto);
         const deltaPoderStr = formatPower(liveDeltas.deltaPoder, true);
         const deltaPoderPctStr = formatPctChange(liveDeltas.deltaPoderPct);
-        lines.push(`• Poder Bruto (Miners):        ${initPoder} -> ${finalPoder} (Δ ${deltaPoderStr} / ${deltaPoderPctStr})`);
+        lines.push(`• Poder Bruto (Miners):        Inicial: ${initPoder} -> Interm. (Pós-Remoção): ${formatPower(interMinersPower)} -> Final: ${finalPoder} (Δ ${deltaPoderStr} / ${deltaPoderPctStr})`);
 
         const initBonus = initialRoomState ? initialRoomState.totalBonusPercent.toFixed(2) + '%' : '0.00%';
         const finalBonus = (currentRoomStats.bonusBruto || 0).toFixed(2) + '%';
         const deltaBonusStr = formatBonusDelta(liveDeltas.deltaBonus);
         const deltaBonusPctStr = formatPctChange(liveDeltas.deltaBonusPct);
-        lines.push(`• Bônus Bruto Total:           ${initBonus} -> ${finalBonus} (Δ ${deltaBonusStr} / ${deltaBonusPctStr})`);
+        lines.push(`• Bônus Bruto Total:           Inicial: ${initBonus} -> Interm. (Pós-Remoção): ${interTotalBonus.toFixed(2)}% -> Final: ${finalBonus} (Δ ${deltaBonusStr} / ${deltaBonusPctStr})`);
 
         const initSetBonus = initialRoomState ? ((initialRoomState.initialSetBonus ?? 0).toFixed(2) + '%') : '0.00%';
         const finalSetBonus = (Number(customSetBonus) || 0).toFixed(2) + '%';
         const deltaSetBonus = ((Number(customSetBonus) || 0) - (initialRoomState?.initialSetBonus || 0));
         const deltaSetBonusStr = (deltaSetBonus > 0 ? '+' : '') + deltaSetBonus.toFixed(2) + '%';
-        lines.push(`   - Bônus de Únicas:          ${(initialRoomState?.initialBaseBonus || 0).toFixed(2)}% -> ${(currentRoomStats.baseBonusBruto || 0).toFixed(2)}%`);
-        lines.push(`   - Bônus de Sets:            ${initSetBonus} -> ${finalSetBonus} (Δ ${deltaSetBonusStr})`);
+        lines.push(`   - Bônus de Únicas:          Inicial: ${(initialRoomState?.initialBaseBonus || 0).toFixed(2)}% -> Interm.: ${interBaseBonus.toFixed(2)}% -> Final: ${(currentRoomStats.baseBonusBruto || 0).toFixed(2)}%`);
+        lines.push(`   - Bônus de Sets:            Inicial: ${initSetBonus} -> Interm.: ${interSetBonus.toFixed(2)}% -> Final: ${finalSetBonus} (Δ ${deltaSetBonusStr})`);
 
         const initReal = initialRoomState ? formatPower(initialRoomState.totalRealPower) : '0 GH/s';
         const finalReal = formatPower(currentRoomStats.poderReal);
         const deltaRealStr = formatPower(liveDeltas.deltaRealPower, true);
         const deltaRealPctStr = formatPctChange(liveDeltas.deltaRealPowerPct);
-        lines.push(`• Poder Real Efetivo:          ${initReal} -> ${finalReal} (Δ ${deltaRealStr} / ${deltaRealPctStr})`);
+        lines.push(`• Poder Real Efetivo:          Inicial: ${initReal} -> Interm. (Pós-Remoção): ${formatPower(interTotalRealPower)} -> Final: ${finalReal} (Δ ${deltaRealStr} / ${deltaRealPctStr})`);
 
-        lines.push(`• Células da Sala:             ${currentRoomStats.totalCells} / ${currentRoomStats.maxCellsCapacity} cél. (${currentRoomStats.availableCells} livres)`);
-        lines.push(`                               Composição: ${currentRoomStats.count1C}x 1C (${currentRoomStats.cells1C}c) • ${currentRoomStats.count2C}x 2C (${currentRoomStats.cells2C}c) • ${currentRoomStats.sellableCount} Vendíveis`);
+        const initCells = initialRoomState ? `${initialRoomState.initialTotalCells} cél.` : '0 cél.';
+        const finalCells = `${currentRoomStats.totalCells} / ${currentRoomStats.maxCellsCapacity} cél. (${currentRoomStats.availableCells} livres)`;
+        const deltaCellsStr = (liveDeltas.deltaCells > 0 ? '+' : '') + liveDeltas.deltaCells + ' cél.';
+        lines.push(`• Células da Sala:             Inicial: ${initCells} -> Interm.: ${interCells} cél. -> Final: ${finalCells}`);
+        lines.push(`                               Composição Final: ${currentRoomStats.count1C}x 1C (${currentRoomStats.cells1C}c) • ${currentRoomStats.count2C}x 2C (${currentRoomStats.cells2C}c) • ${currentRoomStats.sellableCount} Vendíveis`);
         lines.push('');
 
         lines.push('========================================================================================');
@@ -1488,13 +1718,36 @@ export const RoomOrganizer: React.FC = () => {
         if (removed.length === 0) {
             lines.push('Nenhum minerador foi removido da sala.');
         } else {
+            const interKeysCount = new Map<string, number>();
+            intermediate.forEach(m => {
+                const k = getMinerKey(m);
+                interKeysCount.set(k, (interKeysCount.get(k) || 0) + 1);
+            });
+            const remBonusProvidedKeys = new Set<string>();
+
             removed.forEach((rem, idx) => {
                 const lvl = romanNumerals[rem.level] || `${rem.level + 1}`;
                 const sizeStr = rem.size === 1 ? '1C' : '2C';
                 const statusStr = rem.canBeSold ? 'Vendível' : 'Inegociável';
                 const locStr = getMinerLocationLabel(rem);
+
+                const key = getMinerKey(rem);
+                const hasInIntermediate = (interKeysCount.get(key) || 0) > 0;
+                let isRemDuplicate = false;
+                if (hasInIntermediate) {
+                    isRemDuplicate = true;
+                } else {
+                    if (remBonusProvidedKeys.has(key)) {
+                        isRemDuplicate = true;
+                    } else {
+                        remBonusProvidedKeys.add(key);
+                        isRemDuplicate = false;
+                    }
+                }
+
+                const bnsStr = formatExportBonus(rem.bonus_percent, isRemDuplicate);
                 lines.push(`${idx + 1}. ${rem.name} [Nível ${lvl} • ${sizeStr}]`);
-                lines.push(`   Poder: ${formatPower(rem.power)} | Bônus: +${rem.bonus_percent}% | Localização: ${locStr} | Status: ${statusStr}`);
+                lines.push(`   Poder: ${formatPower(rem.power)} | Bônus: ${bnsStr} | Localização: ${locStr} | Status: ${statusStr}`);
             });
         }
         lines.push('');
@@ -1505,13 +1758,23 @@ export const RoomOrganizer: React.FC = () => {
         if (added.length === 0) {
             lines.push('Nenhum minerador novo foi inserido na sala.');
         } else {
+            const enrichedMap = new Map<string, OrganizerMiner>();
+            currentRoomStats.enrichedMiners.forEach(m => {
+                enrichedMap.set(m.id, m);
+            });
+
             added.forEach((add, idx) => {
                 const lvl = romanNumerals[add.level] || `${add.level + 1}`;
                 const sizeStr = add.size === 1 ? '1C' : '2C';
                 const statusStr = add.canBeSold ? 'Vendível' : 'Inegociável';
                 const origStr = add.location_label || 'Inventário';
+
+                const enrichedAdd = enrichedMap.get(add.id);
+                const isAddDuplicate = enrichedAdd ? !enrichedAdd.isFirstInRoom : false;
+                const bnsStr = formatExportBonus(add.bonus_percent, isAddDuplicate);
+
                 lines.push(`${idx + 1}. ${add.name} [Nível ${lvl} • ${sizeStr}]`);
-                lines.push(`   Poder: ${formatPower(add.power)} | Bônus: +${add.bonus_percent}% | Origem: ${origStr} | Status: ${statusStr}`);
+                lines.push(`   Poder: ${formatPower(add.power)} | Bônus: ${bnsStr} | Origem: ${origStr} | Status: ${statusStr}`);
             });
         }
         lines.push('========================================================================================');
@@ -1607,21 +1870,21 @@ export const RoomOrganizer: React.FC = () => {
                         {/* Botões do Otimizador Automático de Montagem */}
                         <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
                             <button
-                                onClick={() => handleAutoOptimize('real_power')}
+                                onClick={() => openOptimizeModal('real_power')}
                                 className="px-2.5 py-1.5 text-xs font-black uppercase tracking-wider rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-sm flex items-center gap-1 active:scale-95"
                                 title="Preenche a sala maximizando o Poder Real total (Equilíbrio ideal de Força e Bônus)"
                             >
                                 <Wand2 size={13} /> Auto Real
                             </button>
                             <button
-                                onClick={() => handleAutoOptimize('power')}
+                                onClick={() => openOptimizeModal('power')}
                                 className="px-2 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-blue-500 rounded-lg transition-all flex items-center gap-1"
                                 title="Preenche a sala com o máximo de poder bruto possível"
                             >
                                 <Zap size={13} /> Força
                             </button>
                             <button
-                                onClick={() => handleAutoOptimize('bonus')}
+                                onClick={() => openOptimizeModal('bonus')}
                                 className="px-2 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-cyan-500 rounded-lg transition-all flex items-center gap-1"
                                 title="Preenche a sala com o máximo de bônus único possível"
                             >
@@ -2767,6 +3030,186 @@ export const RoomOrganizer: React.FC = () => {
                                 className="text-[10px] font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 underline"
                             >
                                 Ou copiar sala inteira em formato JSON (Backup)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* MODAL DE OTIMIZAÇÃO COM TETO DE PODER REAL */}
+            {showOptimizeModal && (
+                <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+                    <div className="bg-white dark:bg-dark-800 rounded-3xl max-w-lg w-full p-6 space-y-5 border border-slate-200 dark:border-slate-700 shadow-2xl animate-scale-up">
+                        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                            <div className="flex items-center gap-3">
+                                <div className={`p-2.5 rounded-2xl ${
+                                    pendingOptimizeTarget === 'real_power'
+                                        ? 'bg-emerald-500/10 text-emerald-500'
+                                        : pendingOptimizeTarget === 'power'
+                                            ? 'bg-blue-500/10 text-blue-500'
+                                            : 'bg-cyan-500/10 text-cyan-500'
+                                }`}>
+                                    {pendingOptimizeTarget === 'real_power' && <Wand2 size={24} />}
+                                    {pendingOptimizeTarget === 'power' && <Zap size={24} />}
+                                    {pendingOptimizeTarget === 'bonus' && <Award size={24} />}
+                                </div>
+                                <div>
+                                    <h3 className="font-display font-black text-slate-900 dark:text-white uppercase tracking-tight text-base sm:text-lg flex items-center gap-2">
+                                        Otimizar Sala
+                                        <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                                            pendingOptimizeTarget === 'real_power'
+                                                ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300'
+                                                : pendingOptimizeTarget === 'power'
+                                                    ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300'
+                                                    : 'bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300'
+                                        }`}>
+                                            {pendingOptimizeTarget === 'real_power' ? 'Auto Real' : pendingOptimizeTarget === 'power' ? 'Força Bruta' : 'Bônus Máximo'}
+                                        </span>
+                                    </h3>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                        {pendingOptimizeTarget === 'real_power' && 'Maximiza o Poder Real equilibrando força e bônus.'}
+                                        {pendingOptimizeTarget === 'power' && 'Maximiza o Poder Bruto por célula.'}
+                                        {pendingOptimizeTarget === 'bonus' && 'Maximiza o percentual de bônus único.'}
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setShowOptimizeModal(false)}
+                                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg font-bold p-1 transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">
+                                    Teto Máximo de Poder Real (Opcional)
+                                </label>
+                                <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-2 leading-relaxed">
+                                    Defina o valor máximo que a sala pode alcançar. A otimização não ultrapassará este teto rígido. Deixe em branco para otimizar <strong>sem teto</strong>.
+                                </p>
+
+                                <div className="flex gap-2">
+                                    <div className="relative flex-grow">
+                                        <input
+                                            type="text"
+                                            value={ceilingInput}
+                                            onChange={(e) => setCeilingInput(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    handleConfirmOptimize();
+                                                }
+                                            }}
+                                            placeholder="Ex: 3,999 ou 500 ph/s (em branco = sem teto)"
+                                            className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-mono text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all placeholder:text-slate-400 placeholder:font-sans"
+                                            autoFocus
+                                        />
+                                    </div>
+                                    <select
+                                        value={ceilingUnit}
+                                        onChange={(e) => setCeilingUnit(e.target.value as any)}
+                                        className="px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                                        title="Unidade de medida padrão para o teto"
+                                    >
+                                        <option value="EH">EH/s</option>
+                                        <option value="ZH">ZH/s</option>
+                                        <option value="PH">PH/s</option>
+                                        <option value="TH">TH/s</option>
+                                        <option value="GH">GH/s</option>
+                                    </select>
+                                </div>
+
+                                <div className="flex items-center gap-2 mt-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setCeilingInput('')}
+                                        className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    >
+                                        Limpar (Sem Teto)
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => { setCeilingInput('3.999'); setCeilingUnit('EH'); }}
+                                        className="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    >
+                                        3,999 EH/s
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* CARD DE FEEDBACK EM TEMPO REAL */}
+                            {(() => {
+                                const parsed = parseCeilingValueToGhs(ceilingInput, ceilingUnit);
+                                if (!ceilingInput.trim()) {
+                                    return (
+                                        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 flex items-start gap-2.5 text-xs">
+                                            <Sparkles size={16} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                                            <div>
+                                                <p className="font-bold text-slate-700 dark:text-slate-200">
+                                                    Modo Sem Teto de Poder
+                                                </p>
+                                                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                                    A sala será preenchida normalmente aproveitando todas as células disponíveis (até {initialRoomState?.maxCellsCapacity || 528} cél.).
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                                if (parsed !== null) {
+                                    return (
+                                        <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 flex items-start gap-2.5 text-xs">
+                                            <CheckCircle2 size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
+                                            <div>
+                                                <p className="font-bold text-emerald-800 dark:text-emerald-300">
+                                                    Teto Rígido Reconhecido: {formatPower(parsed)}
+                                                </p>
+                                                <p className="text-[11px] text-emerald-700/80 dark:text-emerald-400/80 mt-0.5">
+                                                    A montagem parará assim que atingir a melhor composição possível <strong>sem ultrapassar</strong> {formatPower(parsed)}.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                                return (
+                                    <div className="p-3.5 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 flex items-start gap-2.5 text-xs">
+                                        <AlertCircle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+                                        <div>
+                                            <p className="font-bold text-red-800 dark:text-red-300">
+                                                Formato de Poder Inválido
+                                            </p>
+                                            <p className="text-[11px] text-red-700/80 dark:text-red-400/80 mt-0.5">
+                                                Digite um número positivo (ex: 3,999 ou 500 ph/s) ou deixe o campo em branco.
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+                        </div>
+
+                        <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-700">
+                            <button
+                                onClick={() => setShowOptimizeModal(false)}
+                                className="px-4 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleConfirmOptimize}
+                                disabled={Boolean(ceilingInput.trim() && parseCeilingValueToGhs(ceilingInput, ceilingUnit) === null)}
+                                className={`px-5 py-2.5 text-xs font-black uppercase tracking-wider rounded-xl text-white shadow-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 ${
+                                    pendingOptimizeTarget === 'real_power'
+                                        ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20'
+                                        : pendingOptimizeTarget === 'power'
+                                            ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20'
+                                            : 'bg-cyan-600 hover:bg-cyan-700 shadow-cyan-600/20'
+                                }`}
+                            >
+                                {pendingOptimizeTarget === 'real_power' && <Wand2 size={14} />}
+                                {pendingOptimizeTarget === 'power' && <Zap size={14} />}
+                                {pendingOptimizeTarget === 'bonus' && <Award size={14} />}
+                                <span>Executar Otimização</span>
                             </button>
                         </div>
                     </div>
