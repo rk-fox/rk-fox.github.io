@@ -61,6 +61,7 @@ export interface OrganizerMiner {
     marginalImpact?: number; // Impacto real na conta (GH/s)
     rack_info?: string;
     hasEstimatedLevel?: boolean; // Nível estimado via parser (não catalogado na planilha)
+    isLegacyStar?: boolean; // Minerador antigo de nível único com badge de estrela
     room_level?: number;
     rack_x?: number;
     rack_y?: number;
@@ -84,35 +85,169 @@ export type InvSortOption = SalaSortOption;
 
 export type AutoOptimizationTarget = 'power' | 'bonus' | 'real_power';
 
-export const LEAGUE_CAP_PRESETS: Array<{
+export interface LeagueCapTier {
+    name: string;
+    numeral: string;
+    value: string;
     unit: 'PH' | 'EH' | 'ZH';
-    label: string;
+    tooltip: string;
+}
+
+export interface LeagueCapPreset {
+    id: string;
+    leagueName: string;
     badgeBg: string;
+    containerBg: string;
     activeBtn: string;
-    values: string[];
-}> = [
+    idleBtn: string;
+    tiers: LeagueCapTier[];
+}
+
+export const LEAGUE_CAP_PRESETS: LeagueCapPreset[] = [
     {
-        unit: 'PH',
-        label: 'PH/s',
-        badgeBg: 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-        activeBtn: 'bg-amber-500 text-white shadow-xs',
-        values: ['24,999', '49,999', '99,999', '149,999', '249,999', '649,999']
+        id: 'bronze',
+        leagueName: 'Bronze',
+        badgeBg: 'bg-amber-900/15 text-amber-800 dark:text-amber-300 border-amber-700/40',
+        containerBg: 'bg-amber-950/5 dark:bg-amber-950/25 border-amber-800/25 dark:border-amber-800/40',
+        activeBtn: 'bg-gradient-to-r from-amber-700 to-amber-600 text-white shadow-xs ring-1 ring-amber-400 font-black',
+        idleBtn: 'bg-white/90 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 border-amber-300/60 dark:border-amber-800/60 hover:bg-amber-100/70 dark:hover:bg-amber-900/40',
+        tiers: [
+            { name: 'Teto da Bronze 1', numeral: 'I', value: '24,999', unit: 'PH', tooltip: 'Teto da Bronze 1 (Bronze I: 24,999 PH/s)' },
+            { name: 'Teto da Bronze 2', numeral: 'II', value: '49,999', unit: 'PH', tooltip: 'Teto da Bronze 2 (Bronze II: 49,999 PH/s)' },
+            { name: 'Teto da Bronze 3', numeral: 'III', value: '99,999', unit: 'PH', tooltip: 'Teto da Bronze 3 (Bronze III: 99,999 PH/s)' },
+        ]
     },
     {
-        unit: 'EH',
-        label: 'EH/s',
-        badgeBg: 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
-        activeBtn: 'bg-indigo-500 text-white shadow-xs',
-        values: ['1,499', '3,499', '15,999', '49,999', '99,999', '199,999', '374,999', '649,999']
+        id: 'prata',
+        leagueName: 'Prata',
+        badgeBg: 'bg-slate-200/80 dark:bg-slate-700/60 text-slate-700 dark:text-slate-200 border-slate-400/50 dark:border-slate-600',
+        containerBg: 'bg-slate-100/60 dark:bg-slate-800/30 border-slate-300/70 dark:border-slate-700/50',
+        activeBtn: 'bg-gradient-to-r from-slate-600 to-slate-500 text-white shadow-xs ring-1 ring-slate-300 font-black',
+        idleBtn: 'bg-white/90 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-600 hover:bg-slate-200/60 dark:hover:bg-slate-700/70',
+        tiers: [
+            { name: 'Teto da Prata 1', numeral: 'I', value: '149,999', unit: 'PH', tooltip: 'Teto da Prata 1 (Silver I: 149,999 PH/s)' },
+            { name: 'Teto da Prata 2', numeral: 'II', value: '249,999', unit: 'PH', tooltip: 'Teto da Prata 2 (Silver II: 249,999 PH/s)' },
+            { name: 'Teto da Prata 3', numeral: 'III', value: '649,999', unit: 'PH', tooltip: 'Teto da Prata 3 (Silver III: 649,999 PH/s)' },
+        ]
     },
     {
-        unit: 'ZH',
-        label: 'ZH/s',
-        badgeBg: 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-        activeBtn: 'bg-emerald-500 text-white shadow-xs',
-        values: ['1,149', '2,159', '3,999', '12,999', '24,999', '69,999', '99,999']
+        id: 'ouro',
+        leagueName: 'Ouro',
+        badgeBg: 'bg-yellow-500/20 text-yellow-800 dark:text-yellow-300 border-yellow-500/40',
+        containerBg: 'bg-yellow-500/5 dark:bg-yellow-950/20 border-yellow-500/25 dark:border-yellow-700/30',
+        activeBtn: 'bg-gradient-to-r from-yellow-500 to-amber-500 text-slate-950 shadow-xs ring-1 ring-yellow-300 font-black',
+        idleBtn: 'bg-white/90 dark:bg-yellow-950/30 text-yellow-900 dark:text-yellow-200 border-yellow-400/60 dark:border-yellow-800/60 hover:bg-yellow-100/70 dark:hover:bg-yellow-900/40',
+        tiers: [
+            { name: 'Teto da Ouro 1', numeral: 'I', value: '1,499', unit: 'EH', tooltip: 'Teto da Ouro 1 (Gold I: 1,499 EH/s)' },
+            { name: 'Teto da Ouro 2', numeral: 'II', value: '3,499', unit: 'EH', tooltip: 'Teto da Ouro 2 (Gold II: 3,499 EH/s)' },
+            { name: 'Teto da Ouro 3', numeral: 'III', value: '15,999', unit: 'EH', tooltip: 'Teto da Ouro 3 (Gold III: 15,999 EH/s)' },
+        ]
+    },
+    {
+        id: 'platina',
+        leagueName: 'Platina',
+        badgeBg: 'bg-cyan-100/80 dark:bg-cyan-950/40 text-cyan-800 dark:text-cyan-200 border-cyan-300/70 dark:border-cyan-700/60',
+        containerBg: 'bg-cyan-50/50 dark:bg-cyan-950/20 border-cyan-200/60 dark:border-cyan-800/30',
+        activeBtn: 'bg-gradient-to-r from-cyan-600 to-slate-600 text-white shadow-xs ring-1 ring-cyan-300 font-black',
+        idleBtn: 'bg-white/90 dark:bg-slate-800/60 text-cyan-900 dark:text-cyan-200 border-cyan-300/60 dark:border-cyan-800/60 hover:bg-cyan-100/60 dark:hover:bg-cyan-900/30',
+        tiers: [
+            { name: 'Teto da Platina 1', numeral: 'I', value: '49,999', unit: 'EH', tooltip: 'Teto da Platina 1 (Platinum I: 49,999 EH/s)' },
+            { name: 'Teto da Platina 2', numeral: 'II', value: '99,999', unit: 'EH', tooltip: 'Teto da Platina 2 (Platinum II: 99,999 EH/s)' },
+            { name: 'Teto da Platina 3', numeral: 'III', value: '199,999', unit: 'EH', tooltip: 'Teto da Platina 3 (Platinum III: 199,999 EH/s)' },
+        ]
+    },
+    {
+        id: 'diamante',
+        leagueName: 'Diamante',
+        badgeBg: 'bg-sky-500/15 text-sky-800 dark:text-sky-300 border-sky-400/40',
+        containerBg: 'bg-sky-500/5 dark:bg-sky-950/20 border-sky-400/25 dark:border-sky-700/30',
+        activeBtn: 'bg-gradient-to-r from-sky-500 to-cyan-500 text-slate-950 shadow-xs ring-1 ring-sky-300 font-black',
+        idleBtn: 'bg-white/90 dark:bg-sky-950/30 text-sky-900 dark:text-sky-200 border-sky-300/60 dark:border-sky-800/60 hover:bg-sky-100/60 dark:hover:bg-sky-900/40',
+        tiers: [
+            { name: 'Teto da Diamante 1', numeral: 'I', value: '374,999', unit: 'EH', tooltip: 'Teto da Diamante 1 (Diamond I: 374,999 EH/s)' },
+            { name: 'Teto da Diamante 2', numeral: 'II', value: '649,999', unit: 'EH', tooltip: 'Teto da Diamante 2 (Diamond II: 649,999 EH/s)' },
+            { name: 'Teto da Diamante 3', numeral: 'III', value: '1,149', unit: 'ZH', tooltip: 'Teto da Diamante 3 (Diamond III: 1,149 ZH/s)' },
+        ]
+    },
+    {
+        id: 'titan',
+        leagueName: 'Titan',
+        badgeBg: 'bg-rose-500/15 text-rose-800 dark:text-rose-300 border-rose-500/40',
+        containerBg: 'bg-rose-500/5 dark:bg-rose-950/20 border-rose-500/25 dark:border-rose-700/30',
+        activeBtn: 'bg-gradient-to-r from-rose-600 to-orange-500 text-white shadow-xs ring-1 ring-rose-300 font-black',
+        idleBtn: 'bg-white/90 dark:bg-rose-950/30 text-rose-900 dark:text-rose-200 border-rose-300/60 dark:border-rose-800/60 hover:bg-rose-100/60 dark:hover:bg-rose-900/40',
+        tiers: [
+            { name: 'Teto da Titan 1', numeral: 'I', value: '2,159', unit: 'ZH', tooltip: 'Teto da Titan 1 (Titan I: 2,159 ZH/s)' },
+            { name: 'Teto da Titan 2', numeral: 'II', value: '3,999', unit: 'ZH', tooltip: 'Teto da Titan 2 (Titan II: 3,999 ZH/s)' },
+            { name: 'Teto da Titan 3', numeral: 'III', value: '12,999', unit: 'ZH', tooltip: 'Teto da Titan 3 (Titan III: 12,999 ZH/s)' },
+        ]
+    },
+    {
+        id: 'esmeralda',
+        leagueName: 'Esmeralda',
+        badgeBg: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/40',
+        containerBg: 'bg-emerald-500/5 dark:bg-emerald-950/20 border-emerald-500/25 dark:border-emerald-700/30',
+        activeBtn: 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs ring-1 ring-emerald-300 font-black',
+        idleBtn: 'bg-white/90 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200 border-emerald-300/60 dark:border-emerald-800/60 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40',
+        tiers: [
+            { name: 'Teto da Esmeralda 1', numeral: 'I', value: '24,999', unit: 'ZH', tooltip: 'Teto da Esmeralda 1 (Emerald I: 24,999 ZH/s)' },
+            { name: 'Teto da Esmeralda 2', numeral: 'II', value: '69,999', unit: 'ZH', tooltip: 'Teto da Esmeralda 2 (Emerald II: 69,999 ZH/s)' },
+            { name: 'Teto da Esmeralda 3', numeral: 'III', value: '99,999', unit: 'ZH', tooltip: 'Teto da Esmeralda 3 / Teto pré-Lenda (Emerald III: 99,999 ZH/s)' },
+        ]
     }
 ];
+
+export const resolveLeagueCap = (leagueInput: any): { value: string; unit: 'GH' | 'TH' | 'PH' | 'EH' | 'ZH'; tierName: string } | null => {
+    if (!leagueInput) return null;
+    let raw = '';
+    if (typeof leagueInput === 'string') {
+        raw = leagueInput;
+    } else if (leagueInput?.title) {
+        if (typeof leagueInput.title === 'string') {
+            raw = leagueInput.title;
+        } else if (typeof leagueInput.title === 'object') {
+            raw = leagueInput.title.en || leagueInput.title.pt || leagueInput.title.es || Object.values(leagueInput.title)[0] || '';
+        }
+    } else if (leagueInput?.name) {
+        raw = String(leagueInput.name);
+    }
+
+    if (!raw) return null;
+    const str = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+
+    let leaguePresetId = '';
+    if (str.includes('bronze')) leaguePresetId = 'bronze';
+    else if (str.includes('prata') || str.includes('silver') || str.includes('plata')) leaguePresetId = 'prata';
+    else if (str.includes('ouro') || str.includes('gold') || str.includes('oro')) leaguePresetId = 'ouro';
+    else if (str.includes('platina') || str.includes('platinum')) leaguePresetId = 'platina';
+    else if (str.includes('diamante') || str.includes('diamond')) leaguePresetId = 'diamante';
+    else if (str.includes('titan') || str.includes('tita')) leaguePresetId = 'titan';
+    else if (str.includes('esmeralda') || str.includes('emerald')) leaguePresetId = 'esmeralda';
+    else if (str.includes('lenda') || str.includes('legend') || str.includes('leyenda')) leaguePresetId = 'esmeralda';
+
+    if (!leaguePresetId) return null;
+
+    const preset = LEAGUE_CAP_PRESETS.find(p => p.id === leaguePresetId);
+    if (!preset || !preset.tiers || preset.tiers.length === 0) return null;
+
+    let tierIndex = 0; // 0 = I, 1 = II, 2 = III
+    if (str.includes('lenda') || str.includes('legend') || str.includes('leyenda')) {
+        tierIndex = 2; // Teto pré-lenda (Esmeralda III)
+    } else if (/\b(iii|3)\b/.test(str) || str.endsWith('3') || str.includes('_3')) {
+        tierIndex = 2;
+    } else if (/\b(ii|2)\b/.test(str) || str.endsWith('2') || str.includes('_2')) {
+        tierIndex = 1;
+    } else if (/\b(i|1)\b/.test(str) || str.endsWith('1') || str.includes('_1')) {
+        tierIndex = 0;
+    }
+
+    const tier = preset.tiers[tierIndex] || preset.tiers[0];
+    return {
+        value: tier.value,
+        unit: tier.unit,
+        tierName: `${preset.leagueName} ${tier.numeral}`
+    };
+};
 
 export const RoomOrganizer: React.FC = () => {
     const hasRun = useRef(false);
@@ -200,6 +335,17 @@ export const RoomOrganizer: React.FC = () => {
     const [ceilingInput, setCeilingInput] = useState('');
     const [ceilingUnit, setCeilingUnit] = useState<'GH' | 'TH' | 'PH' | 'EH' | 'ZH'>('EH');
 
+    // Sincroniza o Teto Máximo de Poder Real quando o perfil é carregado com a Liga Atual
+    useEffect(() => {
+        if (profileData?.league) {
+            const suggestedCap = resolveLeagueCap(profileData.league);
+            if (suggestedCap) {
+                setCeilingInput(suggestedCap.value);
+                setCeilingUnit(suggestedCap.unit);
+            }
+        }
+    }, [profileData?.league]);
+
     const proxy = "https://summer-night-03c0.rk-foxx-159.workers.dev/?";
 
     // Formatadores numéricos
@@ -233,7 +379,27 @@ export const RoomOrganizer: React.FC = () => {
     };
 
     // Badge visual para o nível da mineradora
-    const renderLevelBadge = (level: number = 0, isEstimated?: boolean) => {
+    const renderLevelBadge = (level: number = 0, isEstimated?: boolean, isLegacyStar?: boolean) => {
+        if (isLegacyStar) {
+            return (
+                <span className="inline-flex items-center gap-1" title="Minerador Legado (Level Único)">
+                    <img
+                        src="/images/legacy_star.png"
+                        alt="★"
+                        className="h-3.5 w-auto object-contain inline-block align-middle rounded-xs"
+                    />
+                    {isEstimated && (
+                        <span
+                            className="text-[8px] font-black px-1 py-0.5 rounded bg-amber-500 text-white shadow-xs"
+                            title="Aviso: Máquina não catalogada na planilha oficial. Nível identificado pelo texto e bônus preservado."
+                        >
+                            !
+                        </span>
+                    )}
+                </span>
+            );
+        }
+
         const lvl = typeof level === 'number' && !isNaN(level) ? Math.max(0, level) : 0;
         const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
         const label = romanNumerals[lvl] || `${lvl + 1}`;
@@ -276,16 +442,30 @@ export const RoomOrganizer: React.FC = () => {
     };
 
     const generateFilename = (name: string): string => {
-        return name.trim()
+        let clean = name.trim()
             .replace(/\s*\(!\)\s*$/, '')
-            .replace(/'/g, '')
-            .replace(/’/g, '')
+            .replace(/^rating[\s_]*star[:\s_-]*/i, '');
+
+        // Trata mineradoras conhecidas cujo CDN preserva apóstrofo tipográfico U+2019 (’)
+        // Ex: "Satoshi's Chest" -> "satoshi’s_chest"
+        const baseSlug = clean
+            .replace(/['’]/g, '')
             .replace(/\+/g, 'plus')
             .replace(/-/g, '_')
             .replace(/\s+/g, '_')
             .replace(/,/g, '')
             .replace(/\./g, '')
             .toLowerCase();
+
+        const typoApostropheMap: Record<string, string> = {
+            'satoshis_chest': 'satoshi’s_chest',
+            'kings_legacy': 'king’s_legacy',
+            'devils_ember': 'devil’s_ember',
+            'hashbeards_ship': 'hashbeard’s_ship',
+            'corsairs_oath': 'corsair’s_oath',
+        };
+
+        return typoApostropheMap[baseSlug] || baseSlug;
     };
 
     const parsePowerStringToGhs = (valStr: string, unitStr: string): number => {
@@ -565,6 +745,8 @@ export const RoomOrganizer: React.FC = () => {
             const lastOpenIdx = rawLines.map(l => l.toLowerCase()).lastIndexOf('open');
             const linesAfterOpen = lastOpenIdx !== -1 ? rawLines.slice(lastOpenIdx + 1) : rawLines;
 
+            let isLegacyStar = false;
+
             const cleanLines = linesAfterOpen.filter(l => {
                 const lower = l.toLowerCase();
                 if (lower === 'open' || lower === 'miner details') return false;
@@ -572,6 +754,10 @@ export const RoomOrganizer: React.FC = () => {
                 if (lower === 'storage') return false;
                 if (lower.startsWith('quantity: high') || lower.startsWith('quantity: low')) return false;
                 if (lower.startsWith('items arranged in your rooms') || lower.startsWith('os itens organizados')) return false;
+                if (/^rating[\s_]*star$/i.test(lower)) {
+                    isLegacyStar = true;
+                    return false;
+                }
                 return true;
             });
 
@@ -579,32 +765,52 @@ export const RoomOrganizer: React.FC = () => {
             const setIdx = cleanLines.findIndex(l => /^(?:Set|Set:|Conjunto|Coleção)$/i.test(l));
             const nameAndLevelLines = setIdx !== -1 ? cleanLines.slice(0, setIdx) : cleanLines;
 
+            // Filtra possíveis 'rating star' residuais dentro de nameAndLevelLines
+            const filteredNameLines: string[] = [];
+            for (const line of nameAndLevelLines) {
+                if (/^rating[\s_]*star$/i.test(line)) {
+                    isLegacyStar = true;
+                    continue;
+                }
+                if (/^rating[\s_]*star[:\s_-]+/i.test(line)) {
+                    isLegacyStar = true;
+                    filteredNameLines.push(line.replace(/^rating[\s_]*star[:\s_-]+/i, '').trim());
+                    continue;
+                }
+                filteredNameLines.push(line);
+            }
+
             let textLevel = 0;
             let cleanName = '';
 
-            if (nameAndLevelLines.length > 0) {
-                const firstLine = nameAndLevelLines[0];
+            if (filteredNameLines.length > 0) {
+                const firstLine = filteredNameLines[0];
                 const numMatch = firstLine.match(/^([1-9]|10)$/);
                 const romanMatch = firstLine.match(/^(I|II|III|IV|V|VI|VII|VIII|IX|X)$/i);
                 const wordMatch = firstLine.match(/^(?:level|lvl|nível|tier)\s*([1-9]|10|[ivx]+)$/i);
 
                 if (numMatch) {
                     textLevel = parseInt(numMatch[1], 10);
-                    cleanName = nameAndLevelLines.slice(1).join(' ').trim();
+                    cleanName = filteredNameLines.slice(1).join(' ').trim();
                 } else if (romanMatch) {
                     const rMap: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10 };
                     textLevel = rMap[romanMatch[1].toUpperCase()] ?? 1;
-                    cleanName = nameAndLevelLines.slice(1).join(' ').trim();
+                    cleanName = filteredNameLines.slice(1).join(' ').trim();
                 } else if (wordMatch) {
                     const val = wordMatch[1];
                     const rMap: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10 };
                     textLevel = parseInt(val, 10) || (rMap[val.toUpperCase()] ?? 1);
-                    cleanName = nameAndLevelLines.slice(1).join(' ').trim();
+                    cleanName = filteredNameLines.slice(1).join(' ').trim();
                 } else {
                     // Se após open vier diretamente o nome, é Nível 0 garantido
                     textLevel = 0;
-                    cleanName = nameAndLevelLines.join(' ').trim();
+                    cleanName = filteredNameLines.join(' ').trim();
                 }
+            }
+
+            if (/^rating[\s_]*star[:\s_-]*/i.test(cleanName)) {
+                isLegacyStar = true;
+                cleanName = cleanName.replace(/^rating[\s_]*star[:\s_-]*/i, '').trim();
             }
 
             if (!cleanName || cleanName.toLowerCase().includes('quantity: high')) continue;
@@ -625,8 +831,8 @@ export const RoomOrganizer: React.FC = () => {
                 finalLevel = detected.level;
                 if (detected.isSellable !== undefined) finalCanBeSold = detected.isSellable;
             } else {
-                finalLevel = textLevel;
-                hasEstimatedLevel = true;
+                finalLevel = isLegacyStar ? 0 : textLevel;
+                hasEstimatedLevel = !isLegacyStar;
             }
 
             parsedList.push({
@@ -641,7 +847,8 @@ export const RoomOrganizer: React.FC = () => {
                 quantity: qty,
                 source: 'inventory',
                 location_label: 'Inventário',
-                hasEstimatedLevel
+                hasEstimatedLevel,
+                isLegacyStar
             });
         }
 
@@ -711,6 +918,13 @@ export const RoomOrganizer: React.FC = () => {
 
     const openOptimizeModal = (target: AutoOptimizationTarget) => {
         setPendingOptimizeTarget(target);
+        if (!ceilingInput.trim() && profileData?.league) {
+            const suggested = resolveLeagueCap(profileData.league);
+            if (suggested) {
+                setCeilingInput(suggested.value);
+                setCeilingUnit(suggested.unit);
+            }
+        }
         setShowOptimizeModal(true);
     };
 
@@ -1048,6 +1262,13 @@ export const RoomOrganizer: React.FC = () => {
             if (!avatarId) throw new Error("Perfil não encontrado ou inválido.");
             setProfileData(pData);
 
+            // Auto pré-preenchimento do Teto Máximo de Poder Real baseado na Liga Atual do jogador
+            const suggestedCap = resolveLeagueCap(pData?.league);
+            if (suggestedCap) {
+                setCeilingInput(suggestedCap.value);
+                setCeilingUnit(suggestedCap.unit);
+            }
+
             const powerRes = await fetch(`${proxy}https://rollercoin.com/api/profile/user-power-data/${avatarId}`);
             const powerData = await powerRes.json();
             const minersPower = powerData?.data?.miners || 0;
@@ -1073,17 +1294,25 @@ export const RoomOrganizer: React.FC = () => {
                     ? `Sala ${room_level + 1} • Linha ${rack_y + 1} • Rack ${rack_x + 1}`
                     : 'Sala';
 
+                let minerName = m.name || '';
+                let isLegacyStar = false;
+                if (/^rating[\s_]*star[:\s_-]*/i.test(minerName)) {
+                    isLegacyStar = true;
+                    minerName = minerName.replace(/^rating[\s_]*star[:\s_-]*/i, '').trim();
+                }
+
                 return {
                     id: `room_${m.miner_id}_${m.level}_${index}_${Math.random().toString(36).substr(2, 6)}`,
                     miner_id: m.miner_id,
-                    name: m.name,
-                    level: m.level || 0,
+                    name: minerName,
+                    level: isLegacyStar ? 0 : (m.level || 0),
                     size: sz,
                     power: m.power || 0,
                     bonus_percent: parseFloat(((m.bonus_percent || 0) / 100).toFixed(2)),
-                    filename: m.filename || generateFilename(m.name),
-                    canBeSold: checkSellable(m.name, m.miner_id),
+                    filename: generateFilename(m.filename || minerName),
+                    canBeSold: checkSellable(minerName, m.miner_id),
                     source: 'room',
+                    isLegacyStar,
                     room_level,
                     rack_x,
                     rack_y,
@@ -2385,7 +2614,7 @@ export const RoomOrganizer: React.FC = () => {
                                                         {miner.name}
                                                     </span>
 
-                                                    {renderLevelBadge(miner.level, miner.hasEstimatedLevel)}
+                                                    {renderLevelBadge(miner.level, miner.hasEstimatedLevel, miner.isLegacyStar)}
 
                                                     {miner.canBeSold ? (
                                                         <span className="inline-flex items-center gap-0.5 text-[8px] font-black uppercase px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400" title="Item negociável no Marketplace">
@@ -2645,7 +2874,7 @@ export const RoomOrganizer: React.FC = () => {
                                                         <span className={`text-[7px] font-black px-1 py-0.2 rounded ${miner.size === 1 ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-300'}`}>
                                                             {miner.size}C
                                                         </span>
-                                                        {renderLevelBadge(miner.level, miner.hasEstimatedLevel)}
+                                                        {renderLevelBadge(miner.level, miner.hasEstimatedLevel, miner.isLegacyStar)}
                                                         {miner.canBeSold ? (
                                                             <span className="text-[7px] font-black px-1 rounded bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400">
                                                                 Vendível
@@ -2741,7 +2970,7 @@ export const RoomOrganizer: React.FC = () => {
                                                         <span className="font-bold text-xs text-slate-800 dark:text-white truncate" title={miner.name}>
                                                             {miner.name}
                                                         </span>
-                                                        {renderLevelBadge(miner.level, miner.hasEstimatedLevel)}
+                                                        {renderLevelBadge(miner.level, miner.hasEstimatedLevel, miner.isLegacyStar)}
                                                         {miner.canBeSold ? (
                                                             <span className="text-[7px] font-black px-1 rounded bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400">
                                                                 Vendível
@@ -3180,48 +3409,78 @@ export const RoomOrganizer: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-2 mt-3">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
-                                            <span>Atalhos de Ligas (Tetos Rápidos):</span>
-                                        </label>
-                                        <button
-                                            type="button"
-                                            onClick={() => setCeilingInput('')}
-                                            className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-all ${
-                                                !ceilingInput.trim()
-                                                    ? 'bg-blue-500 text-white border-blue-500 shadow-xs'
-                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 border-slate-200 dark:border-slate-700'
-                                            }`}
-                                        >
-                                            Limpar (Sem Teto)
-                                        </button>
-                                    </div>
+                                    {(() => {
+                                        const userCap = resolveLeagueCap(profileData?.league);
+                                        return (
+                                            <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                                                <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                                                    <span>Atalhos de Ligas (Tetos Rápidos):</span>
+                                                </label>
+                                                <div className="flex items-center gap-1.5 flex-wrap">
+                                                    {userCap && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setCeilingInput(userCap.value);
+                                                                setCeilingUnit(userCap.unit);
+                                                            }}
+                                                            className="text-[10px] font-bold px-2 py-0.5 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all flex items-center gap-1 cursor-pointer"
+                                                            title={`Restaurar teto sugerido para sua liga (${userCap.tierName}: ${userCap.value} ${userCap.unit}/s)`}
+                                                        >
+                                                            <Award size={11} className="text-blue-500" />
+                                                            <span>Sua Liga: {userCap.tierName}</span>
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setCeilingInput('')}
+                                                        className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-all cursor-pointer ${
+                                                            !ceilingInput.trim()
+                                                                ? 'bg-blue-500 text-white border-blue-500 shadow-xs'
+                                                                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 border-slate-200 dark:border-slate-700'
+                                                        }`}
+                                                    >
+                                                        Limpar (Sem Teto)
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
 
-                                    <div className="space-y-2 p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80">
-                                        {LEAGUE_CAP_PRESETS.map(group => (
-                                            <div key={group.unit} className="flex items-start gap-1.5 sm:gap-2">
-                                                <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md border flex-shrink-0 mt-0.5 w-11 text-center ${group.badgeBg}`}>
-                                                    {group.label}
+                                    <div className="space-y-1.5 p-2 rounded-2xl bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                                        {LEAGUE_CAP_PRESETS.map(league => (
+                                            <div
+                                                key={league.id}
+                                                className={`flex items-center gap-1.5 sm:gap-2 p-1.5 rounded-xl border transition-all ${league.containerBg}`}
+                                            >
+                                                <span
+                                                    className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border flex-shrink-0 text-center tracking-wider w-18 ${league.badgeBg}`}
+                                                    title={`Liga ${league.leagueName}`}
+                                                >
+                                                    {league.leagueName}
                                                 </span>
                                                 <div className="flex flex-wrap gap-1 items-center flex-grow">
-                                                    {group.values.map(val => {
+                                                    {league.tiers.map(tier => {
                                                         const cleanInput = ceilingInput.trim().replace('.', ',');
-                                                        const isActive = cleanInput === val && ceilingUnit === group.unit;
+                                                        const isActive = cleanInput === tier.value && ceilingUnit === tier.unit;
                                                         return (
                                                             <button
-                                                                key={`${group.unit}_${val}`}
+                                                                key={`${league.id}_${tier.value}`}
                                                                 type="button"
                                                                 onClick={() => {
-                                                                    setCeilingInput(val);
-                                                                    setCeilingUnit(group.unit);
+                                                                    setCeilingInput(tier.value);
+                                                                    setCeilingUnit(tier.unit);
                                                                 }}
-                                                                className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-all ${
+                                                                title={tier.tooltip}
+                                                                className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-all active:scale-95 flex items-center gap-1 border cursor-pointer ${
                                                                     isActive
-                                                                        ? group.activeBtn
-                                                                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 active:scale-95'
+                                                                        ? league.activeBtn
+                                                                        : league.idleBtn
                                                                 }`}
                                                             >
-                                                                {val}
+                                                                <span className="opacity-60 text-[8px] font-mono font-black">{tier.numeral}</span>
+                                                                <span>{tier.value}</span>
+                                                                <span className="text-[8px] opacity-75 font-mono">{tier.unit}</span>
                                                             </button>
                                                         );
                                                     })}
