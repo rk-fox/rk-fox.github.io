@@ -813,6 +813,8 @@ export const RoomOrganizer: React.FC = () => {
                 cleanName = cleanName.replace(/^rating[\s_]*star[:\s_-]*/i, '').trim();
             }
 
+            cleanName = cleanName.replace(/\s*\(!\)\s*$/, '').trim();
+
             if (!cleanName || cleanName.toLowerCase().includes('quantity: high')) continue;
 
             const pwr = parsePowerStringToGhs(power, unit);
@@ -835,9 +837,11 @@ export const RoomOrganizer: React.FC = () => {
                 hasEstimatedLevel = !isLegacyStar;
             }
 
+            const displayName = hasEstimatedLevel ? `${cleanName} (!)` : cleanName;
+
             parsedList.push({
                 id: `inv_${filename}_lvl${finalLevel}_${Date.now()}_${Math.random().toString(36).substr(2, 7)}`,
-                name: cleanName,
+                name: displayName,
                 level: finalLevel,
                 size: sz,
                 power: pwr,
@@ -852,24 +856,23 @@ export const RoomOrganizer: React.FC = () => {
             });
         }
 
-        // Prevenção de falso duplicado para itens não catalogados com forças distintas
-        const nameGroups = new Map<string, OrganizerMiner[]>();
+        // Prevenção de falso duplicado exclusivamente para itens não catalogados com forças distintas
+        const uncatalogedGroups = new Map<string, OrganizerMiner[]>();
         parsedList.forEach(m => {
-            const key = m.name.toLowerCase();
-            if (!nameGroups.has(key)) nameGroups.set(key, []);
-            nameGroups.get(key)!.push(m);
+            if (m.hasEstimatedLevel) {
+                const key = m.name.toLowerCase().replace(/\s*\(!\)\s*$/, '');
+                if (!uncatalogedGroups.has(key)) uncatalogedGroups.set(key, []);
+                uncatalogedGroups.get(key)!.push(m);
+            }
         });
 
-        nameGroups.forEach(group => {
+        uncatalogedGroups.forEach(group => {
             const distinctPowers = new Set(group.map(m => Math.round(m.power)));
             if (distinctPowers.size > 1) {
                 group.sort((a, b) => a.power - b.power);
                 group.forEach((m, idx) => {
-                    if (m.level === 0 && m.hasEstimatedLevel) {
+                    if (m.level === 0) {
                         m.level = idx;
-                    }
-                    if (!m.name.includes('(!)')) {
-                        m.name = `${m.name} (!)`;
                     }
                 });
             }
