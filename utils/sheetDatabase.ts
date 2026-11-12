@@ -125,10 +125,10 @@ export const findSheetMiner = (name: string, db: SheetMinerData[]): SheetMinerDa
     });
     if (match) return match;
 
-    // 4. Inclusão de substring para nomes mais longos
+    // 4. Inclusão por prefixo normalizado (evita falsos positivos onde um nome não relacionado é substring interna)
     match = db.find(m => {
         const normDb = normalizeMinerName(m.name);
-        return normDb.length >= 4 && targetNorm.includes(normDb);
+        return normDb.length >= 5 && targetNorm.startsWith(normDb);
     });
 
     return match;

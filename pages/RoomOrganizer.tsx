@@ -369,13 +369,54 @@ export const RoomOrganizer: React.FC = () => {
         return `${sign}${pct.toFixed(2)}%`;
     };
 
-    // Chave única para duplicadas (separa instâncias por patamar de força quando o nível é estimado)
+    const normalizeMinerName = (name: string): string => (name || '').replace(/\s*\(!\)\s*$/, '').trim().toLowerCase();
+
+    // Chave única para identificação e controle de duplicadas (nome normalizado + nível)
     const getMinerKey = (m: OrganizerMiner): string => {
-        const cleanName = m.name.replace(/\s*\(!\)\s*$/, '').trim().toLowerCase();
-        if (m.level !== undefined && m.level > 0 && !m.hasEstimatedLevel) {
-            return `${cleanName}_lvl_${m.level}`;
-        }
-        return `${cleanName}_lvl_${m.level ?? 0}_pwr_${Math.round(m.power)}`;
+        const cleanName = normalizeMinerName(m.name);
+        return `${cleanName}_lvl_${m.level ?? 0}`;
+    };
+
+    // Projeção inteligente de níveis para itens não catalogados com múltiplos patamares de força e bônus
+    const projectUncatalogedMinerTiers = (miners: OrganizerMiner[]) => {
+        if (!miners || miners.length === 0) return;
+        const db = sheetDataRef.current.length > 0 ? sheetDataRef.current : sheetDatabase;
+        const groups = new Map<string, OrganizerMiner[]>();
+
+        miners.forEach(m => {
+            const isCataloged = db.length > 0 && !!findSheetMiner(m.name, db);
+            if (m.hasEstimatedLevel || m.source === 'inventory' || !isCataloged) {
+                const key = normalizeMinerName(m.name);
+                if (!groups.has(key)) groups.set(key, []);
+                groups.get(key)!.push(m);
+            }
+        });
+
+        groups.forEach(group => {
+            const uniqueTiers = Array.from(
+                new Map(
+                    group.map(m => [
+                        `${Math.round(m.power)}_${Math.round((m.bonus_percent || 0) * 100)}`,
+                        { power: m.power, bonus: m.bonus_percent || 0 }
+                    ])
+                ).values()
+            ).sort((a, b) => a.power - b.power || a.bonus - b.bonus);
+
+            if (uniqueTiers.length > 1) {
+                group.forEach(m => {
+                    if (m.level === 0 || m.hasEstimatedLevel) {
+                        const tierIdx = uniqueTiers.findIndex(
+                            t => Math.round(t.power) === Math.round(m.power) &&
+                                 Math.round(t.bonus * 100) === Math.round((m.bonus_percent || 0) * 100)
+                        );
+                        if (tierIdx !== -1) {
+                            m.level = tierIdx;
+                            m.hasEstimatedLevel = true;
+                        }
+                    }
+                });
+            }
+        });
     };
 
     // Badge visual para o nível da mineradora
@@ -524,6 +565,8 @@ export const RoomOrganizer: React.FC = () => {
         let dupUnsellableCount = 0;
         let dupSellableCount = 0;
         const enrichedMiners: OrganizerMiner[] = [];
+
+        projectUncatalogedMinerTiers([...salaMiners, ...inventoryMiners]);
 
         const keyCounts = new Map<string, number>();
         salaMiners.forEach(m => {
@@ -707,7 +750,8 @@ export const RoomOrganizer: React.FC = () => {
         for (const tier of matched.tiers) {
             const bonusDiff = Math.abs(tier.bonus - bonus_percent);
             const powerDiffRatio = tier.power > 0 ? Math.abs(tier.power - power) / tier.power : 1;
-            const score = (bonusDiff * 100) + (powerDiffRatio * 10);
+            // Tolerância calibrada: 0.1% de diferença de bônus atinge 20 pontos; 10% de diferença de poder atinge 20 pontos
+            const score = (bonusDiff * 200) + (powerDiffRatio * 200);
             if (score < minScore) {
                 minScore = score;
                 bestTier = tier;
@@ -718,7 +762,7 @@ export const RoomOrganizer: React.FC = () => {
             return { level: bestTier.level, isSellable, detectedFromDb: true };
         }
 
-        return { level: bestTier ? bestTier.level : 0, isSellable, detectedFromDb: bestTier !== null };
+        return { level: 0, isSellable, detectedFromDb: false };
     };
 
     // Parser robusto com suporte a descarte de Sets e regra de Nível 0 imediato após "open"
@@ -837,11 +881,9 @@ export const RoomOrganizer: React.FC = () => {
                 hasEstimatedLevel = !isLegacyStar;
             }
 
-            const displayName = hasEstimatedLevel ? `${cleanName} (!)` : cleanName;
-
             parsedList.push({
                 id: `inv_${filename}_lvl${finalLevel}_${Date.now()}_${Math.random().toString(36).substr(2, 7)}`,
-                name: displayName,
+                name: cleanName,
                 level: finalLevel,
                 size: sz,
                 power: pwr,
@@ -856,27 +898,8 @@ export const RoomOrganizer: React.FC = () => {
             });
         }
 
-        // Prevenção de falso duplicado exclusivamente para itens não catalogados com forças distintas
-        const uncatalogedGroups = new Map<string, OrganizerMiner[]>();
-        parsedList.forEach(m => {
-            if (m.hasEstimatedLevel) {
-                const key = m.name.toLowerCase().replace(/\s*\(!\)\s*$/, '');
-                if (!uncatalogedGroups.has(key)) uncatalogedGroups.set(key, []);
-                uncatalogedGroups.get(key)!.push(m);
-            }
-        });
-
-        uncatalogedGroups.forEach(group => {
-            const distinctPowers = new Set(group.map(m => Math.round(m.power)));
-            if (distinctPowers.size > 1) {
-                group.sort((a, b) => a.power - b.power);
-                group.forEach((m, idx) => {
-                    if (m.level === 0) {
-                        m.level = idx;
-                    }
-                });
-            }
-        });
+        // Harmoniza e projeta níveis automaticamente para itens não catalogados com múltiplos patamares de força
+        projectUncatalogedMinerTiers([...salaMiners, ...parsedList]);
 
         return parsedList;
     };
@@ -965,6 +988,8 @@ export const RoomOrganizer: React.FC = () => {
             setStatusMessage({ text: "Nenhum minerador disponível para otimizar.", type: 'error' });
             return;
         }
+
+        projectUncatalogedMinerTiers(pool);
 
         let finalRoom: OrganizerMiner[] = [];
         let remainingPool = [...pool];
@@ -1165,8 +1190,9 @@ export const RoomOrganizer: React.FC = () => {
         // 2. Consolidar os mineradores excedentes de volta para o Inventário com quantidade
         const consolidatedInv: OrganizerMiner[] = [];
         remainingPool.forEach(item => {
+            const cleanItemName = normalizeMinerName(item.name);
             const existing = consolidatedInv.find(m =>
-                m.name.toLowerCase() === item.name.toLowerCase() &&
+                normalizeMinerName(m.name) === cleanItemName &&
                 m.level === item.level &&
                 m.power === item.power &&
                 m.bonus_percent === item.bonus_percent &&
@@ -1175,7 +1201,7 @@ export const RoomOrganizer: React.FC = () => {
             if (existing) {
                 existing.quantity = (existing.quantity || 1) + 1;
             } else {
-                consolidatedInv.push({ ...item, quantity: 1, source: 'inventory', location_label: 'Inventário' });
+                consolidatedInv.push({ ...item, name: item.name.replace(/\s*\(!\)\s*$/, '').trim(), quantity: 1, source: 'inventory', location_label: 'Inventário' });
             }
         });
 
@@ -1233,13 +1259,15 @@ export const RoomOrganizer: React.FC = () => {
         setInventoryMiners(prev => {
             const merged = [...prev];
             items.forEach(newItem => {
-                const existing = merged.find(m => m.name.toLowerCase() === newItem.name.toLowerCase() && m.level === newItem.level && m.power === newItem.power && m.bonus_percent === newItem.bonus_percent && m.size === newItem.size);
+                const cleanNewName = normalizeMinerName(newItem.name);
+                const existing = merged.find(m => normalizeMinerName(m.name) === cleanNewName && m.level === newItem.level && m.power === newItem.power && m.bonus_percent === newItem.bonus_percent && m.size === newItem.size);
                 if (existing) {
                     existing.quantity = (existing.quantity || 1) + (newItem.quantity || 1);
                 } else {
                     merged.push(newItem);
                 }
             });
+            projectUncatalogedMinerTiers([...salaMiners, ...merged]);
             return merged;
         });
 
@@ -1392,11 +1420,12 @@ export const RoomOrganizer: React.FC = () => {
         if (!item) return;
         setSalaMiners(prev => prev.filter(m => m.id !== minerId));
         setInventoryMiners(prev => {
-            const existing = prev.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
+            const cleanItemName = normalizeMinerName(item.name);
+            const existing = prev.find(m => normalizeMinerName(m.name) === cleanItemName && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
             if (existing) {
                 return prev.map(m => m.id === existing.id ? { ...m, quantity: (m.quantity || 1) + 1 } : m);
             } else {
-                return [{ ...item, id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory', location_label: item.location_label || 'Inventário' }, ...prev];
+                return [{ ...item, name: item.name.replace(/\s*\(!\)\s*$/, '').trim(), id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory', location_label: item.location_label || 'Inventário' }, ...prev];
             }
         });
         setSelectedSalaIds(prev => {
@@ -1470,11 +1499,12 @@ export const RoomOrganizer: React.FC = () => {
         if (!item) return;
         setDiscardMiners(prev => prev.filter(m => m.id !== minerId));
         setInventoryMiners(prev => {
-            const existing = prev.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
+            const cleanItemName = normalizeMinerName(item.name);
+            const existing = prev.find(m => normalizeMinerName(m.name) === cleanItemName && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
             if (existing) {
                 return prev.map(m => m.id === existing.id ? { ...m, quantity: (m.quantity || 1) + 1 } : m);
             } else {
-                return [{ ...item, id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory' }, ...prev];
+                return [{ ...item, name: item.name.replace(/\s*\(!\)\s*$/, '').trim(), id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory' }, ...prev];
             }
         });
     };
@@ -1495,13 +1525,15 @@ export const RoomOrganizer: React.FC = () => {
         setInventoryMiners(prev => {
             const merged = [...prev];
             toMove.forEach(item => {
-                const existing = merged.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
+                const cleanItemName = normalizeMinerName(item.name);
+                const existing = merged.find(m => normalizeMinerName(m.name) === cleanItemName && m.level === item.level && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
                 if (existing) {
                     existing.quantity = (existing.quantity || 1) + 1;
                 } else {
-                    merged.push({ ...item, id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory' });
+                    merged.push({ ...item, name: item.name.replace(/\s*\(!\)\s*$/, '').trim(), id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory' });
                 }
             });
+            projectUncatalogedMinerTiers([...salaMiners, ...merged]);
             return merged;
         });
         setSelectedSalaIds(new Set());
@@ -1535,13 +1567,15 @@ export const RoomOrganizer: React.FC = () => {
         setInventoryMiners(prev => {
             const merged = [...prev];
             target.forEach(item => {
-                const existing = merged.find(m => m.name.toLowerCase() === item.name.toLowerCase() && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
+                const cleanItemName = normalizeMinerName(item.name);
+                const existing = merged.find(m => normalizeMinerName(m.name) === cleanItemName && (item.level === undefined || m.level === item.level) && m.power === item.power && m.bonus_percent === item.bonus_percent && m.size === item.size);
                 if (existing) {
                     existing.quantity = (existing.quantity || 1) + 1;
                 } else {
-                    merged.push({ ...item, id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory' });
+                    merged.push({ ...item, name: item.name.replace(/\s*\(!\)\s*$/, '').trim(), id: `inv_${item.filename}_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`, quantity: 1, source: 'inventory' });
                 }
             });
+            projectUncatalogedMinerTiers([...salaMiners, ...merged]);
             return merged;
         });
 
@@ -1769,6 +1803,7 @@ export const RoomOrganizer: React.FC = () => {
     const getModificationsData = () => {
         const initialMiners = initialRoomState?.miners || [];
         const currentMiners = salaMiners;
+        projectUncatalogedMinerTiers([...initialMiners, ...currentMiners, ...inventoryMiners]);
         const removed = initialMiners.filter(initM => !currentMiners.some(s => s.id === initM.id));
         const added = currentMiners.filter(s => !initialMiners.some(initM => initM.id === s.id));
         const intermediate = initialMiners.filter(initM => currentMiners.some(s => s.id === initM.id));
