@@ -278,9 +278,25 @@ export const RoomOrganizer: React.FC = () => {
     useEffect(() => {
         sheetDataRef.current = sheetDatabase;
         if (sheetDatabase.length > 0) {
-            setSalaMiners(prev => prev.map(m => ({ ...m, canBeSold: isMinerSellable(m.name, sheetDatabase) })));
-            setInventoryMiners(prev => prev.map(m => ({ ...m, canBeSold: isMinerSellable(m.name, sheetDatabase) })));
-            setDiscardMiners(prev => prev.map(m => ({ ...m, canBeSold: isMinerSellable(m.name, sheetDatabase) })));
+            const recheckItem = (m: OrganizerMiner): OrganizerMiner => {
+                const isSellable = isMinerSellable(m.name, sheetDatabase);
+                if (m.hasEstimatedLevel) {
+                    const detected = detectMinerLevelAndMeta(m.name, m.power, m.bonus_percent, sheetDatabase);
+                    if (detected.detectedFromDb) {
+                        return {
+                            ...m,
+                            level: detected.level,
+                            hasEstimatedLevel: false,
+                            canBeSold: detected.isSellable !== undefined ? detected.isSellable : isSellable
+                        };
+                    }
+                }
+                return { ...m, canBeSold: isSellable };
+            };
+
+            setSalaMiners(prev => prev.map(recheckItem));
+            setInventoryMiners(prev => prev.map(recheckItem));
+            setDiscardMiners(prev => prev.map(recheckItem));
         }
     }, [sheetDatabase]);
 
@@ -381,11 +397,14 @@ export const RoomOrganizer: React.FC = () => {
     const projectUncatalogedMinerTiers = (miners: OrganizerMiner[]) => {
         if (!miners || miners.length === 0) return;
         const db = sheetDataRef.current.length > 0 ? sheetDataRef.current : sheetDatabase;
+        if (!db || db.length === 0) return; // Aguarda a planilha estar pronta antes de assumir que uma máquina é não catalogada
+
         const groups = new Map<string, OrganizerMiner[]>();
 
         miners.forEach(m => {
-            const isCataloged = db.length > 0 && !!findSheetMiner(m.name, db);
-            if (m.hasEstimatedLevel || m.source === 'inventory' || !isCataloged) {
+            const isCataloged = !!findSheetMiner(m.name, db);
+            // APENAS máquinas NÃO catalogadas na planilha oficial participam da projeção inteligente de tiers
+            if (!isCataloged) {
                 const key = normalizeMinerName(m.name);
                 if (!groups.has(key)) groups.set(key, []);
                 groups.get(key)!.push(m);
@@ -510,7 +529,23 @@ export const RoomOrganizer: React.FC = () => {
     };
 
     const parsePowerStringToGhs = (valStr: string, unitStr: string): number => {
-        const cleanVal = parseFloat(valStr.replace(/,/g, ''));
+        let clean = (valStr || '').trim();
+        if (!clean) return 0;
+
+        if (clean.includes(',') && !clean.includes('.')) {
+            // Notação com vírgula decimal (ex: PT-BR "4,800" = 4.8, "16,500" = 16.5, "1,300" = 1.3)
+            clean = clean.replace(',', '.');
+        } else if (clean.includes('.') && clean.includes(',')) {
+            if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+                // Notação europeia/BR "1.234,56"
+                clean = clean.replace(/\./g, '').replace(',', '.');
+            } else {
+                // Notação US "1,234.56"
+                clean = clean.replace(/,/g, '');
+            }
+        }
+
+        const cleanVal = parseFloat(clean);
         if (isNaN(cleanVal)) return 0;
         const unit = unitStr.toUpperCase().trim();
         if (unit.startsWith('ZH')) return cleanVal * 1e12;
